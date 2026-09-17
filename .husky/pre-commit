@@ -1,0 +1,5 @@
+# Format and lint only the staged files.
+npx lint-staged
+
+# Type-check the whole project.
+npm run typecheck

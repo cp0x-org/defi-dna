@@ -1,0 +1,45 @@
+{
+  "name": "defi-dna",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Neutral aggregator of DeFi risk feeds: what every major risk feed says about a protocol, verbatim and side by side, with no composite score of our own.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @defi-dna/web",
+    "build": "npm run build --workspaces --if-present",
+    "preview": "npm run preview --workspace @defi-dna/web",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,css,html}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.12.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
+    "prettier": "^3.9.7",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.0"
+  }
+}

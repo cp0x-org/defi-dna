@@ -1,0 +1,18 @@
+{
+  "name": "@defi-dna/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Web frontend for defi DNA.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3",
+    "vite": "^8.3.0"
+  }
+}
