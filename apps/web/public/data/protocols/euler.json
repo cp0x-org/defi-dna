@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "euler",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 58132437.70783054,
+      "url": "https://defillama.com/protocol/euler-v2",
+      "extra": {
+        "components": [
+          {
+            "id": "5044",
+            "name": "Euler V2",
+            "tvl": 58132437.70783054
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "DeFiScan has no data for Euler."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Euler."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for Euler."
+    }
+  }
+}

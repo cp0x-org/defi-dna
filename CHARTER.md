@@ -24,8 +24,8 @@ What is allowed, because it is not the same thing:
 - **Facts about our own coverage** — whether a feed publishes anything about a
   protocol, when we last read it. These describe this project, not the protocol.
 
-Stated once: *arithmetic across feeds is forbidden; carrying one feed's own
-published value is not.*
+Stated once: _arithmetic across feeds is forbidden; carrying one feed's own
+published value is not._
 
 ## 2. Verbatim, with a link and a date
 

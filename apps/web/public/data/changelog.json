@@ -1,0 +1,258 @@
+[
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "aave-v4",
+    "protocolName": "Aave v4",
+    "feedId": "philidor",
+    "from": null,
+    "to": "36 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "aave-v3",
+    "protocolName": "Aave v3",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 0"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "aave-v3",
+    "protocolName": "Aave v3",
+    "feedId": "philidor",
+    "from": null,
+    "to": "46 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "compound-v3",
+    "protocolName": "Compound v3",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 0"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "compound-v3",
+    "protocolName": "Compound v3",
+    "feedId": "philidor",
+    "from": null,
+    "to": "5 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "aave-v3",
+    "protocolName": "Aave v3",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.8/10 · medium"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "compound-v2",
+    "protocolName": "Compound v2",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 0"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "curve",
+    "protocolName": "Curve",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 0"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "compound-v2",
+    "protocolName": "Compound v2",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "5.9/10 · high"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "curve",
+    "protocolName": "Curve",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "6.7/10 · high"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "liquity-v1",
+    "protocolName": "Liquity v1",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 2"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "lido",
+    "protocolName": "Lido",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 0"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "morpho-vaults",
+    "protocolName": "Morpho Vaults",
+    "feedId": "philidor",
+    "from": null,
+    "to": "196 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "lido",
+    "protocolName": "Lido",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.2/10 · medium"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "morpho-blue",
+    "protocolName": "Morpho Blue",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 1"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "morpho-blue",
+    "protocolName": "Morpho Blue",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.8/10 · medium"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "morpho-vaults",
+    "protocolName": "Morpho Vaults",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.8/10 · medium"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "pendle",
+    "protocolName": "Pendle",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 0"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "rocketpool",
+    "protocolName": "Rocket Pool",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.8/10 · medium"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "spark",
+    "protocolName": "Spark",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 0"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "spark",
+    "protocolName": "Spark",
+    "feedId": "philidor",
+    "from": null,
+    "to": "18 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "uniswap-v2",
+    "protocolName": "Uniswap v2",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 2"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "uniswap-v2",
+    "protocolName": "Uniswap v2",
+    "feedId": "philidor",
+    "from": null,
+    "to": "9 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "pendle",
+    "protocolName": "Pendle",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "5.7/10 · high"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "spark",
+    "protocolName": "Spark",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.9/10 · medium"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "uniswap-v2",
+    "protocolName": "Uniswap v2",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.3/10 · medium"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "uniswap-v4",
+    "protocolName": "Uniswap v4",
+    "feedId": "philidor",
+    "from": null,
+    "to": "39 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "yearn",
+    "protocolName": "Yearn",
+    "feedId": "philidor",
+    "from": null,
+    "to": "77 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "uniswap-v3",
+    "protocolName": "Uniswap v3",
+    "feedId": "defiscan",
+    "from": null,
+    "to": "Stage 2"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "uniswap-v3",
+    "protocolName": "Uniswap v3",
+    "feedId": "philidor",
+    "from": null,
+    "to": "69 vaults rated"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "uniswap-v4",
+    "protocolName": "Uniswap v4",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.3/10 · medium"
+  },
+  {
+    "ts": "2026-09-20T21:59:09.250Z",
+    "protocolId": "uniswap-v3",
+    "protocolName": "Uniswap v3",
+    "feedId": "risklayer",
+    "from": null,
+    "to": "4.3/10 · medium"
+  }
+]

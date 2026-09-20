@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "balancer-v3",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 14617914.32243293,
+      "url": "https://defillama.com/protocol/balancer-v3",
+      "extra": {
+        "components": [
+          {
+            "id": "5491",
+            "name": "Balancer V3",
+            "tvl": 14617914.32243293
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "DeFiScan has no data for Balancer v3."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Balancer v3."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for Balancer v3."
+    }
+  }
+}

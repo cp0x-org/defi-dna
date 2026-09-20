@@ -1,0 +1,11 @@
+{
+  "aave-v3": ["aave:v3", "aave:v3-lido", "aave:v3-horizon"],
+  "aave-v4": "aave:v4",
+  "compound-v3": "compound:v3",
+  "morpho-vaults": ["morpho:v1", "morpho:v2"],
+  "spark": "spark",
+  "uniswap-v2": "uniswap:v2",
+  "uniswap-v3": "uniswap:v3",
+  "uniswap-v4": "uniswap:v4",
+  "yearn": "yearn"
+}

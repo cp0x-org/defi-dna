@@ -1,0 +1,181 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "compound-v3",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 1361823099.3912108,
+      "url": "https://defillama.com/protocol/compound-v3",
+      "extra": {
+        "components": [
+          {
+            "id": "2088",
+            "name": "Compound V3",
+            "tvl": 1361823099.3912108
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "value": "Stage 0",
+      "summary": "Compound-v3 is a lending protocol that accepts a base asset as liquidity and allows borrowing this base asset with a variety of other assets as collateral. Multiple base assets are supported such as USDC, WETH, USDT, wstETH, and USDS. Each base asset represents an isolated lending market managed by a separate instance of the protocol. Compound governance is able to update various parameters for each of these markets.",
+      "details": [
+        {
+          "name": "Chain",
+          "value": "L"
+        },
+        {
+          "name": "Upgradeability",
+          "value": "H"
+        },
+        {
+          "name": "Autonomy",
+          "value": "H"
+        },
+        {
+          "name": "Exit Window",
+          "value": "H"
+        },
+        {
+          "name": "Accessibility",
+          "value": "L"
+        }
+      ],
+      "updatedAt": "2025-03-18",
+      "url": "https://www.defiscan.info/protocols/compound-v3/ethereum",
+      "extra": {
+        "reviews": [
+          {
+            "file": "compound-v3/ethereum.md",
+            "stage": "Stage 0",
+            "risks": [
+              "L",
+              "H",
+              "H",
+              "H",
+              "L"
+            ],
+            "date": "2025-03-18",
+            "url": "https://www.defiscan.info/protocols/compound-v3/ethereum"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "philidor": {
+      "value": "5 vaults rated",
+      "summary": "Philidor scores individual vaults rather than protocols. It rates 5 live Ethereum vault(s) of compound (version v3).",
+      "details": [
+        {
+          "name": "Compound V3 USDC",
+          "value": "Core 7.50",
+          "description": "Version v3 · TVL $376.1M · Scored 2026-09-20"
+        },
+        {
+          "name": "Compound V3 USDT",
+          "value": "Core 7.50",
+          "description": "Version v3 · TVL $177.4M · Scored 2026-09-20"
+        },
+        {
+          "name": "Compound V3 WETH",
+          "value": "Core 7.50",
+          "description": "Version v3 · TVL $132.4M · Scored 2026-09-20"
+        },
+        {
+          "name": "Compound V3 WBTC",
+          "value": "Prime 8.93",
+          "description": "Version v3 · TVL $2.3M · Scored 2026-09-20"
+        },
+        {
+          "name": "Compound V3 USDS",
+          "value": "Prime 8.06",
+          "description": "Version v3 · TVL $1.9M · Scored 2026-09-20"
+        }
+      ],
+      "updatedAt": "2026-09-20",
+      "url": "https://analytics.philidor.io/protocols/compound",
+      "note": "Counted: 5 of the 5 live vault(s) Philidor lists for compound under version v3. No vault stands in for the protocol and nothing is averaged — Philidor publishes no protocol-level score.",
+      "extra": {
+        "philidorId": "compound",
+        "versions": [
+          "v3"
+        ],
+        "vaultsListed": 5,
+        "vaultsLive": 5,
+        "vaultsShutdown": 0,
+        "vaultsRated": 5,
+        "vaults": [
+          {
+            "name": "Compound V3 USDC",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.5,
+            "tvlUsd": 376105619.93257594,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xc3d688b66703497daa19211eedff47f25384cdc3"
+          },
+          {
+            "name": "Compound V3 USDT",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.5,
+            "tvlUsd": 177422243.30762944,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x3afdc9bca9213a35503b077a6072f3d0d5ab0840"
+          },
+          {
+            "name": "Compound V3 WETH",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.5,
+            "tvlUsd": 132351150.22359435,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xa17581a9e3356d9a858b789d68b4d866e593ae94"
+          },
+          {
+            "name": "Compound V3 WBTC",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.93,
+            "tvlUsd": 2344692.1907065497,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xe85dc543813b8c2cfeaac371517b925a166a9293"
+          },
+          {
+            "name": "Compound V3 USDS",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.06,
+            "tvlUsd": 1900555.786036854,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x5d409e56d886231adaf00c8775665ad0f9897b56"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for Compound v3."
+    }
+  }
+}

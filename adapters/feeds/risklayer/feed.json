@@ -1,0 +1,8 @@
+{
+  "id": "risklayer",
+  "name": "Risklayer",
+  "topic": "Protocol risk · Beta",
+  "focus": "Beta protocol analysis: dependency, governance, tokenomics, audit coverage and smart-contract risk.",
+  "homepage": "https://risklayer.online",
+  "enabled": true
+}

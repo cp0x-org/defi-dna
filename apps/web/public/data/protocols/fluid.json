@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "fluid",
+  "metrics": {
+    "incidents": {
+      "value": 1,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": [
+          {
+            "date": "2026-05-31",
+            "name": "Fluid Lending",
+            "amountUsd": 215000,
+            "classification": "Frontend & Infrastructure",
+            "technique": "Key Leaked via Infrastructure",
+            "returnedFunds": null,
+            "source": null
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 734060562.6232892,
+      "url": "https://defillama.com/protocol/fluid-lending",
+      "extra": {
+        "components": [
+          {
+            "id": "4167",
+            "name": "Fluid Lending",
+            "tvl": 519617288.5022508
+          },
+          {
+            "id": "5317",
+            "name": "Fluid DEX",
+            "tvl": 214443274.12103844
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "DeFiScan has no data for Fluid."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Fluid."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for Fluid."
+    }
+  }
+}

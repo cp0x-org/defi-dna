@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "cowswap",
+  "metrics": {
+    "incidents": {
+      "value": 1,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": [
+          {
+            "date": "2023-02-07",
+            "name": "CoWSwap",
+            "amountUsd": 180000,
+            "classification": "Access Control",
+            "technique": "Arbitrary External Call",
+            "returnedFunds": null,
+            "source": null
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": null,
+      "url": "https://defillama.com/protocol/cowswap",
+      "note": "DefiLlama publishes no Ethereum TVL for CoW Swap.",
+      "extra": {
+        "components": [
+          {
+            "id": "2643",
+            "name": "CoWSwap",
+            "tvl": null
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "DeFiScan has no data for CoW Swap."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for CoW Swap."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for CoW Swap."
+    }
+  }
+}

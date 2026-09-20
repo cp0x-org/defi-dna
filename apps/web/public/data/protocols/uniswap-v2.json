@@ -1,0 +1,352 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "uniswap-v2",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 807404469.257863,
+      "url": "https://defillama.com/protocol/uniswap-v2",
+      "extra": {
+        "components": [
+          {
+            "id": "2197",
+            "name": "Uniswap V2",
+            "tvl": 807404469.257863
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "value": "Stage 2",
+      "summary": "Uniswap v2 is a decentralized automated market maker (AMM) that builds upon the original Uniswap protocol by introducing several key features to enhance functionality and flexibility for liquidity providers (LPs) and traders. Unlike its predecessor, Uniswap v2 enables direct token-to-token swaps, eliminating the need to route trades through ETH as an intermediary. Another notable improvement is the introduction of flash swaps, which allow users to withdraw assets without upfront capital as long as the borrowed amount is returned by the end of the transaction. This feature facilitates advanced use cases like arbitrage, collateral swapping, and debt refinancing. Additionally, Uniswap v2 integr",
+      "details": [
+        {
+          "name": "Chain",
+          "value": "L"
+        },
+        {
+          "name": "Upgradeability",
+          "value": "L"
+        },
+        {
+          "name": "Autonomy",
+          "value": "L"
+        },
+        {
+          "name": "Exit Window",
+          "value": "L"
+        },
+        {
+          "name": "Accessibility",
+          "value": "L"
+        }
+      ],
+      "updatedAt": "2025-01-22",
+      "url": "https://www.defiscan.info/protocols/uniswap-v2/ethereum",
+      "extra": {
+        "reviews": [
+          {
+            "file": "uniswap-v2/ethereum.md",
+            "stage": "Stage 2",
+            "risks": [
+              "L",
+              "L",
+              "L",
+              "L",
+              "L"
+            ],
+            "date": "2025-01-22",
+            "url": "https://www.defiscan.info/protocols/uniswap-v2/ethereum"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "philidor": {
+      "value": "9 vaults rated",
+      "summary": "Philidor scores individual vaults rather than protocols. It rates 9 live Ethereum vault(s) of uniswap (version v2).",
+      "details": [
+        {
+          "name": "Uniswap V2 USDC/WETH",
+          "value": "Prime 8.57",
+          "description": "Version v2 · TVL $20.7M · Scored 2026-09-20"
+        },
+        {
+          "name": "Uniswap V2 WETH/USDT",
+          "value": "Prime 8.38",
+          "description": "Version v2 · TVL $15.0M · Scored 2026-09-20"
+        },
+        {
+          "name": "Uniswap V2 DAI/WETH",
+          "value": "Prime 8.52",
+          "description": "Version v2 · TVL $9.4M · Scored 2026-09-20"
+        },
+        {
+          "name": "Uniswap V2 WBTC/WETH",
+          "value": "Prime 8.39",
+          "description": "Version v2 · TVL $9.1M · Scored 2026-09-20"
+        },
+        {
+          "name": "Uniswap V2 UNI/WETH",
+          "value": "Core 7.80",
+          "description": "Version v2 · TVL $5.5M · Scored 2026-09-20"
+        },
+        {
+          "name": "Uniswap V2 USDC/USDT",
+          "value": "Prime 8.53",
+          "description": "Version v2 · TVL $3.6M · Scored 2026-09-20"
+        },
+        {
+          "name": "Uniswap V2 LINK/WETH",
+          "value": "Core 7.90",
+          "description": "Version v2 · TVL $1.5M · Scored 2026-09-20"
+        },
+        {
+          "name": "Uniswap V2 DAI/USDC",
+          "value": "Prime 8.67",
+          "description": "Version v2 · TVL $1.1M · Scored 2026-09-20"
+        },
+        {
+          "name": "Uniswap V2 stETH/WETH",
+          "value": "Prime 8.42",
+          "description": "Version v2 · TVL $394K · Scored 2026-09-20"
+        }
+      ],
+      "updatedAt": "2026-09-20",
+      "url": "https://analytics.philidor.io/protocols/uniswap",
+      "note": "Counted: 9 of the 9 live vault(s) Philidor lists for uniswap under version v2. No vault stands in for the protocol and nothing is averaged — Philidor publishes no protocol-level score.",
+      "extra": {
+        "philidorId": "uniswap",
+        "versions": [
+          "v2"
+        ],
+        "vaultsListed": 9,
+        "vaultsLive": 9,
+        "vaultsShutdown": 0,
+        "vaultsRated": 9,
+        "vaults": [
+          {
+            "name": "Uniswap V2 USDC/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.57,
+            "tvlUsd": 20734824.286440026,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc"
+          },
+          {
+            "name": "Uniswap V2 WETH/USDT",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.38,
+            "tvlUsd": 14954264.909285896,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852"
+          },
+          {
+            "name": "Uniswap V2 DAI/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.52,
+            "tvlUsd": 9383192.958319547,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xa478c2975ab1ea89e8196811f51a7b7ade33eb11"
+          },
+          {
+            "name": "Uniswap V2 WBTC/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.39,
+            "tvlUsd": 9070674.280826395,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xbb2b8038a1640196fbe3e38816f3e67cba72d940"
+          },
+          {
+            "name": "Uniswap V2 UNI/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.8,
+            "tvlUsd": 5481972.950933587,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xd3d2e2692501a5c9ca623199d38826e513033a17"
+          },
+          {
+            "name": "Uniswap V2 USDC/USDT",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.53,
+            "tvlUsd": 3603424.682831182,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x3041cbd36888becc7bbcbc0045e3b1f144466f5f"
+          },
+          {
+            "name": "Uniswap V2 LINK/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 1462746.7518648128,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xa2107fa5b38d9bbd2c461d6edf11b11a50f6b974"
+          },
+          {
+            "name": "Uniswap V2 DAI/USDC",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.67,
+            "tvlUsd": 1089063.1019994922,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5"
+          },
+          {
+            "name": "Uniswap V2 stETH/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.42,
+            "tvlUsd": 394041.2981848302,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x4028daac072e492d34a3afdbef0ba7e35d8b55c4"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "risklayer": {
+      "value": "4.3/10 · medium",
+      "summary": "Uniswap is the dominant multi-chain DEX with roughly $2.9B TVL across 40+ EVM chains, operating immutable v2/v3/v4 AMM contracts that have processed trillions in volume with no recorded core exploit since v2 launched in 2020. Core contract security is strong—non-upgradeable pools, nine pre-launch v4 audits, and an active $15.5M bug bounty—but governance and integration risks are elevated: an EOA controls Arbitrum v4 admin outside the Ethereum timelock, v4 hooks have caused ~$20M in third-party losses, and UNI voting power is concentrated in a 272M-token treasury and a small delegate set. Overall risk is moderate at 4.3/10.",
+      "details": [
+        {
+          "name": "Dependency Risk",
+          "value": "4.3/10",
+          "description": "Core AMM has no Chainlink or native bridge dependencies, but Permit2 is a shared cross-protocol approval singleton, v4 hooks create third-party composability risk (Cork/Bunni precedents), cross-chain address heterogeneity across 40+ chains increases integrati…"
+        },
+        {
+          "name": "Governance Risk",
+          "value": "5.8/10",
+          "description": "Ethereum mainnet uses Governor Bravo with a 2-day timelock, but Arbitrum v3/v4 admin is an active EOA outside L1 governance, Base/Optimism bridge to timelock while 35+ other chains have independent admins, UNIfication shifts operational control to Labs/DUNI,…"
+        },
+        {
+          "name": "Tokenomics Risk",
+          "value": "5.5/10",
+          "description": "Fixed 1B UNI supply with completed insider vesting, but governance timelock holds 27% of supply, top ~50 delegates control >90% of voting power, the 20M UNI/year growth budget outpaces ~4–5M UNI/year fee burns, and a dormant 2% annual mint cap remains governa…"
+        },
+        {
+          "name": "Audit Coverage Risk",
+          "value": "2.4/10",
+          "description": "v3/v4 core received multi-firm audits (Trail of Bits, OpenZeppelin, Spearbit, Certora, ABDK) plus a $2.35M Cantina competition with all critical/high findings remediated and an active $15.5M bug bounty; residual gaps are third-party v4 hooks, partial v2 perip…"
+        },
+        {
+          "name": "Smart Contract Risk",
+          "value": "4.3/10",
+          "description": "Core v2/v3/v4 AMM contracts are immutable with no upgrade proxies and strong reentrancy guards, but an EOA controls Arbitrum v4 PoolManager ownership and Unichain v2 feeToSetter, four pipeline-flagged unverified deployments reduce transparency, and v4 hooks d…"
+        }
+      ],
+      "updatedAt": "2026-07-02",
+      "url": "https://risklayer.online/protocol/uniswap.org",
+      "note": "Risklayer is in beta and publishes no ordering for its bands, so the figure is shown exactly as reported.",
+      "extra": {
+        "domain": "uniswap.org",
+        "riskLevel": "medium",
+        "overallScore": 4.3,
+        "analysisStatus": "completed",
+        "keyFindings": [
+          {
+            "title": "EOA controls Arbitrum v4 PoolManager ownership",
+            "severity": "critical",
+            "category": "access-control",
+            "description": "On-chain owner() of Arbitrum UniswapV4 PoolManager (0x360e68faccca8ca495c1b759fd9eee466db9fb32) resolves to 0x2bad8182c09f50c8318d769245bea52c32be46cd, confirmed EOA (eth_getCode empty). This address can call setProtocolFeeController() and transferOwnership() per verified PoolManager source. Single-key compromise could reassign protocol-fee authority or ownership without timelock/multisig protect…"
+          },
+          {
+            "title": "Same EOA controls Unichain v2 feeToSetter",
+            "severity": "high",
+            "category": "access-control",
+            "description": "The same EOA 0x2bad8182c09f50c8318d769245bea52c32be46cd is feeToSetter on Unichain UniswapV2Factory (0x1f9840…002), granting setFeeTo/setFeeToSetter privileges per verified v2 factory source. Cross-chain concentration of privileged roles in one EOA expands blast radius beyond Arbitrum v4."
+          },
+          {
+            "title": "UNI governance Timelock unverified on Etherscan",
+            "severity": "high",
+            "category": "verification",
+            "description": "The UNI Timelock at 0x1a9C8182C09F50C8318d769245beA52c32BE35BC is marked unverified in VERIFICATION_STATUS.md with no downloadable source. On-chain it is a live contract (admin=0x408ed6354d4973f66138c91495f2f2fcbd8724c3) and owns Ethereum v4 PoolManager, is V2 feeToSetter, and is UNI minter. Lack of explorer verification prevents independent audit of the governance execution layer controlling pro…"
+          },
+          {
+            "title": "Four scoped deployments lack verified explorer source",
+            "severity": "high",
+            "category": "verification",
+            "description": "Pipeline verification flags four contracts as unverified: Ethereum NonfungiblePositionManager (0xC36442b4…), Ethereum Timelock (0x1a9C8182…), Optimism UniswapV3Factory (0x1F98431c…), and Base Permit2 (0x000000000022D473030F116dDEE9F6B43aC78BA3). Unverified bytecode cannot be source-audited via explorer; NPM and Permit2 hold user NFT positions and token approvals respectively, amplifying impact."
+          },
+          {
+            "title": "Arbitrum Admin Controlled by EOA, Not L1 Timelock",
+            "severity": "high",
+            "category": "cross-chain",
+            "description": "On Arbitrum, UniswapV3Factory owner (0xff7a…0699) and UniswapV4 PoolManager owner (0x2bad…46cd) both resolve to EOA 0x2bad8182c09f50c8318d769245bea52c32be46cd (verified: code length 0, transaction nonce 8). This EOA can call setOwner on the v3 ProtocolFeeController and transferOwnership on v4 PoolManager without the 2-day Ethereum timelock delay or UNI holder vote. Base and Optimism use bridged L…"
+          },
+          {
+            "title": "Cross-Chain Governance Asymmetry Across L2s",
+            "severity": "high",
+            "category": "cross-chain",
+            "description": "L2 factory/PoolManager admin addresses differ per chain and are not uniformly controlled by the Ethereum timelock. Base/Optimism L2 proxy contracts (1419 bytes) store admin=0x4200…0007 (L2CrossDomainMessenger) and reference L1 timelock 0x1a9C…35BC in storage slot 1, enabling L1-governance relay. Arbitrum uses a standalone EOA. Polygon, BSC, and 35+ other chains listed in discovery have independen…"
+          },
+          {
+            "title": "v4 Hook Composability Creates Third-Party Integration Risk",
+            "severity": "high",
+            "category": "protocol",
+            "description": "v4 PoolManager delegates swap, liquidity, and donate lifecycle to arbitrary IHooks contracts chosen per pool. PoolManager correctly passes msg.sender to hook callbacks and prevents hook self-calls, but does not enforce onlyPoolManager on hook entrypoints—third-party hooks must implement access control themselves. Cork Protocol lost ~$12M (May 2025) when CorkHook.beforeSwap lacked PoolManager-only…"
+          },
+          {
+            "title": "v4 hooks delegate execution to arbitrary pool-configured contracts",
+            "severity": "medium",
+            "category": "composability",
+            "description": "Verified PoolManager source invokes hook contracts at initialize, modifyLiquidity, swap, and donate via before/after hooks with optional delta returns. Core enforces hook-address bit flags but does not constrain hook logic. Poorly implemented or malicious hooks (e.g., Cork Protocol May 2025) can cause LP/user losses while Uniswap core remains technically correct. LPs must audit per-pool hook beha…"
+          },
+          {
+            "title": "Privileged admin addresses diverge across chains",
+            "severity": "medium",
+            "category": "cross-chain",
+            "description": "Factory/PoolManager owners are not uniform: Ethereum v4 PoolManager owner is UNI Timelock (0x1a9c8182…), Ethereum v3 factory owner is a separate 14.5KB contract (0xf2371551…), while Arbitrum/Base/Optimism v3 owners are chain-local 14.5KB contracts and v4 owners differ (Arbitrum EOA, Base/Optimism 2.8KB contracts). v3/v4 factories also use different addresses on some chains (e.g., Base v3 at 0x331…"
+          },
+          {
+            "title": "Permit2 is immutable and ownerless but aggregates token approvals",
+            "severity": "medium",
+            "category": "approvals",
+            "description": "Verified Permit2 source shows no owner/admin/pause functions — deployment is immutable. Users granting Permit2 max approvals enable signature-based transfers via any integrated router. This is by design but creates a high-value phishing/approval-theft target; Base deployment is additionally unverified on BaseScan despite CREATE2 canonical address."
+          },
+          {
+            "title": "Timelock Contract Source Unverified on Etherscan",
+            "severity": "medium",
+            "category": "centralization",
+            "description": "The UNI timelock at 0x1a9C8182C09F50C8318d769245beA52c32BE35BC has no verified source code on Etherscan. On-chain storage confirms Compound-style layout (admin=Governor Bravo, delay=172800s/2 days), but unverified bytecode prevents independent audit of the full execution logic and queued-transaction handling."
+          },
+          {
+            "title": "UNIfication Restructures Off-Chain Control Under DUNI/Labs",
+            "severity": "medium",
+            "category": "centralization",
+            "description": "The Dec 2025 UNIfication proposal (passed with ~99.9% support) consolidates Uniswap Foundation teams into Uniswap Labs, establishes a Wyoming DUNA (DUNI) legal entity, creates a 20M UNI/year growth budget under a Labs–DUNI service provider agreement, and activates protocol fee switches. On-chain fee parameters remain governable by UNI votes, but operational execution, interface/API fee removal, a…"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  }
+}

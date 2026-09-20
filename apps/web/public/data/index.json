@@ -1,0 +1,239 @@
+{
+  "generatedAt": "2026-09-20T22:26:14.226Z",
+  "rows": [
+    {
+      "id": "aave-v3",
+      "tvl": 15220898411.914497,
+      "feeds": {
+        "defiscan": true,
+        "philidor": true,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "aave-v4",
+      "tvl": 411121880.41193926,
+      "feeds": {
+        "defiscan": false,
+        "philidor": true,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "balancer-v2",
+      "tvl": 22301392.322128166,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "balancer-v3",
+      "tvl": 14617914.32243293,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "compound-v3",
+      "tvl": 1361823099.3912108,
+      "feeds": {
+        "defiscan": true,
+        "philidor": true,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "compound-v2",
+      "tvl": 109122095.24818277,
+      "feeds": {
+        "defiscan": true,
+        "philidor": false,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "cowswap",
+      "tvl": null,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "curve",
+      "tvl": 1395645281.6140144,
+      "feeds": {
+        "defiscan": true,
+        "philidor": false,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "euler",
+      "tvl": 58132437.70783054,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "fluid",
+      "tvl": 734060562.6232892,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "gearbox",
+      "tvl": 21554538.497865483,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "lido",
+      "tvl": 25745307823.546032,
+      "feeds": {
+        "defiscan": true,
+        "philidor": false,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "liquity-v1",
+      "tvl": 190727584.25286436,
+      "feeds": {
+        "defiscan": true,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "liquity-v2",
+      "tvl": 103482198.49914543,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "mellow",
+      "tvl": 294661346.4161093,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "morpho-blue",
+      "tvl": 5001217607.061073,
+      "feeds": {
+        "defiscan": true,
+        "philidor": false,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "morpho-vaults",
+      "tvl": null,
+      "feeds": {
+        "defiscan": false,
+        "philidor": true,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "oneinch",
+      "tvl": 3051579.0772854784,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "pendle",
+      "tvl": 732005891.6901664,
+      "feeds": {
+        "defiscan": true,
+        "philidor": false,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "rocketpool",
+      "tvl": 1374915127.0420094,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "spark",
+      "tvl": 8860320589.097996,
+      "feeds": {
+        "defiscan": true,
+        "philidor": true,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "uniswap-v2",
+      "tvl": 807404469.257863,
+      "feeds": {
+        "defiscan": true,
+        "philidor": true,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "uniswap-v3",
+      "tvl": 907666083.8099073,
+      "feeds": {
+        "defiscan": true,
+        "philidor": true,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "uniswap-v4",
+      "tvl": 740628798.1702765,
+      "feeds": {
+        "defiscan": false,
+        "philidor": true,
+        "risklayer": true
+      }
+    },
+    {
+      "id": "yearn",
+      "tvl": 176583944.22309732,
+      "feeds": {
+        "defiscan": false,
+        "philidor": true,
+        "risklayer": false
+      }
+    },
+    {
+      "id": "zerox",
+      "tvl": null,
+      "feeds": {
+        "defiscan": false,
+        "philidor": false,
+        "risklayer": false
+      }
+    }
+  ]
+}

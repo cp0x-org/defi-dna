@@ -1,0 +1,13 @@
+{
+  "aave-v3": ["aave/ethereum.md", "aave/prime.md", "aave/etherfi.md"],
+  "compound-v3": "compound-v3/ethereum.md",
+  "compound-v2": "compound-v2/ethereum.md",
+  "curve": "curve-finance/ethereum.md",
+  "lido": "lido-v2/ethereum.md",
+  "liquity-v1": "liquity/ethereum.md",
+  "morpho-blue": "morpho/ethereum.md",
+  "pendle": "pendle/ethereum.md",
+  "spark": "spark/ethereum.md",
+  "uniswap-v2": "uniswap-v2/ethereum.md",
+  "uniswap-v3": "uniswap-v3/ethereum.md"
+}

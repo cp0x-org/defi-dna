@@ -1,0 +1,85 @@
+{
+  "generatedAt": "2026-09-20T21:08:05.435Z",
+  "protocol": {
+    "id": "balancer",
+    "name": "Balancer",
+    "category": "dex",
+    "website": "https://balancer.fi",
+    "description": "Weighted and custom-curve AMM pools. The row covers Balancer v2 and v3."
+  },
+  "metrics": {
+    "incidents": {
+      "value": 3,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": [
+          {
+            "date": "2025-11-03",
+            "name": "Balancer V2",
+            "amountUsd": 128000000,
+            "classification": "Token & Share Accounting",
+            "technique": "Rounding Error",
+            "returnedFunds": null,
+            "source": null
+          },
+          {
+            "date": "2023-09-19",
+            "name": "Balancer V2",
+            "amountUsd": 238000,
+            "classification": "Frontend & Infrastructure",
+            "technique": "Frontend Compromise",
+            "returnedFunds": null,
+            "source": null
+          },
+          {
+            "date": "2023-08-27",
+            "name": "Balancer V2",
+            "amountUsd": 800000,
+            "classification": "Oracle Manipulation",
+            "technique": "Spot Price Manipulation",
+            "returnedFunds": null,
+            "source": null
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:08:05.435Z"
+    },
+    "tvl": {
+      "value": 37007254.88053921,
+      "url": "https://defillama.com/protocol/balancer-v2",
+      "extra": {
+        "components": [
+          {
+            "id": "2611",
+            "name": "Balancer V2",
+            "tvl": 22255316.819900103
+          },
+          {
+            "id": "5491",
+            "name": "Balancer V3",
+            "tvl": 14751938.060639106
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:08:05.435Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:08:05.435Z",
+      "note": "DeFiScan has no data for Balancer."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:08:05.435Z",
+      "note": "Philidor Analytics has no data for Balancer."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:08:05.435Z",
+      "note": "Risklayer has no data for Balancer."
+    }
+  }
+}

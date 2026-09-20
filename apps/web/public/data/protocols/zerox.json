@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "zerox",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": null,
+      "url": "https://defillama.com/protocol/0x",
+      "note": "DefiLlama publishes no Ethereum TVL for 0x / Matcha.",
+      "extra": {
+        "components": [
+          {
+            "id": "2116",
+            "name": "0x",
+            "tvl": null
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "DeFiScan has no data for 0x / Matcha."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for 0x / Matcha."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for 0x / Matcha."
+    }
+  }
+}

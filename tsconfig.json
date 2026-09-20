@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "types": ["node"] },
+  "include": [
+    "packages/core/src/**/*.ts",
+    "adapters/**/*.ts",
+    "packages/data-client/src/**/*.ts",
+    "apps/pipeline/src/**/*.ts"
+  ]
+}

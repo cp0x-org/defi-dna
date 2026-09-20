@@ -1,0 +1,9 @@
+{
+  "id": "_template",
+  "name": "Example Feed",
+  "topic": "Two or three words",
+  "focus": "One line: what this feed looks at, in its own terms.",
+  "homepage": "https://example.com",
+  "methodologyUrl": "https://example.com/methodology",
+  "enabled": false
+}

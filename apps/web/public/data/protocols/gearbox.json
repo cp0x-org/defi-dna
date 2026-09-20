@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "gearbox",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 21554538.497865483,
+      "url": "https://defillama.com/protocol/gearbox",
+      "extra": {
+        "components": [
+          {
+            "id": "1108",
+            "name": "Gearbox",
+            "tvl": 21554538.497865483
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "DeFiScan has no data for Gearbox."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Gearbox."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for Gearbox."
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@defi-dna/data",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@defi-dna/core": "*"
+  }
+}

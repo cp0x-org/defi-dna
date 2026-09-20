@@ -1,0 +1,9 @@
+{
+  "id": "philidor",
+  "name": "Philidor Analytics",
+  "topic": "Vault risk",
+  "focus": "Vault-level resilience scores (0-10, tiers Edge / Core / Prime) for individual Ethereum vaults.",
+  "homepage": "https://analytics.philidor.io",
+  "methodologyUrl": "https://docs.philidor.io/docs/methodology",
+  "enabled": true
+}

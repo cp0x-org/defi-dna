@@ -9,15 +9,20 @@
     "node": ">=24.0.0"
   },
   "workspaces": [
-    "web"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
+    "collect": "tsx apps/pipeline/src/cli.ts collect",
+    "bundle": "tsx apps/pipeline/src/cli.ts bundle",
+    "refresh": "tsx apps/pipeline/src/cli.ts run",
     "dev": "npm run dev --workspace @defi-dna/web",
     "build": "npm run build --workspaces --if-present",
     "preview": "npm run preview --workspace @defi-dna/web",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit",
+    "test": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky"
@@ -33,13 +38,16 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^24.0.0",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
     "prettier": "^3.9.7",
+    "tsx": "^4.19.2",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.70.0"
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^3.2.4"
   }
 }

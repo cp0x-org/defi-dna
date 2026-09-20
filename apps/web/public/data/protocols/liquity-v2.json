@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "liquity-v2",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 103482198.49914543,
+      "url": "https://defillama.com/protocol/liquity-v2",
+      "extra": {
+        "components": [
+          {
+            "id": "5656",
+            "name": "Liquity V2",
+            "tvl": 103482198.49914543
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "DeFiScan has no data for Liquity v2."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Liquity v2."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for Liquity v2."
+    }
+  }
+}

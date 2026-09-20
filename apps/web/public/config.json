@@ -1,0 +1,4 @@
+{
+  "_comment": "Loaded at runtime, so the deployed site can be pointed at another copy of the generated data without rebuilding. Relative values resolve against the site itself; set dataUrl to a raw.githubusercontent.com folder (for example https://raw.githubusercontent.com/<org>/<repo>/main/data) to read the data straight from the repository.",
+  "dataUrl": "./data"
+}

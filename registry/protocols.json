@@ -1,0 +1,201 @@
+{
+  "_comment": "Hand-maintained. One entry per protocol version we track on Ethereum mainnet: sources file a version separately, so we collect it separately. `group` only nests rows on the dashboard — data is never merged across versions. The frontend imports this file at build time; adding a protocol means an entry here plus a line in the mappings of the adapters that cover it. A protocol no adapter maps is fine: its row simply shows no data.",
+  "protocols": [
+    {
+      "id": "aave-v3",
+      "name": "Aave v3",
+      "group": "Aave",
+      "category": "lending",
+      "website": "https://aave.com",
+      "description": "Pooled lending markets: the Core, Prime, Lido and Horizon instances of Aave v3 on Ethereum mainnet."
+    },
+    {
+      "id": "aave-v4",
+      "name": "Aave v4",
+      "group": "Aave",
+      "category": "lending",
+      "website": "https://aave.com",
+      "description": "The Aave v4 deployment."
+    },
+    {
+      "id": "balancer-v2",
+      "name": "Balancer v2",
+      "group": "Balancer",
+      "category": "dex",
+      "website": "https://balancer.fi",
+      "description": "Weighted and custom-curve AMM pools, the v2 vault architecture."
+    },
+    {
+      "id": "balancer-v3",
+      "name": "Balancer v3",
+      "group": "Balancer",
+      "category": "dex",
+      "website": "https://balancer.fi",
+      "description": "The Balancer v3 pools and hooks architecture."
+    },
+    {
+      "id": "compound-v3",
+      "name": "Compound v3",
+      "group": "Compound",
+      "category": "lending",
+      "website": "https://compound.finance",
+      "description": "Comet markets: one borrowable asset per market."
+    },
+    {
+      "id": "compound-v2",
+      "name": "Compound v2",
+      "group": "Compound",
+      "category": "lending",
+      "website": "https://compound.finance",
+      "description": "The cToken-era pooled lending markets."
+    },
+    {
+      "id": "cowswap",
+      "name": "CoW Swap",
+      "category": "aggregator",
+      "website": "https://cow.fi",
+      "description": "Batch-auction trading protocol settled by external solvers."
+    },
+    {
+      "id": "curve",
+      "name": "Curve",
+      "category": "dex",
+      "website": "https://curve.fi",
+      "description": "Stable and crypto AMM pools, plus the crvUSD markets."
+    },
+    {
+      "id": "euler",
+      "name": "Euler",
+      "category": "lending",
+      "website": "https://euler.finance",
+      "description": "Modular lending vaults (Euler v2)."
+    },
+    {
+      "id": "fluid",
+      "name": "Fluid",
+      "group": "Fluid",
+      "category": "lending",
+      "website": "https://fluid.io",
+      "description": "Lending and DEX protocol built on a shared liquidity layer."
+    },
+    {
+      "id": "gearbox",
+      "name": "Gearbox",
+      "category": "lending",
+      "website": "https://gearbox.fi",
+      "description": "Leverage protocol with credit accounts."
+    },
+    {
+      "id": "lido",
+      "name": "Lido",
+      "category": "liquid-staking",
+      "website": "https://lido.fi",
+      "description": "Liquid staking: stETH and the node-operator set behind it."
+    },
+    {
+      "id": "liquity-v1",
+      "name": "Liquity v1",
+      "group": "Liquity",
+      "category": "lending",
+      "website": "https://liquity.org",
+      "description": "The immutable LUSD borrowing protocol."
+    },
+    {
+      "id": "liquity-v2",
+      "name": "Liquity v2",
+      "group": "Liquity",
+      "category": "lending",
+      "website": "https://liquity.org",
+      "description": "BOLD borrowing with user-set interest rates."
+    },
+    {
+      "id": "mellow",
+      "name": "Mellow",
+      "category": "yield",
+      "website": "https://mellow.finance",
+      "description": "Curated vaults across restaking and yield strategies."
+    },
+    {
+      "id": "morpho-blue",
+      "name": "Morpho Blue",
+      "group": "Morpho",
+      "category": "lending",
+      "website": "https://morpho.org",
+      "description": "The immutable Morpho Blue market singleton."
+    },
+    {
+      "id": "morpho-vaults",
+      "name": "Morpho Vaults",
+      "group": "Morpho",
+      "category": "yield",
+      "website": "https://morpho.org",
+      "description": "Curator-managed vaults (MetaMorpho v1 and Vault V2) allocating into Morpho Blue markets."
+    },
+    {
+      "id": "oneinch",
+      "name": "1inch",
+      "category": "aggregator",
+      "website": "https://1inch.io",
+      "description": "Swap aggregation and routing."
+    },
+    {
+      "id": "pendle",
+      "name": "Pendle",
+      "category": "yield",
+      "website": "https://pendle.finance",
+      "description": "Yield tokenisation and trading (Pendle v2)."
+    },
+    {
+      "id": "rocketpool",
+      "name": "Rocket Pool",
+      "category": "liquid-staking",
+      "website": "https://rocketpool.net",
+      "description": "Permissionless liquid staking with node-operator bonds."
+    },
+    {
+      "id": "spark",
+      "name": "Spark",
+      "category": "lending",
+      "website": "https://spark.fi",
+      "description": "SparkLend, Spark Savings and the Liquidity Layer."
+    },
+    {
+      "id": "uniswap-v2",
+      "name": "Uniswap v2",
+      "group": "Uniswap",
+      "category": "dex",
+      "website": "https://uniswap.org",
+      "description": "The constant-product AMM pools."
+    },
+    {
+      "id": "uniswap-v3",
+      "name": "Uniswap v3",
+      "group": "Uniswap",
+      "category": "dex",
+      "website": "https://uniswap.org",
+      "description": "Concentrated-liquidity AMM pools."
+    },
+    {
+      "id": "uniswap-v4",
+      "name": "Uniswap v4",
+      "group": "Uniswap",
+      "category": "dex",
+      "website": "https://uniswap.org",
+      "description": "Singleton AMM with hooks."
+    },
+    {
+      "id": "yearn",
+      "name": "Yearn",
+      "category": "yield",
+      "website": "https://yearn.fi",
+      "description": "Automated yield vaults (v2 and v3)."
+    },
+    {
+      "id": "zerox",
+      "name": "0x / Matcha",
+      "category": "aggregator",
+      "website": "https://0x.org",
+      "description": "Exchange routing and the Matcha front end."
+    }
+  ]
+}

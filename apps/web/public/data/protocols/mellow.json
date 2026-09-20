@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "mellow",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 294661346.4161093,
+      "url": "https://defillama.com/protocol/mellow-core",
+      "extra": {
+        "components": [
+          {
+            "id": "7330",
+            "name": "Mellow Core",
+            "tvl": 268827703.9728462
+          },
+          {
+            "id": "4756",
+            "name": "Mellow Restaking",
+            "tvl": 25739678.326093033
+          },
+          {
+            "id": "2613",
+            "name": "Mellow Yield",
+            "tvl": 93964.11717010835
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "DeFiScan has no data for Mellow."
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Mellow."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for Mellow."
+    }
+  }
+}

@@ -3,3 +3,6 @@ dist
 coverage
 package-lock.json
 LICENSE
+apps/web/public/data
+data
+grant_data

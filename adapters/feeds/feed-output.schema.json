@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/cp0x-org/defi-dna/blob/main/adapters/feeds/feed-output.schema.json",
+  "title": "defi-dna feed output",
+  "description": "What one feed adapter produces for one protocol. collect() returns the fields below, or null when the feed has nothing for that protocol; the runner adds `status` and `fetchedAt` and stores the result under data/protocols/<protocol>.json in `feeds.<feed id>`.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "description": "Added by the runner. `ok` when a value was returned, `none` when the feed has nothing (a normal answer), `error` when the source could not be read (our failure, never a statement about coverage).",
+      "enum": ["ok", "none", "error"]
+    },
+    "value": {
+      "description": "The feed's headline value, verbatim and as a string: \"Stage 1\", \"4.8/10 · medium\", \"82 vaults rated\". Never converted into another feed's units. Its absence is what makes a cell grey.",
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "description": "The feed's own text about the protocol, quoted. Never our prose about the protocol.",
+      "type": "string"
+    },
+    "details": {
+      "description": "The parts the feed breaks its assessment into: dimensions, sub-scores, the vaults it rates. Rendered as a list, with `description` behind a dropdown.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "value"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "value": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "updatedAt": {
+      "description": "When the feed itself last updated this assessment (ISO date or date-time). The fetch time is recorded separately as fetchedAt.",
+      "type": "string"
+    },
+    "url": {
+      "description": "The feed's page for this protocol — where a reader checks the value.",
+      "type": "string",
+      "format": "uri"
+    },
+    "note": {
+      "description": "What the data covers, or why there is none. A fact about coverage, never a judgement about the protocol.",
+      "type": "string"
+    },
+    "extra": {
+      "description": "Everything else the feed publishes, as it came. Shown as raw data on the protocol page, so nothing is hidden behind our choice of what to display.",
+      "type": "object"
+    },
+    "fetchedAt": {
+      "description": "Added by the runner: when we read the source.",
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "ok" } }, "required": ["status"] },
+      "then": { "required": ["value", "url"] }
+    }
+  ],
+  "examples": [
+    {
+      "status": "ok",
+      "value": "Stage 1",
+      "summary": "Morpho Blue is an immutable lending primitive…",
+      "details": [
+        { "name": "Upgradeability", "value": "L" },
+        {
+          "name": "Exit Window",
+          "value": "H",
+          "description": "Centralized operators control the permissioned functions."
+        }
+      ],
+      "updatedAt": "2025-05-07",
+      "url": "https://www.defiscan.info/protocols/morpho/ethereum",
+      "extra": { "reviews": [] },
+      "fetchedAt": "2026-09-20T21:01:09.359Z"
+    },
+    {
+      "status": "none",
+      "note": "Risklayer lists balancer.fi but has published no completed analysis.",
+      "fetchedAt": "2026-09-20T21:01:09.359Z"
+    }
+  ]
+}

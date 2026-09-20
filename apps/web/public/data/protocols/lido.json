@@ -1,0 +1,199 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "lido",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 25745307823.546032,
+      "url": "https://defillama.com/protocol/lido",
+      "extra": {
+        "components": [
+          {
+            "id": "182",
+            "name": "Lido",
+            "tvl": 25745307823.546032
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "value": "Stage 0",
+      "summary": "_Lido V2_ is a liquid-staking protocol. Liquid staking allows users to deposit `ETH` for staking to a set of _Node Operators_ who run validators with `ETH` staked in Lido. In exchange for depositing `ETH` users get `stETH`, _Liquid staked Ether_, a token issued by Lido which represents the staked `ETH`. This token can then be used throughout DeFi in other protocols, for example, as collateral. Lido takes a 10% fee on the yield, split between the _Lido Treasury_ and _Node Operators_.",
+      "details": [
+        {
+          "name": "Chain",
+          "value": "L"
+        },
+        {
+          "name": "Upgradeability",
+          "value": "H"
+        },
+        {
+          "name": "Autonomy",
+          "value": "L"
+        },
+        {
+          "name": "Exit Window",
+          "value": "H"
+        },
+        {
+          "name": "Accessibility",
+          "value": "L"
+        }
+      ],
+      "updatedAt": "2025-06-19",
+      "url": "https://www.defiscan.info/protocols/lido-v2/ethereum",
+      "extra": {
+        "reviews": [
+          {
+            "file": "lido-v2/ethereum.md",
+            "stage": "Stage 0",
+            "risks": [
+              "L",
+              "H",
+              "L",
+              "H",
+              "L"
+            ],
+            "date": "2025-06-19",
+            "url": "https://www.defiscan.info/protocols/lido-v2/ethereum"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Lido."
+    },
+    "risklayer": {
+      "value": "4.2/10 · medium",
+      "summary": "Lido is the largest Ethereum liquid staking protocol, holding roughly $15B in pooled ETH across mainnet and bridged L2 deployments. It has operated since 2020 with no successful core smart-contract exploit, backed by one of DeFi's deepest audit programs (99+ reports, including recent V3 v3.0.2 fix reviews) and mature mainnet governance with Dual Governance, a ~4-day timelock, and emergency multisigs. Primary risks are a large upgradeable contract surface (20+ proxies still admin-controlled by the Aragon Agent), 12 Etherscan-unverified contracts including the proxy admin itself, dependence on a custom oracle committee with no on-chain fallback, weaker L2 governance controls, and concentrated…",
+      "details": [
+        {
+          "name": "Dependency Risk",
+          "value": "6.0/10",
+          "description": "Ethereum beacon chain is an immutable single point of failure for all pooled ETH. Custom HashConsensus oracle committee (no on-chain fallback) drives all stETH rebases; v3 stVaults add LazyOracle/IPFS merkle-report dependency. L2 wstETH relies on canonical ro…"
+        },
+        {
+          "name": "Governance Risk",
+          "value": "4.5/10",
+          "description": "Mature Aragon DAO with Dual Governance, Emergency Protected Timelock (~4-day execution delay), and 4/7–5/7 emergency multisigs provides strong mainnet controls. L2 bridge executors accept Aragon Agent actions with zero delay and no guardian, creating cross-ch…"
+        },
+        {
+          "name": "Tokenomics Risk",
+          "value": "4.8/10",
+          "description": "LDO has fixed 1B supply with vesting complete since Feb 2024, but governance concentration remains high (~22% in top three addresses; top-five ~50%+ voting power). Latent controller-gated LDO mint authority persists; stETH rebasing depends on oracle quorum an…"
+        },
+        {
+          "name": "Audit Coverage Risk",
+          "value": "2.8/10",
+          "description": "One of DeFi's most extensive audit programs (99+ reports; Certora, Consensys, OpenZeppelin, MixBytes) with V3 v3.0.2 fix reviews confirming zero remaining critical/high issues. However, 12 of 51 deployed contracts (23%) are unverified on Etherscan—blocking by…"
+        },
+        {
+          "name": "Smart Contract Risk",
+          "value": "4.8/10",
+          "description": "Core v3.0.2 contracts (~$15B TVL) use 20+ upgradeable OssifiableProxy/AppProxy deployments with Aragon Agent as sole admin; 12 contracts remain Etherscan-unverified including the Agent, AccountingOracle, and Burner. Oracle quorum, SanityChecker bounds, DSM gu…"
+        }
+      ],
+      "updatedAt": "2026-06-09",
+      "url": "https://risklayer.online/protocol/lido.fi",
+      "note": "Risklayer is in beta and publishes no ordering for its bands, so the figure is shown exactly as reported.",
+      "extra": {
+        "domain": "lido.fi",
+        "riskLevel": "medium",
+        "overallScore": 4.2,
+        "analysisStatus": "completed",
+        "keyFindings": [
+          {
+            "title": "Aragon Agent (0x3e40D73E) Unverified on Etherscan",
+            "severity": "critical",
+            "category": "verification",
+            "description": "The Aragon Agent is the on-chain proxy admin for LidoLocator, StakingRouter, WithdrawalQueue, VaultHub, LazyOracle, AccountingOracle proxy, CSModule, Burner, Accounting, and all L1 bridge gateways. Without verified source, privileged execution paths cannot be independently audited, yet this contract can upgrade core protocol logic."
+          },
+          {
+            "title": "AccountingOracle Proxy Unverified",
+            "severity": "critical",
+            "category": "verification",
+            "description": "AccountingOracle (0x852deD01…) submits consensus reports that drive stETH rebases and withdrawal finalization. Proxy is OssifiableProxy with Agent admin; Etherscan source unavailable for independent audit."
+          },
+          {
+            "title": "Burner Contract Unverified",
+            "severity": "critical",
+            "category": "verification",
+            "description": "Burner (0xE76c5275…) handles stETH share burning for exited validators and coverage fund flows. Unverified bytecode prevents auditing burn authorization and fund routing logic."
+          },
+          {
+            "title": "Ethereum Beacon Chain Is Foundational Single Point of Failure",
+            "severity": "critical",
+            "category": "consensus",
+            "description": "All staked ETH is deposited via the immutable Ethereum deposit contract and validator rewards/penalties are derived from consensus-layer state. A beacon-chain halt, consensus failure, or prolonged CL data unavailability would freeze rebases, withdrawals, and oracle reporting for the entire pool."
+          },
+          {
+            "title": "LDO Token Contract Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "LDO governance token (0x5A98FcBE…) is unverified on Etherscan. While not directly custodial, unverified token logic prevents confirming mint/burn/pause controls."
+          },
+          {
+            "title": "Veto Signaling Escrow Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "Veto Signaling Escrow (0x165813A3…) is part of Dual Governance veto mechanics. Unverified status prevents auditing escrow withdrawal and rage-quit logic."
+          },
+          {
+            "title": "L1 Base Bridge Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "L1ERC20TokenBridge for Base (0x9de443Ad…) is unverified. Controls wstETH bridging to Base; upgrade path cannot be source-audited."
+          },
+          {
+            "title": "OpStackTokenRatePusher Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "OpStackTokenRatePusher (0xd54c1c64…) pushes wstETH/stETH exchange rates to L2 bridges. Unverified contract cannot be audited for rate manipulation or unauthorized pushes."
+          },
+          {
+            "title": "Arbitrum Chainlink Rate Feed Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "Chainlink wstETH/stETH rate feed on Arbitrum (0xB1552C5e…) is unverified. L2 integrations relying on this feed cannot have aggregator logic independently verified."
+          },
+          {
+            "title": "Optimism TokenRateOracle Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "TokenRateOracle on Optimism (0x294ED1f2…) provides rebasing rate data for bridged stETH. Unverified status blocks audit of rate update authorization."
+          },
+          {
+            "title": "Base L2ERC20TokenBridge Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "L2ERC20TokenBridge on Base (0xac9D11cD…) handles wstETH deposits/withdrawals on L2. Unverified bytecode prevents auditing mint/burn and admin upgrade paths."
+          },
+          {
+            "title": "Polygon DataBus Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "DataBus on Polygon (0x37De961D…) is unverified. Cross-chain messaging component cannot be source-audited on this deployment."
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  }
+}

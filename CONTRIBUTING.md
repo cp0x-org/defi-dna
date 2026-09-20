@@ -19,7 +19,7 @@ basics.
    ```
 
    The repository is an npm workspaces monorepo; a single root `npm install`
-   covers every workspace. Application code lives in workspaces such as `web/`,
+   covers every workspace. Application code lives in workspaces such as `apps/web/`,
    never at the root. Add dependencies with
    `npm install <package> --workspace @defi-dna/web`.
 
@@ -45,7 +45,9 @@ Run the same checks CI runs:
 
 ```bash
 npm run lint
+npm run format:check
 npm run typecheck
+npm test
 npm run build
 ```
 
@@ -61,10 +63,10 @@ Everything must pass. Do not bypass the Git hooks (`--no-verify`).
 
 ## Corrections to published data
 
-Once the data layer lands, corrections to what a feed is quoted as saying — a
+Corrections to what a feed is quoted as saying — a
 misquote, a wrong source link, a stale entry — will follow the same pull request
 flow, against the data files, with the source link in the description. The
-process will be documented here when those files exist.
+generated data is collected by the pipeline and published separately.
 
 ## License
 

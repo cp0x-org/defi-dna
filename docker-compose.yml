@@ -1,0 +1,16 @@
+services:
+  defi-dna-web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        DEFI_DNA_BASE: ${DEFI_DNA_BASE:-/}
+    image: defi-dna-web:local
+    container_name: defi-dna-web
+    restart: always
+    volumes:
+      # The only configuration the site has: where it reads the generated data.
+      - ./configs/config.json:/usr/share/nginx/html/config.json:ro
+    ports:
+      - '127.0.0.1:8080:80'
+    tty: true

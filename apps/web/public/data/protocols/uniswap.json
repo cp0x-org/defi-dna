@@ -1,0 +1,1279 @@
+{
+  "generatedAt": "2026-09-20T21:08:05.435Z",
+  "protocol": {
+    "id": "uniswap",
+    "name": "Uniswap",
+    "category": "dex",
+    "website": "https://uniswap.org",
+    "description": "AMM deployments v2, v3 and v4, plus UniswapX order flow."
+  },
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:08:05.435Z"
+    },
+    "tvl": {
+      "value": 2454217065.0537024,
+      "url": "https://defillama.com/protocol/uniswap-v3",
+      "extra": {
+        "components": [
+          {
+            "id": "2198",
+            "name": "Uniswap V3",
+            "tvl": 906183797.6255628
+          },
+          {
+            "id": "5690",
+            "name": "Uniswap V4",
+            "tvl": 740628798.1702765
+          },
+          {
+            "id": "2197",
+            "name": "Uniswap V2",
+            "tvl": 807404469.257863
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:08:05.435Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "value": "Stage 2",
+      "summary": "Uniswap v3 is an AMM that builds upon Uniswap v2 by introducing a concentrated liquidity model, providing liquidity providers with granular control over capital allocation. Unlike v2, where liquidity is distributed uniformly across all price ranges, v3 allows LPs to specify custom price ranges in which their liquidity is active. This approach significantly improves capital efficiency, as LPs can concentrate their assets in high-demand price ranges, earning fees only within those specified ranges. Uniswap v3 also introduces multiple fee tiers (0.01%, 0.05%, 0.3%, and 1%) to support different asset volatility profiles, allowing LPs to adjust their fee preferences based on expected risk and ret",
+      "details": [
+        {
+          "name": "Chain",
+          "value": "L"
+        },
+        {
+          "name": "Upgradeability",
+          "value": "L"
+        },
+        {
+          "name": "Autonomy",
+          "value": "L"
+        },
+        {
+          "name": "Exit Window",
+          "value": "L"
+        },
+        {
+          "name": "Accessibility",
+          "value": "L"
+        }
+      ],
+      "asOf": "2025-01-31",
+      "url": "https://www.defiscan.info/protocols/uniswap-v3/ethereum",
+      "note": "DeFiScan reviews each deployment separately. This cell reads 2 reviews: uniswap-v3/ethereum.md, uniswap-v2/ethereum.md.",
+      "extra": {
+        "reviews": [
+          {
+            "file": "uniswap-v3/ethereum.md",
+            "stage": "Stage 2",
+            "risks": [
+              "L",
+              "L",
+              "L",
+              "L",
+              "L"
+            ],
+            "date": "2025-01-31",
+            "url": "https://www.defiscan.info/protocols/uniswap-v3/ethereum"
+          },
+          {
+            "file": "uniswap-v2/ethereum.md",
+            "stage": "Stage 2",
+            "risks": [
+              "L",
+              "L",
+              "L",
+              "L",
+              "L"
+            ],
+            "date": "2025-01-22",
+            "url": "https://www.defiscan.info/protocols/uniswap-v2/ethereum"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:08:05.435Z"
+    },
+    "philidor": {
+      "value": "100 vaults rated",
+      "summary": "Philidor scores individual vaults rather than protocols. It rates 100 live Ethereum vault(s) filed under \"uniswap\".",
+      "details": [
+        {
+          "name": "Uniswap V3 USDC/WETH 0.05%",
+          "value": "Prime 8.72",
+          "description": "Version v3 · TVL $424.9M"
+        },
+        {
+          "name": "Uniswap V3 USDC/WETH 0.3%",
+          "value": "Prime 8.72",
+          "description": "Version v3 · TVL $315.2M"
+        },
+        {
+          "name": "Uniswap V3 WETH/USDT 0.3%",
+          "value": "Prime 8.53",
+          "description": "Version v3 · TVL $305.6M"
+        },
+        {
+          "name": "Uniswap V3 WBTC/WETH 0.3%",
+          "value": "Prime 8.54",
+          "description": "Version v3 · TVL $214.3M"
+        },
+        {
+          "name": "Uniswap V3 WBTC/USDC 0.3%",
+          "value": "Prime 8.69",
+          "description": "Version v3 · TVL $139.7M"
+        },
+        {
+          "name": "Uniswap V3 WBTC/WETH 0.05%",
+          "value": "Prime 8.54",
+          "description": "Version v3 · TVL $118.8M"
+        },
+        {
+          "name": "Uniswap V3 WETH/USDT 0.05%",
+          "value": "Prime 8.53",
+          "description": "Version v3 · TVL $77.1M"
+        },
+        {
+          "name": "Uniswap V3 LINK/WETH 0.3%",
+          "value": "Core 7.90",
+          "description": "Version v3 · TVL $61.3M"
+        }
+      ],
+      "asOf": "2026-09-20",
+      "url": "https://analytics.philidor.io/protocols/uniswap",
+      "extra": {
+        "philidorId": "uniswap",
+        "vaults": [
+          {
+            "name": "Uniswap V3 USDC/WETH 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.72,
+            "tvlUsd": 424862905.2620471,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
+          },
+          {
+            "name": "Uniswap V3 USDC/WETH 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.72,
+            "tvlUsd": 315177574.62815315,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8"
+          },
+          {
+            "name": "Uniswap V3 WETH/USDT 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.53,
+            "tvlUsd": 305609131.5814897,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x4e68ccd3e89f51c3074ca5072bbac773960dfa36"
+          },
+          {
+            "name": "Uniswap V3 WBTC/WETH 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.54,
+            "tvlUsd": 214319806.99654573,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xcbcdf9626bc03e24f779434178a73a0b4bad62ed"
+          },
+          {
+            "name": "Uniswap V3 WBTC/USDC 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.69,
+            "tvlUsd": 139738706.18743572,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x99ac8ca7087fa4a2a1fb6357269965a2014abc35"
+          },
+          {
+            "name": "Uniswap V3 WBTC/WETH 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.54,
+            "tvlUsd": 118799299.97082838,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x4585fe77225b41b697c938b018e2ac67ac5a20c0"
+          },
+          {
+            "name": "Uniswap V3 WETH/USDT 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.53,
+            "tvlUsd": 77126625.61155334,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x11b815efb8f581194ae79006d24e0d814b7697f6"
+          },
+          {
+            "name": "Uniswap V3 LINK/WETH 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 61261264.653663896,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xa6cc3c2531fdaa6ae1a3ca84c2855806728693e8"
+          },
+          {
+            "name": "Uniswap V3 WBTC/USDT 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.5,
+            "tvlUsd": 58353915.30182029,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x9db9e0e53058c89e5b94e29621a205198648425b"
+          },
+          {
+            "name": "Uniswap V3 DAI/WETH 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.66,
+            "tvlUsd": 51160718.381396875,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xc2e9f25be6257c210d7adf0d4cd6e3e881ba25f8"
+          },
+          {
+            "name": "Uniswap V3 UNI/WETH 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 46922411.69478185,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x1d42064fc4beb5f8aaf85f4617ae8b3b5b8bd801"
+          },
+          {
+            "name": "Uniswap V3 USDC/USDT 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.68,
+            "tvlUsd": 44781150.633418,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x3416cf6c708da44db2624d63ea0aaef7113527c6"
+          },
+          {
+            "name": "Uniswap V4 ETH/USDC 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 42772660.82451922,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xdce6394339af00981949f5f3baf27e3610c76326a700af57e4b3e3ae4977f78d"
+          },
+          {
+            "name": "Uniswap V3 WBTC/USDT 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.5,
+            "tvlUsd": 37588464.1961684,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x56534741cd8b152df6d48adf7ac51f75169a83b2"
+          },
+          {
+            "name": "Uniswap V3 AUSD/USDC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.49,
+            "tvlUsd": 34146597.86452104,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xbafead7c60ea473758ed6c6021505e8bbd7e8e5d"
+          },
+          {
+            "name": "Uniswap V4 ETH/USDT 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 28227212.77809363,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x50b00c1a5a8e582ec808e97e71598cd135206a9f9c548eab2ed73659e7ee5fa8"
+          },
+          {
+            "name": "Uniswap V2 USDC/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.57,
+            "tvlUsd": 20783255.28141158,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc"
+          },
+          {
+            "name": "Uniswap V4 ETH/LINK 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.69,
+            "tvlUsd": 20303576.79818986,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xb2b5618903d74bbac9e9049a035c3827afc4487cde3b994a1568b050f4c8e2e4"
+          },
+          {
+            "name": "Uniswap V3 USDM/USDT 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 20108505.144890644,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x4a25dbdf9629b1782c3e2c7de3bdce41f1c7f801"
+          },
+          {
+            "name": "Uniswap V3 DAI/WETH 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.66,
+            "tvlUsd": 17121334.923084904,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x60594a405d53811d3bc4766596efd80fd545a270"
+          },
+          {
+            "name": "Uniswap V4 ETH/WBTC 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 16052834.322795067,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x54c72c46df32f2cc455e84e41e191b26ed73a29452cdd3d82f511097af9f427e"
+          },
+          {
+            "name": "Uniswap V2 WETH/USDT",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.38,
+            "tvlUsd": 14989083.045745164,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852"
+          },
+          {
+            "name": "Uniswap V3 WETH/weETH 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 14820935.51875727,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x7a415b19932c0105c82fdb6b720bb01b0cc2cae3"
+          },
+          {
+            "name": "Uniswap V4 ETH/USDC 0.05%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 13906523.641836414,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x21c67e77068de97969ba93d4aab21826d33ca12bb9f565d8496e8fda8a82ca27"
+          },
+          {
+            "name": "Uniswap V4 WBTC/cbBTC 0.01%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.57,
+            "tvlUsd": 13643452.214125762,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x2f92b371aef58f0abe9c10c06423de083405991f2839638914a1031e91d9a723"
+          },
+          {
+            "name": "Uniswap V4 ETH/USDT 0.05%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 13446463.450524148,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x72331fcb696b0151904c03584b66dc8365bc63f8a144d89a773384e3a579ca73"
+          },
+          {
+            "name": "Uniswap V4 WBTC/USDC 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.7,
+            "tvlUsd": 12476924.700373366,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xb98437c7ba28c6590dd4e1cc46aa89eed181f97108e5b6221730d41347bc817f"
+          },
+          {
+            "name": "Uniswap V3 WETH/USDT 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.53,
+            "tvlUsd": 11864674.9402028,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b"
+          },
+          {
+            "name": "Uniswap V3 WBTC/cbBTC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.56,
+            "tvlUsd": 11773699.590471009,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xe8f7c89c5efa061e340f2d2f206ec78fd8f7e124"
+          },
+          {
+            "name": "Uniswap V3 USDC/WETH 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.72,
+            "tvlUsd": 11697401.236417921,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xe0554a476a092703abdb3ef35c80e0d76d32939f"
+          },
+          {
+            "name": "Uniswap V3 USDC/WETH 1%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.72,
+            "tvlUsd": 10814827.941073991,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x7bea39867e4169dbe237d55c8242a8f2fcdcc387"
+          },
+          {
+            "name": "Uniswap V4 WBTC/USDT 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.51,
+            "tvlUsd": 10388420.038165227,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x20c3a15e34e5d88aeba004b0753af69e4f6bea80eae2263f7a92e919cd33cc56"
+          },
+          {
+            "name": "Uniswap V4 ETH/WBTC 0.05%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 9569474.053412091,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x599326d9cd5e1ea0893305c87d5ec3199e7f05e94d72159f35dea381479a615e"
+          },
+          {
+            "name": "Uniswap V3 wstETH/WETH 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.57,
+            "tvlUsd": 9469313.872992707,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x109830a1aaad605bbf02a9dfa7b0b92ec2fb7daa"
+          },
+          {
+            "name": "Uniswap V2 DAI/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.52,
+            "tvlUsd": 9400436.93445965,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xa478c2975ab1ea89e8196811f51a7b7ade33eb11"
+          },
+          {
+            "name": "Uniswap V4 USDC/cbBTC 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.75,
+            "tvlUsd": 9245311.32730629,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x7067a500ad68cf5129b957fa62c97042cddccaa15d16cb91e3720d97971109bb"
+          },
+          {
+            "name": "Uniswap V2 WBTC/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.39,
+            "tvlUsd": 9065945.148082852,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xbb2b8038a1640196fbe3e38816f3e67cba72d940"
+          },
+          {
+            "name": "Uniswap V3 USDC/USDT 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.68,
+            "tvlUsd": 8684236.392229,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x7858e59e0c01ea06df3af3d20ac7b0003275d4bf"
+          },
+          {
+            "name": "Uniswap V3 WBTC/USDC 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.69,
+            "tvlUsd": 8148579.824231062,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x9a772018fbd77fcd2d25657e5c547baff3fd7d16"
+          },
+          {
+            "name": "Uniswap V3 UNI/WETH 1%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 5838407.357993531,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x360b9726186c0f62cc719450685ce70280774dc8"
+          },
+          {
+            "name": "Uniswap V3 WETH/weETH 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 5600134.727669587,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x202a6012894ae5c288ea824cbc8a9bfb26a49b93"
+          },
+          {
+            "name": "Uniswap V2 UNI/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.8,
+            "tvlUsd": 5494073.0272816075,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xd3d2e2692501a5c9ca623199d38826e513033a17"
+          },
+          {
+            "name": "Uniswap V3 WBTC/SolvBTC 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 4725010.352969975,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x5738df8073ad05d0c0fcf60e358033268ebf16cc"
+          },
+          {
+            "name": "Uniswap V3 tBTC/WBTC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 4707055.508501005,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x73a38006d23517a1d383c88929b2014f8835b38b"
+          },
+          {
+            "name": "Uniswap V4 ETH/UNI 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.32,
+            "tvlUsd": 4656267.1230493365,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x053f6a47ccba79e7d5d623173ed6dd5a31cf19c28bae0fb8276f4506295f90da"
+          },
+          {
+            "name": "Uniswap V4 WBTC/cbBTC 0.005%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.57,
+            "tvlUsd": 4394381.768532747,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xbf8fc52a30d6500e86c681f082d3524e35fb4ceb21ded8c13c6ce3968690adc6"
+          },
+          {
+            "name": "Uniswap V3 DAI/USDC 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.81,
+            "tvlUsd": 4321317.669877699,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x6c6bc977e13df9b0de53b251522280bb72383700"
+          },
+          {
+            "name": "Uniswap V3 DAI/USDC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.81,
+            "tvlUsd": 3974451.816711079,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x5777d92f208679db4b9778590fa3cab3ac9e2168"
+          },
+          {
+            "name": "Uniswap V3 WETH/USDT 1%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.53,
+            "tvlUsd": 3776227.28665148,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xc5af84701f98fa483ece78af83f11b6c38aca71d"
+          },
+          {
+            "name": "Uniswap V2 USDC/USDT",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.53,
+            "tvlUsd": 3603424.682831182,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x3041cbd36888becc7bbcbc0045e3b1f144466f5f"
+          },
+          {
+            "name": "Uniswap V3 FIDD/USDC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.59,
+            "tvlUsd": 3567700.273570289,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xbb5b761415a58d944fcb81313b204f895637d20c"
+          },
+          {
+            "name": "Uniswap V4 UNI/USDC 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 3155307.635135978,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x9a5c1d2f4a7a7962a63259de6fcc1afb1d0aa1abdf5d19c23d22fd78953c5167"
+          },
+          {
+            "name": "Uniswap V3 FRAX/USDC 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.56,
+            "tvlUsd": 3143432.7392372754,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xc63b0708e2f7e69cb8a1df0e1389a98c35a76d52"
+          },
+          {
+            "name": "Uniswap V3 UNI/USDC 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 3083690.224093804,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xd0fc8ba7e267f2bc56044a7715a489d851dc6d78"
+          },
+          {
+            "name": "Uniswap V4 GHO/USDC 0.05%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.7,
+            "tvlUsd": 3025629.3046687706,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xb3ec039dd452a0c23404fec0bcaf6a6e4e1111469f2bfe7b7b5f41a0e366c03c"
+          },
+          {
+            "name": "Uniswap V3 RLUSD/USDC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.69,
+            "tvlUsd": 2789779.4733995865,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xcc6d2f26d363836f85a42d249e145ec0320d3e55"
+          },
+          {
+            "name": "Uniswap V4 WBTC/USDC 0.05%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.7,
+            "tvlUsd": 2759169.30260599,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x3ea74c37fbb79dfcd6d760870f0f4e00cf4c3960b3259d0d43f211c0547394c1"
+          },
+          {
+            "name": "Uniswap V4 WBTC/wstETH 0.25%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.55,
+            "tvlUsd": 2741014.7236030735,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x58299b9ad89104f189f5efcdf4910615cb9e3296afb0c5a1d1d3befdd1bf7ae4"
+          },
+          {
+            "name": "Uniswap V3 WBTC/FBTC 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 2713247.2145509333,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x9dbe5dffaeb4ac2e0ac14f8b4e08b3bc55de5232"
+          },
+          {
+            "name": "Uniswap V3 USDe/USDC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.49,
+            "tvlUsd": 2642886.2518151863,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xe6d7ebb9f1a9519dc06d557e03c522d53520e76a"
+          },
+          {
+            "name": "Uniswap V3 LINK/USDC 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.47,
+            "tvlUsd": 2486426.7276198436,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xfad57d2039c21811c8f2b5d5b65308aa99d31559"
+          },
+          {
+            "name": "Uniswap V4 EURC/USDC 0.03%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.75,
+            "tvlUsd": 2354841.0488084094,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xb2b92b56988a4edbe255989792c6ea239b25eaf66b42093145cbf8f630db3a17"
+          },
+          {
+            "name": "Uniswap V3 DAI/USDT 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.62,
+            "tvlUsd": 2291101.80076026,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x48da0965ab2d2cbf1c17c09cfb5cbe67ad5b1406"
+          },
+          {
+            "name": "Uniswap V3 cbETH/WETH 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.55,
+            "tvlUsd": 2284385.717700639,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x840deeef2f115cf50da625f7368c24af6fe74410"
+          },
+          {
+            "name": "Uniswap V3 FIDD/USDT 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 2242862.8317253846,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x31d0e24bdb9359a09d810623112e257dabf0e974"
+          },
+          {
+            "name": "Uniswap V4 sUSDe/USDT 0.008%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 2206999.731663605,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xb20351bcf606dcc3525d2ed36760a86a5dec7423b77d41125bd4a416ba93448b"
+          },
+          {
+            "name": "Uniswap V3 tBTC/WBTC 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 2142538.7114439397,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xdbac78be00503d10ae0074e5e5873a61fc56647c"
+          },
+          {
+            "name": "Uniswap V3 WETH/mETH 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 2008183.1058793818,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x04708077eca6bb527a5bbbd6358ffb043a9c1c14"
+          },
+          {
+            "name": "Uniswap V3 USD0/USDC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.51,
+            "tvlUsd": 1973127.5884311148,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x4e665157291dbcb25152ebb01061e4012f58add2"
+          },
+          {
+            "name": "Uniswap V3 frxETH/FRAX 1%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 1967467.9667517971,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x36c060cc4b088c830a561e959a679a58205d3f56"
+          },
+          {
+            "name": "Uniswap V3 UNI/USDT 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 1931723.1512081062,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x3470447f3cecffac709d3e783a307790b0208d60"
+          },
+          {
+            "name": "Uniswap V3 USDe/USDT 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 1741287.972967383,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x435664008f38b0650fbc1c9fc971d0a3bc2f1e47"
+          },
+          {
+            "name": "Uniswap V3 WBTC/WETH 1%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.54,
+            "tvlUsd": 1664441.4353894347,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x6ab3bba2f41e7eaa262fa5a1a9b3932fa161526f"
+          },
+          {
+            "name": "Uniswap V4 ETH/USDT 2%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 1489904.8445573158,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x6423caccdb2b6b9913b9c488ae9b0fba2440e0ddc14d2bc5de45e3ce4df57c2e"
+          },
+          {
+            "name": "Uniswap V2 LINK/WETH",
+            "version": "v2",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 1470924.3487049378,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xa2107fa5b38d9bbd2c461d6edf11b11a50f6b974"
+          },
+          {
+            "name": "Uniswap V3 rETH/WETH 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.57,
+            "tvlUsd": 1452575.287448926,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xa4e0faa58465a2d369aa21b3e42d43374c6f9613"
+          },
+          {
+            "name": "Uniswap V3 DAI/USDT 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.62,
+            "tvlUsd": 1411377.69240331,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x6f48eca74b38d2936b02ab603ff4e36a6c0e3a77"
+          },
+          {
+            "name": "Uniswap V3 rETH/WETH 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.57,
+            "tvlUsd": 1377645.3654145116,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x553e9c493678d8606d6a5ba284643db2110df823"
+          },
+          {
+            "name": "Uniswap V4 USDe/USDT 0.0045%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 1255784.3955676276,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x63bb22f47c7ede6578a25c873e77eb782ec8e4c19778e36ce64d37877b5bd1e7"
+          },
+          {
+            "name": "Uniswap V4 USDe/USDC 0.0025%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.5,
+            "tvlUsd": 1246141.3030516407,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x56fc29b86900aa0afa6e20b020429bffba1105cfb45070492c67529b46eb48c1"
+          },
+          {
+            "name": "Uniswap V3 WETH/cbBTC 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.59,
+            "tvlUsd": 1183728.0970063736,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x15aa01580ae866f9ff4dbe45e06e307941d90c7b"
+          },
+          {
+            "name": "Uniswap V2 DAI/USDC",
+            "version": "v2",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.67,
+            "tvlUsd": 1089063.1019994922,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5"
+          },
+          {
+            "name": "Uniswap V4 ETH/stETH 0.08%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 1038349.3374719291,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xbc21dd4a44766fadfd6447f4b222a6185dcc2e6a3b15eb79e0cc637e30e7e97f"
+          },
+          {
+            "name": "Uniswap V4 eUSD/USDC 0%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.43,
+            "tvlUsd": 1000003.8121614008,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xdda3c47e70fb237fb50e3856169019bf26fe4c09d7b6618c4f9d6e2423903870"
+          },
+          {
+            "name": "Uniswap V3 UNI/WBTC 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 948630.628956133,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x8f0cb37cdff37e004e0088f563e5fe39e05ccc5b"
+          },
+          {
+            "name": "Uniswap V4 ETH/rETH 0.01%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 940272.4846881686,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x70946c979da3e5587a00b3a750cc76902d187894501ba9e8be9efd1849b6e0b7"
+          },
+          {
+            "name": "Uniswap V3 LUSD/USDC 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.63,
+            "tvlUsd": 930743.7885711709,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x4e0924d3a751be199c426d52fb1f2337fa96f736"
+          },
+          {
+            "name": "Uniswap V4 LINK/USDC 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.48,
+            "tvlUsd": 892349.9417182509,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x50ae33c238824aa1937d5d9f1766c487bca39b548f8d957994e8357eeeca3280"
+          },
+          {
+            "name": "Uniswap V3 WBTC/LBTC 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 888322.8298377156,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x0b599ebf4e05af48b56d38e2dde520570c366460"
+          },
+          {
+            "name": "Uniswap V3 USDC/cbBTC 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.74,
+            "tvlUsd": 850119.7501596096,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x4548280ac92507c9092a511c7396cbea78fa9e49"
+          },
+          {
+            "name": "Uniswap V3 WBTC/USDC 1%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.69,
+            "tvlUsd": 839924.3131103318,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xcbfb0745b8489973bf7b334d54fdbd573df7ef3c"
+          },
+          {
+            "name": "Uniswap V3 WBTC/WETH 0.01%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.54,
+            "tvlUsd": 804250.7321974521,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xe6ff8b9a37b0fab776134636d9981aa778c4e718"
+          },
+          {
+            "name": "Uniswap V3 WBTC/DAI 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.63,
+            "tvlUsd": 802464.6196284229,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x391e8501b626c623d39474afca6f9e46c2686649"
+          },
+          {
+            "name": "Uniswap V4 GHO/USDT 0.01%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.51,
+            "tvlUsd": 785309.3690382097,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x4eceeb5adaa1cabd56451c1f1ea82b33effb6de62097a19734936f574e9a2de2"
+          },
+          {
+            "name": "Uniswap V4 ETH/DAI 0.3%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 751090.1184791373,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x042a5b2c816d473338d6d1fff7d4e2f74a4bf6d9517e74538f3778d0693aef69"
+          },
+          {
+            "name": "Uniswap V3 stETH/WETH 1%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.57,
+            "tvlUsd": 663944.8132990458,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x63818bbdd21e69be108a23ac1e84cbf66399bd7d"
+          },
+          {
+            "name": "Uniswap V3 ARB/WETH 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 647493.1022997667,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x59354356ec5d56306791873f567d61ebf11dfbd5"
+          },
+          {
+            "name": "Uniswap V3 UNI/WETH 0.05%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Core",
+            "score": 7.9,
+            "tvlUsd": 631484.7275984725,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xfaa318479b7755b2dbfdd34dc306cb28b420ad12"
+          },
+          {
+            "name": "Uniswap V4 USDC/USDT 0.01%",
+            "version": "v4",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.69,
+            "tvlUsd": 606394.750834,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0xe018f09af38956affdfeab72c2cefbcd4e6fee44d09df7525ec9dba3e51356a5"
+          },
+          {
+            "name": "Uniswap V3 tBTC/WETH 0.3%",
+            "version": "v3",
+            "curator": null,
+            "tier": "Prime",
+            "score": 8.16,
+            "tvlUsd": 604181.261911929,
+            "scoredAt": "2026-09-20",
+            "url": "https://analytics.philidor.io/vault/ethereum/0x97944213d2caeea773da1c9b11b0525f25b749cc"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:08:05.435Z"
+    },
+    "risklayer": {
+      "value": "4.3/10 · medium",
+      "summary": "Uniswap is the dominant multi-chain DEX with roughly $2.9B TVL across 40+ EVM chains, operating immutable v2/v3/v4 AMM contracts that have processed trillions in volume with no recorded core exploit since v2 launched in 2020. Core contract security is strong—non-upgradeable pools, nine pre-launch v4 audits, and an active $15.5M bug bounty—but governance and integration risks are elevated: an EOA controls Arbitrum v4 admin outside the Ethereum timelock, v4 hooks have caused ~$20M in third-party losses, and UNI voting power is concentrated in a 272M-token treasury and a small delegate set. Overall risk is moderate at 4.3/10.",
+      "details": [
+        {
+          "name": "Dependency Risk",
+          "value": "4.3/10",
+          "description": "Core AMM has no Chainlink or native bridge dependencies, but Permit2 is a shared cross-protocol approval singleton, v4 hooks create third-party composability risk (Cork/Bunni precedents), cross-chain address heterogeneity across 40+ chains increases integrati…"
+        },
+        {
+          "name": "Governance Risk",
+          "value": "5.8/10",
+          "description": "Ethereum mainnet uses Governor Bravo with a 2-day timelock, but Arbitrum v3/v4 admin is an active EOA outside L1 governance, Base/Optimism bridge to timelock while 35+ other chains have independent admins, UNIfication shifts operational control to Labs/DUNI,…"
+        },
+        {
+          "name": "Tokenomics Risk",
+          "value": "5.5/10",
+          "description": "Fixed 1B UNI supply with completed insider vesting, but governance timelock holds 27% of supply, top ~50 delegates control >90% of voting power, the 20M UNI/year growth budget outpaces ~4–5M UNI/year fee burns, and a dormant 2% annual mint cap remains governa…"
+        },
+        {
+          "name": "Audit Coverage Risk",
+          "value": "2.4/10",
+          "description": "v3/v4 core received multi-firm audits (Trail of Bits, OpenZeppelin, Spearbit, Certora, ABDK) plus a $2.35M Cantina competition with all critical/high findings remediated and an active $15.5M bug bounty; residual gaps are third-party v4 hooks, partial v2 perip…"
+        },
+        {
+          "name": "Smart Contract Risk",
+          "value": "4.3/10",
+          "description": "Core v2/v3/v4 AMM contracts are immutable with no upgrade proxies and strong reentrancy guards, but an EOA controls Arbitrum v4 PoolManager ownership and Unichain v2 feeToSetter, four pipeline-flagged unverified deployments reduce transparency, and v4 hooks d…"
+        }
+      ],
+      "asOf": "2026-07-02",
+      "url": "https://risklayer.online/protocol/uniswap.org",
+      "note": "Risklayer is in beta and publishes no ordering for its bands, so the figure is shown exactly as reported.",
+      "extra": {
+        "domain": "uniswap.org",
+        "riskLevel": "medium",
+        "overallScore": 4.3,
+        "analysisStatus": "completed",
+        "keyFindings": [
+          {
+            "title": "EOA controls Arbitrum v4 PoolManager ownership",
+            "severity": "critical",
+            "category": "access-control",
+            "description": "On-chain owner() of Arbitrum UniswapV4 PoolManager (0x360e68faccca8ca495c1b759fd9eee466db9fb32) resolves to 0x2bad8182c09f50c8318d769245bea52c32be46cd, confirmed EOA (eth_getCode empty). This address can call setProtocolFeeController() and transferOwnership() per verified PoolManager source. Single-key compromise could reassign protocol-fee authority or ownership without timelock/multisig protect…"
+          },
+          {
+            "title": "Same EOA controls Unichain v2 feeToSetter",
+            "severity": "high",
+            "category": "access-control",
+            "description": "The same EOA 0x2bad8182c09f50c8318d769245bea52c32be46cd is feeToSetter on Unichain UniswapV2Factory (0x1f9840…002), granting setFeeTo/setFeeToSetter privileges per verified v2 factory source. Cross-chain concentration of privileged roles in one EOA expands blast radius beyond Arbitrum v4."
+          },
+          {
+            "title": "UNI governance Timelock unverified on Etherscan",
+            "severity": "high",
+            "category": "verification",
+            "description": "The UNI Timelock at 0x1a9C8182C09F50C8318d769245beA52c32BE35BC is marked unverified in VERIFICATION_STATUS.md with no downloadable source. On-chain it is a live contract (admin=0x408ed6354d4973f66138c91495f2f2fcbd8724c3) and owns Ethereum v4 PoolManager, is V2 feeToSetter, and is UNI minter. Lack of explorer verification prevents independent audit of the governance execution layer controlling pro…"
+          },
+          {
+            "title": "Four scoped deployments lack verified explorer source",
+            "severity": "high",
+            "category": "verification",
+            "description": "Pipeline verification flags four contracts as unverified: Ethereum NonfungiblePositionManager (0xC36442b4…), Ethereum Timelock (0x1a9C8182…), Optimism UniswapV3Factory (0x1F98431c…), and Base Permit2 (0x000000000022D473030F116dDEE9F6B43aC78BA3). Unverified bytecode cannot be source-audited via explorer; NPM and Permit2 hold user NFT positions and token approvals respectively, amplifying impact."
+          },
+          {
+            "title": "Arbitrum Admin Controlled by EOA, Not L1 Timelock",
+            "severity": "high",
+            "category": "cross-chain",
+            "description": "On Arbitrum, UniswapV3Factory owner (0xff7a…0699) and UniswapV4 PoolManager owner (0x2bad…46cd) both resolve to EOA 0x2bad8182c09f50c8318d769245bea52c32be46cd (verified: code length 0, transaction nonce 8). This EOA can call setOwner on the v3 ProtocolFeeController and transferOwnership on v4 PoolManager without the 2-day Ethereum timelock delay or UNI holder vote. Base and Optimism use bridged L…"
+          },
+          {
+            "title": "Cross-Chain Governance Asymmetry Across L2s",
+            "severity": "high",
+            "category": "cross-chain",
+            "description": "L2 factory/PoolManager admin addresses differ per chain and are not uniformly controlled by the Ethereum timelock. Base/Optimism L2 proxy contracts (1419 bytes) store admin=0x4200…0007 (L2CrossDomainMessenger) and reference L1 timelock 0x1a9C…35BC in storage slot 1, enabling L1-governance relay. Arbitrum uses a standalone EOA. Polygon, BSC, and 35+ other chains listed in discovery have independen…"
+          },
+          {
+            "title": "v4 Hook Composability Creates Third-Party Integration Risk",
+            "severity": "high",
+            "category": "protocol",
+            "description": "v4 PoolManager delegates swap, liquidity, and donate lifecycle to arbitrary IHooks contracts chosen per pool. PoolManager correctly passes msg.sender to hook callbacks and prevents hook self-calls, but does not enforce onlyPoolManager on hook entrypoints—third-party hooks must implement access control themselves. Cork Protocol lost ~$12M (May 2025) when CorkHook.beforeSwap lacked PoolManager-only…"
+          },
+          {
+            "title": "v4 hooks delegate execution to arbitrary pool-configured contracts",
+            "severity": "medium",
+            "category": "composability",
+            "description": "Verified PoolManager source invokes hook contracts at initialize, modifyLiquidity, swap, and donate via before/after hooks with optional delta returns. Core enforces hook-address bit flags but does not constrain hook logic. Poorly implemented or malicious hooks (e.g., Cork Protocol May 2025) can cause LP/user losses while Uniswap core remains technically correct. LPs must audit per-pool hook beha…"
+          },
+          {
+            "title": "Privileged admin addresses diverge across chains",
+            "severity": "medium",
+            "category": "cross-chain",
+            "description": "Factory/PoolManager owners are not uniform: Ethereum v4 PoolManager owner is UNI Timelock (0x1a9c8182…), Ethereum v3 factory owner is a separate 14.5KB contract (0xf2371551…), while Arbitrum/Base/Optimism v3 owners are chain-local 14.5KB contracts and v4 owners differ (Arbitrum EOA, Base/Optimism 2.8KB contracts). v3/v4 factories also use different addresses on some chains (e.g., Base v3 at 0x331…"
+          },
+          {
+            "title": "Permit2 is immutable and ownerless but aggregates token approvals",
+            "severity": "medium",
+            "category": "approvals",
+            "description": "Verified Permit2 source shows no owner/admin/pause functions — deployment is immutable. Users granting Permit2 max approvals enable signature-based transfers via any integrated router. This is by design but creates a high-value phishing/approval-theft target; Base deployment is additionally unverified on BaseScan despite CREATE2 canonical address."
+          },
+          {
+            "title": "Timelock Contract Source Unverified on Etherscan",
+            "severity": "medium",
+            "category": "centralization",
+            "description": "The UNI timelock at 0x1a9C8182C09F50C8318d769245beA52c32BE35BC has no verified source code on Etherscan. On-chain storage confirms Compound-style layout (admin=Governor Bravo, delay=172800s/2 days), but unverified bytecode prevents independent audit of the full execution logic and queued-transaction handling."
+          },
+          {
+            "title": "UNIfication Restructures Off-Chain Control Under DUNI/Labs",
+            "severity": "medium",
+            "category": "centralization",
+            "description": "The Dec 2025 UNIfication proposal (passed with ~99.9% support) consolidates Uniswap Foundation teams into Uniswap Labs, establishes a Wyoming DUNA (DUNI) legal entity, creates a 20M UNI/year growth budget under a Labs–DUNI service provider agreement, and activates protocol fee switches. On-chain fee parameters remain governable by UNI votes, but operational execution, interface/API fee removal, a…"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:08:05.435Z"
+    }
+  }
+}

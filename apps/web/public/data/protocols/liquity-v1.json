@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "liquity-v1",
+  "metrics": {
+    "incidents": {
+      "value": 0,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": []
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 190727584.25286436,
+      "url": "https://defillama.com/protocol/liquity-v1",
+      "extra": {
+        "components": [
+          {
+            "id": "270",
+            "name": "Liquity V1",
+            "tvl": 190727584.25286436
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "value": "Stage 2",
+      "summary": "Liquity is a decentralized borrowing protocol that allows you to draw interest-free loans against Ether used as collateral. Loans are paid out in LUSD (a USD pegged stablecoin) and need to maintain a minimum collateral ratio of 110%.",
+      "details": [
+        {
+          "name": "Chain",
+          "value": "L"
+        },
+        {
+          "name": "Upgradeability",
+          "value": "L"
+        },
+        {
+          "name": "Autonomy",
+          "value": "L"
+        },
+        {
+          "name": "Exit Window",
+          "value": "L"
+        },
+        {
+          "name": "Accessibility",
+          "value": "L"
+        }
+      ],
+      "updatedAt": "2024-10-23",
+      "url": "https://www.defiscan.info/protocols/liquity/ethereum",
+      "extra": {
+        "reviews": [
+          {
+            "file": "liquity/ethereum.md",
+            "stage": "Stage 2",
+            "risks": [
+              "L",
+              "L",
+              "L",
+              "L",
+              "L"
+            ],
+            "date": "2024-10-23",
+            "url": "https://www.defiscan.info/protocols/liquity/ethereum"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Liquity v1."
+    },
+    "risklayer": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Risklayer has no data for Liquity v1."
+    }
+  }
+}

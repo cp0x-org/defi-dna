@@ -1,0 +1,37 @@
+name: Refresh data
+
+on:
+  schedule:
+    # Twice a day. Feeds move slowly; being polite to their servers matters
+    # more than freshness measured in minutes.
+    - cron: '17 5,17 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-data
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run refresh
+
+      # Committing the generated data is deliberate: the git history is the
+      # audit trail for every cell, including changes a feed makes to its page.
+      - name: Commit the result
+        run: |
+          git add -A data
+          git diff --cached --quiet && echo "no data changes" && exit 0
+          git config user.name  "defi-dna-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push

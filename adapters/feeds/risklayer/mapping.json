@@ -1,0 +1,14 @@
+{
+  "aave-v3": "aave.com",
+  "compound-v2": "compound.finance",
+  "curve": "curve.fi",
+  "lido": "lido.fi",
+  "morpho-blue": "morpho.org",
+  "morpho-vaults": "morpho.org",
+  "pendle": "pendle.finance",
+  "rocketpool": "rocketpool.net",
+  "spark": "spark.fi",
+  "uniswap-v2": "uniswap.org",
+  "uniswap-v3": "uniswap.org",
+  "uniswap-v4": "uniswap.org"
+}

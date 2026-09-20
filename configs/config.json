@@ -1,0 +1,4 @@
+{
+  "_comment": "Mounted into the container at /usr/share/nginx/html/config.json and fetched by the site on load. It says where the generated data is read from — change it and restart, no rebuild.",
+  "dataUrl": "https://raw.githubusercontent.com/cp0x-org/defi-dna-data/main"
+}

@@ -1,0 +1,222 @@
+{
+  "generatedAt": "2026-09-20T21:59:09.250Z",
+  "protocolId": "curve",
+  "metrics": {
+    "incidents": {
+      "value": 2,
+      "url": "https://defillama.com/hacks",
+      "note": "Absence from DefiLlama’s registry is not proof that nothing happened.",
+      "extra": {
+        "incidents": [
+          {
+            "date": "2023-07-30",
+            "name": "Curve DEX",
+            "amountUsd": 61700000,
+            "classification": "Reentrancy",
+            "technique": "Vyper Compiler Bug",
+            "returnedFunds": null,
+            "source": null
+          },
+          {
+            "date": "2022-08-09",
+            "name": "Curve DEX",
+            "amountUsd": 575000,
+            "classification": "Frontend & Infrastructure",
+            "technique": "DNS Hijack",
+            "returnedFunds": 575000,
+            "source": null
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "tvl": {
+      "value": 1395645281.6140144,
+      "url": "https://defillama.com/protocol/curve-dex",
+      "extra": {
+        "components": [
+          {
+            "id": "3",
+            "name": "Curve DEX",
+            "tvl": 1241113707.0550585
+          },
+          {
+            "id": "2994",
+            "name": "crvUSD",
+            "tvl": 154531574.55895588
+          }
+        ]
+      },
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  },
+  "feeds": {
+    "defiscan": {
+      "value": "Stage 0",
+      "summary": "Curve Finance is a protocol consisting of a _Decentralized Exchange (DEX)_ focused on stablecoin and correlated-asset swaps, _Isolated Lending Markets (Llamalend)_, and a _Stablecoin (crvUSD)_.",
+      "details": [
+        {
+          "name": "Chain",
+          "value": "L"
+        },
+        {
+          "name": "Upgradeability",
+          "value": "H"
+        },
+        {
+          "name": "Autonomy",
+          "value": "L"
+        },
+        {
+          "name": "Exit Window",
+          "value": "H"
+        },
+        {
+          "name": "Accessibility",
+          "value": "M"
+        }
+      ],
+      "url": "https://www.defiscan.info/protocols/curve-finance/ethereum",
+      "extra": {
+        "reviews": [
+          {
+            "file": "curve-finance/ethereum.md",
+            "stage": "Stage 0",
+            "risks": [
+              "L",
+              "H",
+              "L",
+              "H",
+              "M"
+            ],
+            "date": null,
+            "url": "https://www.defiscan.info/protocols/curve-finance/ethereum"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    },
+    "philidor": {
+      "status": "none",
+      "fetchedAt": "2026-09-20T21:59:09.250Z",
+      "note": "Philidor Analytics has no data for Curve."
+    },
+    "risklayer": {
+      "value": "6.7/10 · high",
+      "summary": "Curve Finance is a six-year-old DEX and stablecoin stack holding roughly $1.5B across 30+ chains, anchored by legacy pools like 3pool and newer crvUSD/LlamaLend products. On paper it has mature veCRV governance, 17+ audits, and a strong 2023 exploit response—but on-chain reality exposes a single EOA controlling the canonical AddressProvider registry on every chain, nine unverified core contracts including GaugeController and scrvUSD, FastBridge pre-minting crvUSD on LayerZero messages before bridge finality, and permissionless LlamaLend markets that already produced a March 2026 oracle attack. Three verified incidents ($61.7M Vyper compiler exploit, $575K DNS hijack, $240K sDOLA donation at…",
+      "details": [
+        {
+          "name": "Dependency Risk",
+          "value": "6.8/10",
+          "description": "Deep reliance on LayerZero FastBridge pre-minting, LLAMMA AMM-band oracles on permissionless markets, Vyper compiler supply chain, and external stablecoin peg concentration across 3pool and 1200+ deployments."
+        },
+        {
+          "name": "Governance Risk",
+          "value": "6.5/10",
+          "description": "Mature veCRV/Aragon DAO path and 5-of-9 Emergency multisig exist, but AddressProvider admin is a single EOA on all chains with instant registry mutation power and no timelock on routine updates."
+        },
+        {
+          "name": "Tokenomics Risk",
+          "value": "5.8/10",
+          "description": "Hard-capped CRV supply with completed vesting, but ~53% of veCRV voting power is concentrated in Convex liquid lockers, ongoing ~7.6% annual inflation, and crvUSD fee routing creates veCRV/scrvUSD incentive tension."
+        },
+        {
+          "name": "Audit Coverage Risk",
+          "value": "4.5/10",
+          "description": "17+ audits from Trail of Bits, ChainSecurity, and MixBytes with strong new-product coverage, but the 2023 Vyper compiler exploit bypassed all prior audits, 1200+ deployments exceed audit scope, and 9 sampled contracts remain unverified."
+        },
+        {
+          "name": "Smart Contract Risk",
+          "value": "6.9/10",
+          "description": "Nine of 36 scoped contracts are unverified (GaugeController, Ownership Agent, scrvUSD), AddressProvider registry is controlled by a single EOA bypassing DAO governance, and FastBridge pre-mints crvUSD on LayerZero messages before bridge finality."
+        }
+      ],
+      "updatedAt": "2026-06-09",
+      "url": "https://risklayer.online/protocol/curve.fi",
+      "note": "Risklayer is in beta and publishes no ordering for its bands, so the figure is shown exactly as reported.",
+      "extra": {
+        "domain": "curve.fi",
+        "riskLevel": "high",
+        "overallScore": 6.7,
+        "analysisStatus": "completed",
+        "keyFindings": [
+          {
+            "title": "AddressProvider Registry Controlled by Single EOA Admin",
+            "severity": "critical",
+            "category": "access-control",
+            "description": "CurveAddressProvider (0x5ffe7FB82894076ECB99A30D6A32e969e6e35E98) admin resolves on-chain to 0x2d12d0907a388811e3aa855a550f959501d303ee, confirmed as an EOA via eth_getCode. Admin can add, update, or remove registry IDs instantly with no DAO vote or timelock. Registry maps Ownership Admin (ID 21), Parameter Admin (ID 22), Emergency Admin (ID 23), factories, and routers—compromise redirects integr…"
+          },
+          {
+            "title": "FastBridge Pre-Mints L1 crvUSD on LayerZero Messages",
+            "severity": "critical",
+            "category": "bridge",
+            "description": "FastBridgeVault (Vyper 0.4.3) grants MINTER_ROLE to VaultMessengerLZ contracts that call mint() on LayerZero lzReceive before native bridge finality. setPeer() on VaultMessengerLZ is owner-gated (ownable._check_owner). Emergency DAO holds KILLER_ROLE via set_killed(). A misconfigured peer, compromised LayerZero path, or malicious message could credit unbacked vault balances. ChainSecurity audited…"
+          },
+          {
+            "title": "FastBridge Pre-Mint Trust on LayerZero Messages",
+            "severity": "critical",
+            "category": "bridge",
+            "description": "FastBridge uses a dual-path withdrawal: L2 FastBridgeL2 burns/locks crvUSD and sends a LayerZero message to VaultMessengerLZ on Ethereum, which calls FastBridgeVault.mint() to credit the receiver before native bridge finality completes. Compromise of LayerZero DVN/executor trust, misconfigured peers, or a malicious peer redirect could mint unbacked L1 crvUSD accounting balances. ChainSecurity aud…"
+          },
+          {
+            "title": "Vyper Compiler Bug Bypassed All Pool Audits",
+            "severity": "critical",
+            "category": "audit-gap",
+            "description": "The July 2023 reentrancy exploit ($61.7M) was caused by a Vyper compiler defect (v0.2.15–0.3.0), not application-layer bugs. Trail of Bits, Quantstamp, and ChainSecurity pool audits reviewed correct source with @nonreentrant decorators but did not verify compiled bytecode. Standard commercial audits cannot detect compiler toolchain failures."
+          },
+          {
+            "title": "July 2023 Vyper Compiler Reentrancy Exploit",
+            "severity": "critical",
+            "category": "incident",
+            "description": "On 2023-07-30, ETH-paired pools compiled with Vyper 0.2.15/0.2.16/0.3.0 were drained via cross-function reentrancy due to a latent compiler bug (broken @nonreentrant guards). Affected Curve pools included CRV/ETH (~$24M). Independent sources (rekt.news, CertiK, Chainalysis) report ~$52–69M ecosystem-wide losses; DeFiLlama records $61.7M for Curve DEX. White-hat MEV bot 0xc0ffeebabe returned ~$5.4…"
+          },
+          {
+            "title": "Nine Scoped Contracts Are Unverified on Etherscan",
+            "severity": "high",
+            "category": "verification",
+            "description": "Of 36 contracts in discovery scope, 9 lack verified source on their respective chains: scrvUSD (ethereum), GaugeController (ethereum), Ownership Agent (ethereum), crvUSD Controller Factory (ethereum), AddressProvider (arbitrum, optimism, polygon), FastBridgeL2 (arbitrum), and crvUSD native bridge (fraxtal). Unverified bytecode cannot be independently audited; several are core governance, savings,…"
+          },
+          {
+            "title": "GaugeController and Ownership Agent Are Unverified Core Governance Proxies",
+            "severity": "high",
+            "category": "verification",
+            "description": "GaugeController (0x2F50D538D60856CF27039851d725A46949860Fc8) allocates veCRV emissions and is unverified. Ownership Agent (0x40907540d8a6C65c637785e8f8B742ae6b0b9968) is the on-chain admin for CRV and veCRV (admin() verified as this address) and routes DAO ownership changes—also unverified. Without source, emission logic and agent execute paths cannot be validated."
+          },
+          {
+            "title": "crvUSD Controller Factory Unverified — Permissionless Market Creation",
+            "severity": "high",
+            "category": "verification",
+            "description": "LLAMMA/crvUSD Controller Factory (0xC9332fdCB1C491Dcc683bAe86Fe3cb70360738BC) is unverified on Etherscan. It is the crvUSD minter (minter() on crvUSD token returns this address) and deploys LlamaLend markets with configurable collateral oracles. The March 2026 sDOLA donation attack exploited a permissionless market's oracle configuration; unverified factory bytecode increases audit uncertainty fo…"
+          },
+          {
+            "title": "scrvUSD Savings Vault Is Unverified",
+            "severity": "high",
+            "category": "verification",
+            "description": "scrvUSD (0x0655977FEb2f289A4aB78af67BAB0d17aAb84367), the ERC-4626 savings wrapper for crvUSD, has no verified source on Etherscan. Users deposit crvUSD into this vault for yield; unverified bytecode prevents review of share accounting, admin mint/burn paths, and reentrancy protections."
+          },
+          {
+            "title": "L2 AddressProvider and FastBridgeL2 Unverified on Multiple Chains",
+            "severity": "high",
+            "category": "verification",
+            "description": "AddressProvider at the same CREATE2 address (0x5ffe7FB82894076ECB99A30D6A32e969e6e35E98) is unverified on Arbitrum, Optimism, and Polygon despite verified source on Ethereum and Base. FastBridgeL2 on Arbitrum (0x1f2af270029d028400265ce1dd0919ba8780dae1) is also unverified; on-chain owner() resolves to xGov Ownership Agent. Cross-chain registry and fast-bridge burn/mint paths on these chains canno…"
+          },
+          {
+            "title": "Legacy Vyper 0.2.4 Pools Amid Historical Compiler Exploit",
+            "severity": "high",
+            "category": "compiler",
+            "description": "Core legacy contracts compile on Vyper 0.2.4: 3pool (0xbEbc44782C7Db0a1A60Cb6fe97d0b483032FF1C7), CRV token, and veCRV. The July 2023 exploit broke reentrancy guards in Vyper 0.2.15, 0.2.16, and 0.3.0 on ETH-paired pools (~$61.7M loss). 3pool source shows @nonreentrant('lock') on swap/add/remove paths and is_killed kill-switch, but the broader legacy pool inventory across 1200+ deployments remain…"
+          },
+          {
+            "title": "LlamaLend Controllers Depend on AMM-Band Oracles, Not Chainlink",
+            "severity": "high",
+            "category": "oracle",
+            "description": "Verified crvUSD Controller (0xaD444663c6C92B497225c6cE65feE2E7F78BFb86) uses LLAMMA price_oracle(), p_oracle_up/down for collateralization and liquidation. Permissionless markets can pair thin collateral with manipulable internal oracles. March 2026 sDOLA donation attack inflated oracle ~14%, liquidating 27 positions (~$240K). Controller source has @nonreentrant('lock') on user-facing paths but o…"
+          }
+        ]
+      },
+      "status": "ok",
+      "fetchedAt": "2026-09-20T21:59:09.250Z"
+    }
+  }
+}

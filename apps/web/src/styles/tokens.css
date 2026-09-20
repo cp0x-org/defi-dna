@@ -1,0 +1,121 @@
+:root {
+  color-scheme: light;
+  --font: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  --canvas: #f6f7f9;
+  --surface: #ffffff;
+  --surface-alt: #eef3f2;
+  --subtle: #f7f8fa;
+  --header: #ffffffed;
+  --ink: #192c3a;
+  --muted: #627180;
+  --muted-heading: #647986;
+  --faint: #93a0ad;
+  --accent: #146b57;
+  --accent-hover: #0b503f;
+  --on-accent: #ffffff;
+  --accent-tint: #e9f3ef;
+  --accent-line: #cce3d9;
+  --focus: #24967b;
+  --line: #e3e8ed;
+  --line-strong: #bdc9d2;
+  --row-hover: #fafcfc;
+  --amber: #906012;
+  --amber-tint: #fbf5e8;
+  --amber-line: #ebdcbc;
+  --shadow: 0 2px 5px #172d3b03, 0 12px 26px #172d3b02;
+  --avatar-border: #00000005;
+  --avatar-0: #e9e7f4;
+  --avatar-ink-0: #62527f;
+  --avatar-1: #e3eff3;
+  --avatar-ink-1: #3e6b7e;
+  --avatar-2: #f4eae0;
+  --avatar-ink-2: #8d6040;
+  --avatar-3: #e4eee8;
+  --avatar-ink-3: #49745d;
+  --avatar-4: #ede9ed;
+  --avatar-ink-4: #786276;
+  --source-0: #e8eef9;
+  --source-ink-0: #4865a2;
+  --source-1: #f1eaf7;
+  --source-ink-1: #795997;
+  --source-2: #e5f1ed;
+  --source-ink-2: #2d7860;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --canvas: #111c24;
+  --surface: #19262f;
+  --surface-alt: #192d2e;
+  --subtle: #1e2e38;
+  --header: #15222bec;
+  --ink: #e3edf2;
+  --muted: #9fb1bd;
+  --muted-heading: #99b1be;
+  --faint: #718694;
+  --accent: #7bd1b7;
+  --accent-hover: #a2e3ce;
+  --on-accent: #122c23;
+  --accent-tint: #203c36;
+  --accent-line: #345b4e;
+  --focus: #7bd1b7;
+  --line: #2c3d49;
+  --line-strong: #506774;
+  --row-hover: #1c2c36;
+  --amber: #e0bb74;
+  --amber-tint: #3a3425;
+  --amber-line: #5e5135;
+  --shadow: 0 2px 5px #00000008, 0 12px 26px #00000006;
+  --avatar-border: #ffffff08;
+  --avatar-0: #39334c;
+  --avatar-ink-0: #c3b0df;
+  --avatar-1: #283f4c;
+  --avatar-ink-1: #9ac8dc;
+  --avatar-2: #453a32;
+  --avatar-ink-2: #ddbc9e;
+  --avatar-3: #2e4338;
+  --avatar-ink-3: #a2cdb4;
+  --avatar-4: #413442;
+  --avatar-ink-4: #cdb0ca;
+  --source-0: #2e3c55;
+  --source-ink-0: #afc5f3;
+  --source-1: #3d334e;
+  --source-ink-1: #d0b6e9;
+  --source-2: #254437;
+  --source-ink-2: #a0dbc3;
+}
+
+/* Tones that render a value's position inside the scale its own feed published.
+   Never our judgement — see CHARTER.md — and switchable off in every view. */
+:root {
+  --tone-low: #1c7a52;
+  --tone-low-tint: #e8f4ee;
+  --tone-low-line: #c5e3d3;
+  --tone-medium: #906012;
+  --tone-medium-tint: #fbf5e8;
+  --tone-medium-line: #ebdcbc;
+  --tone-high: #b0403a;
+  --tone-high-tint: #fbeeed;
+  --tone-high-line: #f0cfcc;
+  --source-3: #eaf0e6;
+  --source-ink-3: #55703f;
+  --source-4: #f6ebe4;
+  --source-ink-4: #90603e;
+}
+
+:root[data-theme='dark'] {
+  --tone-low: #7bd1b7;
+  --tone-low-tint: #203c36;
+  --tone-low-line: #345b4e;
+  --tone-medium: #e0bb74;
+  --tone-medium-tint: #3a3425;
+  --tone-medium-line: #5e5135;
+  --tone-high: #e99a94;
+  --tone-high-tint: #3a2725;
+  --tone-high-line: #5f3f3c;
+  --source-3: #2f3d2a;
+  --source-ink-3: #b5cfa2;
+  --source-4: #453529;
+  --source-ink-4: #dfb894;
+}

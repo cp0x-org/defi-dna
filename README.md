@@ -1,116 +1,107 @@
-# defi DNA
+# defi-dna
 
-**defi DNA** is a neutral, open-source aggregator of DeFi risk intelligence: it
-shows what every major risk feed says about an Ethereum mainnet protocol —
-verbatim, side by side, with sources and dates. It publishes **no composite
-score and no ratings of its own**; the aggregation itself is the value, and
-coverage gaps are shown as data rather than hidden. The project is licensed
-under AGPL-3.0 and developed in the open from day one.
+**defi-dna** is an open-source, neutral aggregator of DeFi risk intelligence for
+Ethereum mainnet protocols. It shows what each risk feed publishes, with the
+source and date, side by side. The dashboard shows coverage; it does not compute
+its own score, rating or ranking. See the [project charter](CHARTER.md) for the
+rules behind this approach.
+
+The dashboard tracks protocol versions separately. Its coverage matrix has one
+row per version and one column per feed. A green dot means the feed has data; a
+grey dot means it does not. Opening a protocol shows each feed's value, words,
+source link, dates and raw record. Feeds measure different things, so their
+values are not merged.
 
 ## Repository layout
 
-The repository is an npm workspaces monorepo. Nothing application-specific lives
-at the root — the root holds shared tooling, configuration and documentation
-only.
+This is an npm workspaces monorepo. The root contains shared tooling and
+documentation; the application and pipeline live in workspaces.
 
 ```text
-.
-├── web/        # @defi-dna/web — frontend (Vite + TypeScript)
-└── …           # shared tooling: ESLint, Prettier, Husky, CI
+registry/protocols.json      Protocol versions and their dashboard groups
+adapters/feeds/<id>/         Risk feeds: metadata, mappings and collectors
+adapters/metrics/<id>/       Independent measurements, such as TVL and incidents
+packages/core/              Types, HTTP cache, collection and bundling
+packages/data-client/       Runtime data reader for the frontend
+apps/pipeline/              Collection and bundling CLI
+apps/web/                   React and Vite dashboard
 ```
 
-Further workspaces (data pipeline, adapters, on-chain collectors) are added as
-sibling directories and registered in the root `workspaces` field.
+The registry and adapter metadata are maintained by hand and compiled into the
+frontend. The pipeline writes generated snapshots to `data/` and copies them to
+`apps/web/public/data/` for the local site. The site reads data at runtime from
+the URL in `config.json`. The container uses [configs/config.json](configs/config.json),
+which points to the separate `defi-dna-data` repository; the local frontend
+defaults to `./data`. This allows data updates without rebuilding the site.
 
 ## Development
 
-### Requirements
-
-- [Node.js](https://nodejs.org/) `>=24.0.0` (see `.nvmrc`)
-- npm `>=11` (ships with Node.js 24)
-
-### Installation
+Requires [Node.js](https://nodejs.org/) 24 or newer and npm 11 or newer. The
+expected Node version is in `.nvmrc`.
 
 ```bash
-git clone <repository-url>
-cd <repository-directory>
-npm install
+npm ci
+npm run dev          # local dashboard at http://localhost:5173
 ```
 
-Run `npm install` once at the root: it installs every workspace. To add a
-dependency to a specific workspace, use
-`npm install <package> --workspace @defi-dna/web`.
+`npm ci` installs all workspaces and sets up the Git hooks. The repository
+includes a snapshot in `apps/web/public/data/` so the dashboard and build work
+without collecting fresh data. To collect current data from the feeds, run
+`npm run refresh`; this makes network requests and updates generated files.
 
-### Running locally
+| Command                                   | Purpose                                                        |
+| ----------------------------------------- | -------------------------------------------------------------- |
+| `npm run collect`                         | Collect feed and metric data into `data/protocols/*.json`      |
+| `npm run bundle`                          | Build `data/index.json` and copy generated data to the web app |
+| `npm run refresh`                         | Collect, then bundle                                           |
+| `npm run dev`                             | Start the dashboard                                            |
+| `npm run build`                           | Build the dashboard from the committed snapshot                |
+| `npm run preview`                         | Preview the built dashboard                                    |
+| `npm run lint` / `npm run lint:fix`       | Check or fix lint issues                                       |
+| `npm run format:check` / `npm run format` | Check or apply formatting                                      |
+| `npm run typecheck`                       | Type-check the pipeline, adapters and frontend                 |
+| `npm test`                                | Run the adapter unit tests                                     |
+
+The collection commands accept `--protocol`, `--source`, `--offline` and
+`--verbose`. For example:
 
 ```bash
-npm run dev
+npm run collect -- --source defiscan --protocol aave-v3 --verbose
+npm run collect -- --offline
 ```
 
-Starts the `web` workspace. The dev server prints a local URL
-(http://localhost:5173 by default).
+`--offline` reads the local HTTP cache; it requires an earlier online collection
+for the requested sources. The Git hook runs formatting, linting and type
+checking on commits. CI also runs tests and a build.
 
-### Build
+## Docker
 
 ```bash
-npm run build
+docker compose up --build    # http://127.0.0.1:8080
 ```
 
-Builds every workspace that defines a `build` script. The frontend bundle is
-written to `web/dist/`. Preview it locally with:
+The image serves the static app. Docker Compose mounts
+`configs/config.json`, which chooses where the app reads generated data. To
+serve from a repository subpath, set `DEFI_DNA_BASE=/defi-dna/` for the build.
 
-```bash
-npm run preview
-```
+## Sources and contributions
 
-### Lint
+Risk feeds currently include [DeFiScan](https://www.defiscan.info),
+[Risklayer](https://risklayer.online) and
+[Philidor](https://analytics.philidor.io). Independent measurements come from
+DefiLlama's Ethereum TVL and incident history. A feed with no data for a
+protocol is distinct from a collection error; a failed refresh retains the
+previous value.
 
-```bash
-npm run lint      # report problems
-npm run lint:fix  # fix what can be fixed automatically
-```
+To add a feed, copy `adapters/feeds/_template/`, provide its metadata and
+protocol mapping, then implement `collect()` in `index.ts`. See the
+[adapter guide](adapters/README.md) and
+[output schema](adapters/feeds/feed-output.schema.json).
 
-ESLint and Prettier are configured once at the root and cover all workspaces.
-
-### Formatting
-
-```bash
-npm run format        # write formatting changes
-npm run format:check  # verify formatting only
-```
-
-### Type checking
-
-```bash
-npm run typecheck
-```
-
-Runs TypeScript in `--noEmit` mode in every workspace, so no build output is
-produced.
-
-### Tests
-
-No test runner is configured yet. When tests are added, a `test` script will be
-exposed here and wired into CI. Until then there is intentionally no `npm test`
-command, so that a missing test suite cannot pass silently.
-
-### Git hooks
-
-`npm install` sets up [Husky](https://typicode.github.io/husky/). On every
-commit, `lint-staged` formats and lints the staged files, then the whole project
-is type-checked. A failing check aborts the commit.
-
-## Contributing
-
-Contributions are welcome — please read [CONTRIBUTING.md](CONTRIBUTING.md) and
-the [Code of Conduct](CODE_OF_CONDUCT.md) first. Security issues are handled
-separately, see [SECURITY.md](SECURITY.md).
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md), the
+[Code of Conduct](CODE_OF_CONDUCT.md) and [SECURITY.md](SECURITY.md).
 
 ## License
 
-Licensed under the GNU Affero General Public License v3.0 only
-(`AGPL-3.0-only`). See [LICENSE](LICENSE) for the full text.
-
-Risk assessments quoted from third-party feeds remain the property of their
-respective providers and are not covered by this license; each quote is
-attributed and linked to its source.
+Licensed under [AGPL-3.0-only](LICENSE). Assessments quoted from third-party
+feeds remain their providers' content and retain attribution and source links.
