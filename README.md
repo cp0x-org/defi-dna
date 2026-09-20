@@ -9,7 +9,7 @@ rules behind this approach.
 The dashboard tracks protocol versions separately. Its coverage matrix has one
 row per version and one column per feed. A green dot means the feed has data; a
 grey dot means it does not. Opening a protocol shows each feed's value, words,
-source link, dates and raw record. Feeds measure different things, so their
+source link and assessment date. Feeds measure different things, so their
 values are not merged.
 
 ## Repository layout
@@ -83,6 +83,14 @@ docker compose up --build    # http://127.0.0.1:8080
 The image serves the static app. Docker Compose mounts
 `configs/config.json`, which chooses where the app reads generated data. To
 serve from a repository subpath, set `DEFI_DNA_BASE=/defi-dna/` for the build.
+
+By default, port 8080 is bound to the host's loopback address. If a reverse
+proxy runs in another Docker container and connects through
+`host.docker.internal:8080`, set `DEFI_DNA_BIND_IP` to the host's Docker bridge
+address in the project's `.env` file (copy `.env.example`; for example,
+`DEFI_DNA_BIND_IP=172.17.0.1`), then recreate the app with
+`docker compose up -d --build`. The bridge address must match where
+`host.docker.internal` resolves inside the proxy container.
 
 ## Sources and contributions
 

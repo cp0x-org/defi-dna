@@ -1,5 +1,5 @@
 import type { Feed, FeedData } from '@defi-dna/data'
-import { coverageLabel, dateInfo } from '../lib/view.ts'
+import { coverageLabel } from '../lib/view.ts'
 import { IconChevron } from './Icons.tsx'
 import { AssessmentDate, DataAgeHelp, ExternalLink, Info, SourceMark } from './UI.tsx'
 
@@ -38,6 +38,7 @@ export const FeedAssessment = ({ feed, data }: { feed: Feed; data: FeedData }) =
   const details = data.details ?? []
   const findings = findingsOf(data)
   const available = data.status === 'ok'
+  const hasDetails = Boolean(data.note || data.summary || details.length || findings.length)
 
   return (
     <article
@@ -79,99 +80,78 @@ export const FeedAssessment = ({ feed, data }: { feed: Feed; data: FeedData }) =
                 </div>
               ))}
             </dl>
-          ) : (
-            <p className="small muted">
-              Open the assessment for this feed’s own words and everything we stored.
-            </p>
-          )}
+          ) : hasDetails ? (
+            <p className="small muted">Explore this feed’s assessment.</p>
+          ) : null}
 
-          <details className="assessment-details">
-            <summary>
-              Explore assessment
-              <IconChevron />
-            </summary>
-            <div className="assessment-expanded">
-              {data.note ? <p className="inline-note">{data.note}</p> : null}
+          {hasDetails ? (
+            <details className="assessment-details">
+              <summary>
+                Explore assessment
+                <IconChevron />
+              </summary>
+              <div className="assessment-expanded">
+                {data.note ? <p className="inline-note">{data.note}</p> : null}
 
-              {data.summary ? (
-                <div>
-                  <h4>In {feed.name}’s words</h4>
-                  <blockquote className="original-text-quote">{data.summary}</blockquote>
-                </div>
-              ) : null}
+                {data.summary ? (
+                  <div>
+                    <h4>In {feed.name}’s words</h4>
+                    <blockquote className="original-text-quote">{data.summary}</blockquote>
+                  </div>
+                ) : null}
 
-              {details.length > 0 ? (
-                <div>
-                  <h4>
-                    {feed.name}’s breakdown <span className="muted">({details.length})</span>
-                  </h4>
-                  <div className="breakdown">
-                    {details.map((detail) =>
-                      detail.description ? (
-                        <details className="breakdown-item" key={detail.name}>
-                          <summary>
+                {details.length > 0 ? (
+                  <div>
+                    <h4>
+                      {feed.name}’s breakdown <span className="muted">({details.length})</span>
+                    </h4>
+                    <div className="breakdown">
+                      {details.map((detail) =>
+                        detail.description ? (
+                          <details className="breakdown-item" key={detail.name}>
+                            <summary>
+                              <span>{detail.name}</span>
+                              <strong>{detail.value}</strong>
+                              <IconChevron />
+                            </summary>
+                            <p>{detail.description}</p>
+                          </details>
+                        ) : (
+                          <div className="breakdown-item plain" key={detail.name}>
                             <span>{detail.name}</span>
                             <strong>{detail.value}</strong>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+
+                {findings.length > 0 ? (
+                  <div>
+                    <h4>Findings reported by {feed.name}</h4>
+                    <p className="small muted">
+                      Published by the feed; they may span several networks.
+                    </p>
+                    <div className="findings">
+                      {findings.map((finding, index) => (
+                        <details key={`${finding.title}-${index}`}>
+                          <summary>
+                            {finding.severity ? (
+                              <span className="finding-severity">{finding.severity}</span>
+                            ) : null}
+                            <span>{finding.title}</span>
                             <IconChevron />
                           </summary>
-                          <p>{detail.description}</p>
+                          <p>{finding.description ?? 'See the original assessment for details.'}</p>
                         </details>
-                      ) : (
-                        <div className="breakdown-item plain" key={detail.name}>
-                          <span>{detail.name}</span>
-                          <strong>{detail.value}</strong>
-                        </div>
-                      ),
-                    )}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : null}
-
-              {findings.length > 0 ? (
-                <div>
-                  <h4>Findings reported by {feed.name}</h4>
-                  <p className="small muted">
-                    Published by the feed; they may span several networks.
-                  </p>
-                  <div className="findings">
-                    {findings.map((finding, index) => (
-                      <details key={`${finding.title}-${index}`}>
-                        <summary>
-                          {finding.severity ? (
-                            <span className="finding-severity">{finding.severity}</span>
-                          ) : null}
-                          <span>{finding.title}</span>
-                          <IconChevron />
-                        </summary>
-                        <p>{finding.description ?? 'See the original assessment for details.'}</p>
-                      </details>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-
-              <details className="original-text">
-                <summary>
-                  Everything we stored
-                  <IconChevron />
-                </summary>
-                <dl className="all-dimensions provenance-details">
-                  <div>
-                    <dt>Feed’s own date</dt>
-                    <dd>{dateInfo(data.updatedAt).label}</dd>
-                  </div>
-                  <div>
-                    <dt>Read by defi-dna</dt>
-                    <dd>{dateInfo(data.fetchedAt).label}</dd>
-                  </div>
-                </dl>
-                {data.extra ? <blockquote>{JSON.stringify(data.extra, null, 2)}</blockquote> : null}
-                <ExternalLink href={feed.methodologyUrl ?? feed.homepage}>
-                  {feed.methodologyUrl ? 'Feed methodology' : 'Feed website'}
-                </ExternalLink>
-              </details>
-            </div>
-          </details>
+                ) : null}
+              </div>
+            </details>
+          ) : null}
 
           <div className="assessment-card-footer">
             <span className="date-with-help">

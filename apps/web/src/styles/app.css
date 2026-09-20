@@ -1397,28 +1397,6 @@ details[open] > summary > svg:last-child {
   border-radius: 0 5px 5px 0;
   font-size: 12px;
 }
-.all-dimensions > div {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 20px;
-  border-bottom: 1px solid var(--line);
-  padding: 9px 0;
-  font-size: 11px;
-}
-.all-dimensions dt {
-  color: var(--muted);
-}
-.all-dimensions dt > span {
-  display: block;
-  font-size: 9px;
-}
-.all-dimensions dd {
-  font-weight: 650;
-  text-align: right;
-  overflow-wrap: anywhere;
-  max-width: 65%;
-}
 .findings {
   margin-top: 10px;
 }
@@ -1458,29 +1436,10 @@ details[open] > summary > svg:last-child {
   color: var(--muted);
   padding: 7px 0;
 }
-.original-text blockquote {
-  margin: 10px 0 0;
-  padding: 12px 14px;
-  border-left: 2px solid var(--line-strong);
-  background: var(--subtle);
-  color: var(--muted);
-  font-size: 11px;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  max-height: 400px;
-  overflow: auto;
-}
 .original-text p {
   margin-top: 10px;
   color: var(--muted);
   font-size: 11px;
-}
-.original-text .text-link {
-  margin-top: 12px;
-  font-size: 11px;
-}
-.provenance-details + p {
-  margin: 12px 0;
 }
 .assessment-card-footer {
   display: flex;

@@ -18,7 +18,7 @@ const QUESTIONS: [string, string][] = [
   ],
   [
     'Where are the actual values then?',
-    'On the protocol page. Each feed gets a card with its value exactly as published, its own words, the date it published, a link to the page we read, and the raw record we stored — so you can see everything, not only what we chose to display.',
+    'On the protocol page. Each feed gets a card with its value exactly as published, its own words, its assessment date and a link to the original source.',
   ],
   [
     'What do the three states mean?',
@@ -26,11 +26,11 @@ const QUESTIONS: [string, string][] = [
   ],
   [
     'What happens when a feed is unreachable?',
-    'The previous run’s value is kept, so one bad response never empties a cell that is genuinely covered. Every card shows both dates: when the feed published, and when we last read it.',
+    'The previous run’s value is kept, so one bad response never empties a cell that is genuinely covered. The card shows the feed’s assessment date; check the original source for updates.',
   ],
   [
     'Why are some dates amber?',
-    'Amber marks a feed-published date more than 90 days old. It is a prompt to check the source, not an expiry. A freshly fetched cell can still carry an old assessment — the fetch date and the assessment date are different facts, and both are on the card.',
+    'Amber marks a feed-published date more than 90 days old. It is a prompt to check the source, not an expiry. A recent collection can still contain an older assessment.',
   ],
   [
     'Is the data live?',
@@ -133,10 +133,7 @@ export const MethodologyPage = ({ index }: { index: IndexBundle }) => (
         </article>
         <article>
           <h2>Sourced</h2>
-          <p>
-            Every value carries the feed’s own date, the date we read it and the link we read it
-            from, plus the raw record behind the card.
-          </p>
+          <p>Every card shows the feed’s assessment date and links to its original source.</p>
         </article>
       </div>
     </section>
