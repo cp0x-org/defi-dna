@@ -28,3 +28,6 @@ export const feeds: Feed[] = collect<Feed>(
 export const metrics: Metric[] = collect<Metric>(
   import.meta.glob('../../../../adapters/metrics/*/metric.json', { eager: true }),
 )
+
+export const metricById = (id: string): Metric | undefined =>
+  metrics.find((metric) => metric.id === id)

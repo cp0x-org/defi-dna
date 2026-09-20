@@ -1,11 +1,14 @@
 import { Link, useParams } from 'react-router-dom'
 import type { MetricData } from '@defi-dna/data'
 import { useProtocol } from '../hooks/useIndex.ts'
-import { feeds as allFeeds, protocolById, protocols } from '../lib/registry.ts'
+import { feeds as allFeeds, metricById, protocolById, protocols } from '../lib/registry.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../lib/view.ts'
 import { FeedAssessment } from '../components/FeedAssessment.tsx'
 import { IconArrow } from '../components/Icons.tsx'
 import { DataAgeHelp, ExternalLink, Info, ProtocolAvatar } from '../components/UI.tsx'
+
+const tvlLabel = metricById('tvl')?.name ?? 'DefiLlama · Ethereum TVL'
+const incidentsLabel = metricById('incidents')?.name ?? 'DefiLlama · Incident history'
 
 interface Incident {
   date: string
@@ -108,14 +111,14 @@ export const ProtocolPage = () => {
       <div className="protocol-summary">
         <div>
           <span className="summary-label">
-            Ethereum TVL
+            {tvlLabel}
             <Info label="What this figure is">
               A measured quantity published by DefiLlama for this protocol, not a risk rating. It is
               never combined with what a feed says.
             </Info>
           </span>
           <strong>{formatUsd(tvl?.value) ?? 'Not available'}</strong>
-          <small>DefiLlama · {dateInfo(tvl?.fetchedAt).label}</small>
+          <small>Collected {dateInfo(tvl?.fetchedAt).label}</small>
         </div>
         <div>
           <span className="summary-label">
@@ -152,7 +155,7 @@ export const ProtocolPage = () => {
         <a href="#assessments">
           Assessments <span>{withData.length}</span>
         </a>
-        <a href="#protocol-context">Context</a>
+        <a href="#incidents">Incidents</a>
         <Link to="/methodology">Reading guide</Link>
       </nav>
 
@@ -209,11 +212,11 @@ export const ProtocolPage = () => {
         )}
       </section>
 
-      <section id="protocol-context" className="context-section">
+      <section id="incidents" className="context-section">
         <div className="section-heading">
           <div>
-            <h2>Context</h2>
-            <p>Measured quantities — separate from the assessments above.</p>
+            <h2>{incidentsLabel}</h2>
+            <p>Reported incidents — separate from the assessments above.</p>
           </div>
           <Info label="About this section">
             Incident history is what DefiLlama attributes to this protocol id. Absence from their

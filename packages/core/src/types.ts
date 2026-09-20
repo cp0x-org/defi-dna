@@ -78,7 +78,7 @@ export interface FeedResult {
   url?: string
   /** What the data covers, or why there is none. */
   note?: string
-  /** Everything else the feed publishes, shown as raw data on the protocol page. */
+  /** Additional source fields retained in JSON; some are displayed as structured details. */
   extra?: Record<string, unknown>
 }
 

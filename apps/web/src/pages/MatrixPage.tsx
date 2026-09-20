@@ -2,13 +2,15 @@ import { Fragment, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { readHiddenFeeds, writeHiddenFeeds } from '../lib/prefs.ts'
-import { feeds as allFeeds } from '../lib/registry.ts'
+import { feeds as allFeeds, metricById } from '../lib/registry.ts'
 import { dataCount, groupRows, type Group, type Row } from '../lib/rows.ts'
 import { TVL_BANDS, categoryLabel, dateInfo, formatUsd } from '../lib/view.ts'
 import { IconArrow, IconBook, IconSearch, IconSort } from '../components/Icons.tsx'
 import { DataFlag, Info, MultiSelect, ProtocolAvatar, SourceMark } from '../components/UI.tsx'
 
 type Dir = 'asc' | 'desc'
+
+const tvlLabel = metricById('tvl')?.name ?? 'DefiLlama · Ethereum TVL'
 
 const defaultDir = (key: string): Dir => (key === 'name' ? 'asc' : 'desc')
 
@@ -113,7 +115,7 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
 
   const columns = [
     { key: 'name', label: 'Protocol', desc: 'Z–A', asc: 'A–Z' },
-    { key: 'tvl', label: 'Ethereum TVL', desc: 'high to low', asc: 'low to high' },
+    { key: 'tvl', label: tvlLabel, desc: 'high to low', asc: 'low to high' },
     ...visibleFeeds.map((feed) => ({
       key: `feed:${feed.id}`,
       label: feed.name,
@@ -389,7 +391,7 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
                   <thead>
                     <tr>
                       {sortable('name', 'Protocol')}
-                      {sortable('tvl', 'Ethereum TVL', 'metric-column')}
+                      {sortable('tvl', tvlLabel, 'metric-column')}
                       {visibleFeeds.map((feed) =>
                         sortable(
                           `feed:${feed.id}`,
@@ -481,7 +483,7 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
                         </Link>
                       </div>
                       <div className="mobile-metric">
-                        <span>Ethereum TVL</span>
+                        <span>{tvlLabel}</span>
                         <strong>{formatUsd(row.tvl) ?? '—'}</strong>
                       </div>
                       <div className="mobile-assessments">
