@@ -74,6 +74,13 @@ npm run collect -- --offline
 for the requested sources. The Git hook runs formatting, linting and type
 checking on commits. CI also runs tests and a build.
 
+The scheduled [refresh workflow](.github/workflows/refresh-data.yml) runs twice a
+day and can also be started manually. It restores the previous snapshot before
+collecting, then commits `index.json`, `changelog.json` and `protocols/*.json`
+to `main` in the separate `cp0x-org/defi-dna-data` repository. To enable the
+cross-repository push, add a `DEFI_DNA_DATA_TOKEN` Actions secret to this
+repository. It must grant Contents read and write access to `defi-dna-data`.
+
 ## Docker
 
 ```bash

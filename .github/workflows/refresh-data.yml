@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: refresh-data
@@ -17,21 +17,67 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check data repository token
+        env:
+          DATA_REPO_TOKEN: ${{ secrets.DEFI_DNA_DATA_TOKEN }}
+        run: |
+          if [ -z "$DATA_REPO_TOKEN" ]; then
+            echo "::error::Add DEFI_DNA_DATA_TOKEN to this repository's Actions secrets"
+            exit 1
+          fi
+
+      - name: Checkout application
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Checkout data repository
+        uses: actions/checkout@v4
+        with:
+          repository: cp0x-org/defi-dna-data
+          ref: main
+          path: data-repo
+          token: ${{ secrets.DEFI_DNA_DATA_TOKEN }}
+
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
+
       - run: npm ci
+
+      # The collector keeps previous values when a feed is temporarily unavailable.
+      - name: Restore previous data
+        run: |
+          mkdir -p data/protocols
+          if [ -d data-repo/protocols ]; then
+            cp -a data-repo/protocols/. data/protocols/
+          fi
+          if [ -f data-repo/changelog.json ]; then
+            cp data-repo/changelog.json data/changelog.json
+          fi
+
       - run: npm run refresh
 
-      # Committing the generated data is deliberate: the git history is the
-      # audit trail for every cell, including changes a feed makes to its page.
-      - name: Commit the result
+      - name: Commit and push data to cp0x-org/defi-dna-data
         run: |
-          git add -A data
-          git diff --cached --quiet && echo "no data changes" && exit 0
-          git config user.name  "defi-dna-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push
+          test -s data/index.json
+          mkdir -p data-repo/protocols
+          cp data/index.json data-repo/index.json
+          cp -a data/protocols/. data-repo/protocols/
+          if [ -f data/changelog.json ]; then
+            cp data/changelog.json data-repo/changelog.json
+          else
+            printf '[]\n' > data-repo/changelog.json
+          fi
+
+          git -C data-repo add -A -- index.json changelog.json protocols
+          if git -C data-repo diff --cached --quiet; then
+            echo "No data changes"
+            exit 0
+          fi
+
+          git -C data-repo config user.name "github-actions[bot]"
+          git -C data-repo config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C data-repo commit -m "data: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git -C data-repo push origin HEAD:main
