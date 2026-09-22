@@ -1426,6 +1426,84 @@ details[open] > summary > svg:last-child {
   color: var(--muted);
   margin: 0 0 14px;
 }
+.extra-section {
+  min-width: 0;
+}
+.extra-section h3,
+.extra-section h4 {
+  margin: 0 0 10px;
+}
+.extra-section > p + p {
+  margin-top: 8px;
+}
+.extra-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.extra-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px 10px;
+  font-size: 11px;
+}
+.extra-list li small {
+  width: 100%;
+  color: var(--muted);
+}
+.extra-facts {
+  display: grid;
+  gap: 6px;
+}
+.extra-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding: 5px 0;
+  font-size: 11px;
+}
+.extra-facts dt {
+  color: var(--muted);
+}
+.extra-facts dd {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.extra-group > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.extra-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.extra-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  text-align: left;
+}
+.extra-table th,
+.extra-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.extra-table th {
+  color: var(--muted);
+  background: var(--subtle);
+}
 .original-text summary {
   display: flex;
   align-items: center;

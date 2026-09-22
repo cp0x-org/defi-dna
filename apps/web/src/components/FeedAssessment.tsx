@@ -2,30 +2,7 @@ import type { Feed, FeedData } from '@defi-dna/data'
 import { coverageLabel } from '../lib/view.ts'
 import { IconChevron } from './Icons.tsx'
 import { AssessmentDate, DataAgeHelp, ExternalLink, Info, SourceMark } from './UI.tsx'
-
-interface Finding {
-  title: string
-  severity: string | null
-  description: string | null
-}
-
-/** Findings, for feeds that publish them alongside their value. */
-const findingsOf = (data: FeedData): Finding[] => {
-  const list = data.extra?.['keyFindings']
-  if (!Array.isArray(list)) return []
-  return list.flatMap((entry) => {
-    const finding = entry as Record<string, unknown>
-    return typeof finding['title'] === 'string'
-      ? [
-          {
-            title: finding['title'],
-            severity: typeof finding['severity'] === 'string' ? finding['severity'] : null,
-            description: typeof finding['description'] === 'string' ? finding['description'] : null,
-          },
-        ]
-      : []
-  })
-}
+import { FeedExtras, hasFeedExtras } from './extra/FeedExtras.tsx'
 
 /**
  * One feed's full say about one protocol.
@@ -36,9 +13,10 @@ const findingsOf = (data: FeedData): Finding[] => {
  */
 export const FeedAssessment = ({ feed, data }: { feed: Feed; data: FeedData }) => {
   const details = data.details ?? []
-  const findings = findingsOf(data)
   const available = data.status === 'ok'
-  const hasDetails = Boolean(data.note || data.summary || details.length || findings.length)
+  const hasDetails = Boolean(
+    data.note || data.summary || details.length || hasFeedExtras(data.extra),
+  )
 
   return (
     <article
@@ -127,28 +105,7 @@ export const FeedAssessment = ({ feed, data }: { feed: Feed; data: FeedData }) =
                   </div>
                 ) : null}
 
-                {findings.length > 0 ? (
-                  <div>
-                    <h4>Findings reported by {feed.name}</h4>
-                    <p className="small muted">
-                      Published by the feed; they may span several networks.
-                    </p>
-                    <div className="findings">
-                      {findings.map((finding, index) => (
-                        <details key={`${finding.title}-${index}`}>
-                          <summary>
-                            {finding.severity ? (
-                              <span className="finding-severity">{finding.severity}</span>
-                            ) : null}
-                            <span>{finding.title}</span>
-                            <IconChevron />
-                          </summary>
-                          <p>{finding.description ?? 'See the original assessment for details.'}</p>
-                        </details>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
+                <FeedExtras extra={data.extra} feedName={feed.name} />
               </div>
             </details>
           ) : null}

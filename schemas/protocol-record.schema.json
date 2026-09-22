@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/schemas/protocol-record.schema.json",
+  "title": "defi-dna protocol record",
+  "description": "Generated data/protocols/<id>.json. Each optional extra field has a defined shape and a dedicated frontend view.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generatedAt", "protocolId", "metrics", "feeds"],
+  "properties": {
+    "generatedAt": { "type": "string" },
+    "protocolId": { "type": "string" },
+    "metrics": { "type": "object", "additionalProperties": { "$ref": "#/definitions/metricData" } },
+    "feeds": { "type": "object", "additionalProperties": { "$ref": "#/definitions/feedData" } }
+  },
+  "definitions": {
+    "feedData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "fetchedAt"],
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "ok" } } },
+          "then": { "required": ["value", "url"] }
+        }
+      ],
+      "properties": {
+        "status": { "enum": ["ok", "none", "error"] },
+        "value": { "type": "string" },
+        "summary": { "type": "string" },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "value"],
+            "properties": {
+              "name": { "type": "string" },
+              "value": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "updatedAt": { "type": "string" },
+        "url": { "type": "string" },
+        "note": { "type": "string" },
+        "extra": { "$ref": "#/definitions/extra" },
+        "fetchedAt": { "type": "string" }
+      }
+    },
+    "metricData": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "fetchedAt"],
+      "properties": {
+        "value": { "type": ["number", "null"] },
+        "updatedAt": { "type": "string" },
+        "url": { "type": "string" },
+        "note": { "type": "string" },
+        "extra": { "$ref": "#/definitions/extra" },
+        "fetchedAt": { "type": "string" }
+      }
+    },
+    "extra": {
+      "description": "Optional source-supplied data. Unknown keys are invalid; add a schema entry, TypeScript type and frontend component for each new type.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reviews": { "type": "array", "items": { "$ref": "#/definitions/review" } },
+        "domain": { "type": "string" },
+        "riskLevel": { "type": ["string", "null"] },
+        "overallScore": { "type": ["number", "null"] },
+        "analysisStatus": { "type": ["string", "null"] },
+        "keyFindings": { "type": "array", "items": { "$ref": "#/definitions/finding" } },
+        "philidorId": { "type": "string" },
+        "versions": { "type": "array", "items": { "type": "string" } },
+        "vaultsListed": { "type": "integer", "minimum": 0 },
+        "vaultsLive": { "type": "integer", "minimum": 0 },
+        "vaultsShutdown": { "type": "integer", "minimum": 0 },
+        "vaultsRated": { "type": "integer", "minimum": 0 },
+        "vaults": { "type": "array", "items": { "$ref": "#/definitions/vault" } },
+        "incidents": { "type": "array", "items": { "$ref": "#/definitions/incident" } },
+        "components": { "type": "array", "items": { "$ref": "#/definitions/tvlComponent" } },
+        "text": {
+          "description": "Optional source-supplied paragraphs for information that has no more specific type.",
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "stage", "risks", "date", "url"],
+      "properties": {
+        "file": { "type": "string" },
+        "stage": { "type": "string" },
+        "risks": { "type": "array", "items": { "type": "string" } },
+        "date": { "type": ["string", "null"] },
+        "url": { "type": "string" }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "severity", "category", "description"],
+      "properties": {
+        "title": { "type": "string" },
+        "severity": { "type": ["string", "null"] },
+        "category": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] }
+      }
+    },
+    "vault": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "curator", "tier", "score", "tvlUsd", "scoredAt", "url"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": ["string", "null"] },
+        "curator": { "type": ["string", "null"] },
+        "tier": { "type": ["string", "null"] },
+        "score": { "type": ["number", "null"] },
+        "tvlUsd": { "type": ["number", "null"] },
+        "scoredAt": { "type": ["string", "null"] },
+        "url": { "type": "string" }
+      }
+    },
+    "incident": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "name",
+        "amountUsd",
+        "classification",
+        "technique",
+        "returnedFunds",
+        "source"
+      ],
+      "properties": {
+        "date": { "type": "string" },
+        "name": { "type": "string" },
+        "amountUsd": { "type": ["number", "null"] },
+        "classification": { "type": "string" },
+        "technique": { "type": "string" },
+        "returnedFunds": { "type": ["number", "null"] },
+        "source": { "type": ["string", "null"] }
+      }
+    },
+    "tvlComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "tvl"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "tvl": { "type": ["number", "null"] }
+      }
+    }
+  }
+}

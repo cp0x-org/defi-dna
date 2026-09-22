@@ -105,7 +105,9 @@ const adapter: FeedAdapter = {
     if (!listing) throw new Error('Philidor vault listing unavailable')
 
     const philidorId = mapped[0]?.split(':')[0] as string
-    const versions = mapped.map((entry) => entry.split(':')[1]).filter(Boolean)
+    const versions = mapped
+      .map((entry) => entry.split(':')[1])
+      .filter((version): version is string => Boolean(version))
     const url = `${SITE}/protocols/${philidorId}`
 
     const listed = mapped.flatMap((entry) => {

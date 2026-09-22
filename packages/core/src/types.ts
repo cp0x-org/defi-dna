@@ -61,6 +61,69 @@ export interface Detail {
   description?: string
 }
 
+export interface ExtraReview {
+  file: string
+  stage: string
+  risks: string[]
+  date: string | null
+  url: string
+}
+
+export interface ExtraFinding {
+  title: string
+  severity: string | null
+  category: string | null
+  description: string | null
+}
+
+export interface ExtraVault {
+  name: string
+  version: string | null
+  curator: string | null
+  tier: string | null
+  score: number | null
+  tvlUsd: number | null
+  scoredAt: string | null
+  url: string
+}
+
+export interface ExtraIncident {
+  date: string
+  name: string
+  amountUsd: number | null
+  classification: string
+  technique: string
+  returnedFunds: number | null
+  source: string | null
+}
+
+export interface ExtraTvlComponent {
+  id: string
+  name: string
+  tvl: number | null
+}
+
+/** Recognized extra fields. Each optional type has its own frontend component. */
+export interface ExtraData {
+  reviews?: ExtraReview[]
+  keyFindings?: ExtraFinding[]
+  domain?: string
+  riskLevel?: string | null
+  overallScore?: number | null
+  analysisStatus?: string | null
+  philidorId?: string
+  versions?: string[]
+  vaultsListed?: number
+  vaultsLive?: number
+  vaultsShutdown?: number
+  vaultsRated?: number
+  vaults?: ExtraVault[]
+  incidents?: ExtraIncident[]
+  components?: ExtraTvlComponent[]
+  /** Optional feed- or metric-supplied paragraphs; never synthesized by us. */
+  text?: string[]
+}
+
 /**
  * What a feed adapter returns for one protocol. Every field is optional
  * because every feed publishes something different.
@@ -78,8 +141,8 @@ export interface FeedResult {
   url?: string
   /** What the data covers, or why there is none. */
   note?: string
-  /** Additional source fields retained in JSON; some are displayed as structured details. */
-  extra?: Record<string, unknown>
+  /** Structured optional fields, defined in schemas/protocol-record.schema.json. */
+  extra?: ExtraData
 }
 
 /** One protocol × one feed, as stored in data/protocols/<id>.json. */
@@ -95,7 +158,7 @@ export interface MetricResult {
   updatedAt?: string
   url?: string
   note?: string
-  extra?: Record<string, unknown>
+  extra?: ExtraData
 }
 
 export interface MetricData extends MetricResult {

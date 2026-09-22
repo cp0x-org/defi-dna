@@ -1,6 +1,6 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/cp0x-org/defi-dna/blob/main/adapters/feeds/feed-output.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/adapters/feeds/feed-output.schema.json",
   "title": "defi-dna feed output",
   "description": "What one feed adapter produces for one protocol. collect() returns the fields below, or null when the feed has nothing for that protocol; the runner adds `status` and `fetchedAt` and stores the result under data/protocols/<protocol>.json in `feeds.<feed id>`.",
   "type": "object",
@@ -47,8 +47,8 @@
       "type": "string"
     },
     "extra": {
-      "description": "Everything else the feed publishes, as it came. Shown as raw data on the protocol page, so nothing is hidden behind our choice of what to display.",
-      "type": "object"
+      "description": "Optional structured data, each recognized type rendered by its own frontend component.",
+      "$ref": "../../schemas/protocol-record.schema.json#/definitions/extra"
     },
     "fetchedAt": {
       "description": "Added by the runner: when we read the source.",

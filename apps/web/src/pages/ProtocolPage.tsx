@@ -1,27 +1,15 @@
 import { Link, useParams } from 'react-router-dom'
-import type { MetricData } from '@defi-dna/data'
 import { useProtocol } from '../hooks/useIndex.ts'
 import { feeds as allFeeds, metricById, protocolById, protocols } from '../lib/registry.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../lib/view.ts'
 import { FeedAssessment } from '../components/FeedAssessment.tsx'
+import { IncidentsExtra, TvlComponentsExtra } from '../components/extra/MetricExtras.tsx'
+import { TextExtra } from '../components/extra/TextExtra.tsx'
 import { IconArrow } from '../components/Icons.tsx'
 import { DataAgeHelp, ExternalLink, Info, ProtocolAvatar } from '../components/UI.tsx'
 
 const tvlLabel = metricById('tvl')?.name ?? 'DefiLlama · Ethereum TVL'
 const incidentsLabel = metricById('incidents')?.name ?? 'DefiLlama · Incident history'
-
-interface Incident {
-  date: string
-  name: string
-  amountUsd: number | null
-  classification: string
-  technique: string
-}
-
-const incidentsOf = (metric: MetricData | undefined): Incident[] => {
-  const list = metric?.extra?.['incidents']
-  return Array.isArray(list) ? (list as Incident[]) : []
-}
 
 export const ProtocolPage = () => {
   const { id = '' } = useParams()
@@ -65,7 +53,6 @@ export const ProtocolPage = () => {
   )
   const tvl = metrics['tvl']
   const incidents = metrics['incidents']
-  const incidentList = incidentsOf(incidents)
 
   const withData = allFeeds.filter((feed) => feeds[feed.id]?.status === 'ok')
   const missing = allFeeds.filter((feed) => feeds[feed.id] && feeds[feed.id]?.status !== 'ok')
@@ -212,6 +199,13 @@ export const ProtocolPage = () => {
         )}
       </section>
 
+      {tvl?.extra?.components?.length || tvl?.extra?.text?.length ? (
+        <section className="context-section" aria-label="Additional DefiLlama TVL data">
+          <TvlComponentsExtra components={tvl.extra.components} />
+          <TextExtra text={tvl.extra.text} />
+        </section>
+      ) : null}
+
       <section id="incidents" className="context-section">
         <div className="section-heading">
           <div>
@@ -224,41 +218,8 @@ export const ProtocolPage = () => {
           </Info>
         </div>
 
-        <div className="table-card">
-          <div className="matrix-scroll">
-            <table className="registry-table">
-              <caption className="sr-only">Incident history recorded by DefiLlama</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Date</th>
-                  <th scope="col">Event</th>
-                  <th scope="col">Amount</th>
-                  <th scope="col">Classification</th>
-                  <th scope="col">Technique</th>
-                </tr>
-              </thead>
-              <tbody>
-                {incidentList.length > 0 ? (
-                  incidentList.map((incident) => (
-                    <tr key={`${incident.date}-${incident.name}`}>
-                      <td>{incident.date}</td>
-                      <td>{incident.name}</td>
-                      <td className="mono">{formatUsd(incident.amountUsd) ?? '—'}</td>
-                      <td>{incident.classification}</td>
-                      <td className="muted">{incident.technique}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={5} className="muted">
-                      {incidents?.note ?? 'DefiLlama records no incident against this protocol id.'}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <IncidentsExtra incidents={incidents?.extra?.incidents} note={incidents?.note} />
+        <TextExtra text={incidents?.extra?.text} />
       </section>
 
       {siblings.length > 0 ? (

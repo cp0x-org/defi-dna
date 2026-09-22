@@ -7,6 +7,7 @@ registered anywhere.
 adapters/
   feeds/_template/            copy this to start a new feed
   feeds/feed-output.schema.json   the shape every feed produces
+  ../schemas/protocol-record.schema.json   the generated JSON and all extra types
   feeds/<id>/      feed.json + mapping.json + index.ts     one dashboard column
   metrics/<id>/    metric.json + mapping.json + index.ts   a measured quantity
 ```
@@ -94,7 +95,6 @@ const adapter: FeedAdapter = {
       value: data.rating, // verbatim, as the feed publishes it
       updatedAt: data.updated, // when the feed last updated it, not our fetch time
       url: `https://my-feed.example/${id}`, // where a reader can check it
-      extra: data, // everything else, shown as raw data
     }
   },
 }
@@ -104,6 +104,15 @@ export default adapter
 
 The full shape, with every field described, is
 [`feeds/feed-output.schema.json`](feeds/feed-output.schema.json).
+The complete generated JSON, including metrics and every supported `extra` field,
+is defined in [`schemas/protocol-record.schema.json`](../schemas/protocol-record.schema.json).
+`extra` is structured rather than an arbitrary copy of the source response:
+DeFiScan reviews; Risklayer analysis and findings; Philidor vault coverage and
+vaults; DefiLlama incidents and TVL components. Each type has its own protocol
+page component and appears only when that field exists in the JSON. Optional
+`extra.text` is an array of source-supplied paragraphs for material that does
+not fit a more specific type. New extra fields need a TypeScript type, schema
+entry and frontend component.
 
 Rules the runner applies to what you return:
 

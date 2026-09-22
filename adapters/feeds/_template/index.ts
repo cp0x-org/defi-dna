@@ -68,8 +68,6 @@ const adapter: FeedAdapter = {
       ...(assessment.updated ? { updatedAt: assessment.updated } : {}),
       // Where a reader can check the value.
       url: `https://example.com/protocol/${id}`,
-      // Anything else the feed publishes; shown as raw data on the protocol page.
-      extra: { id },
     }
   },
 }

@@ -87,7 +87,7 @@ const adapter: FeedAdapter = {
     })
 
     const findings = (analysis?.keyFindings ?? [])
-      .filter((finding) => finding.title)
+      .filter((finding): finding is typeof finding & { title: string } => Boolean(finding.title))
       .slice(0, MAX_FINDINGS)
       .map((finding) => ({
         title: finding.title,

@@ -3,6 +3,12 @@ import type { Change, IndexBundle, ProtocolRecord } from '@defi-dna/core/types'
 export type {
   Change,
   Detail,
+  ExtraData,
+  ExtraFinding,
+  ExtraIncident,
+  ExtraReview,
+  ExtraTvlComponent,
+  ExtraVault,
   Feed,
   FeedData,
   IndexBundle,
