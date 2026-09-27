@@ -1,15 +1,15 @@
 <!doctype html>
 <!--
-  defi-dna · макет v4 — «сегментное кольцо фидов».
-  Один автономный файл: HTML, встроенные CSS и JS, без сети, импортов, внешних шрифтов и изображений.
-  Реальные записи DeFiScan / Philidor / Risklayer / DefiLlama взяты без изменений из apps/web/public/data/protocols/*.json.
-  Всё, что помечено «ДЕМО», вымышлено.
+  defi-dna · mockup v4 — “segmented feed ring”.
+  One standalone file: HTML with inline CSS and JS, no network, imports, external fonts or images.
+  Real DeFiScan / Philidor / Risklayer / DefiLlama records are taken unchanged from apps/web/public/data/protocols/*.json.
+  Everything marked “DEMO” is invented.
 -->
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Протоколы · defi-dna · макет v4</title>
+    <title>Protocols · defi-dna · mockup v4</title>
     <script>
       ;(function () {
         var t = 'dark'
@@ -2124,42 +2124,42 @@
       </defs>
     </svg>
     <div class="mock-banner">
-      <b>МАКЕТ v4 · СЕГМЕНТНОЕ КОЛЬЦО ФИДОВ</b>
+      <b>MOCKUP v4 · SEGMENTED FEED RING</b>
       <span
-        >DeFiScan, Philidor, Risklayer и DefiLlama — точные записи из снапшота проекта (20 сен
-        2026). Всё с меткой ДЕМО вымышлено. Демо-время: 21 сен 2026, 09:00 UTC.</span
+        >DeFiScan, Philidor, Risklayer and DefiLlama are exact records from the project snapshot (20
+        Sep 2026). Everything labelled DEMO is invented. Demo time: 21 Sep 2026, 09:00 UTC.</span
       >
     </div>
     <header class="site-header">
       <div class="inner">
-        <a class="brand" href="#/" aria-label="defi-dna — на главную">
+        <a class="brand" href="#/" aria-label="defi-dna — home">
           <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
             <path d="M3 3h9v9H3zM16 3h9v9h-9zM3 16h9v9H3z" fill="currentColor" />
             <path d="M16 25v-9h9" stroke="currentColor" stroke-width="3" />
           </svg>
           <span>defi-dna<span class="dot">.</span></span>
         </a>
-        <nav class="nav" aria-label="Основная навигация">
-          <a href="#/" class="active">Протоколы</a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="#/" class="active">Protocols</a>
         </nav>
         <div class="tools">
           <span class="prov cp0x"><b>CP0X</b></span
-          ><span>Срез данных: 20 сен 2026</span>
+          ><span>Data cut: 20 Sep 2026</span>
           <button class="icon-btn" id="theme-toggle" type="button"></button>
         </div>
       </div>
     </header>
     <main class="page" id="app"></main>
-    <div class="ringpop" id="ringpop" role="dialog" aria-label="Фиды протокола" hidden></div>
+    <div class="ringpop" id="ringpop" role="dialog" aria-label="Protocol feeds" hidden></div>
     <footer class="site-footer">
       <span
-        ><b>defi-dna.</b> Данные фидов показаны так, как их опубликовал провайдер. Цвета и рейтинг —
-        отдельные пометки cp0x.</span
+        ><b>defi-dna.</b> Feed data is shown exactly as the provider published it. Colours and the
+        rating are separate cp0x marks.</span
       >
       <span
-        ><span class="prov src"><b>ИСТОЧНИК</b>имя</span> — происхождение данных ·
-        <span class="prov cp0x"><b>CP0X</b></span> — вывод cp0x · <span class="demo">ДЕМО</span> —
-        вымышленные данные</span
+        ><span class="prov src"><b>SOURCE</b>name</span> — data origin ·
+        <span class="prov cp0x"><b>CP0X</b></span> — cp0x conclusion ·
+        <span class="demo">DEMO</span> — invented data</span
       >
     </footer>
 
@@ -4430,7 +4430,7 @@
    Registry. Three feeds are the project's real adapters (DeFiScan,
    Philidor, Risklayer) and render the exact snapshot records in REAL.
    Every other feed is an anonymised DEMO feed: its content is invented
-   and always labelled ДЕМО. Order = the order feeds join the registry,
+   and always labelled DEMO. Order = the order feeds join the registry,
    so the 6 / 14 / 24 presets are prefixes of this list.
 ------------------------------------------------------------------- */
       const TYPES = [
@@ -4473,7 +4473,7 @@
         },
         {
           id: 'm1',
-          name: 'Монитор M1',
+          name: 'Monitor M1',
           type: 'monitoring',
           fmt: 'events',
           topic: 'On-chain alerts',
@@ -4481,24 +4481,24 @@
         },
         {
           id: 'r1',
-          name: 'Исследование R1',
+          name: 'Research R1',
           type: 'research',
           fmt: 'research',
           topic: 'Protocol reviews',
         },
         {
           id: 'd1',
-          name: 'Дашборд D1',
+          name: 'Dashboard D1',
           type: 'dashboard',
           fmt: 'metrics',
           topic: 'Market metrics',
           table: true,
         },
         // → 14
-        { id: 'ra', name: 'Рейтинг A', type: 'rating', fmt: 'grade', topic: 'Letter ratings' },
+        { id: 'ra', name: 'Rating A', type: 'rating', fmt: 'grade', topic: 'Letter ratings' },
         {
           id: 'm2',
-          name: 'Монитор M2',
+          name: 'Monitor M2',
           type: 'monitoring',
           fmt: 'events',
           topic: 'Governance watch',
@@ -4506,22 +4506,22 @@
         },
         {
           id: 'r2',
-          name: 'Исследование R2',
+          name: 'Research R2',
           type: 'research',
           fmt: 'research',
           topic: 'Economic design',
         },
-        { id: 'd2', name: 'Дашборд D2', type: 'dashboard', fmt: 'metrics', topic: 'Liquidity' },
+        { id: 'd2', name: 'Dashboard D2', type: 'dashboard', fmt: 'metrics', topic: 'Liquidity' },
         {
           id: 'rb',
-          name: 'Рейтинг B',
+          name: 'Rating B',
           type: 'rating',
           fmt: 'score100',
           topic: 'Scored assessments',
         },
         {
           id: 'm3',
-          name: 'Монитор M3',
+          name: 'Monitor M3',
           type: 'monitoring',
           fmt: 'events',
           topic: 'Oracle monitoring',
@@ -4529,24 +4529,24 @@
         },
         {
           id: 'r3',
-          name: 'Исследование R3',
+          name: 'Research R3',
           type: 'research',
           fmt: 'research',
           topic: 'Security research',
         },
         {
           id: 'd3',
-          name: 'Дашборд D3',
+          name: 'Dashboard D3',
           type: 'dashboard',
           fmt: 'metrics',
           topic: 'Usage analytics',
         },
         // → 24
-        { id: 'rc', name: 'Рейтинг C', type: 'rating', fmt: 'stars', topic: 'Safety stars' },
-        { id: 'rd', name: 'Рейтинг D', type: 'rating', fmt: 'tier', topic: 'Tier lists' },
+        { id: 'rc', name: 'Rating C', type: 'rating', fmt: 'stars', topic: 'Safety stars' },
+        { id: 'rd', name: 'Rating D', type: 'rating', fmt: 'tier', topic: 'Tier lists' },
         {
           id: 'm4',
-          name: 'Монитор M4',
+          name: 'Monitor M4',
           type: 'monitoring',
           fmt: 'events',
           topic: 'Admin-key watch',
@@ -4554,7 +4554,7 @@
         },
         {
           id: 'm5',
-          name: 'Монитор M5',
+          name: 'Monitor M5',
           type: 'monitoring',
           fmt: 'events',
           topic: 'Bridge & dependency watch',
@@ -4562,7 +4562,7 @@
         },
         {
           id: 'm6',
-          name: 'Монитор M6',
+          name: 'Monitor M6',
           type: 'monitoring',
           fmt: 'events',
           topic: 'Liquidity alerts',
@@ -4570,35 +4570,35 @@
         },
         {
           id: 'r4',
-          name: 'Исследование R4',
+          name: 'Research R4',
           type: 'research',
           fmt: 'research',
           topic: 'Governance research',
         },
         {
           id: 'r5',
-          name: 'Исследование R5',
+          name: 'Research R5',
           type: 'research',
           fmt: 'research',
           topic: 'Incident post-mortems',
         },
         {
           id: 'r6',
-          name: 'Исследование R6',
+          name: 'Research R6',
           type: 'research',
           fmt: 'research',
           topic: 'Token & incentives',
         },
         {
           id: 'd4',
-          name: 'Дашборд D4',
+          name: 'Dashboard D4',
           type: 'dashboard',
           fmt: 'metrics',
           topic: 'Risk parameters',
         },
         {
           id: 'd5',
-          name: 'Дашборд D5',
+          name: 'Dashboard D5',
           type: 'dashboard',
           fmt: 'metrics',
           topic: 'Holder concentration',
@@ -4606,20 +4606,20 @@
       ]
       const REGISTRY_SIZES = [6, 14, 24]
 
-      /* cp0x rating (ДЕМО): five weighted factors, 0–100 each. */
+      /* cp0x rating (DEMO): five weighted factors, 0–100 each. */
       const FACTORS = [
-        { k: 'Покрытие фидами', w: 15 },
-        { k: 'Пометки cp0x по фидам', w: 30 },
-        { k: 'История инцидентов', w: 20 },
-        { k: 'Управление и обновляемость', w: 20 },
-        { k: 'Аудиты', w: 15 },
+        { k: 'Feed coverage', w: 15 },
+        { k: 'cp0x marks on feeds', w: 30 },
+        { k: 'Incident history', w: 20 },
+        { k: 'Governance and upgradeability', w: 20 },
+        { k: 'Audits', w: 15 },
       ]
 
       const PROTOCOLS = [
         {
           id: 'aave',
           name: 'Aave',
-          cats: ['Кредитование', 'Стейблкоин'],
+          cats: ['Lending', 'Stablecoin'],
           kind: 'lending',
           chains: [
             'Ethereum',
@@ -4635,31 +4635,31 @@
             'Sonic',
             'zkSync Era',
           ],
-          desc: 'Пуловое кредитование с переменными ставками и собственным стейблкоином GHO. В каталоге — развёртывания v3 и v4.',
+          desc: 'Pooled lending with variable rates and its own GHO stablecoin. The catalog covers the v3 and v4 deployments.',
           links: {
-            Сайт: 'https://aave.com',
-            Документация: 'https://aave.com/docs',
+            Website: 'https://aave.com',
+            Docs: 'https://aave.com/docs',
             GitHub: 'https://github.com/aave',
-            Управление: 'https://governance.aave.com',
+            Governance: 'https://governance.aave.com',
           },
           profile: { cov: 0.9, bias: 0.2 },
           scores: [90, 55, 60, 65, 85],
           verdict:
-            'Зрелый протокол с глубоким аудитом; в 2026 году — инциденты с оракулом и зависимостями.',
+            'A mature protocol with deep audit coverage; in 2026, incidents involving an oracle and dependencies.',
           gov: [
-            ['Модель управления', 'Aave DAO, ончейн-голосование AAVE / stkAAVE (Governance v3)'],
-            ['Исполнение решений', 'Executor Level 1 и Level 2 с таймлоками 1 и 7 дней'],
-            ['Экстренные полномочия', 'Guardian-мультисиг может приостанавливать рынки'],
+            ['Governance model', 'Aave DAO, on-chain AAVE / stkAAVE voting (Governance v3)'],
+            ['Execution', 'Executor Level 1 and Level 2 with 1- and 7-day timelocks'],
+            ['Emergency powers', 'A Guardian multisig can pause markets'],
             [
-              'Обновляемость',
-              'Pool и PoolConfigurator — обновляемые прокси под контролем Executor',
+              'Upgradeability',
+              'Pool and PoolConfigurator are upgradeable proxies controlled by the Executor',
             ],
-            ['Токен', 'AAVE'],
+            ['Token', 'AAVE'],
           ],
           notes: [
             [
-              'Расхождение',
-              'DeFiScan (Stage 0) и Risklayer (4.8/10 · medium) оценивают разное — децентрализацию и совокупный риск. cp0x не сводит их к одному значению.',
+              'Divergence',
+              'DeFiScan (Stage 0) and Risklayer (4.8/10 · medium) assess different things — decentralization and overall risk. cp0x does not merge them into one value.',
               'feed:defiscan',
             ],
           ],
@@ -4683,28 +4683,28 @@
             'Blast',
             'World Chain',
           ],
-          desc: 'Автоматический маркет-мейкер: версии v2, v3 (концентрированная ликвидность) и v4 (хуки), плюс поток ордеров UniswapX.',
+          desc: 'Automated market maker: v2, v3 (concentrated liquidity) and v4 (hooks), plus the UniswapX order flow.',
           links: {
-            Сайт: 'https://uniswap.org',
-            Документация: 'https://docs.uniswap.org',
+            Website: 'https://uniswap.org',
+            Docs: 'https://docs.uniswap.org',
             GitHub: 'https://github.com/Uniswap',
-            Управление: 'https://gov.uniswap.org',
+            Governance: 'https://gov.uniswap.org',
           },
           profile: { cov: 0.85, bias: 0.6 },
           scores: [85, 75, 95, 80, 80],
           verdict:
-            'Неизменяемое ядро пулов и долгая история без эксплойтов ядра; вопросы — к управлению v4 на L2.',
+            'Immutable pool core and a long history without core exploits; open questions concern v4 governance on L2s.',
           gov: [
-            ['Модель управления', 'Uniswap DAO, голосование UNI (Governor Bravo)'],
-            ['Исполнение решений', 'Через контракт Timelock'],
-            ['Обновляемость', 'Ядро пулов v2 и v3 не обновляется'],
-            ['Комиссия протокола', 'Включается и настраивается решением управления'],
-            ['Токен', 'UNI'],
+            ['Governance model', 'Uniswap DAO, UNI voting (Governor Bravo)'],
+            ['Execution', 'Through the Timelock contract'],
+            ['Upgradeability', 'The v2 and v3 pool core cannot be upgraded'],
+            ['Protocol fee', 'Switched on and configured by governance'],
+            ['Token', 'UNI'],
           ],
           notes: [
             [
-              'Покрытие',
-              'DeFiScan публикует отдельные обзоры для v2 и v3; обзора v4 в данных нет.',
+              'Coverage',
+              'DeFiScan publishes separate reviews for v2 and v3; there is no v4 review in the data.',
               'feed:defiscan',
             ],
           ],
@@ -4724,27 +4724,29 @@
             'Optimism',
             'Sonic',
           ],
-          desc: 'AMM с взвешенными и кастомными пулами: архитектура Vault v2 и пулы с хуками v3.',
+          desc: 'AMM with weighted and custom pools: the Vault v2 architecture and v3 pools with hooks.',
           links: {
-            Сайт: 'https://balancer.fi',
-            Документация: 'https://docs.balancer.fi',
+            Website: 'https://balancer.fi',
+            Docs: 'https://docs.balancer.fi',
             GitHub: 'https://github.com/balancer',
-            Управление: 'https://forum.balancer.fi',
+            Governance: 'https://forum.balancer.fi',
           },
           profile: { cov: 0.6, bias: -0.6 },
           scores: [35, 30, 15, 50, 70],
-          verdict:
-            'Крупный эксплойт в ноябре 2025 года; реальные фиды проекта данных не публикуют.',
+          verdict: 'A major exploit in November 2025; the project’s real feeds publish no data.',
           gov: [
-            ['Модель управления', 'Balancer DAO, голосование veBAL (Snapshot)'],
-            ['Исполнение решений', 'Мультисиг DAO'],
-            ['Обновляемость', 'Vault v2 не обновляется; права выдаются через Authorizer'],
-            ['Токен', 'BAL'],
+            ['Governance model', 'Balancer DAO, veBAL voting (Snapshot)'],
+            ['Execution', 'DAO multisig'],
+            [
+              'Upgradeability',
+              'Vault v2 cannot be upgraded; permissions are granted through the Authorizer',
+            ],
+            ['Token', 'BAL'],
           ],
           notes: [
             [
-              'Покрытие',
-              'Ни DeFiScan, ни Philidor, ни Risklayer не публикуют данных по Balancer — покрытие держится только на демо-фидах.',
+              'Coverage',
+              'None of DeFiScan, Philidor or Risklayer publishes data on Balancer — coverage rests on demo feeds only.',
               null,
             ],
           ],
@@ -4752,30 +4754,30 @@
         {
           id: 'morpho',
           name: 'Morpho',
-          cats: ['Кредитование'],
+          cats: ['Lending'],
           kind: 'lending',
           chains: ['Ethereum', 'Base', 'Arbitrum', 'Polygon', 'Unichain', 'Katana'],
-          desc: 'Неизменяемый синглтон Morpho Blue с изолированными рынками, которые создаются без разрешений.',
+          desc: 'The immutable Morpho Blue singleton with isolated markets that are created permissionlessly.',
           links: {
-            Сайт: 'https://morpho.org',
-            Документация: 'https://docs.morpho.org',
+            Website: 'https://morpho.org',
+            Docs: 'https://docs.morpho.org',
             GitHub: 'https://github.com/morpho-org',
-            Управление: 'https://forum.morpho.org',
+            Governance: 'https://forum.morpho.org',
           },
           profile: { cov: 0.8, bias: 0.3 },
           scores: [85, 65, 95, 60, 90],
           verdict:
-            'Минимальное неизменяемое ядро и сильное аудиторское покрытие; риски смещены к оракулам и кураторам.',
+            'A minimal immutable core and strong audit coverage; the risks shift to oracles and curators.',
           gov: [
-            ['Модель управления', 'Morpho DAO, токен MORPHO'],
-            ['Обновляемость', 'Ядро Morpho Blue неизменяемо'],
-            ['Полномочия владельца', 'Включение новых IRM и LLTV, установка комиссии'],
-            ['Токен', 'MORPHO'],
+            ['Governance model', 'Morpho DAO, MORPHO token'],
+            ['Upgradeability', 'The Morpho Blue core is immutable'],
+            ['Owner powers', 'Enabling new IRMs and LLTVs, setting the fee'],
+            ['Token', 'MORPHO'],
           ],
           notes: [
             [
-              'Нет вывода',
-              'Philidor оценивает отдельные волты и не публикует оценку протокола — cp0x не выводит из этих оценок вывод о Morpho.',
+              'No conclusion',
+              'Philidor rates individual vaults and publishes no protocol score — cp0x draws no conclusion about Morpho from those scores.',
               'feed:philidor',
             ],
           ],
@@ -4783,7 +4785,7 @@
         {
           id: 'lido',
           name: 'Lido',
-          cats: ['Ликвидный стейкинг'],
+          cats: ['Liquid staking'],
           kind: 'staking',
           chains: [
             'Ethereum',
@@ -4796,27 +4798,27 @@
             'zkSync Era',
             'Mantle',
           ],
-          desc: 'Ликвидный стейкинг ETH: stETH и wstETH, валидаторы кураторских, DVT- и комьюнити-операторов.',
+          desc: 'ETH liquid staking: stETH and wstETH, with validators from curated, DVT and community operators.',
           links: {
-            Сайт: 'https://lido.fi',
-            Документация: 'https://docs.lido.fi',
+            Website: 'https://lido.fi',
+            Docs: 'https://docs.lido.fi',
             GitHub: 'https://github.com/lidofinance',
-            Управление: 'https://research.lido.fi',
+            Governance: 'https://research.lido.fi',
           },
           profile: { cov: 0.85, bias: 0.3 },
           scores: [80, 60, 95, 55, 85],
           verdict:
-            'Доминирующий провайдер стейкинга; концентрация и сложность управления — основные вопросы.',
+            'The dominant staking provider; concentration and governance complexity are the main questions.',
           gov: [
-            ['Модель управления', 'Lido DAO, голосование LDO'],
-            ['Токен', 'LDO'],
+            ['Governance model', 'Lido DAO, LDO voting'],
+            ['Token', 'LDO'],
           ],
           notes: [],
         },
         {
           id: 'curve',
           name: 'Curve',
-          cats: ['DEX', 'Стейблкоин'],
+          cats: ['DEX', 'Stablecoin'],
           kind: 'dex',
           chains: [
             'Ethereum',
@@ -4828,110 +4830,111 @@
             'Gnosis',
             'Sonic',
           ],
-          desc: 'Стейбл- и крипто-AMM, изолированные рынки Llamalend и стейблкоин crvUSD.',
+          desc: 'Stable and crypto AMMs, isolated Llamalend markets and the crvUSD stablecoin.',
           links: {
-            Сайт: 'https://curve.fi',
-            Документация: 'https://docs.curve.fi',
+            Website: 'https://curve.fi',
+            Docs: 'https://docs.curve.fi',
             GitHub: 'https://github.com/curvefi',
-            Управление: 'https://gov.curve.fi',
+            Governance: 'https://gov.curve.fi',
           },
           profile: { cov: 0.75, bias: -0.1 },
           scores: [70, 40, 45, 55, 60],
-          verdict: 'Широкое покрытие, но история инцидентов и высокий уровень риска у Risklayer.',
+          verdict: 'Broad coverage, but an incident history and a high risk level at Risklayer.',
           gov: [
-            ['Модель управления', 'Curve DAO, голосование veCRV'],
-            ['Токен', 'CRV · crvUSD'],
+            ['Governance model', 'Curve DAO, veCRV voting'],
+            ['Token', 'CRV · crvUSD'],
           ],
           notes: [],
         },
         {
           id: 'spark',
           name: 'Spark',
-          cats: ['Кредитование', 'Доходность'],
+          cats: ['Lending', 'Yield'],
           kind: 'lending',
           chains: ['Ethereum', 'Base', 'Arbitrum', 'Optimism', 'Gnosis', 'Unichain'],
-          desc: 'Кредитование SparkLend, сбережения Spark Savings и слой ликвидности Spark Liquidity Layer.',
+          desc: 'SparkLend lending, Spark Savings and the Spark Liquidity Layer.',
           links: {
-            Сайт: 'https://spark.fi',
-            Документация: 'https://docs.spark.fi',
+            Website: 'https://spark.fi',
+            Docs: 'https://docs.spark.fi',
             GitHub: 'https://github.com/sparkdotfi',
-            Управление: 'https://forum.sky.money',
+            Governance: 'https://forum.sky.money',
           },
           profile: { cov: 0.7, bias: 0.3 },
           scores: [75, 60, 95, 55, 70],
           verdict:
-            'Связанная с Sky инфраструктура кредитования; управление наследуется от экосистемы Sky.',
+            'Lending infrastructure tied to Sky; governance is inherited from the Sky ecosystem.',
           gov: [
-            ['Модель управления', 'Управление через экосистему Sky'],
-            ['Токен', 'SPK'],
+            ['Governance model', 'Governed through the Sky ecosystem'],
+            ['Token', 'SPK'],
           ],
           notes: [],
         },
         {
           id: 'compound',
           name: 'Compound',
-          cats: ['Кредитование'],
+          cats: ['Lending'],
           kind: 'lending',
           chains: ['Ethereum', 'Arbitrum', 'Base', 'Optimism', 'Polygon', 'Scroll', 'Mantle'],
-          desc: 'Рынки Comet (v3) с одним заимствуемым активом и пул cToken-эпохи v2.',
+          desc: 'Comet markets (v3) with one borrowable asset each, and the cToken-era v2 pool.',
           links: {
-            Сайт: 'https://compound.finance',
-            Документация: 'https://docs.compound.finance',
+            Website: 'https://compound.finance',
+            Docs: 'https://docs.compound.finance',
             GitHub: 'https://github.com/compound-finance',
-            Управление: 'https://www.comp.xyz',
+            Governance: 'https://www.comp.xyz',
           },
           profile: { cov: 0.7, bias: 0 },
           scores: [80, 40, 40, 55, 75],
           verdict:
-            'Долгая история, но высокий уровень риска у Risklayer и крупный инцидент v2 в прошлом.',
+            'A long history, but a high risk level at Risklayer and a major v2 incident in the past.',
           gov: [
-            ['Модель управления', 'Compound DAO, голосование COMP (Governor Bravo)'],
-            ['Токен', 'COMP'],
+            ['Governance model', 'Compound DAO, COMP voting (Governor Bravo)'],
+            ['Token', 'COMP'],
           ],
           notes: [],
         },
         {
           id: 'pendle',
           name: 'Pendle',
-          cats: ['Доходность'],
+          cats: ['Yield'],
           kind: 'yield',
           chains: ['Ethereum', 'Arbitrum', 'Base', 'BNB Chain', 'Optimism', 'Mantle', 'Sonic'],
-          desc: 'Токенизация доходности: разделение активов на principal- и yield-токены с рынками до даты погашения.',
+          desc: 'Yield tokenization: splitting assets into principal and yield tokens, with markets up to maturity.',
           links: {
-            Сайт: 'https://pendle.finance',
-            Документация: 'https://docs.pendle.finance',
+            Website: 'https://pendle.finance',
+            Docs: 'https://docs.pendle.finance',
             GitHub: 'https://github.com/pendle-finance',
-            Управление: 'https://snapshot.box/#/s:pendle.eth',
+            Governance: 'https://snapshot.box/#/s:pendle.eth',
           },
           profile: { cov: 0.55, bias: 0 },
           scores: [60, 45, 95, 45, 60],
-          verdict: 'Сложная доходная механика; Risklayer — high, DeFiScan — Stage 0.',
+          verdict: 'Complex yield mechanics; Risklayer — high, DeFiScan — Stage 0.',
           gov: [
-            ['Модель управления', 'Голосование vePENDLE'],
-            ['Токен', 'PENDLE'],
+            ['Governance model', 'vePENDLE voting'],
+            ['Token', 'PENDLE'],
           ],
           notes: [],
         },
         {
           id: 'cowswap',
           name: 'CoW Swap',
-          cats: ['Агрегатор'],
+          cats: ['Aggregator'],
           kind: 'aggregator',
           chains: ['Ethereum', 'Arbitrum', 'Base', 'Gnosis', 'Avalanche', 'Polygon', 'BNB Chain'],
-          desc: 'Протокол торговли батч-аукционами, расчёт выполняют внешние солверы.',
+          desc: 'Batch-auction trading protocol; settlement is done by external solvers.',
           links: {
-            Сайт: 'https://cow.fi',
-            Документация: 'https://docs.cow.fi',
+            Website: 'https://cow.fi',
+            Docs: 'https://docs.cow.fi',
             GitHub: 'https://github.com/cowprotocol',
-            Управление: 'https://forum.cow.fi',
+            Governance: 'https://forum.cow.fi',
           },
           profile: { cov: 0.35, bias: 0.3 },
           scores: [30, 50, 80, 60, 55],
-          alt: { label: 'Объём торгов, 30 дн.', value: 5.1e9 },
-          verdict: 'Агрегатор без собственного TVL; реальные фиды проекта данных не публикуют.',
+          alt: { label: 'Trading volume, 30d', value: 5.1e9 },
+          verdict:
+            'An aggregator with no TVL of its own; the project’s real feeds publish no data.',
           gov: [
-            ['Модель управления', 'CoW DAO, голосование COW'],
-            ['Токен', 'COW'],
+            ['Governance model', 'CoW DAO, COW voting'],
+            ['Token', 'COW'],
           ],
           notes: [],
         },
@@ -4967,18 +4970,18 @@
       const NOW = Date.UTC(2026, 8, 21, 9, 0) // demo "now": the morning after the snapshot
       const DAY = 864e5
       const MON = [
-        'янв',
-        'фев',
-        'мар',
-        'апр',
-        'мая',
-        'июн',
-        'июл',
-        'авг',
-        'сен',
-        'окт',
-        'ноя',
-        'дек',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ]
       const MON_EN = [
         'Jan',
@@ -4997,12 +5000,12 @@
       const TYPE = Object.fromEntries(TYPES.map((t) => [t.id, t]))
       const PMAP = Object.fromEntries(PROTOCOLS.map((p) => [p.id, p]))
       const CLS = {
-        pos: 'положительный',
-        neu: 'нейтральный',
-        neg: 'отрицательный',
-        mixed: 'смешанные сигналы',
-        noconc: 'данные есть, вывода нет',
-        none: 'нет данных',
+        pos: 'positive',
+        neu: 'neutral',
+        neg: 'negative',
+        mixed: 'mixed signals',
+        noconc: 'data, no conclusion',
+        none: 'no data',
       }
       const CLS_ORDER = ['pos', 'neu', 'neg', 'mixed', 'noconc', 'none']
 
@@ -5027,26 +5030,26 @@
       const isoMin = (ms) => new Date(ms).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
       function rel(ms) {
         const h = (NOW - ms) / 36e5
-        if (h < 1) return 'только что'
-        if (h < 24) return `${Math.round(h)} ч назад`
+        if (h < 1) return 'just now'
+        if (h < 24) return `${Math.round(h)}h ago`
         const d = h / 24
-        if (d < 2) return 'вчера'
-        if (d < 45) return `${Math.floor(d)} дн. назад`
+        if (d < 2) return 'yesterday'
+        if (d < 45) return `${Math.floor(d)}d ago`
         const m = Math.floor(d / 30.44)
-        if (m < 12) return `${m} мес. назад`
+        if (m < 12) return `${m} mo ago`
         const y = Math.floor(m / 12)
-        return m % 12 ? `${y} г. ${m % 12} мес. назад` : `${y} г. назад`
+        return m % 12 ? `${y} y ${m % 12} mo ago` : `${y} y ago`
       }
       const money = (v) =>
         v == null
           ? '—'
           : v >= 1e10
-            ? `$${(v / 1e9).toFixed(1).replace('.', ',')} млрд`
+            ? `$${(v / 1e9).toFixed(1)}B`
             : v >= 1e9
-              ? `$${(v / 1e9).toFixed(2).replace('.', ',')} млрд`
+              ? `$${(v / 1e9).toFixed(2)}B`
               : v >= 1e6
-                ? `$${Math.round(v / 1e6)} млн`
-                : `$${Math.round(v / 1e3)} тыс.`
+                ? `$${Math.round(v / 1e6)}M`
+                : `$${Math.round(v / 1e3)}K`
       const usdEn = (v) =>
         v >= 1e9
           ? `$${(v / 1e9).toFixed(2)}B`
@@ -5054,12 +5057,7 @@
             ? `$${(v / 1e6).toFixed(1)}M`
             : `$${Math.round(v / 1e3)}K`
       const parseDay = (s) => (s ? Date.parse(s.length === 10 ? `${s}T00:00:00Z` : s) : null)
-      const plural = (n, one, few, many) =>
-        n % 10 === 1 && n % 100 !== 11
-          ? one
-          : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)
-            ? few
-            : many
+      const plural = (n, one, few, many) => (n === 1 ? one : many)
       function hash(s) {
         let h = 2166136261
         for (const c of s) {
@@ -5080,12 +5078,11 @@
       }
       const pick = (r, a) => a[Math.floor(r() * a.length)]
       const between = (r, a, b) => a + r() * (b - a)
-      const DEMO =
-        '<span class="demo" title="Вымышленные данные для демонстрации макета">ДЕМО</span>'
+      const DEMO = '<span class="demo" title="Invented data for the mockup">DEMO</span>'
       const prov = (kind, name) =>
         kind === 'cp0x'
-          ? `<span class="prov cp0x" title="Оценка или вывод cp0x, а не данные фида"><b>CP0X</b>${name ? esc(name) : ''}</span>`
-          : `<span class="prov src" title="Источник данных"><b>ИСТОЧНИК</b>${esc(name)}</span>`
+          ? `<span class="prov cp0x" title="A cp0x assessment or conclusion, not feed data"><b>CP0X</b>${name ? esc(name) : ''}</span>`
+          : `<span class="prov src" title="Data source"><b>SOURCE</b>${esc(name)}</span>`
       const svg = (d, size = 16) =>
         `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`
       const ICON = {
@@ -5104,11 +5101,11 @@
         moon: svg('<path d="M20 14a8.5 8.5 0 0 1-10-10 8.5 8.5 0 1 0 10 10Z"/>', 18),
       }
       const techStale = (t) =>
-        `<span class="tech" title="Данные старше порога для типа ${esc(t.label)}: ${t.staleDays} дн.">${ICON.clock}устарело</span>`
+        `<span class="tech" title="Data older than the threshold for type ${esc(t.label)}: ${t.staleDays} days">${ICON.clock}stale</span>`
       const techErr =
-        '<span class="tech" title="Последняя попытка получения данных завершилась ошибкой">' +
+        '<span class="tech" title="The last attempt to fetch data failed">' +
         ICON.err +
-        'ошибка получения</span>'
+        'fetch error</span>'
       const sw = (cls) => `<i class="sw ${cls}" aria-hidden="true"></i>`
       const markTag = (cls) => `<span class="mark ${cls}">${sw(cls)}${CLS[cls]}</span>`
       const avatar = (p, lg) =>
@@ -5190,19 +5187,22 @@
           if (v === 'Stage 2')
             return {
               cls: 'pos',
-              why: '«Stage 2» — верхняя ступень шкалы DeFiScan (Stage 0 → Stage 2).',
+              why: '“Stage 2” is the top step of DeFiScan’s scale (Stage 0 → Stage 2).',
             }
           if (v === 'Stage 1')
             return {
               cls: 'neu',
-              why: '«Stage 1» — средняя ступень шкалы DeFiScan (Stage 0 → Stage 2).',
+              why: '“Stage 1” is the middle step of DeFiScan’s scale (Stage 0 → Stage 2).',
             }
           if (v === 'Stage 0')
             return {
               cls: 'neg',
-              why: '«Stage 0» — нижняя ступень шкалы DeFiScan (Stage 0 → Stage 2).',
+              why: '“Stage 0” is the bottom step of DeFiScan’s scale (Stage 0 → Stage 2).',
             }
-          return { cls: 'noconc', why: `Значение «${v}» вне шкалы стадий — cp0x вывод не делает.` }
+          return {
+            cls: 'noconc',
+            why: `The value “${v}” is outside the stage scale — cp0x draws no conclusion.`,
+          }
         }
         if (id === 'risklayer') {
           const lvl = rec.extra && rec.extra.riskLevel
@@ -5210,20 +5210,20 @@
             (k) => k.severity === 'critical',
           ).length
           const caveat =
-            ' Risklayer не публикует порядок своих уровней — трактовка уровня как «середины» или «края» шкалы принадлежит cp0x.'
-          if (lvl === 'low') return { cls: 'pos', why: `Уровень «low».${caveat}` }
-          if (lvl === 'high') return { cls: 'neg', why: `Уровень «high».${caveat}` }
+            ' Risklayer publishes no ordering for its levels — reading a level as the “middle” or “edge” of the scale is cp0x’s interpretation.'
+          if (lvl === 'low') return { cls: 'pos', why: `Level “low”.${caveat}` }
+          if (lvl === 'high') return { cls: 'neg', why: `Level “high”.${caveat}` }
           if (lvl === 'medium' && crit >= 3)
             return {
               cls: 'mixed',
-              why: `Уровень «medium», но ${crit} ${plural(crit, 'ключевая находка', 'ключевые находки', 'ключевых находок')} с severity «critical» — сигналы расходятся.${caveat}`,
+              why: `Level “medium”, but ${crit} ${plural(crit, 'key finding', 'key findings', 'key findings')} with severity “critical” — the signals diverge.${caveat}`,
             }
-          if (lvl === 'medium') return { cls: 'neu', why: `Уровень «medium».${caveat}` }
-          return { cls: 'noconc', why: 'Уровень риска не указан.' }
+          if (lvl === 'medium') return { cls: 'neu', why: `Level “medium”.${caveat}` }
+          return { cls: 'noconc', why: 'No risk level given.' }
         }
         return {
           cls: 'noconc',
-          why: 'Philidor оценивает отдельные волты и не публикует оценку протокола. cp0x не выводит из оценок волтов вывод о протоколе.',
+          why: 'Philidor rates individual vaults and publishes no protocol score. cp0x draws no protocol-level conclusion from vault scores.',
         }
       }
 
@@ -5234,7 +5234,7 @@
         let st = o ? o.st : r() < p.profile.cov + boost ? 'ok' : 'none'
         if (!o && st === 'ok' && r() < 0.07) st = 'error'
         if (st === 'none')
-          return { st, demo: true, why: 'Фид не публикует данных по этому протоколу.' }
+          return { st, demo: true, why: 'The feed publishes no data for this protocol.' }
         if (st === 'error') {
           return {
             st,
@@ -5318,14 +5318,14 @@
                 ? `Strong contract assurance offsets weak market and operational controls; the committee did not reach a single view on ${p.name}.`
                 : `Rating reflects contract assurance, governance process and market structure of ${p.name} as reviewed by the committee.`,
           }
-          const pos = base < 3 ? 'верхней трети' : base < 6 ? 'средней трети' : 'нижней трети'
+          const pos = base < 3 ? 'upper third' : base < 6 ? 'middle third' : 'lower third'
           return {
             value: content.rating,
             content,
             why:
               cls === 'mixed'
-                ? `Компоненты рейтинга расходятся (${comps.map((c) => c.grade).join(', ')}) — смешанные сигналы.`
-                : `«${content.rating}» — в ${pos} шкалы фида AAA … D.`,
+                ? `Rating components diverge (${comps.map((c) => c.grade).join(', ')}) — mixed signals.`
+                : `“${content.rating}” — in the ${pos} of the feed’s AAA … D scale.`,
           }
         },
         score100(p, f, cls, r) {
@@ -5354,8 +5354,8 @@
             content,
             why:
               cls === 'mixed'
-                ? 'Подоценки фида расходятся сильнее чем на 40 пунктов — смешанные сигналы.'
-                : `${score} из 100 по шкале фида: ${cls === 'pos' ? '≥ 75' : cls === 'neu' ? '50–74' : '< 50'} → ${CLS[cls]}.`,
+                ? 'The feed’s sub-scores diverge by more than 40 points — mixed signals.'
+                : `${score} of 100 on the feed’s scale: ${cls === 'pos' ? '≥ 75' : cls === 'neu' ? '50–74' : '< 50'} → ${CLS[cls]}.`,
           }
         },
         stars(p, f, cls, r) {
@@ -5375,8 +5375,8 @@
             content,
             why:
               cls === 'mixed'
-                ? 'Комментарий фида противопоставляет сильные и слабые стороны.'
-                : `${stars} из 5 звёзд → ${CLS[cls]}.`,
+                ? 'The feed’s comment weighs strengths against weaknesses.'
+                : `${stars} of 5 stars → ${CLS[cls]}.`,
           }
         },
         tier(p, f, cls, r) {
@@ -5396,7 +5396,7 @@
           return {
             value: `Tier ${tier}`,
             content,
-            why: `«Tier ${tier}» по шкале фида Tier 1 … Tier 4 → ${CLS[cls]}.`,
+            why: `“Tier ${tier}” on the feed’s Tier 1 … Tier 4 scale → ${CLS[cls]}.`,
           }
         },
         events(p, f, cls, r, date) {
@@ -5460,12 +5460,12 @@
           }
           const why =
             cls === 'neg'
-              ? `Есть открытое событие уровня «${s[0]}» (верхний уровень шкалы фида).`
+              ? `There is an open event of level “${s[0]}” (the top level of the feed’s scale).`
               : cls === 'neu'
-                ? `Есть события уровней «${s[1]}» и ниже, открытых событий верхнего уровня нет.`
-                : 'Кроме служебных событий, алертов нет. Отсутствие алертов — не вывод о рисках.'
+                ? `There are events of level “${s[1]}” and below; no open top-level events.`
+                : 'Apart from service events, there are no alerts. The absence of alerts is not a conclusion about risk.'
           return {
-            value: `${ev.length} ${plural(ev.length, 'событие', 'события', 'событий')} · 30 дн.`,
+            value: `${ev.length} ${plural(ev.length, 'event', 'events', 'events')} · 30d`,
             content,
             why,
           }
@@ -5515,11 +5515,11 @@
             ],
           }
           const why = {
-            pos: 'Вывод автора — низкий риск без существенных оговорок.',
-            neu: 'Вывод автора — умеренный риск, сопоставимый с аналогами.',
-            neg: 'Вывод автора — повышенный риск до закрытия открытых вопросов.',
+            pos: 'The author’s conclusion — low risk without material caveats.',
+            neu: 'The author’s conclusion — moderate risk, comparable to peers.',
+            neg: 'The author’s conclusion — elevated risk until the open questions are closed.',
             mixed:
-              'Автор прямо отказывается от единого вывода: сильные и слабые стороны не уравновешиваются.',
+              'The author explicitly declines to give a single conclusion: strengths and weaknesses do not balance out.',
           }[cls]
           return { value: content.title, content, why }
         },
@@ -5577,8 +5577,8 @@
             content,
             why:
               cls === 'neu'
-                ? 'Фид сам отмечает превышение 2 из 12 порогов.'
-                : 'Дашборд публикует только показатели, без оценки — вывод не делаем.',
+                ? 'The feed itself flags 2 of 12 thresholds as exceeded.'
+                : 'The dashboard publishes metrics only, without an assessment — we draw no conclusion.',
           }
         },
       }
@@ -5635,7 +5635,7 @@
           const a0 = a
           const a1 = a + span
           a = a1 + gap + (f.type !== feeds[(i + 1) % N].type ? extra : 0)
-          const title = `${f.name}${f.real ? '' : ' (ДЕМО)'} — ${c.st === 'ok' ? `данные есть · пометка cp0x: ${CLS[c.cls]}` : c.st === 'error' ? 'ошибка получения' : 'нет данных'}${c.stale ? ' · устарело' : ''}`
+          const title = `${f.name}${f.real ? '' : ' (DEMO)'} — ${c.st === 'ok' ? `data available · cp0x mark: ${CLS[c.cls]}` : c.st === 'error' ? 'fetch error' : 'no data'}${c.stale ? ' · stale' : ''}`
           body += `<path d="${arc(cx, rm, a0, a1)}" class="seg-${c.st === 'ok' ? c.cls : 'none'}" stroke-width="${c.st === 'ok' ? th : th * 0.45}" fill="none"><title>${esc(title)}</title></path>`
           if (c.stale || c.st === 'error') {
             const m = ((a0 + a1) / 2) * (Math.PI / 180)
@@ -5648,23 +5648,23 @@
           }
         })
         const s = stats(p)
-        return `<svg class="ring-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${s.n} из ${s.N} фидов с данными">${body}<text class="ctr" x="${cx}" y="${cx}" dy="0.36em" text-anchor="middle" style="font-size:${Math.round(size * 0.29)}px">${s.n}</text></svg>`
+        return `<svg class="ring-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${s.n} of ${s.N} feeds with data">${body}<text class="ctr" x="${cx}" y="${cx}" dy="0.36em" text-anchor="middle" style="font-size:${Math.round(size * 0.29)}px">${s.n}</text></svg>`
       }
       function ringButton(p, size = 46) {
         const s = stats(p)
         const tech =
           (s.stale ? `<span class="tech">${ICON.clock}${s.stale}</span>` : '') +
           (s.err ? `<span class="tech">${ICON.err}${s.err}</span>` : '')
-        return `<button type="button" class="ring-btn" data-ring="${p.id}" aria-haspopup="dialog" aria-expanded="${S.pop && S.pop.pid === p.id}" title="Открыть список всех фидов">
+        return `<button type="button" class="ring-btn" data-ring="${p.id}" aria-haspopup="dialog" aria-expanded="${S.pop && S.pop.pid === p.id}" title="Open the list of all feeds">
     ${ringSvg(p, size)}
-    <span class="ring-txt"><b>${s.n}<span>/${s.N}</span></b><small>фидов с данными</small>${tech ? `<span class="ring-tech">${tech}</span>` : ''}</span>
+    <span class="ring-txt"><b>${s.n}<span>/${s.N}</span></b><small>feeds with data</small>${tech ? `<span class="ring-tech">${tech}</span>` : ''}</span>
   </button>`
       }
       const LEGEND = () => `<div class="legend">
-  <span class="lead">Цвет сигнала — пометка cp0x; исходные данные фида показаны без изменений.</span>
+  <span class="lead">Signal colour is a cp0x mark; the feed’s original data is shown unchanged.</span>
   ${CLS_ORDER.map((k) => `<span>${sw(k)}${CLS[k]}</span>`).join('')}
   <span class="sep"></span>
-  <span>${techStale(TYPE.rating)}${techErr}</span><span>— технические метки, не оценка риска</span>
+  <span>${techStale(TYPE.rating)}${techErr}</span><span>— technical labels, not a risk assessment</span>
 </div>`
 
       /* ---------------- ring popover ---------------- */
@@ -5724,8 +5724,8 @@
       <a class="rp-row${c.st === 'ok' ? '' : ' nodata'}" href="#/p/${p.id}/feed/${c.f.id}">
         ${sw(c.st === 'ok' ? c.cls : 'none')}
         <span><span class="nm">${esc(c.f.name)}${c.f.real ? '' : DEMO}</span>
-          <span class="st">${c.st === 'ok' ? `<span>${esc(CLS[c.cls])}</span><span class="mono">${c.date ? fmtDate(c.date) : 'дата не указана фидом'}</span>` : c.st === 'error' ? `<span>нет данных</span>${techErr}` : '<span>нет данных</span>'}${c.stale ? techStale(TYPE[c.f.type]) : ''}</span></span>
-        <span class="go">${c.st === 'ok' ? 'Открыть' : 'Подробнее'} →</span>
+          <span class="st">${c.st === 'ok' ? `<span>${esc(CLS[c.cls])}</span><span class="mono">${c.date ? fmtDate(c.date) : 'date not given by feed'}</span>` : c.st === 'error' ? `<span>no data</span>${techErr}` : '<span>no data</span>'}${c.stale ? techStale(TYPE[c.f.type]) : ''}</span></span>
+        <span class="go">${c.st === 'ok' ? 'Open' : 'Details'} →</span>
       </a>`,
               )
               .join('')
@@ -5733,13 +5733,13 @@
         }).join('')
         pop.innerHTML = `
     <div class="rp-h">
-      <div class="rp-t">${avatar(p)}<b>${esc(p.name)}</b><button type="button" class="icon-btn" data-pop-close aria-label="Закрыть список">${ICON.close}</button></div>
-      <div class="rp-sum"><span><b>${s.n}/${s.N}</b> фидов с данными</span>${s.stale ? techStale(TYPE.rating).replace('устарело', `устарело: ${s.stale}`) : ''}${s.err ? techErr.replace('ошибка получения', `ошибка получения: ${s.err}`) : ''}</div>
-      <div class="rp-ctl"><div class="seg" role="group" aria-label="Показать">
+      <div class="rp-t">${avatar(p)}<b>${esc(p.name)}</b><button type="button" class="icon-btn" data-pop-close aria-label="Close the list">${ICON.close}</button></div>
+      <div class="rp-sum"><span><b>${s.n}/${s.N}</b> feeds with data</span>${s.stale ? techStale(TYPE.rating).replace('stale', `stale: ${s.stale}`) : ''}${s.err ? techErr.replace('fetch error', `fetch error: ${s.err}`) : ''}</div>
+      <div class="rp-ctl"><div class="seg" role="group" aria-label="Show">
         ${[
-          ['all', 'Все'],
-          ['data', 'С данными'],
-          ['nodata', 'Без данных'],
+          ['all', 'All'],
+          ['data', 'With data'],
+          ['nodata', 'Without data'],
         ]
           .map(
             ([k, l]) =>
@@ -5748,8 +5748,8 @@
           .join('')}
       </div></div>
     </div>
-    <div class="rp-list">${rows || '<p class="muted" style="padding:12px">Нет фидов в этом состоянии.</p>'}</div>
-    <div class="rp-f"><span>Цвет — пометка cp0x</span><a class="text-link" href="#/p/${p.id}/feeds">Все фиды протокола →</a></div>`
+    <div class="rp-list">${rows || '<p class="muted" style="padding:12px">No feeds in this state.</p>'}</div>
+    <div class="rp-f"><span>Colour is a cp0x mark</span><a class="text-link" href="#/p/${p.id}/feeds">All protocol feeds →</a></div>`
       }
       pop.addEventListener('click', (e) => {
         if (e.target.closest('[data-pop-close]')) return closePop(true)
@@ -5787,21 +5787,21 @@
       /* ================= DASHBOARD ================= */
       const app = document.getElementById('app')
       const TVL_BANDS = [
-        ['ge10', '≥ $10 млрд'],
-        ['1to10', '$1–10 млрд'],
-        ['100to1', '$100 млн – 1 млрд'],
-        ['lt100', '< $100 млн'],
-        ['none', 'нет TVL'],
+        ['ge10', '≥ $10B'],
+        ['1to10', '$1–10B'],
+        ['100to1', '$100M – 1B'],
+        ['lt100', '< $100M'],
+        ['none', 'no TVL'],
       ]
       const SORTS = [
-        ['tvl-desc', 'TVL: по убыванию'],
-        ['tvl-asc', 'TVL: по возрастанию'],
-        ['name-asc', 'Название: А–Я'],
-        ['feeds-desc', 'Фидов с данными: больше'],
-        ['feeds-asc', 'Фидов с данными: меньше'],
-        ['grade-desc', 'Рейтинг cp0x: лучше'],
-        ['grade-asc', 'Рейтинг cp0x: хуже'],
-        ['upd-desc', 'Обновление: новее'],
+        ['tvl-desc', 'TVL: high to low'],
+        ['tvl-asc', 'TVL: low to high'],
+        ['name-asc', 'Name: A–Z'],
+        ['feeds-desc', 'Feeds with data: most'],
+        ['feeds-asc', 'Feeds with data: fewest'],
+        ['grade-desc', 'cp0x rating: best'],
+        ['grade-asc', 'cp0x rating: worst'],
+        ['upd-desc', 'Updated: newest'],
       ]
       const uniq = (arr) => [...new Set(arr)]
       const CATS = uniq(PROTOCOLS.flatMap((p) => p.cats))
@@ -5879,48 +5879,46 @@
         const f = S.f
         const out = []
         const add = (text, undo) => out.push({ text, undo })
-        f.cats.forEach((v) => add(`Категория: ${v}`, () => f.cats.splice(f.cats.indexOf(v), 1)))
-        f.chains.forEach((v) => add(`Сеть: ${v}`, () => f.chains.splice(f.chains.indexOf(v), 1)))
+        f.cats.forEach((v) => add(`Category: ${v}`, () => f.cats.splice(f.cats.indexOf(v), 1)))
+        f.chains.forEach((v) => add(`Chain: ${v}`, () => f.chains.splice(f.chains.indexOf(v), 1)))
         if (f.tvl) add(`TVL: ${TVL_BANDS.find((b) => b[0] === f.tvl)[1]}`, () => (f.tvl = ''))
         f.grade.forEach((v) =>
-          add(`Рейтинг cp0x: ${v}`, () => f.grade.splice(f.grade.indexOf(v), 1)),
+          add(`cp0x rating: ${v}`, () => f.grade.splice(f.grade.indexOf(v), 1)),
         )
         if (f.feed)
           add(
-            `${f.feedMode === 'has' ? 'Есть данные' : 'Нет данных'}: ${REGISTRY.find((x) => x.id === f.feed).name}`,
+            `${f.feedMode === 'has' ? 'Has data' : 'No data'}: ${REGISTRY.find((x) => x.id === f.feed).name}`,
             () => (f.feed = ''),
           )
-        if (f.minFeeds) add(`Фидов с данными ≥ ${f.minFeeds}`, () => (f.minFeeds = 0))
+        if (f.minFeeds) add(`Feeds with data ≥ ${f.minFeeds}`, () => (f.minFeeds = 0))
         f.types.forEach((v) =>
-          add(`Тип фида: ${TYPE[v].label}`, () => f.types.splice(f.types.indexOf(v), 1)),
+          add(`Feed type: ${TYPE[v].label}`, () => f.types.splice(f.types.indexOf(v), 1)),
         )
-        f.cls.forEach((v) =>
-          add(`Пометка cp0x: ${CLS[v]}`, () => f.cls.splice(f.cls.indexOf(v), 1)),
-        )
+        f.cls.forEach((v) => add(`cp0x mark: ${CLS[v]}`, () => f.cls.splice(f.cls.indexOf(v), 1)))
         return out
       }
 
       function renderDashboard() {
         S.view = 'dash'
-        document.title = 'Протоколы · defi-dna · макет v4'
+        document.title = 'Protocols · defi-dna · mockup v4'
         app.innerHTML = `
     <section class="dash-head">
       <div>
-        <div class="eyebrow"><span class="sq"></span>Нейтральный агрегатор DeFi-рисков</div>
-        <h1>Протоколы <span class="count">${PROTOCOLS.length}</span></h1>
-        <p class="lede">Один протокол — одна строка. Кольцо показывает каждый фид реестра отдельным сегментом: цвет — пометка cp0x, а сами данные фидов открываются без изменений.</p>
+        <div class="eyebrow"><span class="sq"></span>Neutral DeFi risk aggregator</div>
+        <h1>Protocols <span class="count">${PROTOCOLS.length}</span></h1>
+        <p class="lede">One protocol, one row. The ring shows every registry feed as its own segment: the colour is a cp0x mark, and the feeds’ data opens unchanged.</p>
       </div>
       <div class="regsize">
-        <span class="lbl">Размер реестра фидов ${DEMO}</span>
-        <div class="seg" role="group" aria-label="Размер реестра">${REGISTRY_SIZES.map((n) => `<button type="button" data-reg="${n}" aria-pressed="${S.reg === n}">${n} фидов</button>`).join('')}</div>
-        <span>Число сегментов кольца = числу фидов в реестре</span>
+        <span class="lbl">Feed registry size ${DEMO}</span>
+        <div class="seg" role="group" aria-label="Registry size">${REGISTRY_SIZES.map((n) => `<button type="button" data-reg="${n}" aria-pressed="${S.reg === n}">${n} feeds</button>`).join('')}</div>
+        <span>Ring segments = feeds in the registry</span>
       </div>
     </section>
     <section class="panel">
       <div class="toolbar">
-        <label class="search">${ICON.search}<span class="sr-only">Поиск</span><input id="q" type="search" placeholder="Поиск: протокол, категория, сеть…" value="${esc(S.q)}" autocomplete="off"></label>
-        <label class="sortsel">Сортировка <select class="sel" id="sort">${SORTS.map(([k, l]) => `<option value="${k}"${k === S.sort ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
-        <button type="button" class="btn secondary" id="ftoggle" aria-expanded="${S.fOpen}" aria-controls="fpanel">${ICON.filter} Фильтры <span class="badge" id="fcount" hidden></span></button>
+        <label class="search">${ICON.search}<span class="sr-only">Search</span><input id="q" type="search" placeholder="Search: protocol, category, chain…" value="${esc(S.q)}" autocomplete="off"></label>
+        <label class="sortsel">Sort <select class="sel" id="sort">${SORTS.map(([k, l]) => `<option value="${k}"${k === S.sort ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
+        <button type="button" class="btn secondary" id="ftoggle" aria-expanded="${S.fOpen}" aria-controls="fpanel">${ICON.filter} Filters <span class="badge" id="fcount" hidden></span></button>
       </div>
       <div class="fpanel" id="fpanel"${S.fOpen ? '' : ' hidden'}>${filterPanel()}</div>
       <div class="results-line" id="rline"></div>
@@ -5937,47 +5935,47 @@
         const cnt = (fn) => PROTOCOLS.filter(fn).length
         const reg = registry()
         return `
-    <div class="fgroup"><h4>Категория</h4>${chipset(
+    <div class="fgroup"><h4>Category</h4>${chipset(
       'cats',
       CATS.map((c) => [c, esc(c), cnt((p) => p.cats.includes(c))]),
     )}</div>
-    <div class="fgroup"><h4>Сеть</h4>${chipset(
+    <div class="fgroup"><h4>Chain</h4>${chipset(
       'chains',
       CHAINS.slice(0, 10).map((c) => [c, esc(c), cnt((p) => p.chains.includes(c))]),
-    )}<p class="hint">Показаны 10 самых частых сетей из ${CHAINS.length}</p></div>
+    )}<p class="hint">Showing the 10 most common of ${CHAINS.length} chains</p></div>
     <div class="fgroup"><h4>TVL ${prov('src', 'DefiLlama')}</h4>${chipset(
       'tvl',
       TVL_BANDS.map(([v, l]) => [v, l]),
-    )}<p class="hint">«Нет TVL» — протоколы с альтернативным показателем</p></div>
-    <div class="fgroup"><h4>Рейтинг cp0x ${DEMO}</h4>${chipset(
+    )}<p class="hint">“No TVL” — protocols with an alternative metric</p></div>
+    <div class="fgroup"><h4>cp0x rating ${DEMO}</h4>${chipset(
       'grade',
       ['A', 'B', 'C', 'D'].map((g) => [g, g, cnt((p) => gradeOf(p).letter === g)]),
     )}</div>
-    <div class="fgroup"><h4>Данные конкретного фида</h4>
-      <select class="sel" id="ffeed" style="width:100%"><option value="">Любой фид</option>${TYPES.map(
+    <div class="fgroup"><h4>Data from a specific feed</h4>
+      <select class="sel" id="ffeed" style="width:100%"><option value="">Any feed</option>${TYPES.map(
         (t) =>
           `<optgroup label="${t.label}">${reg
             .filter((f) => f.type === t.id)
-            .map((f) => `<option value="${f.id}">${esc(f.name)}${f.real ? '' : ' (ДЕМО)'}</option>`)
+            .map((f) => `<option value="${f.id}">${esc(f.name)}${f.real ? '' : ' (DEMO)'}</option>`)
             .join('')}</optgroup>`,
       ).join('')}</select>
-      <div class="seg" style="margin-top:8px" role="group" aria-label="Условие">${[
-        ['has', 'есть данные'],
-        ['missing', 'нет данных'],
+      <div class="seg" style="margin-top:8px" role="group" aria-label="Condition">${[
+        ['has', 'has data'],
+        ['missing', 'no data'],
       ]
         .map(([k, l]) => `<button type="button" data-feedmode="${k}">${l}</button>`)
         .join('')}</div></div>
-    <div class="fgroup"><h4>Фидов с данными <output id="o-min"></output></h4>
-      <input type="range" id="fmin" min="0" max="${S.reg}" step="1" aria-label="Минимум фидов с данными">
+    <div class="fgroup"><h4>Feeds with data <output id="o-min"></output></h4>
+      <input type="range" id="fmin" min="0" max="${S.reg}" step="1" aria-label="Minimum feeds with data">
       <div class="range-scale"><span>0</span><span>${Math.round(S.reg / 2)}</span><span>${S.reg}</span></div></div>
-    <div class="fgroup"><h4>Тип фида</h4>${chipset(
+    <div class="fgroup"><h4>Feed type</h4>${chipset(
       'types',
       TYPES.map((t) => [t.id, t.label]),
-    )}<p class="hint">Есть данные хотя бы от одного фида этого типа</p></div>
-    <div class="fgroup"><h4>Пометка cp0x</h4>${chipset(
+    )}<p class="hint">Has data from at least one feed of this type</p></div>
+    <div class="fgroup"><h4>cp0x mark</h4>${chipset(
       'cls',
       CLS_ORDER.map((k) => [k, `${sw(k)}${CLS[k]}`]),
-    )}<p class="hint">Хотя бы один фид с такой пометкой</p></div>`
+    )}<p class="hint">At least one feed with this mark</p></div>`
       }
       function syncFilters() {
         const f = S.f
@@ -5996,7 +5994,7 @@
         const rng2 = document.getElementById('fmin')
         if (rng2) rng2.value = f.minFeeds
         const o = document.getElementById('o-min')
-        if (o) o.textContent = f.minFeeds ? `≥ ${f.minFeeds} из ${S.reg}` : 'любое'
+        if (o) o.textContent = f.minFeeds ? `≥ ${f.minFeeds} of ${S.reg}` : 'any'
       }
 
       function updateDashboard() {
@@ -6007,9 +6005,9 @@
         fc.hidden = !active.length
         fc.textContent = active.length
         document.getElementById('rline').innerHTML =
-          `<span class="found">Найдено <b>${list.length}</b> из <b>${PROTOCOLS.length}</b></span>
-    ${active.map((a, i) => `<span class="fchip">${esc(a.text)}<button type="button" data-undo="${i}" aria-label="Убрать фильтр ${esc(a.text)}">${ICON.close}</button></span>`).join('')}
-    ${active.length || S.q ? '<button type="button" class="reset" data-reset>Сбросить всё</button>' : ''}`
+          `<span class="found">Found <b>${list.length}</b> of <b>${PROTOCOLS.length}</b></span>
+    ${active.map((a, i) => `<span class="fchip">${esc(a.text)}<button type="button" data-undo="${i}" aria-label="Remove filter ${esc(a.text)}">${ICON.close}</button></span>`).join('')}
+    ${active.length || S.q ? '<button type="button" class="reset" data-reset>Reset all</button>' : ''}`
         syncFilters()
         const [sk] = S.sort.split('-')
         const th = (key, label, extra = '') =>
@@ -6017,17 +6015,17 @@
         document.getElementById('results').innerHTML = list.length
           ? `
     <table class="ptable">
-      <caption class="sr-only">Протоколы: категории, сети, TVL, фиды, рейтинг cp0x и обновление</caption>
+      <caption class="sr-only">Protocols: categories, chains, TVL, feeds, cp0x rating and updates</caption>
       <thead><tr>
-        ${th('name', 'Протокол')}<th>Категории</th><th>Сети</th>
+        ${th('name', 'Protocol')}<th>Categories</th><th>Chains</th>
         ${th('tvl', 'TVL', prov('src', 'DefiLlama · Ethereum'))}
-        ${th('feeds', 'Фиды', `<span class="prov" style="margin-top:5px;display:flex">цвет — пометка cp0x</span>`)}
-        ${th('grade', 'Рейтинг cp0x', prov('cp0x', 'ДЕМО'))}
-        ${th('upd', 'Обновление')}
+        ${th('feeds', 'Feeds', `<span class="prov" style="margin-top:5px;display:flex">colour — cp0x mark</span>`)}
+        ${th('grade', 'cp0x rating', prov('cp0x', 'DEMO'))}
+        ${th('upd', 'Updated')}
       </tr></thead>
       <tbody>${list.map(row).join('')}</tbody>
     </table>`
-          : `<div class="empty"><h3>Ничего не найдено</h3><p>Ослабьте фильтры или сбросьте их.</p><p style="margin-top:12px"><button type="button" class="btn primary" data-reset>Сбросить всё</button></p></div>`
+          : `<div class="empty"><h3>Nothing found</h3><p>Loosen the filters or reset them.</p><p style="margin-top:12px"><button type="button" class="btn primary" data-reset>Reset all</button></p></div>`
       }
       function row(p) {
         const s = stats(p)
@@ -6037,7 +6035,7 @@
         const tvlCell =
           tvl != null
             ? `<div class="tvl"><b>${money(tvl)}</b><small>DefiLlama · ${fmtDate(Date.parse(REAL[p.id].tvl.fetchedAt))}</small></div>`
-            : `<div class="tvl alt"><b>${money(p.alt.value)}</b><small>альт.: ${esc(p.alt.label.toLowerCase())} ${DEMO}</small><small title="${esc(REAL[p.id].tvl.note)}">TVL не публикуется DefiLlama</small></div>`
+            : `<div class="tvl alt"><b>${money(p.alt.value)}</b><small>alt.: ${esc(p.alt.label.toLowerCase())} ${DEMO}</small><small title="${esc(REAL[p.id].tvl.note)}">TVL not published by DefiLlama</small></div>`
         return `<tr>
     <td class="c-name"><a class="pname" href="#/p/${p.id}">${avatar(p)}<span><strong>${esc(p.name)}</strong><small>${esc(p.desc)}</small></span></a></td>
     <td><div class="tags">${p.cats.map((c) => `<span class="tag cat">${esc(c)}</span>`).join('')}</div></td>
@@ -6050,14 +6048,14 @@
     <td>${tvlCell}</td>
     <td>${ringButton(p, 54)}</td>
     <td><div class="grade"><span class="g">${g.letter}</span><span><span class="mono">${g.score}/100</span><small>cp0x ${DEMO}</small></span></div></td>
-    <td><div class="upd">${s.latest ? fmtDate(s.latest) : '—'}<small>${s.latest ? rel(s.latest) : 'нет данных'}${s.fetched ? ` · сбор ${fmtDate(s.fetched)}` : ''}</small></div></td>
+    <td><div class="upd">${s.latest ? fmtDate(s.latest) : '—'}<small>${s.latest ? rel(s.latest) : 'no data'}${s.fetched ? ` · collected ${fmtDate(s.fetched)}` : ''}</small></div></td>
   </tr>`
       }
 
       /* ================= PROTOCOL PAGE ================= */
       function renderProtocol(p, feedId) {
         S.view = 'protocol'
-        document.title = `${p.name} · defi-dna · макет v4`
+        document.title = `${p.name} · defi-dna · mockup v4`
         const s = stats(p)
         const g = gradeOf(p)
         const tvl = REAL[p.id].tvl
@@ -6067,15 +6065,15 @@
           S.sel[p.id] = (s.cells.find((c) => c.st === 'ok') || s.cells[0]).f.id
 
         app.innerHTML = `
-    <nav class="crumbs" aria-label="Навигация"><a href="#/">Протоколы</a><span>/</span><span aria-current="page">${esc(p.name)}</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Protocols</a><span>/</span><span aria-current="page">${esc(p.name)}</span></nav>
     <section class="phead">
       <div class="ph-id">${avatar(p, true)}<div>
         <div class="ph-title"><h1>${esc(p.name)}</h1></div>
         <p class="ph-about">${esc(p.desc)}</p>
         <dl class="ph-rows">
-          <dt>Категории</dt><dd>${p.cats.map((c) => `<span class="tag cat">${esc(c)}</span>`).join('')}</dd>
-          <dt>Сети</dt><dd>${p.chains.map((c) => `<span class="tag">${esc(c)}</span>`).join('')}</dd>
-          <dt>Ссылки</dt><dd class="ph-links">${Object.entries(p.links)
+          <dt>Categories</dt><dd>${p.cats.map((c) => `<span class="tag cat">${esc(c)}</span>`).join('')}</dd>
+          <dt>Chains</dt><dd>${p.chains.map((c) => `<span class="tag">${esc(c)}</span>`).join('')}</dd>
+          <dt>Links</dt><dd class="ph-links">${Object.entries(p.links)
             .map(
               ([k, u]) =>
                 `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(k)}${ICON.ext}</a>`,
@@ -6083,41 +6081,41 @@
             .join('')}</dd>
         </dl>
       </div></div>
-      <div class="ph-side"><a class="text-link" href="#/">← Все протоколы</a></div>
+      <div class="ph-side"><a class="text-link" href="#/">← All protocols</a></div>
     </section>
 
-    <section class="facts" aria-label="Ключевые показатели">
+    <section class="facts" aria-label="Key figures">
       <div class="fact">
-        <div class="l">${tvl.value != null ? 'TVL' : 'Альтернативный показатель'} ${prov('src', 'DefiLlama')}</div>
+        <div class="l">${tvl.value != null ? 'TVL' : 'Alternative metric'} ${prov('src', 'DefiLlama')}</div>
         ${
           tvl.value != null
-            ? `<div class="v">${money(tvl.value)}</div><div class="s">Ethereum mainnet · ${esc(REAL[p.id].tvlComponents.join(' + '))}</div><div class="s">Собрано ${fmtDT(Date.parse(tvl.fetchedAt))} · <a class="text-link" href="${esc(tvl.url)}" target="_blank" rel="noopener noreferrer">источник${ICON.ext}</a></div>`
-            : `<div class="v">${money(p.alt.value)} ${DEMO}</div><div class="s">${esc(p.alt.label)} — вместо TVL</div><div class="s">DefiLlama: «${esc(tvl.note)}»</div>`
+            ? `<div class="v">${money(tvl.value)}</div><div class="s">Ethereum mainnet · ${esc(REAL[p.id].tvlComponents.join(' + '))}</div><div class="s">Collected ${fmtDT(Date.parse(tvl.fetchedAt))} · <a class="text-link" href="${esc(tvl.url)}" target="_blank" rel="noopener noreferrer">source${ICON.ext}</a></div>`
+            : `<div class="v">${money(p.alt.value)} ${DEMO}</div><div class="s">${esc(p.alt.label)} — instead of TVL</div><div class="s">DefiLlama: “${esc(tvl.note)}”</div>`
         }
       </div>
       <div class="fact cp0x">
-        <div class="l">Рейтинг cp0x ${prov('cp0x')} ${DEMO}</div>
+        <div class="l">cp0x rating ${prov('cp0x')} ${DEMO}</div>
         <div class="v"><span class="rc-grade" style="width:40px;height:40px;font-size:20px;border-radius:10px">${g.letter}</span>${g.score}<span class="muted" style="font-size:13px">/100</span></div>
-        <div class="s">Оценка cp0x, не данные фидов · <button type="button" class="text-link" data-goto-sec="overview">методология</button></div>
+        <div class="s">A cp0x assessment, not feed data · <button type="button" class="text-link" data-goto-sec="overview">methodology</button></div>
       </div>
       <div class="fact">
-        <div class="l">Покрытие фидами</div>
+        <div class="l">Feed coverage</div>
         <div style="margin-top:8px">${ringButton(p, 64)}</div>
-        <div class="s">Нажмите на кольцо — список всех фидов реестра (${s.N})</div>
+        <div class="s">Click the ring for the list of all registry feeds (${s.N})</div>
       </div>
       <div class="fact">
-        <div class="l">Обновление</div>
+        <div class="l">Updated</div>
         <div class="v" style="font-size:18px">${s.latest ? rel(s.latest) : '—'}</div>
-        <div class="s">Свежие данные фида: ${s.latest ? fmtDate(s.latest) : '—'}</div>
-        <div class="s">Последний сбор cp0x: ${s.fetched ? fmtDT(s.fetched) : '—'}</div>
+        <div class="s">Freshest feed data: ${s.latest ? fmtDate(s.latest) : '—'}</div>
+        <div class="s">Latest cp0x collection: ${s.fetched ? fmtDT(s.fetched) : '—'}</div>
       </div>
     </section>
 
-    <nav class="secnav" id="secnav" aria-label="Разделы страницы">
-      <button type="button" data-goto-sec="overview">Обзор cp0x</button>
-      <button type="button" data-goto-sec="feeds">Фиды <span class="count">${s.n}/${s.N}</span></button>
-      <button type="button" data-goto-sec="sources">Источники и история</button>
-      <span class="aside">Разделы одной страницы протокола</span>
+    <nav class="secnav" id="secnav" aria-label="Page sections">
+      <button type="button" data-goto-sec="overview">cp0x overview</button>
+      <button type="button" data-goto-sec="feeds">Feeds <span class="count">${s.n}/${s.N}</span></button>
+      <button type="button" data-goto-sec="sources">Sources and history</button>
+      <span class="aside">Sections of a single protocol page</span>
     </nav>
 
     <section class="psec" id="sec-overview">${overviewSection(p, s, g)}</section>
@@ -6127,48 +6125,48 @@
         spy()
       }
 
-      /* ---------- Обзор cp0x ---------- */
+      /* ---------- cp0x overview ---------- */
       function overviewSection(p, s, g) {
         const inc = REAL[p.id].incidents.items
         const all = REGISTRY.map((f) => cellOf(p, f))
         const allN = all.filter((c) => c.st === 'ok').length
         const cnt = (k) => all.filter((c) => c.st === 'ok' && c.cls === k).length
         const basis = [
-          `${allN} из ${REGISTRY.length} фидов полного реестра с данными`,
-          `${cnt('pos')} полож. · ${cnt('neu')} нейтр. · ${cnt('neg')} отриц. · ${cnt('mixed')} смеш. · ${cnt('noconc')} без вывода`,
+          `${allN} of ${REGISTRY.length} feeds in the full registry have data`,
+          `${cnt('pos')} pos. · ${cnt('neu')} neut. · ${cnt('neg')} neg. · ${cnt('mixed')} mixed · ${cnt('noconc')} no concl.`,
           inc.length
-            ? `${inc.length} ${plural(inc.length, 'инцидент', 'инцидента', 'инцидентов')} в реестре DefiLlama, крупнейший — ${usdEn(Math.max(...inc.map((i) => i.amountUsd || 0)))}`
-            : 'Инцидентов в реестре DefiLlama нет',
-          'Факты об управлении ниже; порог — наличие таймлока и неизменяемого ядра',
-          'Аудиторские отчёты из раздела «Источники и история»',
+            ? `${inc.length} ${plural(inc.length, 'incident', 'incidents', 'incidents')} in the DefiLlama registry, the largest ${usdEn(Math.max(...inc.map((i) => i.amountUsd || 0)))}`
+            : 'No incidents in the DefiLlama registry',
+          'Governance facts below; the bar is a timelock and an immutable core',
+          'Audit reports from the “Sources and history” section',
         ]
         return `
-    <div class="psec-h"><h2>Обзор cp0x</h2><p>Собственная оценка и заметки cp0x — отдельно от данных фидов.</p></div>
+    <div class="psec-h"><h2>cp0x overview</h2><p>cp0x’s own assessment and notes — kept apart from feed data.</p></div>
     <div class="cp0x-zone">
-      <div class="zone-label">${prov('cp0x')} Всё в этом разделе — выводы cp0x. Данные фидов — в разделе «Фиды», без изменений.</div>
+      <div class="zone-label">${prov('cp0x')} Everything in this section is a cp0x conclusion. Feed data is in the “Feeds” section, unchanged.</div>
       <div class="ov-grid">
         <div class="panel rating-card">
           <div class="rc-top"><span class="rc-grade">${g.letter}</span><div>
             <div class="score">${g.score}/100 ${DEMO}</div>
             <p>${esc(p.verdict)}</p>
           </div></div>
-          <details class="method"><summary>Краткая методология</summary><ul>
-            <li>Пять факторов с весами, каждый оценивается от 0 до 100; итог — взвешенная сумма.</li>
-            <li>Шкала: A ≥ 80 · B ≥ 60 · C ≥ 45 · D &lt; 45.</li>
-            <li>Пометки фидов учитываются по полному реестру (${REGISTRY.length} фидов), независимо от выбранного размера реестра.</li>
-            <li>Рейтинг не заменяет данные фидов и не меняет их: фиды показаны как опубликованы.</li>
-            <li>Все числа рейтинга в этом макете — ДЕМО.</li>
+          <details class="method"><summary>Short methodology</summary><ul>
+            <li>Five weighted factors, each scored from 0 to 100; the result is the weighted sum.</li>
+            <li>Scale: A ≥ 80 · B ≥ 60 · C ≥ 45 · D &lt; 45.</li>
+            <li>Feed marks are counted across the full registry (${REGISTRY.length} feeds), regardless of the selected registry size.</li>
+            <li>The rating neither replaces nor changes feed data: feeds are shown as published.</li>
+            <li>All rating numbers in this mockup are DEMO.</li>
           </ul></details>
-          <table class="ftable"><thead><tr><th>Фактор</th><th>Основание</th><th class="num">Вес</th><th class="num">Оценка ${DEMO}</th></tr></thead>
+          <table class="ftable"><thead><tr><th>Factor</th><th>Basis</th><th class="num">Weight</th><th class="num">Score ${DEMO}</th></tr></thead>
           <tbody>${FACTORS.map((f, i) => `<tr><td><b>${esc(f.k)}</b></td><td class="muted">${esc(basis[i])}</td><td class="num">${f.w}%</td><td class="num">${p.scores[i]}<span class="bar"><i style="width:${p.scores[i]}%"></i></span></td></tr>`).join('')}</tbody></table>
         </div>
         <div style="display:grid;gap:14px">
           <div class="panel gov">
-            <div class="panel-h"><h3>Управление протоколом</h3><span class="aside">факты</span></div>
-            <dl class="kv">${p.gov.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}${prov('src', 'документация протокола')}</dd></div>`).join('')}</dl>
+            <div class="panel-h"><h3>Protocol governance</h3><span class="aside">facts</span></div>
+            <dl class="kv">${p.gov.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}${prov('src', 'protocol docs')}</dd></div>`).join('')}</dl>
           </div>
           <div class="panel">
-            <div class="panel-h"><h3>Пометки cp0x</h3><span class="aside">${prov('cp0x')}</span></div>
+            <div class="panel-h"><h3>cp0x marks</h3><span class="aside">${prov('cp0x')}</span></div>
             <ul class="notes">${notesFor(p, s)
               .map(
                 (n) =>
@@ -6187,7 +6185,7 @@
           html:
             esc(text) +
             (link && link.startsWith('feed:') && registry().some((f) => f.id === link.slice(5))
-              ? ` <a href="#/p/${p.id}/feed/${link.slice(5)}">к фиду →</a>`
+              ? ` <a href="#/p/${p.id}/feed/${link.slice(5)}">to feed →</a>`
               : ''),
         }))
         s.cells
@@ -6195,8 +6193,8 @@
           .forEach((c) =>
             out.push({
               date: fmtDate(NOW - DAY),
-              tag: 'Устаревание',
-              html: `${esc(c.f.name)}: данные от ${fmtDate(c.date)} старше порога ${TYPE[c.f.type].staleDays} дн. для типа ${TYPE[c.f.type].label}. <a href="#/p/${p.id}/feed/${c.f.id}">к фиду →</a>`,
+              tag: 'Staleness',
+              html: `${esc(c.f.name)}: data from ${fmtDate(c.date)} is older than the ${TYPE[c.f.type].staleDays}-day threshold for type ${TYPE[c.f.type].label}. <a href="#/p/${p.id}/feed/${c.f.id}">to feed →</a>`,
             }),
           )
         s.cells
@@ -6204,8 +6202,8 @@
           .forEach((c) =>
             out.push({
               date: fmtDate(NOW - DAY),
-              tag: 'Дата',
-              html: `${esc(c.f.name)} не публикует дату обзора — свежесть проверить нельзя. <a href="#/p/${p.id}/feed/${c.f.id}">к фиду →</a>`,
+              tag: 'Date',
+              html: `${esc(c.f.name)} publishes no review date — freshness cannot be checked. <a href="#/p/${p.id}/feed/${c.f.id}">to feed →</a>`,
             }),
           )
         s.cells
@@ -6213,36 +6211,34 @@
           .forEach((c) =>
             out.push({
               date: fmtDate(c.attempt),
-              tag: 'Ошибка',
-              html: `Не удалось получить ${esc(c.f.name)}: ${esc(c.err)}. <a href="#/p/${p.id}/feed/${c.f.id}">к фиду →</a>`,
+              tag: 'Error',
+              html: `Could not fetch ${esc(c.f.name)}: ${esc(c.err)}. <a href="#/p/${p.id}/feed/${c.f.id}">to feed →</a>`,
             }),
           )
-        REAL[p.id].incidents.items
-          .slice(0, 2)
-          .forEach((i) =>
-            out.push({
-              date: fmtDate(parseDay(i.date)),
-              tag: 'Инцидент',
-              html: `В реестре DefiLlama: ${esc(i.classification)} · ${esc(i.technique)}, ${usdEn(i.amountUsd)}${i.returnedFunds ? `, возвращено ${usdEn(i.returnedFunds)}` : ''}. <button type="button" class="text-link" data-goto-sec="sources">к истории →</button>`,
-            }),
-          )
+        REAL[p.id].incidents.items.slice(0, 2).forEach((i) =>
+          out.push({
+            date: fmtDate(parseDay(i.date)),
+            tag: 'Incident',
+            html: `In the DefiLlama registry: ${esc(i.classification)} · ${esc(i.technique)}, ${usdEn(i.amountUsd)}${i.returnedFunds ? `, returned ${usdEn(i.returnedFunds)}` : ''}. <button type="button" class="text-link" data-goto-sec="sources">to history →</button>`,
+          }),
+        )
         return out.length
           ? out
           : [
               {
                 date: fmtDate(NOW - DAY),
-                tag: 'Нет пометок',
-                html: 'Для этого протокола у cp0x пока нет заметок.',
+                tag: 'No marks',
+                html: 'cp0x has no notes for this protocol yet.',
               },
             ]
       }
 
-      /* ---------- Фиды ---------- */
+      /* ---------- Feeds ---------- */
       function feedsSection(p, s) {
         return `
-    <div class="psec-h"><h2>Фиды</h2><p>Слева — все фиды реестра, включая фиды без данных. Справа — содержимое выбранного фида без изменений.</p></div>
+    <div class="psec-h"><h2>Feeds</h2><p>Left — every registry feed, including feeds without data. Right — the selected feed’s content, unchanged.</p></div>
     <div class="feeds2">
-      <nav class="panel flist" id="flist" aria-label="Фиды протокола">${TYPES.map((t) => {
+      <nav class="panel flist" id="flist" aria-label="Protocol feeds">${TYPES.map((t) => {
         const cells = s.cells.filter((c) => c.f.type === t.id)
         if (!cells.length) return ''
         return (
@@ -6253,7 +6249,7 @@
           <button type="button" class="fl-item${c.st === 'ok' ? '' : ' nodata'}" data-feed="${c.f.id}" aria-current="${S.sel[p.id] === c.f.id}">
             ${sw(c.st === 'ok' ? c.cls : 'none')}
             <span><span class="nm">${esc(c.f.name)}${c.f.real ? '' : DEMO}</span>
-            <span class="st">${c.st === 'ok' ? `<span class="mono">${c.date ? fmtDate(c.date) : 'без даты'}</span>` : c.st === 'error' ? techErr : '<span>нет данных</span>'}${c.stale ? techStale(TYPE[c.f.type]) : ''}</span></span>
+            <span class="st">${c.st === 'ok' ? `<span class="mono">${c.date ? fmtDate(c.date) : 'no date'}</span>` : c.st === 'error' ? techErr : '<span>no data</span>'}${c.stale ? techStale(TYPE[c.f.type]) : ''}</span></span>
           </button>`,
             )
             .join('')
@@ -6271,46 +6267,46 @@
         const method = f.real ? f.method : `${DEMO_URL(f.id)}/methodology`
         const status =
           c.st === 'ok'
-            ? '<span class="status">Данные получены</span>'
+            ? '<span class="status">Data received</span>'
             : c.st === 'error'
-              ? '<span class="status error">Ошибка получения</span>'
-              : '<span class="status none">Нет данных</span>'
+              ? '<span class="status error">Fetch error</span>'
+              : '<span class="status none">No data</span>'
         const dateLine =
           c.st === 'ok'
-            ? `<span>Данные фида: <b class="mono">${c.date ? fmtDate(c.date) : 'дата не указана фидом'}</b>${c.date ? ` · ${rel(c.date)}` : ''}</span><span>Собрано cp0x: ${fmtDT(c.fetchedAt)}</span>`
+            ? `<span>Feed data: <b class="mono">${c.date ? fmtDate(c.date) : 'date not given by feed'}</b>${c.date ? ` · ${rel(c.date)}` : ''}</span><span>Collected by cp0x: ${fmtDT(c.fetchedAt)}</span>`
             : c.st === 'error'
-              ? `<span>Последняя попытка: ${fmtDT(c.attempt)}</span>`
+              ? `<span>Last attempt: ${fmtDT(c.attempt)}</span>`
               : c.fetchedAt
-                ? `<span>Проверено: ${fmtDT(c.fetchedAt)}</span>`
+                ? `<span>Checked: ${fmtDT(c.fetchedAt)}</span>`
                 : ''
         const note =
           c.st === 'ok'
-            ? `<div class="cp0x-note"><div class="lbl">${prov('cp0x', 'пометка')}${markTag(c.cls)}</div><div><p>${esc(c.why)}</p><small>Это классификация cp0x по ${f.real ? 'правилу cp0x' : 'ДЕМО-правилу'}, а не вывод фида.${f.real ? '' : ` ${DEMO}`}</small></div></div>`
-            : `<div class="cp0x-note"><div class="lbl">${prov('cp0x', 'пометка')}${markTag('none')}</div><div><p>Данных нет — пометку не ставим.${c.st === 'error' ? ' Ошибка получения — техническая метка, а не оценка риска.' : ''}</p></div></div>`
+            ? `<div class="cp0x-note"><div class="lbl">${prov('cp0x', 'mark')}${markTag(c.cls)}</div><div><p>${esc(c.why)}</p><small>This is cp0x’s classification under ${f.real ? 'a cp0x rule' : 'a DEMO rule'}, not the feed’s conclusion.${f.real ? '' : ` ${DEMO}`}</small></div></div>`
+            : `<div class="cp0x-note"><div class="lbl">${prov('cp0x', 'mark')}${markTag('none')}</div><div><p>No data — no mark is given.${c.st === 'error' ? ' A fetch error is a technical label, not a risk assessment.' : ''}</p></div></div>`
         let body
         if (c.st === 'ok') {
           const origin = f.real
-            ? `запись из снапшота проекта <code class="mono">apps/web/public/data/protocols/${p.id}.json</code>`
-            : `${DEMO} вымышленное содержимое обезличенного фида`
+            ? `record from the project snapshot <code class="mono">apps/web/public/data/protocols/${p.id}.json</code>`
+            : `${DEMO} invented content of an anonymized feed`
           body = `<div class="content">
-        <div class="content-h"><b>Содержимое фида — без изменений</b><span>Формат: ${fmtLabel(f.fmt)}</span><span>· ${origin}</span></div>
+        <div class="content-h"><b>Feed content — unchanged</b><span>Format: ${fmtLabel(f.fmt)}</span><span>· ${origin}</span></div>
         <div class="content-b">${RENDER[f.fmt](f.real ? c.rec : c.content, f, c)}</div>
       </div>
-      <details class="raw"><summary>Исходная структура записи (JSON)</summary><pre>${esc(JSON.stringify(f.real ? c.rec : c.content, null, 2))}</pre>${f.real && c.rec.extra && c.rec.extra._vaultsTotal ? `<p class="muted" style="margin-top:6px">extra.vaults сокращён до первых ${c.rec.extra.vaults.length} из ${c.rec.extra._vaultsTotal} записей — полный список в первоисточнике.</p>` : ''}</details>`
+      <details class="raw"><summary>Original record structure (JSON)</summary><pre>${esc(JSON.stringify(f.real ? c.rec : c.content, null, 2))}</pre>${f.real && c.rec.extra && c.rec.extra._vaultsTotal ? `<p class="muted" style="margin-top:6px">extra.vaults is trimmed to the first ${c.rec.extra.vaults.length} of ${c.rec.extra._vaultsTotal} records — the full list is at the original source.</p>` : ''}</details>`
         } else if (c.st === 'error') {
-          body = `<div class="nofeed"><b>Не удалось получить данные.</b><br>Ошибка: <span class="mono">${esc(c.err)}</span> ${DEMO}<br>${c.lastOk ? `Последние успешные данные — ${fmtDate(c.lastOk)}; они не показываются, пока сбор не восстановится.` : 'Успешных сборов по этому протоколу ещё не было.'}</div>`
+          body = `<div class="nofeed"><b>Could not fetch the data.</b><br>Error: <span class="mono">${esc(c.err)}</span> ${DEMO}<br>${c.lastOk ? `Last successful data — ${fmtDate(c.lastOk)}; it is hidden until collection recovers.` : 'There has been no successful collection for this protocol yet.'}</div>`
         } else {
-          body = `<div class="nofeed"><b>Фид не публикует данных по ${esc(p.name)}.</b><br>${f.real ? `Сообщение конвейера: «${esc(c.why)}»` : esc(c.why)}<br><span class="small">Отсутствие данных — пробел в покрытии, а не вывод о рисках.</span></div>`
+          body = `<div class="nofeed"><b>The feed publishes no data for ${esc(p.name)}.</b><br>${f.real ? `Pipeline message: “${esc(c.why)}”` : esc(c.why)}<br><span class="small">Missing data is a coverage gap, not a conclusion about risk.</span></div>`
         }
         document.getElementById('fpanel-r').innerHTML = `
     <div class="ff-h">
       <div>
         <div class="ff-name"><span class="tag">${t.label}</span><h3>${esc(f.name)}</h3>${f.real ? '' : DEMO}${status}${c.stale ? techStale(t) : ''}</div>
-        <div class="ff-meta">${prov('src', f.real ? f.name : 'обезличенный демо-фид')}<span>${esc(f.topic)}</span>${dateLine}</div>
+        <div class="ff-meta">${prov('src', f.real ? f.name : 'anonymized demo feed')}<span>${esc(f.topic)}</span>${dateLine}</div>
       </div>
       <div class="ff-links">
-        <a class="btn secondary sm" href="${esc(src)}" target="_blank" rel="noopener noreferrer">Первоисточник ${ICON.ext}</a>
-        <a class="text-link" href="${esc(method)}" target="_blank" rel="noopener noreferrer">Методология${ICON.ext}</a>
+        <a class="btn secondary sm" href="${esc(src)}" target="_blank" rel="noopener noreferrer">Original source ${ICON.ext}</a>
+        <a class="text-link" href="${esc(method)}" target="_blank" rel="noopener noreferrer">Methodology${ICON.ext}</a>
       </div>
     </div>
     ${note}
@@ -6318,16 +6314,16 @@
       }
       const fmtLabel = (fmt) =>
         ({
-          defiscan: 'рейтинг',
-          risklayer: 'рейтинг',
-          grade: 'рейтинг',
-          score100: 'рейтинг',
-          stars: 'рейтинг',
-          tier: 'рейтинг',
-          philidor: 'набор метрик',
-          metrics: 'набор метрик',
-          events: 'мониторинг событий',
-          research: 'исследовательский текст',
+          defiscan: 'rating',
+          risklayer: 'rating',
+          grade: 'rating',
+          score100: 'rating',
+          stars: 'rating',
+          tier: 'rating',
+          philidor: 'metric set',
+          metrics: 'metric set',
+          events: 'event monitoring',
+          research: 'research text',
         })[fmt]
 
       /* Provider renderers: fields are printed as published — no translation, rounding or re-scaling. */
@@ -6432,10 +6428,10 @@
     }`,
       }
 
-      /* ---------- Источники и история ---------- */
+      /* ---------- Sources and history ---------- */
       function auditsFor(p) {
         const r = rng(hash(`${p.id}|audits`))
-        const firms = ['Аудитор A', 'Аудитор B', 'Аудитор C', 'Аудитор D', 'Аудитор E']
+        const firms = ['Auditor A', 'Auditor B', 'Auditor C', 'Auditor D', 'Auditor E']
         const scopes = {
           lending: [
             'Core pool & liquidation logic',
@@ -6476,41 +6472,41 @@
         const hist = historyFor(p, s, audits)
         const shown = S.histAll ? hist : hist.slice(0, 8)
         return `
-    <div class="psec-h"><h2>Источники и история</h2><p>Аудиты, задокументированные события и происхождение каждого показателя на странице.</p></div>
+    <div class="psec-h"><h2>Sources and history</h2><p>Audits, documented events and the origin of every figure on the page.</p></div>
     <div class="sh-grid">
       <div class="panel">
-        <div class="panel-h"><h3>Аудиторские отчёты</h3>${DEMO}<span class="aside">${prov('src', 'реестр аудитов cp0x')}</span></div>
-        <div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>Дата</th><th>Аудитор</th><th>Охват</th><th>Находки (крит. / выс. / сред. / низк.)</th><th>Отчёт</th><th>Происхождение</th></tr></thead>
-        <tbody>${audits.map((a) => `<tr><td class="mono">${fmtDate(a.date)}</td><td>${a.firm}</td><td>${esc(a.scope)}</td><td class="mono">${a.sev.join(' / ')}</td><td><a class="text-link" href="${esc(p.links.GitHub)}" target="_blank" rel="noopener noreferrer">репозиторий${ICON.ext}</a></td><td>${prov('src', 'реестр аудитов cp0x')} ${DEMO}</td></tr>`).join('')}</tbody></table></div>
-        <div class="panel-note">Аудиторы обезличены, даты и находки вымышлены (ДЕМО). В рабочей версии каждая строка ссылается на PDF-отчёт аудитора.</div>
+        <div class="panel-h"><h3>Audit reports</h3>${DEMO}<span class="aside">${prov('src', 'cp0x audit registry')}</span></div>
+        <div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>Date</th><th>Auditor</th><th>Scope</th><th>Findings (crit. / high / med. / low)</th><th>Report</th><th>Origin</th></tr></thead>
+        <tbody>${audits.map((a) => `<tr><td class="mono">${fmtDate(a.date)}</td><td>${a.firm}</td><td>${esc(a.scope)}</td><td class="mono">${a.sev.join(' / ')}</td><td><a class="text-link" href="${esc(p.links.GitHub)}" target="_blank" rel="noopener noreferrer">repository${ICON.ext}</a></td><td>${prov('src', 'cp0x audit registry')} ${DEMO}</td></tr>`).join('')}</tbody></table></div>
+        <div class="panel-note">Auditors are anonymized; dates and findings are invented (DEMO). In production every row links to the auditor’s PDF report.</div>
       </div>
 
       <div class="panel">
-        <div class="panel-h"><h3>Публично задокументированные события</h3><span class="aside">${prov('src', 'DefiLlama · Hacks')} собрано ${fmtDate(Date.parse(R.incidents.fetchedAt))}</span></div>
+        <div class="panel-h"><h3>Publicly documented events</h3><span class="aside">${prov('src', 'DefiLlama · Hacks')} collected ${fmtDate(Date.parse(R.incidents.fetchedAt))}</span></div>
         ${
           incidents.length
-            ? `<div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>date</th><th>name</th><th>classification</th><th>technique</th><th>amountUsd</th><th>returnedFunds</th><th>Ссылка</th></tr></thead>
+            ? `<div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>date</th><th>name</th><th>classification</th><th>technique</th><th>amountUsd</th><th>returnedFunds</th><th>Link</th></tr></thead>
           <tbody>${incidents.map((i) => `<tr><td class="mono">${esc(i.date)}</td><td>${esc(i.name)}</td><td>${esc(i.classification)}</td><td>${esc(i.technique)}</td><td class="mono">${esc(i.amountUsd)}</td><td class="mono">${esc(i.returnedFunds ?? 'null')}</td><td><a class="text-link" href="${esc(R.incidents.url)}" target="_blank" rel="noopener noreferrer">DefiLlama${ICON.ext}</a></td></tr>`).join('')}</tbody></table></div>`
-            : '<p class="nofeed" style="margin:14px 18px">В реестре DefiLlama нет инцидентов для этого протокола.</p>'
+            : '<p class="nofeed" style="margin:14px 18px">The DefiLlama registry has no incidents for this protocol.</p>'
         }
-        <div class="panel-note">Поля показаны так, как их публикует DefiLlama. ${esc(R.incidents.note || '')}</div>
-        ${mentions.length ? `<div class="panel-note"><b>Инциденты в данных фидов:</b> ${mentions.map((m) => `<a class="text-link" href="#/p/${p.id}/feed/risklayer">Risklayer — ${esc(m.title)}</a>`).join(' · ')}</div>` : ''}
+        <div class="panel-note">Fields are shown as DefiLlama publishes them. ${esc(R.incidents.note || '')}</div>
+        ${mentions.length ? `<div class="panel-note"><b>Incidents in feed data:</b> ${mentions.map((m) => `<a class="text-link" href="#/p/${p.id}/feed/risklayer">Risklayer — ${esc(m.title)}</a>`).join(' · ')}</div>` : ''}
       </div>
 
       <div class="panel">
-        <div class="panel-h"><h3>Происхождение данных на странице</h3></div>
-        <div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>Показатель</th><th>Источник</th><th>Собрано</th><th>Статус</th><th>Ссылка</th></tr></thead><tbody>
-          <tr><td>TVL</td><td>${prov('src', 'DefiLlama')}</td><td class="mono">${fmtDT(Date.parse(R.tvl.fetchedAt))}</td><td>${R.tvl.value != null ? 'данные есть' : esc(R.tvl.note)}</td><td><a class="text-link" href="${esc(R.tvl.url)}" target="_blank" rel="noopener noreferrer">открыть${ICON.ext}</a></td></tr>
-          <tr><td>Инциденты</td><td>${prov('src', 'DefiLlama · Hacks')}</td><td class="mono">${fmtDT(Date.parse(R.incidents.fetchedAt))}</td><td>${incidents.length} ${plural(incidents.length, 'запись', 'записи', 'записей')}</td><td><a class="text-link" href="${esc(R.incidents.url)}" target="_blank" rel="noopener noreferrer">открыть${ICON.ext}</a></td></tr>
-          ${s.cells.map((c) => `<tr><td>Фид · ${TYPE[c.f.type].label}</td><td>${prov('src', c.f.name)}${c.f.real ? '' : ` ${DEMO}`}</td><td class="mono">${c.fetchedAt ? fmtDT(c.fetchedAt) : c.attempt ? fmtDT(c.attempt) : '—'}</td><td>${c.st === 'ok' ? 'данные есть' : c.st === 'error' ? techErr : 'нет данных'}${c.stale ? ` ${techStale(TYPE[c.f.type])}` : ''}</td><td><a class="text-link" href="#/p/${p.id}/feed/${c.f.id}">к фиду →</a></td></tr>`).join('')}
-          <tr><td>Рейтинг и пометки</td><td>${prov('cp0x')}</td><td class="mono">${fmtDT(NOW - 3 * 36e5)}</td><td>${DEMO}</td><td><button type="button" class="text-link" data-goto-sec="overview">методология</button></td></tr>
+        <div class="panel-h"><h3>Origin of the data on this page</h3></div>
+        <div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>Figure</th><th>Source</th><th>Collected</th><th>Status</th><th>Link</th></tr></thead><tbody>
+          <tr><td>TVL</td><td>${prov('src', 'DefiLlama')}</td><td class="mono">${fmtDT(Date.parse(R.tvl.fetchedAt))}</td><td>${R.tvl.value != null ? 'data available' : esc(R.tvl.note)}</td><td><a class="text-link" href="${esc(R.tvl.url)}" target="_blank" rel="noopener noreferrer">open${ICON.ext}</a></td></tr>
+          <tr><td>Incidents</td><td>${prov('src', 'DefiLlama · Hacks')}</td><td class="mono">${fmtDT(Date.parse(R.incidents.fetchedAt))}</td><td>${incidents.length} ${plural(incidents.length, 'record', 'records', 'records')}</td><td><a class="text-link" href="${esc(R.incidents.url)}" target="_blank" rel="noopener noreferrer">open${ICON.ext}</a></td></tr>
+          ${s.cells.map((c) => `<tr><td>Feed · ${TYPE[c.f.type].label}</td><td>${prov('src', c.f.name)}${c.f.real ? '' : ` ${DEMO}`}</td><td class="mono">${c.fetchedAt ? fmtDT(c.fetchedAt) : c.attempt ? fmtDT(c.attempt) : '—'}</td><td>${c.st === 'ok' ? 'data available' : c.st === 'error' ? techErr : 'no data'}${c.stale ? ` ${techStale(TYPE[c.f.type])}` : ''}</td><td><a class="text-link" href="#/p/${p.id}/feed/${c.f.id}">to feed →</a></td></tr>`).join('')}
+          <tr><td>Rating and marks</td><td>${prov('cp0x')}</td><td class="mono">${fmtDT(NOW - 3 * 36e5)}</td><td>${DEMO}</td><td><button type="button" class="text-link" data-goto-sec="overview">methodology</button></td></tr>
         </tbody></table></div>
       </div>
 
       <div class="panel">
-        <div class="panel-h"><h3>История обновлений</h3><span class="aside">новые сверху</span></div>
+        <div class="panel-h"><h3>Update history</h3><span class="aside">newest first</span></div>
         <ul class="hist">${shown.map((h) => `<li><span class="mono muted">${fmtDate(h.date)}</span>${sw(h.sw)}<span>${h.html}</span></li>`).join('')}</ul>
-        ${hist.length > 8 ? `<button type="button" class="more" data-hist>${S.histAll ? 'Свернуть' : `Показать ещё ${hist.length - 8}`}</button>` : ''}
+        ${hist.length > 8 ? `<button type="button" class="more" data-hist>${S.histAll ? 'Collapse' : `Show ${hist.length - 8} more`}</button>` : ''}
       </div>
     </div>`
       }
@@ -6521,7 +6517,7 @@
             out.push({
               date: c.date,
               sw: c.cls,
-              html: `<b>${esc(c.f.name)}</b>${c.f.real ? '' : DEMO} опубликовал данные: <span class="mono">${esc(c.value)}</span>`,
+              html: `<b>${esc(c.f.name)}</b>${c.f.real ? '' : DEMO} published data: <span class="mono">${esc(c.value)}</span>`,
             })
           if (c.st === 'error')
             out.push({
@@ -6537,7 +6533,7 @@
                 out.push({
                   date: parseDay(r.date),
                   sw: c.cls,
-                  html: `<b>DeFiScan</b> — обзор <span class="mono">${esc(r.file)}</span>: ${esc(r.stage)}`,
+                  html: `<b>DeFiScan</b> — review <span class="mono">${esc(r.file)}</span>: ${esc(r.stage)}`,
                 }),
               )
         })
@@ -6545,14 +6541,14 @@
           out.push({
             date: parseDay(i.date),
             sw: 'none',
-            html: `<b>DefiLlama</b> — инцидент: ${esc(i.classification)} · ${esc(i.technique)}`,
+            html: `<b>DefiLlama</b> — incident: ${esc(i.classification)} · ${esc(i.technique)}`,
           }),
         )
         audits.forEach((a) =>
           out.push({
             date: a.date,
             sw: 'none',
-            html: `Аудит: ${a.firm} — ${esc(a.scope)} ${DEMO}`,
+            html: `Audit: ${a.firm} — ${esc(a.scope)} ${DEMO}`,
           }),
         )
         return out.sort((a, b) => b.date - a.date)
@@ -6728,7 +6724,7 @@
       function paintTheme() {
         const dark = document.documentElement.dataset.theme === 'dark'
         themeBtn.innerHTML = dark ? ICON.sun : ICON.moon
-        themeBtn.setAttribute('aria-label', dark ? 'Светлая тема' : 'Тёмная тема')
+        themeBtn.setAttribute('aria-label', dark ? 'Light theme' : 'Dark theme')
       }
       themeBtn.addEventListener('click', () => {
         const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'

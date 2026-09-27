@@ -9,6 +9,7 @@ on:
       - 'adapters/**'
       - 'registry/**'
       - 'data/**'
+      - 'mokaps/**'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy-pages.yml'
