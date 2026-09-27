@@ -1,0 +1,4399 @@
+<!doctype html>
+<!--
+  defi-dna · Mockup v2 — "Intelligence terminal"
+  Standalone file: pure HTML, internal CSS, vanilla JS. No imports, fonts, icons or CDN.
+  All data below is SAMPLE DATA for UX exploration, not real source output.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="DeFi DNA mockup v2: protocol intelligence matrix with source coverage, signals and freshness."
+    />
+    <title>Protocols · defi-dna mockup v2</title>
+    <script>
+      ;(function () {
+        var t = 'dark'
+        try {
+          t = localStorage.getItem('defi-dna-mock-theme') || 'dark'
+        } catch (e) {}
+        document.documentElement.dataset.theme = t
+      })()
+    </script>
+    <style>
+      /* Tokens follow apps/web/src/styles/tokens.css. System fonts only: no external fonts. */
+      :root {
+        color-scheme: light;
+        --font:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+        --canvas: #f6f7f9;
+        --surface: #ffffff;
+        --subtle: #f7f8fa;
+        --header: #ffffffed;
+        --ink: #192c3a;
+        --muted: #627180;
+        --faint: #93a0ad;
+        --accent: #146b57;
+        --accent-hover: #0b503f;
+        --on-accent: #ffffff;
+        --accent-tint: #e9f3ef;
+        --accent-line: #cce3d9;
+        --focus: #24967b;
+        --line: #e3e8ed;
+        --line-strong: #bdc9d2;
+        --row-hover: #fafcfc;
+        --amber: #906012;
+        --amber-tint: #fbf5e8;
+        --shadow: 0 2px 5px #172d3b05, 0 12px 26px #172d3b04;
+        --pop: 0 10px 32px #10202c26;
+        /* Source states: what the source itself published, mapped to four states. */
+        --pos: #1c7a52;
+        --pos-fill: #3a9a6c;
+        --pos-tint: #e8f4ee;
+        --neu: #906012;
+        --neu-fill: #d6a23c;
+        --neu-tint: #fbf5e8;
+        --neg: #b0403a;
+        --neg-fill: #d0554c;
+        --neg-tint: #fbeeed;
+        --none: #7d8a97;
+        --none-fill: #e2e7ec;
+        --none-tint: #f2f4f6;
+        /* Freshness is not a sentiment, so it gets its own hue. */
+        --new: #3b5bdb;
+        --new-tint: #eaeefe;
+        --avatar-0: #e9e7f4;
+        --avatar-ink-0: #62527f;
+        --avatar-1: #e3eff3;
+        --avatar-ink-1: #3e6b7e;
+        --avatar-2: #f4eae0;
+        --avatar-ink-2: #8d6040;
+        --avatar-3: #e4eee8;
+        --avatar-ink-3: #49745d;
+        --avatar-4: #ede9ed;
+        --avatar-ink-4: #786276;
+      }
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --canvas: #111c24;
+        --surface: #19262f;
+        --subtle: #1e2e38;
+        --header: #15222bec;
+        --ink: #e3edf2;
+        --muted: #9fb1bd;
+        --faint: #718694;
+        --accent: #7bd1b7;
+        --accent-hover: #a2e3ce;
+        --on-accent: #122c23;
+        --accent-tint: #203c36;
+        --accent-line: #345b4e;
+        --focus: #7bd1b7;
+        --line: #2c3d49;
+        --line-strong: #506774;
+        --row-hover: #1c2c36;
+        --amber: #e0bb74;
+        --amber-tint: #3a3425;
+        --shadow: 0 2px 5px #00000010, 0 12px 26px #0000000c;
+        --pop: 0 12px 36px #00000066;
+        --pos: #7bd1b7;
+        --pos-fill: #45b088;
+        --pos-tint: #203c36;
+        --neu: #e0bb74;
+        --neu-fill: #cfa04d;
+        --neu-tint: #3a3425;
+        --neg: #ee9f98;
+        --neg-fill: #d8625a;
+        --neg-tint: #3a2725;
+        --none: #7f94a2;
+        --none-fill: #2a3b47;
+        --none-tint: #1e2e38;
+        --new: #9db0ff;
+        --new-tint: #28315a;
+        --avatar-0: #39334c;
+        --avatar-ink-0: #c3b0df;
+        --avatar-1: #283f4c;
+        --avatar-ink-1: #9ac8dc;
+        --avatar-2: #453a32;
+        --avatar-ink-2: #ddbc9e;
+        --avatar-3: #2e4338;
+        --avatar-ink-3: #a2cdb4;
+        --avatar-4: #413442;
+        --avatar-ink-4: #cdb0ca;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-padding-top: 132px;
+      }
+      body {
+        margin: 0;
+        background: var(--canvas);
+        color: var(--ink);
+        font: 14px/1.55 var(--font);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 0;
+        background: none;
+        padding: 0;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      p {
+        margin: 0;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.25;
+      }
+      dl,
+      dd {
+        margin: 0;
+      }
+      ul,
+      ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      svg {
+        flex-shrink: 0;
+        vertical-align: middle;
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .small {
+        font-size: 12px;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      /* ---------- chrome ---------- */
+      .mock-banner {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 6px 14px;
+        padding: 6px 24px;
+        background: var(--ink);
+        color: var(--canvas);
+        font-size: 11.5px;
+      }
+      .mock-banner b {
+        font-family: var(--mono);
+        letter-spacing: 0.08em;
+      }
+      .mock-banner a {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        opacity: 0.85;
+      }
+      .mock-banner a:hover {
+        opacity: 1;
+      }
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: var(--header);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--line);
+      }
+      .site-header .inner {
+        max-width: 1440px;
+        margin: auto;
+        padding: 0 32px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        gap: 40px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.8px;
+        white-space: nowrap;
+      }
+      .brand svg {
+        color: var(--accent);
+      }
+      .brand .dot {
+        color: var(--accent);
+      }
+      .nav {
+        display: flex;
+        gap: 26px;
+        align-self: stretch;
+      }
+      .nav a {
+        display: flex;
+        align-items: center;
+        border-bottom: 2px solid transparent;
+        padding-top: 2px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .nav a:hover {
+        color: var(--ink);
+      }
+      .nav a.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+      .tools {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .datacut {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+      .page {
+        max-width: 1440px;
+        margin: auto;
+        padding: 0 32px 72px;
+      }
+      .site-footer {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 22px 32px 32px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 28px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .site-footer b {
+        color: var(--ink);
+      }
+
+      /* ---------- primitives ---------- */
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+      }
+      .sq {
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 1px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 38px;
+        padding: 0 14px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .btn svg {
+        width: 16px;
+        height: 16px;
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+      .btn.primary:hover {
+        background: var(--accent-hover);
+      }
+      .btn.secondary {
+        background: var(--surface);
+        border-color: var(--line);
+      }
+      .btn.secondary:hover {
+        border-color: var(--line-strong);
+        background: var(--subtle);
+      }
+      .btn.secondary[aria-expanded='true'] {
+        border-color: var(--accent-line);
+        background: var(--accent-tint);
+        color: var(--accent);
+      }
+      .btn.sm {
+        height: 30px;
+        padding: 0 10px;
+        font-size: 12px;
+      }
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        color: var(--muted);
+      }
+      .icon-btn:hover {
+        background: var(--subtle);
+        color: var(--ink);
+      }
+      .text-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent);
+        font-size: 12.5px;
+        font-weight: 700;
+      }
+      .text-link:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .text-link svg {
+        width: 14px;
+        height: 14px;
+      }
+      .count {
+        display: inline-flex;
+        align-items: center;
+        font: 600 12px var(--mono);
+        color: var(--muted);
+        background: var(--subtle);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 1px 7px;
+        vertical-align: middle;
+      }
+      .badge {
+        display: inline-flex;
+        min-width: 18px;
+        justify-content: center;
+        font: 700 10px/16px var(--mono);
+        background: var(--accent);
+        color: var(--on-accent);
+        border-radius: 999px;
+        padding: 0 5px;
+      }
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+      }
+      .panel-h {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .panel-h h2,
+      .panel-h h3 {
+        font-size: 14px;
+        font-weight: 750;
+      }
+      .panel-h .aside {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      /* Provenance: outline = the source said it, solid = CP0X derived it. */
+      .prov {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10.5px;
+        font-weight: 600;
+        color: var(--muted);
+        white-space: nowrap;
+        line-height: 1;
+        vertical-align: middle;
+      }
+      .prov b {
+        font: 700 8.5px/1 var(--mono);
+        letter-spacing: 0.08em;
+        padding: 3px 4px 2px;
+        border-radius: 3px;
+      }
+      .prov.src b {
+        border: 1px solid var(--line-strong);
+        color: var(--muted);
+      }
+      .prov.cp0x b {
+        background: var(--ink);
+        color: var(--surface);
+        border: 1px solid var(--ink);
+      }
+
+      /* State helpers set local colour variables. */
+      .st-pos {
+        --c: var(--pos);
+        --cf: var(--pos-fill);
+        --ct: var(--pos-tint);
+      }
+      .st-neu {
+        --c: var(--neu);
+        --cf: var(--neu-fill);
+        --ct: var(--neu-tint);
+      }
+      .st-neg {
+        --c: var(--neg);
+        --cf: var(--neg-fill);
+        --ct: var(--neg-tint);
+      }
+      .st-none {
+        --c: var(--none);
+        --cf: var(--none-fill);
+        --ct: var(--none-tint);
+      }
+      .state {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--c);
+        background: var(--ct);
+        border-radius: 5px;
+        padding: 2px 7px;
+        white-space: nowrap;
+      }
+      .state::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 2px;
+        background: var(--cf);
+      }
+      .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        background: var(--cf);
+        flex-shrink: 0;
+      }
+      .mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        font: 700 10px var(--mono);
+        background: var(--ct);
+        color: var(--c);
+      }
+      .mark.st-none {
+        background: transparent;
+        border: 1px dashed var(--line-strong);
+        color: var(--faint);
+      }
+      .newb {
+        display: inline-flex;
+        font: 700 9px/1 var(--mono);
+        letter-spacing: 0.06em;
+        color: var(--new);
+        background: var(--new-tint);
+        border-radius: 3px;
+        padding: 3px 4px 2px;
+        white-space: nowrap;
+      }
+      .srclabel {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .srclabel::before {
+        content: '“';
+        color: var(--faint);
+      }
+      .srclabel::after {
+        content: '”';
+        color: var(--faint);
+      }
+
+      /* Feed cells: one cell = one source. */
+      .strip {
+        display: flex;
+        gap: 3px;
+      }
+      .cell {
+        position: relative;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        background: var(--cf);
+      }
+      .cell.st-none {
+        background: var(--none-fill);
+      }
+      .cell:hover,
+      .cell:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 1px;
+      }
+      .cell .fresh {
+        position: absolute;
+        top: -3px;
+        right: -3px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--new);
+        box-shadow: 0 0 0 2px var(--surface);
+      }
+      .avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .avatar.lg {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        font-size: 22px;
+      }
+      .av-0 {
+        background: var(--avatar-0);
+        color: var(--avatar-ink-0);
+      }
+      .av-1 {
+        background: var(--avatar-1);
+        color: var(--avatar-ink-1);
+      }
+      .av-2 {
+        background: var(--avatar-2);
+        color: var(--avatar-ink-2);
+      }
+      .av-3 {
+        background: var(--avatar-3);
+        color: var(--avatar-ink-3);
+      }
+      .av-4 {
+        background: var(--avatar-4);
+        color: var(--avatar-ink-4);
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .chip:hover {
+        border-color: var(--line-strong);
+        color: var(--ink);
+      }
+      .chip[aria-pressed='true'] {
+        background: var(--accent-tint);
+        border-color: var(--accent-line);
+        color: var(--accent);
+      }
+      .chip .ab {
+        font: 700 9px var(--mono);
+        opacity: 0.8;
+      }
+      .chip .n {
+        font: 600 10px var(--mono);
+        opacity: 0.75;
+      }
+      .seg {
+        display: inline-flex;
+        padding: 3px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: var(--subtle);
+      }
+      .seg button {
+        height: 30px;
+        padding: 0 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .seg button:hover {
+        color: var(--ink);
+      }
+      .seg button[aria-pressed='true'] {
+        background: var(--surface);
+        color: var(--ink);
+        box-shadow:
+          0 1px 2px #0000001f,
+          0 0 0 1px var(--line);
+      }
+      .chain {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--muted);
+        background: var(--surface);
+        white-space: nowrap;
+      }
+      button.chain:hover {
+        color: var(--ink);
+        border-color: var(--line-strong);
+      }
+      .kv {
+        display: grid;
+        gap: 8px;
+      }
+      .kv > div {
+        display: grid;
+        grid-template-columns: minmax(110px, 40%) 1fr;
+        gap: 10px;
+        align-items: baseline;
+        font-size: 12.5px;
+      }
+      .kv dt {
+        color: var(--muted);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 6px;
+      }
+      .kv dd {
+        font-weight: 600;
+      }
+      .kv dd small {
+        display: block;
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 11px;
+      }
+
+      @media (max-width: 900px) {
+        .site-header .inner,
+        .page,
+        .site-footer {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+        .nav,
+        .datacut {
+          display: none;
+        }
+      }
+
+      /* ---------- dashboard ---------- */
+      .dash-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 28px 0 18px;
+      }
+      .dash-head h1 {
+        font-size: 30px;
+        font-weight: 780;
+        letter-spacing: -1px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .dash-head .lede {
+        color: var(--muted);
+        max-width: 72ch;
+        margin-top: 6px;
+        font-size: 13.5px;
+      }
+      .dash-head .lede b {
+        color: var(--ink);
+        font-weight: 650;
+      }
+
+      .pulse {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      .pulse-cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .pcard {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+        text-align: left;
+        padding: 12px 16px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+      }
+      .pcard:hover {
+        border-color: var(--line-strong);
+      }
+      .pcard[aria-pressed='true'] {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent) inset;
+      }
+      .pcard .pc-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.9px;
+      }
+      .pcard .pc-act {
+        margin-left: auto;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: none;
+        letter-spacing: 0;
+      }
+      .pcard .pc-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-width: 0;
+      }
+      .pcard .pc-n {
+        font: 650 30px/1 var(--mono);
+        letter-spacing: -1px;
+        white-space: nowrap;
+      }
+      .pcard .pc-n small {
+        font-size: 13px;
+        color: var(--muted);
+        letter-spacing: 0;
+        margin-left: 4px;
+      }
+      .pcard .pc-txt {
+        min-width: 0;
+      }
+      .pcard .pc-d {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pcard .pc-list {
+        display: block;
+        margin-top: 2px;
+        font-size: 12px;
+        font-weight: 650;
+        color: var(--ink);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .pcard .pc-ico {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+      }
+      .pcard.k-new .pc-ico {
+        background: var(--new);
+        border-radius: 50%;
+      }
+      .pcard.k-neg .pc-ico {
+        background: var(--neg-fill);
+      }
+      .pcard.k-gap .pc-ico {
+        background: var(--none-fill);
+        border: 1px dashed var(--line-strong);
+      }
+      .pcard.k-stale .pc-ico {
+        background: var(--amber);
+      }
+
+      .stream {
+        display: flex;
+        flex-direction: column;
+      }
+      .stream ol {
+        padding: 4px 0;
+      }
+      .stream li a {
+        display: grid;
+        grid-template-columns: 34px 26px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 16px;
+        font-size: 12px;
+      }
+      .stream li a:hover {
+        background: var(--row-hover);
+      }
+      .stream .t {
+        font: 600 11px var(--mono);
+        color: var(--muted);
+      }
+      .stream .mark {
+        width: 24px;
+        height: 22px;
+        font-size: 9.5px;
+      }
+      .stream .s-main {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .stream .s-main b {
+        font-weight: 750;
+      }
+      .stream .s-main span {
+        color: var(--muted);
+      }
+
+      .explorer {
+        padding: 0;
+        overflow: visible;
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px;
+        flex-wrap: wrap;
+      }
+      .toolbar h2 {
+        font-size: 15px;
+        font-weight: 780;
+        margin-right: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 200px;
+        max-width: 360px;
+        height: 38px;
+        padding: 0 11px;
+        background: var(--canvas);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--muted);
+      }
+      .search:focus-within {
+        outline: 2px solid var(--focus);
+        outline-offset: 1px;
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        font-size: 13px;
+        color: var(--ink);
+      }
+      .sortsel {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .sortsel select {
+        height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 0 8px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .toolbar .spacer {
+        flex: 1;
+      }
+      .fchips {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding: 0 16px 12px;
+      }
+      .fchips:empty {
+        display: none;
+      }
+      .fchip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 5px 3px 10px;
+        border-radius: 999px;
+        background: var(--accent-tint);
+        border: 1px solid var(--accent-line);
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 650;
+      }
+      .fchip button {
+        display: inline-flex;
+        width: 18px;
+        height: 18px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        color: inherit;
+      }
+      .fchip button:hover {
+        background: var(--surface);
+      }
+      .fchip button svg {
+        width: 12px;
+        height: 12px;
+      }
+      .clear-all {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        margin-left: 4px;
+      }
+      .clear-all:hover {
+        color: var(--ink);
+        text-decoration: underline;
+      }
+
+      .scroll {
+        overflow-x: auto;
+        border-top: 1px solid var(--line);
+      }
+      .matrix {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .matrix th,
+      .matrix td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: middle;
+      }
+      .matrix thead th {
+        background: var(--subtle);
+        font-size: 11px;
+        font-weight: 650;
+        color: var(--muted);
+        white-space: nowrap;
+        vertical-align: bottom;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+      .matrix thead .prov {
+        margin-top: 5px;
+        display: flex;
+      }
+      .th-sort {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 6px;
+        margin: -3px -6px;
+        border-radius: 6px;
+        color: inherit;
+        font-weight: 650;
+      }
+      .th-sort:hover {
+        background: var(--surface);
+        color: var(--ink);
+      }
+      .th-sort.on {
+        color: var(--accent);
+      }
+      .th-sort svg {
+        opacity: 0.55;
+      }
+      .th-sort.on svg {
+        opacity: 1;
+      }
+      .matrix tbody tr {
+        cursor: pointer;
+      }
+      .matrix tbody tr:hover > td {
+        background: var(--row-hover);
+      }
+      .matrix td.c-name {
+        padding-left: 18px;
+        min-width: 190px;
+      }
+      .matrix td.num,
+      .matrix th.num {
+        text-align: right;
+      }
+      .pname {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+      .pname strong {
+        display: block;
+        font-size: 13.5px;
+        font-weight: 750;
+        white-space: nowrap;
+      }
+      .pname small {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .tvl {
+        font: 500 13px var(--mono);
+        white-space: nowrap;
+      }
+
+      .cov {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 70px;
+      }
+      .cov .v {
+        font: 500 13px var(--mono);
+        white-space: nowrap;
+      }
+      .cov .v b {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .cov .v span {
+        color: var(--muted);
+        font-size: 11.5px;
+      }
+      .covbar {
+        display: block;
+        width: 64px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--none-fill);
+        overflow: hidden;
+      }
+      .covbar i {
+        display: block;
+        height: 100%;
+        background: var(--ink);
+        opacity: 0.55;
+      }
+      .cov.low .covbar i {
+        background: var(--amber);
+        opacity: 1;
+      }
+      .cov.low .v b {
+        color: var(--amber);
+      }
+
+      .sig-h {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .strip.abbr button {
+        width: 20px;
+        font: 700 8.5px/16px var(--mono);
+        color: var(--muted);
+        border-radius: 3px;
+        text-align: center;
+      }
+      .strip.abbr button:hover,
+      .strip.abbr button.hl {
+        background: var(--ink);
+        color: var(--surface);
+      }
+      .strip.abbr button.on {
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+      .matrix td.c-sig {
+        min-width: 270px;
+      }
+
+      .lc {
+        min-width: 230px;
+      }
+      .lc1 {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .lc2 {
+        color: var(--muted);
+        font-size: 11.5px;
+        margin-top: 2px;
+        padding-left: 15px;
+      }
+      .lc.quiet .lc1 {
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .lc.quiet .lc2,
+      .lc.stale .lc2 {
+        padding-left: 0;
+      }
+      .lc.stale .lc1 {
+        color: var(--amber);
+        font-weight: 650;
+      }
+      .lc.stale .lc1::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        background: var(--amber);
+      }
+      .c-x {
+        width: 44px;
+        color: var(--faint);
+      }
+      .prow .chev {
+        display: inline-flex;
+        transition: transform 0.12s;
+      }
+      .prow.open .chev {
+        transform: rotate(180deg);
+        color: var(--accent);
+      }
+      .prow.open > td {
+        background: var(--row-hover);
+        border-bottom-color: transparent;
+      }
+
+      .xrow > td {
+        padding: 0 !important;
+        background: var(--subtle);
+        cursor: default;
+      }
+      .xrow:hover > td {
+        background: var(--subtle) !important;
+      }
+      .preview {
+        display: grid;
+        grid-template-columns: minmax(230px, 1fr) minmax(360px, 1.7fr) minmax(240px, 1fr);
+        border-left: 3px solid var(--accent);
+      }
+      .preview > div {
+        padding: 16px 20px 18px;
+        border-right: 1px solid var(--line);
+        min-width: 0;
+      }
+      .preview > div:last-child {
+        border-right: 0;
+      }
+      .preview h4 {
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .ulist li a {
+        display: grid;
+        grid-template-columns: 26px minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: start;
+        padding: 8px 8px;
+        margin: 0 -8px;
+        border-radius: 8px;
+      }
+      .ulist li a:hover {
+        background: var(--surface);
+      }
+      .u-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-size: 12.5px;
+      }
+      .u-top b {
+        font-weight: 750;
+      }
+      .u-lab {
+        font-size: 11.5px;
+      }
+      .u-sum {
+        display: block;
+        color: var(--muted);
+        font-size: 11.5px;
+        margin-top: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .u-age {
+        font: 500 11px var(--mono);
+        color: var(--muted);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+        white-space: nowrap;
+      }
+      .glist li {
+        display: grid;
+        grid-template-columns: 26px 1fr;
+        gap: 10px;
+        padding: 6px 0;
+        font-size: 12.5px;
+      }
+      .glist li b {
+        font-weight: 700;
+      }
+      .glist li small {
+        display: block;
+        color: var(--muted);
+        font-size: 11.5px;
+        margin-top: 1px;
+      }
+      .pv-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+
+      .trow td {
+        white-space: nowrap;
+      }
+      .sigcount {
+        display: inline-flex;
+        gap: 10px;
+        font: 600 12px var(--mono);
+      }
+      .sigcount span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .sigcount .z {
+        color: var(--faint);
+        font-weight: 400;
+      }
+      .upd {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12.5px;
+      }
+      .upd.stale {
+        color: var(--amber);
+      }
+
+      .foot {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px 24px;
+        padding: 12px 18px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 16px;
+      }
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend .cell {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+      }
+      .legend .fresh-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--new);
+      }
+      .empty {
+        padding: 48px 20px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .empty h3 {
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+      .empty .btn {
+        margin-top: 14px;
+      }
+
+      /* tooltip */
+      .tip {
+        position: fixed;
+        z-index: 60;
+        width: 310px;
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        box-shadow: var(--pop);
+        padding: 12px 14px;
+        font-size: 12px;
+        pointer-events: none;
+      }
+      .tip-h {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .tip-h b {
+        font-size: 13px;
+        font-weight: 750;
+      }
+      .tip-h .prov {
+        margin-left: auto;
+      }
+      .tip-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 9px;
+        flex-wrap: wrap;
+      }
+      .tip-meta {
+        color: var(--muted);
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .tip-sum {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid var(--line);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .tip-sum q {
+        quotes: '“' '”';
+      }
+      .tip-foot {
+        margin-top: 8px;
+        color: var(--accent);
+        font-weight: 700;
+        font-size: 11px;
+      }
+
+      /* drawer */
+      .scrim {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: #0b151d73;
+      }
+      .drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 51;
+        width: min(430px, 100vw);
+        display: flex;
+        flex-direction: column;
+        background: var(--surface);
+        border-left: 1px solid var(--line);
+        box-shadow: -16px 0 48px #00000030;
+      }
+      .drawer-h {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px 14px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .drawer-h h2 {
+        font-size: 16px;
+        font-weight: 780;
+      }
+      .drawer-h .icon-btn {
+        margin-left: auto;
+      }
+      .drawer-b {
+        flex: 1;
+        overflow-y: auto;
+        padding: 4px 20px 24px;
+      }
+      .fgroup {
+        border: 0;
+        margin: 0;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--line);
+        min-width: 0;
+      }
+      .fgroup:last-child {
+        border-bottom: 0;
+      }
+      .fgroup legend {
+        float: left;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0;
+        margin-bottom: 10px;
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .fgroup legend + * {
+        clear: both;
+      }
+      .flabel {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 12px 0 7px;
+        font-size: 12.5px;
+        font-weight: 650;
+      }
+      .flabel:first-of-type {
+        margin-top: 0;
+      }
+      .flabel output {
+        margin-left: auto;
+        font: 600 12px var(--mono);
+        color: var(--accent);
+      }
+      .chipset {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .fnote {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      .check {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 6px 0;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .check input {
+        width: 16px;
+        height: 16px;
+        margin: 2px 0 0;
+        accent-color: var(--accent);
+        flex-shrink: 0;
+      }
+      .check small {
+        display: block;
+        color: var(--muted);
+        font-size: 11.5px;
+      }
+      .check .dot {
+        margin-top: 5px;
+      }
+      .fgroup.lead {
+        background: var(--new-tint);
+        margin: 14px -8px 4px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 0;
+      }
+      .fgroup.lead .check b {
+        font-weight: 750;
+      }
+      input[type='range'] {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+      .range-scale {
+        display: flex;
+        justify-content: space-between;
+        font: 500 10px var(--mono);
+        color: var(--faint);
+      }
+      .stepper {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .stepper button {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        color: var(--muted);
+      }
+      .stepper button:hover {
+        color: var(--ink);
+        background: var(--subtle);
+      }
+      .stepper output {
+        min-width: 34px;
+        text-align: center;
+        font: 600 13px var(--mono);
+      }
+      .more-toggle {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent);
+        padding: 5px 4px;
+      }
+      .drawer-f {
+        display: flex;
+        gap: 10px;
+        padding: 14px 20px;
+        border-top: 1px solid var(--line);
+        background: var(--surface);
+      }
+      .drawer-f .primary {
+        flex: 1;
+      }
+
+      @media (max-width: 1180px) {
+        .pulse {
+          grid-template-columns: 1fr;
+        }
+        .preview {
+          grid-template-columns: 1fr 1fr;
+        }
+        .preview > .pv-up {
+          grid-column: 1 / -1;
+          order: 3;
+          border-top: 1px solid var(--line);
+          border-right: 0;
+        }
+      }
+      @media (max-width: 760px) {
+        .pulse-cards {
+          grid-template-columns: 1fr;
+        }
+        .preview {
+          grid-template-columns: 1fr;
+        }
+        .preview > div {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+        .dash-head {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mock-banner">
+      <b>MOCKUP v2 · INTELLIGENCE</b>
+      <span>Sample data — not real source output. Mock time: 27 Sep 2026 12:00 UTC.</span>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="protocol.html?p=aave">Protocol page (Aave)</a>
+    </div>
+    <header class="site-header">
+      <div class="inner">
+        <a class="brand" href="dashboard.html" aria-label="defi-dna home">
+          <svg width="24" height="24" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path d="M3 3h9v9H3zM16 3h9v9h-9zM3 16h9v9H3z" fill="currentColor" />
+            <path d="M16 25v-9h9" stroke="currentColor" stroke-width="3" />
+          </svg>
+          <span>defi-dna<span class="dot">.</span></span>
+        </a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="dashboard.html" class="active">Protocols</a>
+          <a href="#" onclick="return false">Sources</a>
+          <a href="#" onclick="return false">What changed</a>
+          <a href="#" onclick="return false">Methodology</a>
+        </nav>
+        <div class="tools">
+          <span class="datacut"
+            ><span class="prov cp0x"><b>CP0X</b></span> Data cut 27 Sep 2026 · 12:00 UTC</span
+          >
+          <button class="icon-btn" id="theme-toggle" type="button"></button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page" id="main">
+      <section class="dash-head">
+        <div>
+          <div class="eyebrow"><span class="sq"></span>Intelligence aggregation layer</div>
+          <h1>Protocols <span class="count" id="count-all"></span></h1>
+          <p class="lede">
+            What changed, which sources have something to say, and where data is missing.
+            <b>Every signal belongs to the source that published it</b> — DeFi DNA shows coverage
+            and freshness, never a combined score.
+          </p>
+        </div>
+      </section>
+
+      <section class="pulse" aria-label="Activity overview">
+        <div class="pulse-cards" id="pulse"></div>
+        <div class="panel stream">
+          <div class="panel-h">
+            <h2>Latest source updates</h2>
+            <span class="aside">all protocols · last 7 days</span>
+          </div>
+          <ol id="stream"></ol>
+        </div>
+      </section>
+
+      <section class="panel explorer" aria-labelledby="explorer-title">
+        <div class="toolbar">
+          <h2 id="explorer-title">Protocols <span class="count" id="count-shown"></span></h2>
+          <label class="search">
+            <span id="search-ico"></span>
+            <span class="sr-only">Search protocols</span>
+            <input
+              id="q"
+              type="search"
+              placeholder="Search protocol, category or source…"
+              autocomplete="off"
+            />
+          </label>
+          <button
+            class="btn secondary"
+            id="open-filters"
+            type="button"
+            aria-expanded="false"
+            aria-controls="drawer"
+          >
+            <span id="filter-ico"></span> Filters
+            <span class="badge" id="filter-count" hidden></span>
+          </button>
+          <label class="sortsel"
+            >Sort
+            <select id="sort"></select>
+          </label>
+          <span class="spacer"></span>
+          <div class="seg" role="group" aria-label="View">
+            <button type="button" data-view="intel">Intelligence</button>
+            <button type="button" data-view="table">Table</button>
+          </div>
+        </div>
+        <div class="fchips" id="fchips"></div>
+        <div class="scroll" id="results"></div>
+        <div class="foot" id="foot"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span
+        ><b>defi-dna.</b> Every verdict belongs to the source that published it. No composite
+        score.</span
+      >
+      <span
+        >Labels: <span class="prov src"><b>SOURCE</b>name</span> published by a source ·
+        <span class="prov cp0x"><b>CP0X</b></span> derived by CP0X from source data</span
+      >
+    </footer>
+
+    <div class="scrim" id="scrim" hidden></div>
+    <aside
+      class="drawer"
+      id="drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drawer-title"
+      hidden
+    >
+      <div class="drawer-h">
+        <h2 id="drawer-title">Filters</h2>
+        <button class="text-link" type="button" id="f-reset-top">Reset</button>
+        <button
+          class="icon-btn"
+          type="button"
+          data-close
+          aria-label="Close filters"
+          id="drawer-x"
+        ></button>
+      </div>
+      <div class="drawer-b" id="drawer-b">
+        <div class="fgroup lead">
+          <label class="check"
+            ><input type="checkbox" data-f="changed" />
+            <span
+              ><b>Changed recently</b
+              ><small
+                >A source published new or updated information in the last 48 hours.</small
+              ></span
+            >
+          </label>
+        </div>
+
+        <fieldset class="fgroup">
+          <legend>Protocol</legend>
+          <div class="flabel">Category</div>
+          <div class="chipset" data-set="cats"></div>
+          <div class="flabel">Chain</div>
+          <div class="chipset" data-set="chains"></div>
+        </fieldset>
+
+        <fieldset class="fgroup">
+          <legend>Financial</legend>
+          <div class="flabel">
+            TVL <span class="prov src"><b>SOURCE</b>DefiLlama</span>
+          </div>
+          <div class="chipset" data-set="tvl"></div>
+        </fieldset>
+
+        <fieldset class="fgroup">
+          <legend>
+            Coverage <span class="prov cp0x"><b>CP0X</b></span>
+          </legend>
+          <div class="flabel">Minimum sources with data <output id="o-minFeeds">Any</output></div>
+          <input
+            type="range"
+            min="0"
+            max="11"
+            step="1"
+            value="0"
+            data-f="minFeeds"
+            aria-label="Minimum number of sources with data"
+          />
+          <div class="range-scale">
+            <span>0</span><span>3</span><span>6</span><span>9</span><span>11</span>
+          </div>
+          <div class="flabel">Coverage percentage</div>
+          <div class="chipset" data-set="covPct"></div>
+        </fieldset>
+
+        <fieldset class="fgroup">
+          <legend>Source coverage</legend>
+          <div class="flabel">Has data from</div>
+          <div class="chipset" data-set="has"></div>
+          <div class="flabel">Missing data from</div>
+          <div class="chipset" data-set="miss"></div>
+        </fieldset>
+
+        <fieldset class="fgroup">
+          <legend>
+            Signals <span class="prov src"><b>SOURCE</b>states</span>
+          </legend>
+          <label class="check st-neg"
+            ><input type="checkbox" data-sig="neg" /><i class="dot"></i
+            ><span>Has source-provided negative signals</span></label
+          >
+          <label class="check st-neu"
+            ><input type="checkbox" data-sig="neu" /><i class="dot"></i
+            ><span>Has neutral signals</span></label
+          >
+          <label class="check st-pos"
+            ><input type="checkbox" data-sig="pos" /><i class="dot"></i
+            ><span>Has positive signals</span></label
+          >
+          <p class="fnote">
+            Each state is what one source published. Filtering finds protocols where at least one
+            source says so — it does not combine sources into a rating.
+          </p>
+        </fieldset>
+
+        <fieldset class="fgroup">
+          <legend>Security</legend>
+          <label class="check"
+            ><input type="checkbox" data-f="hasAudits" /><span
+              >Has audits<small>From Audit Feed</small></span
+            ></label
+          >
+          <div class="flabel">
+            Minimum audits
+            <span class="stepper" style="margin-left: auto">
+              <button type="button" data-step="-1" aria-label="Fewer audits">−</button>
+              <output id="o-minAudits">0</output>
+              <button type="button" data-step="1" aria-label="More audits">+</button>
+            </span>
+          </div>
+          <label class="check"
+            ><input type="checkbox" data-f="hasSec" /><span
+              >Has source-reported security events<small>From Security Feed</small></span
+            ></label
+          >
+        </fieldset>
+
+        <fieldset class="fgroup">
+          <legend>
+            Freshness <span class="prov cp0x"><b>CP0X</b></span>
+          </legend>
+          <div class="flabel">Latest source update within</div>
+          <div class="chipset" data-set="fresh"></div>
+        </fieldset>
+      </div>
+      <div class="drawer-f">
+        <button class="btn secondary" type="button" id="f-reset">Reset all</button>
+        <button class="btn primary" type="button" data-close id="f-apply">Show results</button>
+      </div>
+    </aside>
+
+    <div class="tip" id="tip" role="tooltip" hidden></div>
+
+    <script>
+      /* ------------------------------------------------------------------
+   SAMPLE DATA — illustrative only, not real source output.
+   Times are hours before the mock "now" (27 Sep 2026 12:00 UTC).
+   st: pos | neu | neg | none — the state the SOURCE published,
+   mapped from its own scale. lab = the source's own wording.
+------------------------------------------------------------------- */
+      const FEEDS = [
+        {
+          id: 'ds',
+          abbr: 'DS',
+          name: 'DeFiSafety',
+          topic: 'Process quality reviews',
+          url: 'https://www.defisafety.com',
+        },
+        {
+          id: 'lr',
+          abbr: 'LR',
+          name: 'LlamaRisk',
+          topic: 'Collateral & protocol risk',
+          url: 'https://www.llamarisk.com',
+        },
+        {
+          id: 'au',
+          abbr: 'AU',
+          name: 'Audit Feed',
+          topic: 'Published audit reports',
+          url: 'https://example.com/audit-feed',
+        },
+        {
+          id: 'se',
+          abbr: 'SE',
+          name: 'Security Feed',
+          topic: 'Incidents & exploits',
+          url: 'https://example.com/security-feed',
+        },
+        {
+          id: 'im',
+          abbr: 'IM',
+          name: 'Immunefi',
+          topic: 'Bug bounty programs',
+          url: 'https://immunefi.com',
+        },
+        {
+          id: 'sc',
+          abbr: 'SC',
+          name: 'DeFiScan',
+          topic: 'Decentralization stages',
+          url: 'https://www.defiscan.info',
+        },
+        {
+          id: 'rl',
+          abbr: 'RL',
+          name: 'Risklayer',
+          topic: 'Protocol risk · Beta',
+          url: 'https://risklayer.online',
+        },
+        {
+          id: 'ph',
+          abbr: 'PH',
+          name: 'Philidor',
+          topic: 'Vault risk',
+          url: 'https://analytics.philidor.io',
+        },
+        {
+          id: 'ex',
+          abbr: 'EX',
+          name: 'Exponential',
+          topic: 'Pool ratings',
+          url: 'https://exponential.fi',
+        },
+        {
+          id: 'cr',
+          abbr: 'CR',
+          name: 'Credora',
+          topic: 'Credit ratings',
+          url: 'https://credora.io',
+        },
+        {
+          id: 'ba',
+          abbr: 'BA',
+          name: 'Block Analitica',
+          topic: 'Market risk',
+          url: 'https://blockanalitica.com',
+        },
+      ]
+
+      /* Protocol-type modules: which structured data a protocol page shows depends on its type. */
+      const MODULE_SETS = [
+        { type: 'Lending · pooled', mods: ['Markets'], ex: 'aave' },
+        { type: 'Lending · modular', mods: ['Markets', 'Vaults', 'Curators'], ex: 'morpho' },
+        {
+          type: 'DEX · concentrated liquidity',
+          mods: ['Pools', 'Liquidity', 'Volume', 'Fee tiers'],
+          ex: 'uniswap',
+        },
+        {
+          type: 'DEX · weighted & composable',
+          mods: ['Pools', 'Pool types', 'Gauges'],
+          ex: 'balancer',
+        },
+        { type: 'DEX · stableswap', mods: ['Pools', 'Volume', 'Gauges'], ex: 'curve' },
+        {
+          type: 'CDP · stablecoin',
+          mods: ['Collateral types', 'Debt', 'Stablecoin supply'],
+          ex: 'sky',
+        },
+        { type: 'Liquid staking', mods: ['Staking', 'Node operators', 'Withdrawals'], ex: 'lido' },
+        { type: 'Synthetic dollar', mods: ['Backing', 'Supply', 'Reserve fund'], ex: 'ethena' },
+      ]
+
+      const NOT_COVERED = { st: 'none', why: 'Not covered by this source.', by: 'source' }
+      const VAULTS_ONLY = {
+        st: 'none',
+        why: 'Out of scope — this source rates vaults, not the protocol itself.',
+        by: 'source',
+      }
+      const NO_RECORDS = {
+        st: 'none',
+        why: 'No records for this protocol in the source. Absence of records is not evidence that nothing happened.',
+        by: 'source',
+      }
+
+      const PROTOCOLS = [
+        {
+          id: 'aave',
+          name: 'Aave',
+          cat: 'Lending',
+          type: 'Lending · pooled',
+          tvl: 31.4e9,
+          audits: 14,
+          sec: 3,
+          cp0x: 87,
+          launch: 2020,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'Avalanche',
+            'BNB Chain',
+            'Gnosis',
+            'Scroll',
+            'zkSync Era',
+            'Linea',
+            'Sonic',
+          ],
+          links: {
+            Website: 'https://aave.com',
+            Docs: 'https://aave.com/docs',
+            GitHub: 'https://github.com/aave',
+            Governance: 'https://governance.aave.com',
+          },
+          about:
+            'Pooled, over-collateralized lending markets with variable rates, e-modes and the GHO stablecoin.',
+          snap: [
+            ['Model', 'Pooled, over-collateralized', 'Protocol docs'],
+            ['Versions', 'v3 (live) · v4 Hub & Spoke (rolling out)', 'Protocol docs'],
+            ['Governance', 'Aave DAO · AAVE / stkAAVE · Governance v3', 'Protocol docs'],
+            ['Oracle', 'Chainlink feeds + CAPO rate adapters', 'Protocol docs'],
+            ['Token', 'AAVE', 'Protocol docs'],
+            ['Stablecoin', 'GHO', 'Protocol docs'],
+            ['Admin', 'Short & long executors · Guardian multisig', 'Protocol docs'],
+          ],
+          pm: [
+            ['Supplied', '$52.8B', 'DefiLlama'],
+            ['Borrowed', '$21.4B', 'DefiLlama'],
+            ['Utilization', '40.5%', 'cp0x'],
+            ['Markets', '18', 'Aave API'],
+            ['Collateral assets', '64', 'Aave API'],
+          ],
+          mods: [
+            {
+              name: 'Markets',
+              src: 'Aave API',
+              note: 'One row per market deployment. Totals match the metrics above.',
+              tables: [
+                {
+                  cols: ['Market', 'Chain', 'Supplied', 'Borrowed', 'Utilization', 'Assets'],
+                  num: [2, 3, 4, 5],
+                  rows: [
+                    ['Core', 'Ethereum', '$38.2B', '$16.9B', '44.2%', '31'],
+                    ['Prime', 'Ethereum', '$6.1B', '$2.4B', '39.3%', '9'],
+                    ['EtherFi', 'Ethereum', '$2.9B', '$0.3B', '10.3%', '4'],
+                    ['Core', 'Arbitrum', '$1.6B', '$0.6B', '37.5%', '18'],
+                    ['Core', 'Base', '$1.4B', '$0.5B', '35.7%', '13'],
+                    ['Core', 'Avalanche', '$0.9B', '$0.3B', '33.3%', '16'],
+                    ['12 other markets', '6 chains', '$1.7B', '$0.4B', '23.5%', '—'],
+                  ],
+                },
+                {
+                  title: 'Collateral assets — Ethereum Core (top 6 of 31)',
+                  cols: ['Asset', 'Supplied', 'Borrowed', 'Utilization', 'LTV', 'Liq. threshold'],
+                  num: [1, 2, 3, 4, 5],
+                  rows: [
+                    ['WETH', '$9.8B', '$5.1B', '52.0%', '80.5%', '83.0%'],
+                    ['wstETH', '$6.4B', '$0.1B', '1.6%', '78.5%', '81.0%'],
+                    ['weETH', '$5.2B', '$0.05B', '1.0%', '77.0%', '79.0%'],
+                    ['USDC', '$4.9B', '$4.1B', '83.7%', '75.0%', '78.0%'],
+                    ['USDT', '$4.3B', '$3.7B', '86.0%', '75.0%', '78.0%'],
+                    ['WBTC', '$2.7B', '$0.2B', '7.4%', '73.0%', '78.0%'],
+                  ],
+                },
+              ],
+            },
+          ],
+          s: {
+            se: {
+              st: 'neg',
+              h: 2,
+              lab: 'Incident reported',
+              ev: 'Assessment updated',
+              hd: 'Security Feed updated',
+              diff: 'State: Neutral → Negative',
+              sum: 'Oracle price deviation on a wstETH adapter in Aave v3 Core led to liquidations; source marks the record as preliminary.',
+              blocks: [
+                {
+                  t: 'event',
+                  date: '27 Sep 2026',
+                  kind: 'Oracle incident',
+                  title: 'Price deviation on a wstETH rate adapter — Aave v3 Core (Ethereum)',
+                  impact: 'Est. $2.1M in liquidations',
+                  status: 'Under investigation',
+                  v: 'A stale exchange-rate snapshot let positions be liquidated below the market price. A DAO proposal for reimbursement is being discussed.',
+                  isNew: true,
+                },
+                {
+                  t: 'warning',
+                  v: 'Source marks this record as preliminary. Figures may change as the investigation continues.',
+                },
+                {
+                  t: 'event',
+                  date: 'Mar 2025',
+                  kind: 'Oracle misconfiguration',
+                  title: 'CAPO adapter misconfiguration on wstETH e-mode',
+                  impact: '~$27M in liquidations',
+                  status: 'Users reimbursed by the DAO',
+                },
+                {
+                  t: 'event',
+                  date: 'Nov 2022',
+                  kind: 'Market manipulation',
+                  title: 'CRV market short attack',
+                  impact: '~$1.6M bad debt',
+                  status: 'Covered by the treasury',
+                },
+              ],
+            },
+            au: {
+              st: 'pos',
+              h: 5,
+              lab: 'New audit',
+              ev: 'New audit detected',
+              hd: 'New audit discovered',
+              sum: 'Certora — Aave v3.5 pool logic. 0 critical, 0 high, 2 medium, 5 low; all resolved.',
+              blocks: [
+                {
+                  t: 'audit',
+                  firm: 'Certora',
+                  scope: 'Aave v3.5 — pool logic & liquidation changes',
+                  date: '27 Sep 2026',
+                  sev: [0, 0, 2, 5],
+                  status: 'All findings resolved',
+                  url: 'https://example.com/audits/certora-aave-v3-5.pdf',
+                  isNew: true,
+                },
+                {
+                  t: 'finding',
+                  id: 'M-01',
+                  sev: 'Medium',
+                  title:
+                    'Rounding direction in the liquidation-bonus calculation can favour the liquidator by 1 wei per asset.',
+                  status: 'Resolved',
+                },
+                {
+                  t: 'audit',
+                  firm: 'ChainSecurity',
+                  scope: 'GHO Steward v2',
+                  date: '6 Sep 2026',
+                  sev: [0, 0, 1, 3],
+                  status: 'Resolved',
+                  url: 'https://example.com/audits/chainsecurity-gho-steward-v2.pdf',
+                },
+                {
+                  t: 'audit',
+                  firm: 'Sigma Prime',
+                  scope: 'Aave v4 — Hub & Spoke core',
+                  date: '14 Aug 2026',
+                  sev: [0, 1, 2, 6],
+                  status: '1 high fixed · 2 medium acknowledged',
+                  url: 'https://example.com/audits/sigmaprime-aave-v4.pdf',
+                },
+                {
+                  t: 'table',
+                  title: 'Audit history by firm',
+                  cols: ['Firm', 'Audits', 'Latest'],
+                  rows: [
+                    ['Certora', '4', '27 Sep 2026'],
+                    ['Sigma Prime', '3', '14 Aug 2026'],
+                    ['OpenZeppelin', '2', 'Mar 2026'],
+                    ['ChainSecurity', '2', '6 Sep 2026'],
+                    ['Trail of Bits', '1', 'Jan 2022'],
+                    ['Others', '2', '—'],
+                  ],
+                },
+              ],
+            },
+            rl: {
+              st: 'pos',
+              h: 26,
+              lab: '8.1 / 10',
+              ev: 'Score updated',
+              diff: '7.9 → 8.1',
+              sum: 'Protocol score 8.1 / 10 (Beta). Audit-coverage component raised after the v3.5 review.',
+              blocks: [
+                {
+                  t: 'score',
+                  title: 'Protocol score (Beta)',
+                  v: '8.1',
+                  max: '10',
+                  prev: '7.9',
+                  scale: '0–10, higher means lower risk (as published). Beta methodology.',
+                  pos: 0.81,
+                },
+                {
+                  t: 'dimension',
+                  title: 'Components',
+                  scale: '0–10 per component',
+                  items: [
+                    { k: 'Dependencies', v: '7.5', pos: 0.75 },
+                    { k: 'Governance', v: '8.4', pos: 0.84 },
+                    { k: 'Tokenomics', v: '7.8', pos: 0.78 },
+                    { k: 'Audit coverage', v: '9.2', pos: 0.92 },
+                    { k: 'Smart contract', v: '8.3', pos: 0.83 },
+                  ],
+                },
+              ],
+            },
+            lr: {
+              st: 'neu',
+              h: 74,
+              lab: 'Conditional approval',
+              ev: 'Protocol assessment updated',
+              hd: 'LlamaRisk assessment updated',
+              sum: 'Supports onboarding weETH to Aave Core subject to a supply cap; secondary-market liquidity is concentrated.',
+              blocks: [
+                {
+                  t: 'text',
+                  title: 'Assessment summary (excerpt)',
+                  v: 'We support onboarding weETH to the Aave Core market subject to the parameters below. Secondary-market liquidity remains concentrated in two venues, and withdrawal-queue duration has increased over the past 30 days.',
+                },
+                {
+                  t: 'dimension',
+                  title: 'Risk dimensions',
+                  scale: 'Low · Medium · High (as published)',
+                  items: [
+                    { k: 'Market risk', v: 'Medium', pos: 0.5 },
+                    { k: 'Liquidity risk', v: 'Medium', pos: 0.5 },
+                    { k: 'Counterparty risk', v: 'Low', pos: 0.15 },
+                    { k: 'Smart-contract risk', v: 'Low', pos: 0.15 },
+                  ],
+                },
+                {
+                  t: 'warning',
+                  v: 'Source recommends a supply cap of no more than 1.2M weETH until on-chain exit liquidity improves.',
+                },
+                {
+                  t: 'link',
+                  title: 'Governance forum — weETH onboarding review',
+                  url: 'https://governance.aave.com',
+                },
+              ],
+            },
+            ba: {
+              st: 'neu',
+              h: 96,
+              lab: 'Parameter changes recommended',
+              ev: 'Market risk report',
+              sum: '3 assets above 80% utilization; recommends rate-curve and cap changes for USDT and PYUSD.',
+              blocks: [
+                {
+                  t: 'metric',
+                  items: [
+                    { k: 'Assets > 80% utilization', v: '3' },
+                    { k: 'Bad debt', v: '$0.18M' },
+                    { k: 'Capital at risk', v: '$214M', s: '1-day, 99% (as published)' },
+                  ],
+                },
+                {
+                  t: 'table',
+                  title: 'Recommendations',
+                  cols: ['Asset', 'Utilization', 'Recommendation'],
+                  rows: [
+                    ['USDT', '86%', 'Raise slope 2 by 2 pp'],
+                    ['USDC', '84%', 'No change'],
+                    ['PYUSD', '91%', 'Lower supply cap to 60M'],
+                  ],
+                },
+                {
+                  t: 'link',
+                  title: 'Risk dashboard — Aave v3 Ethereum',
+                  url: 'https://blockanalitica.com',
+                },
+              ],
+            },
+            ds: {
+              st: 'pos',
+              h: 146,
+              lab: 'Pass · 92%',
+              ev: 'Review updated',
+              diff: '90% → 92%',
+              sum: 'Process Quality Review 92%. DeFiSafety treats 70% and above as a pass.',
+              blocks: [
+                {
+                  t: 'score',
+                  title: 'Process Quality Review',
+                  v: '92%',
+                  prev: '90%',
+                  scale: '0–100%. DeFiSafety treats ≥ 70% as a pass.',
+                  pos: 0.92,
+                },
+                {
+                  t: 'dimension',
+                  title: 'Review sections',
+                  scale: 'Share of section criteria met',
+                  items: [
+                    { k: 'Contracts & team', v: '100%', pos: 1 },
+                    { k: 'Documentation', v: '88%', pos: 0.88 },
+                    { k: 'Testing', v: '85%', pos: 0.85 },
+                    { k: 'Security', v: '96%', pos: 0.96 },
+                    { k: 'Admin controls', v: '90%', pos: 0.9 },
+                    { k: 'Oracles', v: '91%', pos: 0.91 },
+                  ],
+                },
+                {
+                  t: 'text',
+                  title: 'Reviewer note (excerpt)',
+                  v: 'Aave v3 continues to show strong process quality. Documentation for the v3.5 upgrade path is partly outdated, and test-coverage figures were not published for the latest release.',
+                },
+                {
+                  t: 'link',
+                  title: 'Aave v3 — Process Quality Review (Sep 2026)',
+                  url: 'https://www.defisafety.com',
+                },
+              ],
+            },
+            im: {
+              st: 'pos',
+              h: 218,
+              lab: 'Active',
+              ev: 'Bounty terms updated',
+              sum: 'Bug bounty active, up to $1,000,000 for critical smart-contract bugs. v4 contracts added to scope.',
+              blocks: [
+                {
+                  t: 'metric',
+                  items: [
+                    { k: 'Max bounty', v: '$1,000,000', s: 'critical · smart contracts' },
+                    { k: 'Assets in scope', v: '42' },
+                    { k: 'Program status', v: 'Active' },
+                    { k: 'Terms changed', v: '18 Sep 2026' },
+                  ],
+                },
+                {
+                  t: 'text',
+                  title: 'Program note',
+                  v: 'v4 Hub & Spoke contracts were added to scope. Front-end issues remain out of scope.',
+                },
+                { t: 'link', title: 'Immunefi — Aave bug bounty', url: 'https://immunefi.com' },
+              ],
+            },
+            sc: {
+              st: 'neu',
+              h: 290,
+              lab: 'Stage 1',
+              ev: 'Stage review confirmed',
+              sum: 'Stage 1. Upgrades require DAO approval with a timelock; a guardian can pause markets without delay.',
+              blocks: [
+                {
+                  t: 'score',
+                  title: 'Decentralization stage',
+                  v: 'Stage 1',
+                  scale: 'Stage 0 → Stage 1 → Stage 2 (as published)',
+                  pos: 0.5,
+                },
+                {
+                  t: 'dimension',
+                  title: 'Risk areas',
+                  scale: 'Low · Medium · High (as published)',
+                  items: [
+                    { k: 'Chain', v: 'Low', pos: 0.15 },
+                    { k: 'Upgradeability', v: 'Medium', pos: 0.5 },
+                    { k: 'Autonomy', v: 'Medium', pos: 0.5 },
+                    { k: 'Exit window', v: 'High', pos: 0.85 },
+                    { k: 'Accessibility', v: 'Low', pos: 0.15 },
+                  ],
+                },
+                {
+                  t: 'text',
+                  title: 'Reviewer note (excerpt)',
+                  v: 'Upgrades require DAO approval with a timelock; a guardian multisig can pause markets without delay.',
+                },
+              ],
+            },
+            ex: {
+              st: 'pos',
+              h: 434,
+              lab: 'A',
+              ev: 'Pool ratings refreshed',
+              sum: 'Main Ethereum Core pools rated A; GHO pool rated B.',
+              blocks: [
+                {
+                  t: 'table',
+                  title: 'Pool ratings (Ethereum Core)',
+                  cols: ['Pool', 'Rating', 'Source note'],
+                  rows: [
+                    ['USDC supply', 'A', '—'],
+                    ['WETH supply', 'A', '—'],
+                    ['USDT supply', 'A', '—'],
+                    ['GHO supply', 'B', 'Newer asset, shorter history'],
+                  ],
+                },
+                {
+                  t: 'text',
+                  v: 'Ratings run from A (lowest risk) to F, per pool rather than per protocol.',
+                },
+              ],
+            },
+            ph: VAULTS_ONLY,
+            cr: {
+              st: 'none',
+              why: 'Collection failed on 26 Sep 2026 18:00 UTC (HTTP 503). No earlier data for this protocol.',
+              by: 'cp0x',
+            },
+          },
+          hist: [
+            {
+              f: 'au',
+              st: 'pos',
+              h: 506,
+              ev: 'New audit detected',
+              lab: 'New audit',
+              sum: 'ChainSecurity — GHO Steward v2. 0 high, 1 medium; resolved.',
+            },
+            {
+              f: 'lr',
+              st: 'neu',
+              h: 615,
+              ev: 'Collateral review published',
+              lab: 'Approved with caps',
+              sum: 'tBTC onboarding to Aave Core approved with a 1,000 tBTC supply cap.',
+            },
+            {
+              f: 'rl',
+              st: 'pos',
+              h: 722,
+              ev: 'Score updated',
+              diff: '7.7 → 7.9',
+              lab: '7.9 / 10',
+              sum: 'Governance component raised after the executor migration.',
+            },
+          ],
+        },
+
+        {
+          id: 'morpho',
+          name: 'Morpho',
+          cat: 'Lending',
+          type: 'Lending · modular',
+          tvl: 8.1e9,
+          audits: 27,
+          sec: null,
+          cp0x: 71,
+          launch: 2022,
+          chains: ['Ethereum', 'Base', 'Arbitrum', 'Polygon', 'Unichain', 'Katana'],
+          links: {
+            Website: 'https://morpho.org',
+            Docs: 'https://docs.morpho.org',
+            GitHub: 'https://github.com/morpho-org',
+            Governance: 'https://forum.morpho.org',
+          },
+          about:
+            'Immutable isolated lending markets (Morpho Blue) with curated vaults allocating across them.',
+          snap: [
+            ['Model', 'Isolated markets + curated vaults', 'Protocol docs'],
+            ['Versions', 'Morpho Blue · Vaults V1.1 · Vaults V2', 'Protocol docs'],
+            ['Governance', 'Morpho DAO · MORPHO token', 'Protocol docs'],
+            ['Oracle', 'Set per market (Chainlink, Redstone, exchange rate)', 'Protocol docs'],
+            ['Token', 'MORPHO', 'Protocol docs'],
+            ['Admin', 'Core contracts immutable; vault roles set by curators', 'Protocol docs'],
+          ],
+          pm: [
+            ['Deposits', '$12.6B', 'DefiLlama'],
+            ['Borrowed', '$4.5B', 'DefiLlama'],
+            ['Markets', '412', 'Morpho API'],
+            ['Vaults', '186', 'Morpho API'],
+            ['Curators', '31', 'Morpho API'],
+          ],
+          mods: [
+            {
+              name: 'Markets',
+              src: 'Morpho API',
+              tables: [
+                {
+                  cols: [
+                    'Market (collateral / loan)',
+                    'LLTV',
+                    'Supply',
+                    'Borrow',
+                    'Utilization',
+                    'Oracle',
+                  ],
+                  num: [1, 2, 3, 4],
+                  rows: [
+                    ['wstETH / WETH', '96.5%', '$1.42B', '$1.31B', '92.3%', 'Exchange rate'],
+                    ['cbBTC / USDC', '86.0%', '$0.98B', '$0.83B', '84.7%', 'Chainlink'],
+                    ['WBTC / USDC', '86.0%', '$0.61B', '$0.52B', '85.2%', 'Chainlink'],
+                    ['sUSDe / USDC', '91.5%', '$0.44B', '$0.39B', '88.6%', 'Chainlink'],
+                    ['weETH / WETH', '94.5%', '$0.37B', '$0.33B', '89.1%', 'Exchange rate'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Vaults',
+              src: 'Morpho API',
+              tables: [
+                {
+                  cols: ['Vault', 'Curator', 'Asset', 'Deposits', 'Markets', 'Chain'],
+                  num: [3, 4],
+                  rows: [
+                    ['Steakhouse USDC', 'Steakhouse', 'USDC', '$1.9B', '14', 'Ethereum'],
+                    ['Gauntlet WETH Prime', 'Gauntlet', 'WETH', '$0.9B', '6', 'Ethereum'],
+                    ['Re7 USDT', 'Re7 Labs', 'USDT', '$0.4B', '9', 'Ethereum'],
+                    ['Seamless USDC', 'Gauntlet', 'USDC', '$0.3B', '8', 'Base'],
+                    ['MEV Capital wETH', 'MEV Capital', 'WETH', '$0.2B', '7', 'Ethereum'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Curators',
+              src: 'Morpho API',
+              tables: [
+                {
+                  cols: ['Curator', 'Vaults', 'Assets under management', 'Chains'],
+                  num: [1, 2, 3],
+                  rows: [
+                    ['Steakhouse', '18', '$2.8B', '4'],
+                    ['Gauntlet', '22', '$2.1B', '5'],
+                    ['Re7 Labs', '11', '$0.7B', '3'],
+                    ['MEV Capital', '9', '$0.4B', '2'],
+                    ['B.Protocol', '6', '$0.3B', '2'],
+                  ],
+                },
+              ],
+            },
+          ],
+          s: {
+            au: {
+              st: 'pos',
+              h: 26,
+              lab: 'New audit',
+              ev: 'New audit detected',
+              hd: 'New audit added',
+              sum: 'Spearbit — Morpho Vaults V2. 0 critical, 0 high, 3 medium; all resolved.',
+              blocks: [
+                {
+                  t: 'audit',
+                  firm: 'Spearbit',
+                  scope: 'Morpho Vaults V2',
+                  date: '26 Sep 2026',
+                  sev: [0, 0, 3, 7],
+                  status: 'All findings resolved',
+                  url: 'https://example.com/audits/spearbit-morpho-vaults-v2.pdf',
+                  isNew: true,
+                },
+                { t: 'text', v: '27 audits on record for Morpho contracts across 9 firms.' },
+              ],
+            },
+            ph: {
+              st: 'neu',
+              h: 30,
+              lab: 'Mixed tiers',
+              ev: 'Vault ratings updated',
+              sum: '14 Morpho vaults rated: 5 Prime, 6 Core, 3 Edge.',
+              blocks: [
+                {
+                  t: 'table',
+                  title: 'Vault tiers (as published)',
+                  cols: ['Vault', 'Curator', 'Tier', 'Score'],
+                  rows: [
+                    ['Steakhouse USDC', 'Steakhouse', 'Prime', '8.7'],
+                    ['Gauntlet WETH Prime', 'Gauntlet', 'Prime', '8.4'],
+                    ['Re7 USDT', 'Re7 Labs', 'Core', '7.1'],
+                    ['MEV Capital wETH', 'MEV Capital', 'Edge', '5.6'],
+                  ],
+                },
+                {
+                  t: 'text',
+                  v: 'Tiers: Prime, Core, Edge. Scores 0–10 per vault. The source does not rate the protocol as a whole.',
+                },
+              ],
+            },
+            lr: {
+              st: 'pos',
+              h: 75,
+              lab: 'Approved',
+              ev: 'Protocol assessment updated',
+              sum: 'Morpho Blue core contracts reviewed; source approves use of listed markets as collateral venues.',
+            },
+            cr: {
+              st: 'pos',
+              h: 150,
+              lab: 'A+ to BBB',
+              ev: 'Market ratings updated',
+              sum: '11 Morpho markets rated between A+ and BBB.',
+            },
+            sc: {
+              st: 'neu',
+              h: 215,
+              lab: 'Stage 1',
+              ev: 'Stage review confirmed',
+              sum: 'Core markets immutable; vault configuration controlled by curators with timelocks.',
+            },
+            ds: {
+              st: 'pos',
+              h: 290,
+              lab: 'Pass · 88%',
+              ev: 'Review updated',
+              sum: 'Process Quality Review 88%.',
+            },
+            im: {
+              st: 'pos',
+              h: 340,
+              lab: 'Active · $2.5M max',
+              ev: 'Bounty terms updated',
+              sum: 'Bug bounty active, up to $2.5M for critical bugs.',
+            },
+            se: NO_RECORDS,
+            rl: {
+              st: 'none',
+              why: 'Collection failed on 26 Sep 2026 18:00 UTC (HTTP 503). Last successful data: none.',
+              by: 'cp0x',
+            },
+            ex: NOT_COVERED,
+            ba: NOT_COVERED,
+          },
+        },
+
+        {
+          id: 'uniswap',
+          name: 'Uniswap',
+          cat: 'DEX',
+          type: 'DEX · concentrated liquidity',
+          tvl: 5.9e9,
+          audits: 11,
+          sec: 1,
+          cp0x: 90,
+          launch: 2018,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'BNB Chain',
+            'Avalanche',
+            'Unichain',
+            'Blast',
+            'Celo',
+            'zkSync Era',
+            'World Chain',
+          ],
+          links: {
+            Website: 'https://uniswap.org',
+            Docs: 'https://docs.uniswap.org',
+            GitHub: 'https://github.com/Uniswap',
+            Governance: 'https://gov.uniswap.org',
+          },
+          about:
+            'Automated market maker with constant-product (v2), concentrated liquidity (v3) and hooks (v4).',
+          snap: [
+            ['Model', 'AMM · concentrated liquidity', 'Protocol docs'],
+            ['Versions', 'v2 · v3 · v4', 'Protocol docs'],
+            ['Governance', 'Uniswap DAO · UNI', 'Protocol docs'],
+            ['Oracle', 'None required (TWAP available)', 'Protocol docs'],
+            ['Token', 'UNI', 'Protocol docs'],
+            ['Admin', 'Core contracts immutable; fee switch by governance', 'Protocol docs'],
+          ],
+          pm: [
+            ['Liquidity', '$5.9B', 'DefiLlama'],
+            ['Volume 24h', '$1.8B', 'DefiLlama'],
+            ['Fees 24h', '$2.1M', 'DefiLlama'],
+            ['Pools', '48,210', 'Uniswap API'],
+            ['Fee tiers', '4 + dynamic', 'Protocol docs'],
+          ],
+          mods: [
+            {
+              name: 'Pools',
+              src: 'Uniswap API',
+              tables: [
+                {
+                  cols: ['Pair', 'Version', 'Fee tier', 'TVL', 'Volume 24h'],
+                  num: [3, 4],
+                  rows: [
+                    ['USDC / WETH', 'v3', '0.05%', '$412M', '$318M'],
+                    ['WETH / USDT', 'v3', '0.05%', '$188M', '$142M'],
+                    ['WBTC / WETH', 'v3', '0.30%', '$171M', '$64M'],
+                    ['USDC / WETH', 'v4', '0.05%', '$96M', '$121M'],
+                    ['PEPE / WETH', 'v2', '0.30%', '$38M', '$9M'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Liquidity',
+              src: 'DefiLlama',
+              tables: [
+                {
+                  cols: ['Version', 'Liquidity', 'Share', 'Active pools'],
+                  num: [1, 2, 3],
+                  rows: [
+                    ['v2', '$1.1B', '19%', '11,420'],
+                    ['v3', '$3.9B', '66%', '24,960'],
+                    ['v4', '$0.9B', '15%', '11,830'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Volume',
+              src: 'DefiLlama',
+              tables: [
+                {
+                  cols: ['Period', 'Volume', 'Fees to LPs'],
+                  num: [1, 2],
+                  rows: [
+                    ['24h', '$1.8B', '$2.1M'],
+                    ['7d', '$12.4B', '$14.6M'],
+                    ['30d', '$51.7B', '$60.2M'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Fee tiers',
+              src: 'Uniswap API',
+              tables: [
+                {
+                  cols: ['Tier', 'Pools', 'Share of liquidity', 'Share of volume'],
+                  num: [1, 2, 3],
+                  rows: [
+                    ['0.01%', '2,140', '9%', '21%'],
+                    ['0.05%', '6,810', '38%', '52%'],
+                    ['0.30%', '31,900', '44%', '22%'],
+                    ['1.00%', '7,360', '9%', '5%'],
+                  ],
+                },
+              ],
+            },
+          ],
+          s: {
+            ds: {
+              st: 'pos',
+              h: 122,
+              lab: 'Pass · 94%',
+              ev: 'Review updated',
+              sum: 'Process Quality Review 94%.',
+            },
+            sc: {
+              st: 'pos',
+              h: 190,
+              lab: 'Stage 2',
+              ev: 'Stage review confirmed',
+              sum: 'Immutable core contracts; no admin upgrade path.',
+            },
+            ex: {
+              st: 'pos',
+              h: 260,
+              lab: 'A',
+              ev: 'Pool ratings refreshed',
+              sum: 'Major stable and ETH pools rated A.',
+            },
+            rl: {
+              st: 'pos',
+              h: 340,
+              lab: '8.6 / 10',
+              ev: 'Score updated',
+              sum: 'Protocol score 8.6 / 10 (Beta).',
+            },
+            ba: {
+              st: 'neu',
+              h: 455,
+              lab: 'Liquidity report',
+              ev: 'Market report',
+              sum: 'Liquidity concentration report for top 50 pools; informational.',
+            },
+            lr: {
+              st: 'neu',
+              h: 505,
+              lab: 'Informational',
+              ev: 'Protocol assessment updated',
+              sum: 'UNI token and v4 hooks review — no collateral recommendation.',
+            },
+            au: {
+              st: 'pos',
+              h: 720,
+              lab: 'Audited',
+              ev: 'New audit detected',
+              sum: '11 audits; latest OpenZeppelin — v4 periphery (Aug 2026).',
+            },
+            cr: {
+              st: 'neu',
+              h: 800,
+              lab: 'Informational',
+              ev: 'Profile updated',
+              sum: 'Counterparty profile for UNI; no credit rating issued.',
+            },
+            se: {
+              st: 'neu',
+              h: 980,
+              lab: 'Historical records',
+              ev: 'Record updated',
+              sum: '1 source-reported event: front-end phishing campaign, no protocol loss.',
+            },
+            im: {
+              st: 'pos',
+              h: 1440,
+              lab: 'Active · $15.5M max',
+              ev: 'Bounty terms updated',
+              sum: 'Bug bounty active, up to $15.5M for critical v4 bugs.',
+            },
+            ph: VAULTS_ONLY,
+          },
+        },
+
+        {
+          id: 'balancer',
+          name: 'Balancer',
+          cat: 'DEX',
+          type: 'DEX · weighted & composable',
+          tvl: 0.61e9,
+          audits: 19,
+          sec: 4,
+          cp0x: 58,
+          launch: 2020,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Gnosis',
+            'Avalanche',
+            'Polygon',
+            'Optimism',
+            'Sonic',
+          ],
+          links: {
+            Website: 'https://balancer.fi',
+            Docs: 'https://docs.balancer.fi',
+            GitHub: 'https://github.com/balancer',
+            Governance: 'https://forum.balancer.fi',
+          },
+          about: 'Programmable AMM with weighted, stable and boosted pools; v3 adds hooks.',
+          snap: [
+            ['Model', 'AMM · weighted / stable / boosted pools', 'Protocol docs'],
+            ['Versions', 'v2 · v3', 'Protocol docs'],
+            ['Governance', 'Balancer DAO · veBAL', 'Protocol docs'],
+            ['Oracle', 'Rate providers per pool', 'Protocol docs'],
+            ['Token', 'BAL', 'Protocol docs'],
+          ],
+          pm: [
+            ['Pools', '1,240', 'Balancer API'],
+            ['Pool types', '4', 'Balancer API'],
+            ['Gauges', '146', 'Balancer API'],
+            ['Volume 24h', '$64M', 'DefiLlama'],
+          ],
+          mods: [
+            {
+              name: 'Pools',
+              src: 'Balancer API',
+              tables: [
+                {
+                  cols: ['Pool', 'Type', 'TVL', 'Volume 24h'],
+                  num: [2, 3],
+                  rows: [
+                    ['wstETH / WETH', 'Stable (v3)', '$88M', '$6.2M'],
+                    ['80BAL / 20WETH', 'Weighted (v2)', '$71M', '$1.1M'],
+                    ['GHO / USDC / USDT', 'Stable (v3)', '$52M', '$4.8M'],
+                    ['rETH / WETH', 'Stable (v2)', '$39M', '$2.2M'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Pool types',
+              src: 'Balancer API',
+              tables: [
+                {
+                  cols: ['Type', 'Pools', 'Share of TVL'],
+                  num: [1, 2],
+                  rows: [
+                    ['Stable', '310', '44%'],
+                    ['Weighted', '702', '38%'],
+                    ['Boosted', '168', '12%'],
+                    ['Gyro E-CLP', '60', '6%'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Gauges',
+              src: 'Balancer API',
+              tables: [
+                {
+                  cols: ['Gauge', 'Weight', 'Emissions / week'],
+                  num: [1, 2],
+                  rows: [
+                    ['80BAL / 20WETH', '18.2%', '21.4k BAL'],
+                    ['wstETH / WETH', '7.9%', '9.3k BAL'],
+                    ['GHO / USDC / USDT', '6.1%', '7.2k BAL'],
+                  ],
+                },
+              ],
+            },
+          ],
+          s: {
+            se: {
+              st: 'neg',
+              h: 70,
+              lab: 'Exploit on record',
+              ev: 'Post-mortem updated',
+              hd: 'Security Feed updated',
+              sum: 'Post-mortem update for the v2 Composable Stable Pool exploit (Nov 2025): recovery phase 2 completed.',
+              blocks: [
+                {
+                  t: 'event',
+                  date: '24 Sep 2026',
+                  kind: 'Post-mortem update',
+                  title: 'Composable Stable Pool exploit — recovery phase 2',
+                  impact: 'Recovered funds distributed',
+                  status: 'Closed',
+                },
+                {
+                  t: 'event',
+                  date: 'Nov 2025',
+                  kind: 'Exploit',
+                  title: 'Rounding exploit in v2 Composable Stable Pools',
+                  impact: '~$128M across chains',
+                  status: 'Partially recovered',
+                },
+              ],
+            },
+            au: {
+              st: 'pos',
+              h: 190,
+              lab: 'New audit',
+              ev: 'New audit detected',
+              sum: 'Certora — Balancer v3 hooks. 0 critical, 0 high.',
+            },
+            im: {
+              st: 'neu',
+              h: 480,
+              lab: 'Active · reduced scope',
+              ev: 'Bounty terms updated',
+              sum: 'v2 Composable Stable Pools removed from bounty scope.',
+            },
+            lr: {
+              st: 'neg',
+              h: 610,
+              lab: 'Not recommended',
+              ev: 'Collateral review published',
+              sum: 'Composable Stable Pool LP tokens not recommended as collateral.',
+            },
+            ds: {
+              st: 'neu',
+              h: 720,
+              lab: 'Re-review pending',
+              ev: 'Review status changed',
+              sum: 'Previous 89% review marked outdated by the source after the Nov 2025 incident; re-review pending.',
+            },
+            sc: {
+              st: 'neu',
+              h: 1080,
+              lab: 'Stage 0',
+              ev: 'Stage review confirmed',
+              sum: 'Stage 0. Emergency roles can pause pools without delay.',
+            },
+            rl: { st: 'none', why: 'Not yet assessed by this source.', by: 'source' },
+            ph: VAULTS_ONLY,
+            ex: {
+              st: 'none',
+              why: 'Coverage paused by the source after the Nov 2025 incident.',
+              by: 'source',
+            },
+            cr: NOT_COVERED,
+            ba: NOT_COVERED,
+          },
+        },
+
+        {
+          id: 'sky',
+          name: 'Sky',
+          cat: 'CDP',
+          type: 'CDP · stablecoin',
+          tvl: 6.3e9,
+          audits: 22,
+          sec: null,
+          cp0x: 76,
+          launch: 2017,
+          chains: ['Ethereum', 'Base', 'Arbitrum', 'Optimism', 'Unichain'],
+          links: {
+            Website: 'https://sky.money',
+            Docs: 'https://developers.sky.money',
+            GitHub: 'https://github.com/sky-ecosystem',
+            Governance: 'https://forum.sky.money',
+          },
+          about: 'Collateralized debt positions issuing USDS and DAI, with the Sky Savings Rate.',
+          snap: [
+            ['Model', 'Collateralized debt positions', 'Protocol docs'],
+            ['Versions', 'Sky (USDS) · Maker (DAI)', 'Protocol docs'],
+            ['Governance', 'Sky governance · SKY token', 'Protocol docs'],
+            ['Oracle', 'Oracle Security Module (1h delay)', 'Protocol docs'],
+            ['Token', 'SKY · USDS · DAI', 'Protocol docs'],
+          ],
+          pm: [
+            ['USDS + DAI supply', '$10.8B', 'Sky API'],
+            ['Debt', '$5.9B', 'Sky API'],
+            ['Collateral types', '26', 'Sky API'],
+            ['Savings rate', '4.50%', 'Sky API'],
+            ['Surplus buffer', '$120M', 'Sky API'],
+          ],
+          mods: [
+            {
+              name: 'Collateral types',
+              src: 'Sky API',
+              tables: [
+                {
+                  cols: ['Collateral type', 'Debt', 'Debt ceiling', 'Stability fee', 'Liq. ratio'],
+                  num: [1, 2, 3, 4],
+                  rows: [
+                    ['ALLOCATOR-SPARK-A', '$2.4B', '$5.0B', '—', '—'],
+                    ['PSM-USDC-A', '$1.9B', '—', '0.00%', '100%'],
+                    ['WSTETH-A', '$1.1B', '$2.0B', '5.25%', '150%'],
+                    ['ETH-C', '$0.6B', '$1.0B', '5.00%', '170%'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Debt',
+              src: 'Sky API',
+              tables: [
+                {
+                  cols: ['Measure', 'Value'],
+                  num: [1],
+                  rows: [
+                    ['Total debt', '$5.9B'],
+                    ['Surplus buffer', '$120M'],
+                    ['Unbacked debt', '$0'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Stablecoin supply',
+              src: 'Sky API',
+              tables: [
+                {
+                  cols: ['Token', 'Supply', 'Savings rate'],
+                  num: [1, 2],
+                  rows: [
+                    ['USDS', '$7.2B', '4.50% (SSR)'],
+                    ['DAI', '$3.6B', '4.25% (DSR)'],
+                    ['sUSDS', '$2.8B', '—'],
+                  ],
+                },
+              ],
+            },
+          ],
+          s: {
+            ba: {
+              st: 'neu',
+              h: 6,
+              lab: 'Parameter update',
+              ev: 'Market risk report',
+              hd: 'Block Analitica report updated',
+              sum: 'Recommends stability-fee changes for 2 collateral types; debt ceilings unchanged.',
+            },
+            ds: {
+              st: 'pos',
+              h: 170,
+              lab: 'Pass · 89%',
+              ev: 'Review updated',
+              sum: 'Process Quality Review 89%.',
+            },
+            rl: {
+              st: 'neu',
+              h: 216,
+              lab: '6.9 / 10',
+              ev: 'Score updated',
+              sum: 'Protocol score 6.9 / 10 (Beta).',
+            },
+            lr: {
+              st: 'neu',
+              h: 266,
+              lab: 'Informational',
+              ev: 'Protocol assessment updated',
+              sum: 'USDS peg-stability module review; informational.',
+            },
+            au: {
+              st: 'pos',
+              h: 336,
+              lab: 'Audited',
+              ev: 'New audit detected',
+              sum: '22 audits; latest ChainSecurity — Sky Staking Engine.',
+            },
+            ex: {
+              st: 'pos',
+              h: 410,
+              lab: 'A',
+              ev: 'Pool ratings refreshed',
+              sum: 'sUSDS savings pool rated A.',
+            },
+            im: {
+              st: 'pos',
+              h: 528,
+              lab: 'Active · $10M max',
+              ev: 'Bounty terms updated',
+              sum: 'Bug bounty active, up to $10M.',
+            },
+            sc: {
+              st: 'neu',
+              h: 864,
+              lab: 'Stage 1',
+              ev: 'Stage review confirmed',
+              sum: 'Governance delay via the pause proxy; emergency shutdown module present.',
+            },
+            se: NO_RECORDS,
+            cr: NOT_COVERED,
+            ph: VAULTS_ONLY,
+          },
+        },
+
+        {
+          id: 'curve',
+          name: 'Curve',
+          cat: 'DEX',
+          type: 'DEX · stableswap',
+          tvl: 2.3e9,
+          audits: 9,
+          sec: 3,
+          cp0x: 80,
+          launch: 2020,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'Fraxtal',
+            'Gnosis',
+            'Sonic',
+          ],
+          links: {
+            Website: 'https://curve.fi',
+            Docs: 'https://docs.curve.fi',
+            GitHub: 'https://github.com/curvefi',
+            Governance: 'https://gov.curve.fi',
+          },
+          about:
+            'Stableswap and cryptoswap AMM pools with gauge-directed CRV emissions and the crvUSD stablecoin.',
+          snap: [
+            ['Model', 'AMM · stableswap & cryptoswap', 'Protocol docs'],
+            ['Governance', 'Curve DAO · veCRV', 'Protocol docs'],
+            ['Oracle', 'Internal EMA oracles', 'Protocol docs'],
+            ['Token', 'CRV · crvUSD', 'Protocol docs'],
+          ],
+          pm: [
+            ['Pools', '3,900', 'Curve API'],
+            ['Volume 24h', '$210M', 'DefiLlama'],
+            ['crvUSD supply', '$140M', 'Curve API'],
+            ['Gauges', '1,120', 'Curve API'],
+          ],
+          mods: [
+            {
+              name: 'Pools',
+              src: 'Curve API',
+              tables: [
+                {
+                  cols: ['Pool', 'Type', 'TVL', 'Volume 24h'],
+                  num: [2, 3],
+                  rows: [
+                    ['3pool', 'Stableswap', '$172M', '$31M'],
+                    ['stETH / ETH', 'Stableswap-NG', '$148M', '$12M'],
+                    ['tricrypto-ng', 'Cryptoswap', '$96M', '$19M'],
+                    ['crvUSD / USDC', 'Stableswap-NG', '$44M', '$22M'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Volume',
+              src: 'DefiLlama',
+              tables: [
+                {
+                  cols: ['Period', 'Volume'],
+                  num: [1],
+                  rows: [
+                    ['24h', '$210M'],
+                    ['7d', '$1.5B'],
+                    ['30d', '$6.1B'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Gauges',
+              src: 'Curve API',
+              tables: [
+                {
+                  cols: ['Gauge', 'Weight'],
+                  num: [1],
+                  rows: [
+                    ['stETH / ETH', '6.3%'],
+                    ['3pool', '4.1%'],
+                    ['crvUSD / USDC', '3.8%'],
+                  ],
+                },
+              ],
+            },
+          ],
+          s: {
+            lr: {
+              st: 'pos',
+              h: 76,
+              lab: 'Approved',
+              ev: 'Protocol assessment updated',
+              sum: 'crvUSD market review: collateral parameters within recommended bounds.',
+            },
+            ds: {
+              st: 'pos',
+              h: 216,
+              lab: 'Pass · 86%',
+              ev: 'Review updated',
+              sum: 'Process Quality Review 86%.',
+            },
+            sc: {
+              st: 'neu',
+              h: 312,
+              lab: 'Stage 1',
+              ev: 'Stage review confirmed',
+              sum: 'Stage 1. Emergency DAO can kill gauges and pause pools.',
+            },
+            rl: {
+              st: 'neu',
+              h: 384,
+              lab: '7.2 / 10',
+              ev: 'Score updated',
+              sum: 'Protocol score 7.2 / 10 (Beta).',
+            },
+            ex: {
+              st: 'pos',
+              h: 600,
+              lab: 'A',
+              ev: 'Pool ratings refreshed',
+              sum: '3pool and stETH/ETH rated A.',
+            },
+            au: {
+              st: 'pos',
+              h: 960,
+              lab: 'Audited',
+              ev: 'New audit detected',
+              sum: '9 audits; latest MixBytes — Stableswap-NG.',
+            },
+            ba: {
+              st: 'neu',
+              h: 1056,
+              lab: 'Liquidity report',
+              ev: 'Market report',
+              sum: 'crvUSD soft-liquidation report; informational.',
+            },
+            se: {
+              st: 'neg',
+              h: 1200,
+              lab: 'Exploit on record',
+              ev: 'Record updated',
+              sum: 'Jul 2023 Vyper compiler re-entrancy affecting several pools; record updated with recovery data.',
+            },
+            im: {
+              st: 'pos',
+              h: 1680,
+              lab: 'Active · $250k max',
+              ev: 'Bounty terms updated',
+              sum: 'Bug bounty active, up to $250k.',
+            },
+            ph: VAULTS_ONLY,
+            cr: NOT_COVERED,
+          },
+        },
+
+        {
+          id: 'lido',
+          name: 'Lido',
+          cat: 'Liquid staking',
+          type: 'Liquid staking',
+          tvl: 24.8e9,
+          audits: 31,
+          sec: 1,
+          cp0x: 91,
+          launch: 2020,
+          chains: ['Ethereum'],
+          links: {
+            Website: 'https://lido.fi',
+            Docs: 'https://docs.lido.fi',
+            GitHub: 'https://github.com/lidofinance',
+            Governance: 'https://research.lido.fi',
+          },
+          about:
+            'Liquid staking for Ethereum: stETH / wstETH backed by validators run by curated, DVT and community operators.',
+          snap: [
+            ['Model', 'Liquid staking · stETH / wstETH', 'Protocol docs'],
+            ['Versions', 'Lido v2 · Lido V3 stVaults', 'Protocol docs'],
+            ['Governance', 'Lido DAO · LDO · dual governance', 'Protocol docs'],
+            ['Oracle', 'Accounting oracle committee', 'Protocol docs'],
+            ['Token', 'LDO · stETH · wstETH', 'Protocol docs'],
+            ['Bridged', 'wstETH on 9 chains', 'Protocol docs'],
+          ],
+          pm: [
+            ['ETH staked', '8.9M ETH', 'Lido API'],
+            ['Staking APR', '2.9%', 'Lido API'],
+            ['Node operators', '1,540', 'Lido API'],
+            ['Validators', '278k', 'Lido API'],
+            ['Withdrawal queue', '42.2k ETH', 'Lido API'],
+          ],
+          mods: [
+            {
+              name: 'Staking',
+              src: 'Lido API',
+              tables: [
+                {
+                  cols: ['Measure', 'Value'],
+                  num: [1],
+                  rows: [
+                    ['ETH staked', '8.9M ETH'],
+                    ['stETH supply', '8.9M'],
+                    ['Share of staked ETH', '25.1%'],
+                    ['Staking APR (7d)', '2.9%'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Node operators',
+              src: 'Lido API',
+              tables: [
+                {
+                  cols: ['Module', 'Operators', 'Validators', 'Share'],
+                  num: [1, 2, 3],
+                  rows: [
+                    ['Curated', '37', '211k', '76%'],
+                    ['Simple DVT', '223', '41k', '15%'],
+                    ['Community Staking', '1,280', '26k', '9%'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Withdrawals',
+              src: 'Lido API',
+              tables: [
+                {
+                  cols: ['Measure', 'Value'],
+                  num: [1],
+                  rows: [
+                    ['Queue', '42.2k ETH'],
+                    ['Estimated wait', '~3 days'],
+                    ['Last finalized', '27 Sep 2026'],
+                  ],
+                },
+              ],
+            },
+          ],
+          s: {
+            sc: {
+              st: 'neu',
+              h: 10,
+              lab: 'Stage 1',
+              ev: 'Stage changed',
+              hd: 'DeFiScan stage changed',
+              diff: 'Stage 0 → Stage 1',
+              sum: 'Dual governance live; exit window now meets Stage 1 requirements.',
+              blocks: [
+                {
+                  t: 'score',
+                  title: 'Decentralization stage',
+                  v: 'Stage 1',
+                  prev: 'Stage 0',
+                  scale: 'Stage 0 → Stage 1 → Stage 2 (as published)',
+                  pos: 0.5,
+                },
+                {
+                  t: 'text',
+                  title: 'Reviewer note (excerpt)',
+                  v: 'Dual governance is live and gives stETH holders an exit window before contested upgrades. This meets the Stage 1 requirements.',
+                },
+              ],
+            },
+            au: {
+              st: 'pos',
+              h: 74,
+              lab: 'New audit',
+              ev: 'New audit detected',
+              sum: 'Statemind — Lido V3 stVaults. 0 critical, 1 high (fixed).',
+            },
+            ds: {
+              st: 'pos',
+              h: 98,
+              lab: 'Pass · 95%',
+              ev: 'Review updated',
+              sum: 'Process Quality Review 95%.',
+            },
+            lr: {
+              st: 'pos',
+              h: 190,
+              lab: 'Approved',
+              ev: 'Protocol assessment updated',
+              sum: 'wstETH approved as collateral across reviewed venues.',
+            },
+            rl: {
+              st: 'pos',
+              h: 290,
+              lab: '8.4 / 10',
+              ev: 'Score updated',
+              sum: 'Protocol score 8.4 / 10 (Beta).',
+            },
+            im: {
+              st: 'pos',
+              h: 432,
+              lab: 'Active · $2M max',
+              ev: 'Bounty terms updated',
+              sum: 'Bug bounty active, up to $2M.',
+            },
+            ex: {
+              st: 'pos',
+              h: 480,
+              lab: 'A',
+              ev: 'Pool ratings refreshed',
+              sum: 'stETH staking rated A.',
+            },
+            cr: {
+              st: 'pos',
+              h: 648,
+              lab: 'A',
+              ev: 'Rating affirmed',
+              sum: 'Credit rating A affirmed.',
+            },
+            ba: {
+              st: 'neu',
+              h: 744,
+              lab: 'Market report',
+              ev: 'Market report',
+              sum: 'stETH secondary-market depth report; informational.',
+            },
+            se: {
+              st: 'neu',
+              h: 1440,
+              lab: 'Historical records',
+              ev: 'Record updated',
+              sum: '1 event: oracle member hot-key compromise (May 2025), no user funds lost.',
+            },
+            ph: VAULTS_ONLY,
+          },
+        },
+
+        {
+          id: 'ethena',
+          name: 'Ethena',
+          cat: 'Synthetic dollar',
+          type: 'Synthetic dollar',
+          tvl: 11.2e9,
+          audits: 8,
+          sec: null,
+          cp0x: 49,
+          launch: 2024,
+          chains: ['Ethereum', 'Arbitrum', 'Base', 'BNB Chain', 'Solana'],
+          links: {
+            Website: 'https://ethena.fi',
+            Docs: 'https://docs.ethena.fi',
+            GitHub: 'https://github.com/ethena-labs',
+            Governance: 'https://gov.ethenafoundation.com',
+          },
+          about:
+            'USDe synthetic dollar backed by spot assets hedged with short perpetual positions.',
+          snap: [
+            ['Model', 'Delta-hedged synthetic dollar', 'Protocol docs'],
+            ['Governance', 'Ethena Foundation · ENA', 'Protocol docs'],
+            ['Custody', 'Off-exchange settlement providers', 'Protocol docs'],
+            ['Token', 'ENA · USDe · sUSDe', 'Protocol docs'],
+          ],
+          pm: [
+            ['USDe supply', '$11.2B', 'Ethena API'],
+            ['sUSDe staked', '$5.6B', 'Ethena API'],
+            ['sUSDe APY', '7.4%', 'Ethena API'],
+            ['Reserve fund', '$62M', 'Ethena API'],
+            ['Backing assets', '5', 'Ethena API'],
+          ],
+          mods: [
+            {
+              name: 'Backing',
+              src: 'Ethena API',
+              tables: [
+                {
+                  cols: ['Asset', 'Amount', 'Share', 'Custody'],
+                  num: [1, 2],
+                  rows: [
+                    ['Liquid stables', '$4.7B', '42%', 'On-chain / custodians'],
+                    ['BTC', '$3.1B', '28%', 'Off-exchange settlement'],
+                    ['ETH', '$2.4B', '21%', 'Off-exchange settlement'],
+                    ['LSTs', '$1.0B', '9%', 'Off-exchange settlement'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Supply',
+              src: 'Ethena API',
+              tables: [
+                {
+                  cols: ['Token', 'Supply'],
+                  num: [1],
+                  rows: [
+                    ['USDe', '$11.2B'],
+                    ['sUSDe (staked)', '$5.6B'],
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'Reserve fund',
+              src: 'Ethena API',
+              tables: [
+                {
+                  cols: ['Measure', 'Value'],
+                  num: [1],
+                  rows: [
+                    ['Reserve fund', '$62M'],
+                    ['Composition', 'USDtb, sUSDe'],
+                  ],
+                },
+              ],
+            },
+          ],
+          s: {
+            lr: {
+              st: 'neu',
+              h: 434,
+              lab: 'Monitored',
+              ev: 'Protocol assessment updated',
+              sum: 'USDe backing and custody review; collateral use approved with caps on selected venues.',
+            },
+            sc: {
+              st: 'neg',
+              h: 470,
+              lab: 'Others',
+              ev: 'Stage review confirmed',
+              sum: 'Classified outside the stage framework: relies on off-chain custody and centralized exchanges.',
+              blocks: [
+                {
+                  t: 'score',
+                  title: 'Decentralization stage',
+                  v: 'Others',
+                  scale: 'Stage 0 → Stage 2; “Others” means outside the framework (as published)',
+                },
+                {
+                  t: 'text',
+                  v: 'Classified outside the stage framework: relies on off-chain custody and centralized exchanges.',
+                },
+              ],
+            },
+            rl: {
+              st: 'neu',
+              h: 624,
+              lab: '6.1 / 10',
+              ev: 'Score updated',
+              sum: 'Protocol score 6.1 / 10 (Beta).',
+            },
+            au: {
+              st: 'pos',
+              h: 1080,
+              lab: 'Audited',
+              ev: 'New audit detected',
+              sum: '8 audits; latest Pashov — sUSDe cooldown changes.',
+            },
+            im: {
+              st: 'pos',
+              h: 1250,
+              lab: 'Active · $3M max',
+              ev: 'Bounty terms updated',
+              sum: 'Bug bounty active, up to $3M.',
+            },
+            ds: { st: 'none', why: 'Not yet reviewed by this source.', by: 'source' },
+            se: NO_RECORDS,
+            ph: VAULTS_ONLY,
+            ex: NOT_COVERED,
+            cr: NOT_COVERED,
+            ba: NOT_COVERED,
+          },
+        },
+      ]
+
+      /* ---------- shared helpers ---------- */
+      const NOW = Date.UTC(2026, 8, 27, 12, 0)
+      const NEW_H = 48 // "NEW" / changed recently
+      const QUIET_H = 72 // after this, latest change reads "No changes for Xd"
+      const STALE_H = 336 // 14 days without any source update
+      const MONTHS = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ]
+      const ST = { pos: 'Positive', neu: 'Neutral', neg: 'Negative', none: 'No data' }
+      const FEED = Object.fromEntries(FEEDS.map((f) => [f.id, f]))
+
+      const esc = (s) =>
+        String(s ?? '').replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+        )
+      const fmtUsd = (v) => (v >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : `$${Math.round(v / 1e6)}M`)
+      const ago = (h) =>
+        h < 1
+          ? 'just now'
+          : h < 24
+            ? `${Math.round(h)}h ago`
+            : h < 48
+              ? 'yesterday'
+              : `${Math.floor(h / 24)}d ago`
+      const agoShort = (h) => (h < 24 ? `${Math.round(h)}h` : `${Math.floor(h / 24)}d`)
+      const at = (h) => new Date(NOW - h * 3600e3)
+      const fmtDate = (h) => {
+        const d = at(h)
+        return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`
+      }
+      const fmtTime = (h) => {
+        const d = at(h)
+        return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`
+      }
+      const dayLabel = (h) => {
+        const d = at(h)
+        const today = new Date(NOW)
+        const days = Math.round(
+          (Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()) -
+            Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())) /
+            864e5,
+        )
+        const date = `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`
+        return days === 0 ? ['Today', date] : days === 1 ? ['Yesterday', date] : [date, '']
+      }
+
+      /** Protocol plus everything CP0X derives from source timestamps and states. Nothing here is a rating. */
+      function derive(p) {
+        const sig = FEEDS.map((f) => ({
+          f,
+          ...(p.s[f.id] || { st: 'none', why: 'Not covered by this source.', by: 'source' }),
+        }))
+        const covered = sig.filter((x) => x.st !== 'none')
+        const counts = { pos: 0, neu: 0, neg: 0, none: 0 }
+        sig.forEach((x) => counts[x.st]++)
+        const recent = covered.slice().sort((a, b) => a.h - b.h)
+        const latest = recent[0] || null
+        return {
+          ...p,
+          sig,
+          covered,
+          counts,
+          recent,
+          latest,
+          cov: covered.length,
+          covPct: covered.length / FEEDS.length,
+          latestH: latest ? latest.h : Infinity,
+          isNew: !!latest && latest.h <= NEW_H,
+          updates7d: covered.filter((x) => x.h <= 168).length,
+        }
+      }
+
+      const avatar = (p, lg) => {
+        const n = [...p.id].reduce((a, c) => a + c.charCodeAt(0), 0) % 5
+        return `<span class="avatar av-${n}${lg ? ' lg' : ''}" aria-hidden="true">${esc(p.name[0])}</span>`
+      }
+      const prov = (kind, name) =>
+        kind === 'cp0x'
+          ? `<span class="prov cp0x" title="Derived by CP0X from source data — not a source statement"><b>CP0X</b>${name ? esc(name) : ''}</span>`
+          : `<span class="prov src" title="Published by ${esc(name)}"><b>SOURCE</b>${esc(name)}</span>`
+      const provFor = (src) => (src === 'cp0x' ? prov('cp0x') : prov('src', src))
+
+      const svg = (d, size = 16, extra = '') =>
+        `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${extra}>${d}</svg>`
+      const ICON = {
+        search: svg('<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>', 16),
+        filter: svg('<path d="M4 6h16M7 12h10M10 18h4"/>', 16),
+        sort: svg('<path d="M8.5 10 12 6.2l3.5 3.8M8.5 14l3.5 3.8 3.5-3.8"/>', 13),
+        chev: svg('<path d="m6 9 6 6 6-6"/>', 16),
+        arrow: svg('<path d="M4 12h16m-6-6 6 6-6 6"/>', 15),
+        ext: svg('<path d="M14 4h6v6m0-6L10 14M10 4H4v16h16v-6"/>', 12),
+        close: svg('<path d="M6 6l12 12M18 6 6 18"/>', 18),
+        warn: svg('<path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4m0 3h.01"/>', 16),
+        link: svg(
+          '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+          16,
+        ),
+        info: svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9h.01"/>', 14),
+        clock: svg('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', 13),
+        sun: svg(
+          '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',
+          18,
+        ),
+        moon: svg('<path d="M20 14a8.5 8.5 0 0 1-10-10 8.5 8.5 0 1 0 10 10Z"/>', 18),
+      }
+
+      function bindTheme() {
+        const button = document.getElementById('theme-toggle')
+        const paint = () => {
+          const dark = document.documentElement.dataset.theme === 'dark'
+          button.innerHTML = dark ? ICON.sun : ICON.moon
+          button.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} theme`)
+        }
+        button.addEventListener('click', () => {
+          const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'
+          document.documentElement.dataset.theme = next
+          try {
+            localStorage.setItem('defi-dna-mock-theme', next)
+          } catch (e) {
+            /* storage may be disabled */
+          }
+          paint()
+        })
+        paint()
+      }
+
+      /* ---------- dashboard ---------- */
+      const P = PROTOCOLS.map(derive)
+      const NF = FEEDS.length
+      const byCount = (list) => {
+        const n = {}
+        list.forEach((v) => (n[v] = (n[v] || 0) + 1))
+        return Object.keys(n)
+          .sort((a, b) => n[b] - n[a] || a.localeCompare(b))
+          .map((v) => [v, n[v]])
+      }
+      const CATS = byCount(P.map((p) => p.cat))
+      const CHAINS = byCount(P.flatMap((p) => p.chains))
+
+      const OPTS = {
+        tvl: [
+          ['', 'Any'],
+          ['gt10', '≥ $10B'],
+          ['mid', '$1B – $10B'],
+          ['lt1', '< $1B'],
+        ],
+        covPct: [
+          ['', 'Any'],
+          ['ge80', '≥ 80%'],
+          ['ge60', '≥ 60%'],
+          ['lt60', '< 60% · gaps'],
+        ],
+        fresh: [
+          ['', 'Any time'],
+          ['24h', '24 hours'],
+          ['7d', '7 days'],
+          ['30d', '30 days'],
+          ['stale', 'Stale · none in 14d+'],
+        ],
+      }
+      const label = (k, v) => (OPTS[k].find((o) => o[0] === v) || [, v])[1]
+      const SORTS = {
+        tvl: ['TVL: high to low', (a, b) => b.tvl - a.tvl],
+        latest: ['Latest change: newest first', (a, b) => a.latestH - b.latestH || b.tvl - a.tvl],
+        cov: ['Coverage: most sources first', (a, b) => b.cov - a.cov || b.tvl - a.tvl],
+        covAsc: ['Coverage: fewest sources first', (a, b) => a.cov - b.cov || b.tvl - a.tvl],
+        neg: [
+          'Negative signals: most first',
+          (a, b) => b.counts.neg - a.counts.neg || a.latestH - b.latestH,
+        ],
+        name: ['Name: A–Z', (a, b) => a.name.localeCompare(b.name)],
+        cat: ['Category', (a, b) => a.cat.localeCompare(b.cat) || b.tvl - a.tvl],
+        audits: ['Audits: most first', (a, b) => (b.audits || 0) - (a.audits || 0)],
+        sec: ['Security events: most first', (a, b) => (b.sec ?? -1) - (a.sec ?? -1)],
+      }
+      const STATE_RANK = { neg: 0, neu: 1, pos: 2, none: 3 }
+      const sortFn = (key) => {
+        if (key.startsWith('src:')) {
+          const id = key.slice(4)
+          return (a, b) =>
+            STATE_RANK[a.s[id]?.st || 'none'] - STATE_RANK[b.s[id]?.st || 'none'] ||
+            (a.s[id]?.h ?? 1e9) - (b.s[id]?.h ?? 1e9)
+        }
+        return (SORTS[key] || SORTS.tvl)[1]
+      }
+
+      const blank = () => ({
+        changed: false,
+        cats: [],
+        chains: [],
+        tvl: '',
+        minFeeds: 0,
+        covPct: '',
+        has: [],
+        miss: [],
+        sig: [],
+        hasAudits: false,
+        minAudits: 0,
+        hasSec: false,
+        fresh: '',
+      })
+      const S = {
+        q: '',
+        view: 'intel',
+        sort: 'tvl',
+        f: blank(),
+        open: new Set(['aave']),
+        chainsAll: false,
+      }
+      try {
+        S.view = localStorage.getItem('defi-dna-mock-view') === 'table' ? 'table' : 'intel'
+      } catch (e) {
+        /* storage may be disabled */
+      }
+
+      const $ = (id) => document.getElementById(id)
+      const toggleIn = (arr, v) => {
+        const i = arr.indexOf(v)
+        i < 0 ? arr.push(v) : arr.splice(i, 1)
+      }
+
+      /* ---------- filtering ---------- */
+      function matches(p) {
+        const f = S.f
+        const q = S.q.trim().toLowerCase()
+        if (
+          q &&
+          ![p.name, p.cat, p.type, ...p.covered.map((x) => x.f.name)].some((t) =>
+            t.toLowerCase().includes(q),
+          )
+        )
+          return false
+        if (f.changed && !p.isNew) return false
+        if (f.cats.length && !f.cats.includes(p.cat)) return false
+        if (f.chains.length && !f.chains.some((c) => p.chains.includes(c))) return false
+        if (f.tvl === 'gt10' && p.tvl < 10e9) return false
+        if (f.tvl === 'mid' && (p.tvl < 1e9 || p.tvl >= 10e9)) return false
+        if (f.tvl === 'lt1' && p.tvl >= 1e9) return false
+        if (p.cov < f.minFeeds) return false
+        if (f.covPct === 'ge80' && p.covPct < 0.8) return false
+        if (f.covPct === 'ge60' && p.covPct < 0.6) return false
+        if (f.covPct === 'lt60' && p.covPct >= 0.6) return false
+        if (f.has.some((id) => !p.s[id] || p.s[id].st === 'none')) return false
+        if (f.miss.some((id) => p.s[id] && p.s[id].st !== 'none')) return false
+        if (f.sig.some((st) => !p.counts[st])) return false
+        if (f.hasAudits && !p.audits) return false
+        if ((p.audits || 0) < f.minAudits) return false
+        if (f.hasSec && !p.sec) return false
+        if (f.fresh === '24h' && p.latestH > 24) return false
+        if (f.fresh === '7d' && p.latestH > 168) return false
+        if (f.fresh === '30d' && p.latestH > 720) return false
+        if (f.fresh === 'stale' && p.latestH <= STALE_H) return false
+        return true
+      }
+
+      function activeFilters() {
+        const f = S.f
+        const out = []
+        const add = (text, undo) => out.push({ text, undo })
+        if (f.changed) add('Changed recently', () => (f.changed = false))
+        f.cats.forEach((v) => add(`Category: ${v}`, () => toggleIn(f.cats, v)))
+        f.chains.forEach((v) => add(`Chain: ${v}`, () => toggleIn(f.chains, v)))
+        if (f.tvl) add(`TVL ${label('tvl', f.tvl)}`, () => (f.tvl = ''))
+        if (f.minFeeds) add(`≥ ${f.minFeeds} sources with data`, () => (f.minFeeds = 0))
+        if (f.covPct) add(`Coverage ${label('covPct', f.covPct)}`, () => (f.covPct = ''))
+        f.has.forEach((v) => add(`Has ${FEED[v].name}`, () => toggleIn(f.has, v)))
+        f.miss.forEach((v) => add(`Missing ${FEED[v].name}`, () => toggleIn(f.miss, v)))
+        f.sig.forEach((v) => add(`Has ${ST[v].toLowerCase()} signals`, () => toggleIn(f.sig, v)))
+        if (f.hasAudits) add('Has audits', () => (f.hasAudits = false))
+        if (f.minAudits) add(`≥ ${f.minAudits} audits`, () => (f.minAudits = 0))
+        if (f.hasSec) add('Has security events', () => (f.hasSec = false))
+        if (f.fresh)
+          add(
+            f.fresh === 'stale' ? 'Stale 14d+' : `Updated within ${label('fresh', f.fresh)}`,
+            () => (f.fresh = ''),
+          )
+        return out
+      }
+
+      /* ---------- pieces ---------- */
+      const protoCell = (p) =>
+        `<div class="pname">${avatar(p)}<span><strong>${esc(p.name)}</strong><small>${esc(p.cat)} · ${p.chains.length} chain${p.chains.length > 1 ? 's' : ''}</small></span></div>`
+
+      const covCell = (p) =>
+        `<div class="cov${p.covPct < 0.6 ? ' low' : ''}"><span class="v"><b>${p.cov}</b><span> / ${NF}</span></span><span class="covbar"><i style="width:${Math.round(p.covPct * 100)}%"></i></span></div>`
+
+      const cell = (p, x) =>
+        `<a class="cell st-${x.st}" href="protocol.html?p=${p.id}#src-${x.f.id}" data-p="${p.id}" data-f="${x.f.id}" aria-label="${esc(p.name)} · ${esc(x.f.name)}: ${ST[x.st]}">${x.st !== 'none' && x.h <= NEW_H ? '<i class="fresh"></i>' : ''}</a>`
+
+      function latestCell(p) {
+        const L = p.latest
+        if (!L) return '<span class="muted">No source data</span>'
+        const more = p.updates7d > 1 ? ` · +${p.updates7d - 1} more in 7d` : ''
+        if (L.h <= QUIET_H) {
+          return `<div class="lc"><div class="lc1"><i class="dot st-${L.st}"></i>${esc(L.hd || `${L.f.name} updated`)}${L.h <= NEW_H ? '<span class="newb">NEW</span>' : ''}</div><div class="lc2">${ago(L.h)}${more}</div></div>`
+        }
+        const d = Math.floor(L.h / 24)
+        if (L.h <= STALE_H) {
+          return `<div class="lc quiet"><div class="lc1">No changes for ${d}d</div><div class="lc2">Last: ${esc(L.f.name)} · ${esc(L.ev.toLowerCase())}</div></div>`
+        }
+        return `<div class="lc stale"><div class="lc1">No source updates</div><div class="lc2">for ${d}d · last: ${esc(L.f.name)}</div></div>`
+      }
+
+      function previewRow(p) {
+        const missing = p.sig.filter((x) => x.st === 'none')
+        const chains =
+          p.chains.slice(0, 3).join(', ') + (p.chains.length > 3 ? ` +${p.chains.length - 3}` : '')
+        return `<tr class="xrow"><td colspan="6"><div class="preview">
+    <div class="pv-ov">
+      <h4>Protocol overview</h4>
+      <dl class="kv">
+        <div><dt>Category</dt><dd>${esc(p.cat)}<small>${esc(p.type)}</small></dd></div>
+        <div><dt>Chains</dt><dd>${esc(chains)}</dd></div>
+        <div><dt>TVL ${prov('src', 'DefiLlama')}</dt><dd class="mono">${fmtUsd(p.tvl)}</dd></div>
+        <div><dt>Coverage ${prov('cp0x')}</dt><dd><span class="mono">${p.cov} / ${NF}</span> sources</dd></div>
+        <div><dt>Audits ${prov('src', 'Audit Feed')}</dt><dd class="mono">${p.audits ?? '—'}</dd></div>
+        <div><dt>Security events ${prov('src', 'Security Feed')}</dt><dd>${p.sec == null ? '<span class="muted">No source data</span>' : `<span class="mono">${p.sec}</span> source-reported`}</dd></div>
+      </dl>
+    </div>
+    <div class="pv-up">
+      <h4>Recent source updates</h4>
+      <ul class="ulist">${p.recent
+        .slice(0, 4)
+        .map(
+          (x) => `<li><a href="protocol.html?p=${p.id}#src-${x.f.id}">
+        <span class="mark st-${x.st}">${x.f.abbr}</span>
+        <span><span class="u-top"><b>${esc(x.f.name)}</b><span class="state st-${x.st}">${ST[x.st]}</span><span class="u-lab srclabel">${esc(x.lab)}</span></span>
+        <span class="u-sum">${esc(x.ev)} — ${esc(x.sum)}</span></span>
+        <span class="u-age">${ago(x.h)}${x.h <= NEW_H ? '<span class="newb">NEW</span>' : ''}</span></a></li>`,
+        )
+        .join('')}</ul>
+    </div>
+    <div class="pv-gap">
+      <h4>No data from ${missing.length} of ${NF}</h4>
+      <ul class="glist">${missing.map((x) => `<li><span class="mark st-none">${x.f.abbr}</span><span><b>${esc(x.f.name)}</b> ${x.by === 'cp0x' ? prov('cp0x') : ''}<small>${esc(x.why)}</small></span></li>`).join('') || '<li class="muted">Every tracked source has data.</li>'}</ul>
+      <div class="pv-actions">
+        <a class="btn primary" href="protocol.html?p=${p.id}">Open protocol ${ICON.arrow}</a>
+        <a class="text-link" href="protocol.html?p=${p.id}#intel">Compare sources</a>
+      </div>
+    </div>
+  </div></td></tr>`
+      }
+
+      const th = (key, text, extra = '', cls = '') =>
+        `<th class="${cls}"><button type="button" class="th-sort${S.sort === key || (key === 'cov' && S.sort === 'covAsc') ? ' on' : ''}" data-sort="${key}">${text}${ICON.sort}</button>${extra}</th>`
+
+      function intelTable(list) {
+        return `<table class="matrix intel">
+    <caption class="sr-only">Protocols with coverage, one cell per source and the latest source change. Click a row for a preview.</caption>
+    <thead><tr>
+      ${th('name', 'Protocol')}
+      ${th('tvl', 'TVL', prov('src', 'DefiLlama'))}
+      ${th('cov', 'Coverage', prov('cp0x'))}
+      <th class="c-sig"><div class="sig-h">Feed signals ${prov('src', `× ${NF}`)}</div>
+        <div class="strip abbr">${FEEDS.map((f) => `<button type="button" data-sort="src:${f.id}" data-col="${f.id}" class="${S.sort === `src:${f.id}` ? 'on' : ''}" title="${esc(f.name)} — ${esc(f.topic)}. Click to sort by this source.">${f.abbr}</button>`).join('')}</div></th>
+      ${th('latest', 'Latest change')}
+      <th class="c-x"><span class="sr-only">Expand</span></th>
+    </tr></thead>
+    <tbody>${list
+      .map((p) => {
+        const open = S.open.has(p.id)
+        return `<tr class="prow${open ? ' open' : ''}" data-id="${p.id}" tabindex="0" aria-expanded="${open}">
+        <td class="c-name">${protoCell(p)}</td>
+        <td><span class="tvl">${fmtUsd(p.tvl)}</span></td>
+        <td>${covCell(p)}</td>
+        <td class="c-sig"><div class="strip">${p.sig.map((x) => cell(p, x)).join('')}</div></td>
+        <td>${latestCell(p)}</td>
+        <td class="c-x"><span class="chev">${ICON.chev}</span></td>
+      </tr>${open ? previewRow(p) : ''}`
+      })
+      .join('')}</tbody></table>`
+      }
+
+      function tableView(list) {
+        const sig = (p) =>
+          `<span class="sigcount">${['pos', 'neu', 'neg'].map((st) => `<span class="st-${st}${p.counts[st] ? '' : ' z'}"><i class="dot"></i>${p.counts[st]}</span>`).join('')}</span>`
+        const upd = (p) =>
+          `<span class="upd${p.latestH > STALE_H ? ' stale' : ''}">${ago(p.latestH)}${p.isNew ? '<span class="newb">NEW</span>' : ''}</span>`
+        return `<table class="matrix plain">
+    <caption class="sr-only">Protocols in a conventional table.</caption>
+    <thead><tr>
+      ${th('name', 'Protocol')}
+      ${th('cat', 'Category')}
+      ${th('tvl', 'TVL', prov('src', 'DefiLlama'), 'num')}
+      ${th('cov', 'Coverage', prov('cp0x'))}
+      ${th('neg', 'Signals', prov('src', 'pos · neu · neg'))}
+      ${th('audits', 'Audits', prov('src', 'Audit Feed'), 'num')}
+      ${th('sec', 'Security events', prov('src', 'Security Feed'), 'num')}
+      ${th('latest', 'Updated', prov('cp0x'))}
+    </tr></thead>
+    <tbody>${list
+      .map(
+        (p) => `<tr class="trow" data-id="${p.id}" tabindex="0">
+      <td class="c-name">${protoCell(p)}</td>
+      <td>${esc(p.cat)}</td>
+      <td class="num"><span class="tvl">${fmtUsd(p.tvl)}</span></td>
+      <td>${covCell(p)}</td>
+      <td>${sig(p)}</td>
+      <td class="num mono">${p.audits ?? '—'}</td>
+      <td class="num mono">${p.sec ?? '<span class="muted" title="No data from Security Feed">—</span>'}</td>
+      <td>${upd(p)}</td>
+    </tr>`,
+      )
+      .join('')}</tbody></table>`
+      }
+
+      /* ---------- pulse + stream ---------- */
+      const PULSE = [
+        {
+          k: 'new',
+          title: 'Changed · 48h',
+          desc: 'protocols with new source data',
+          test: (p) => p.isNew,
+          on: () => S.f.changed,
+          flip: () => (S.f.changed = !S.f.changed),
+        },
+        {
+          k: 'neg',
+          title: 'Negative signals',
+          desc: 'at least one source reports negative',
+          test: (p) => p.counts.neg > 0,
+          on: () => S.f.sig.includes('neg'),
+          flip: () => toggleIn(S.f.sig, 'neg'),
+        },
+        {
+          k: 'gap',
+          title: 'Coverage gaps',
+          desc: 'fewer than 60% of sources have data',
+          test: (p) => p.covPct < 0.6,
+          on: () => S.f.covPct === 'lt60',
+          flip: () => (S.f.covPct = S.f.covPct === 'lt60' ? '' : 'lt60'),
+        },
+        {
+          k: 'stale',
+          title: 'Stale',
+          desc: 'no source update for 14+ days',
+          test: (p) => p.latestH > STALE_H,
+          on: () => S.f.fresh === 'stale',
+          flip: () => (S.f.fresh = S.f.fresh === 'stale' ? '' : 'stale'),
+        },
+      ]
+
+      function renderPulse() {
+        $('pulse').innerHTML = PULSE.map((c, i) => {
+          const hit = P.filter(c.test)
+          return `<button type="button" class="pcard k-${c.k}" data-pulse="${i}" aria-pressed="${c.on()}">
+      <span class="pc-top"><i class="pc-ico"></i>${c.title}<span class="pc-act">${c.on() ? 'Filter on · clear' : 'Filter'}</span></span>
+      <span class="pc-row"><span class="pc-n">${hit.length}<small>/ ${P.length}</small></span>
+        <span class="pc-txt"><span class="pc-d">${c.desc}</span><span class="pc-list">${hit.map((p) => esc(p.name)).join(' · ') || '—'}</span></span></span>
+    </button>`
+        }).join('')
+      }
+
+      function renderStream() {
+        const events = P.flatMap((p) => p.covered.map((x) => ({ p, x })))
+          .filter((e) => e.x.h <= 168)
+          .sort((a, b) => a.x.h - b.x.h)
+          .slice(0, 6)
+        $('stream').innerHTML = events
+          .map(
+            ({ p, x }) => `<li><a href="protocol.html?p=${p.id}#src-${x.f.id}">
+    <span class="t">${agoShort(x.h)}</span>
+    <span class="mark st-${x.st}">${x.f.abbr}</span>
+    <span class="s-main"><b>${esc(p.name)}</b> <span>· ${esc(x.f.name)} — ${esc(x.ev)}</span></span>
+    ${x.h <= NEW_H ? '<span class="newb">NEW</span>' : '<span></span>'}
+  </a></li>`,
+          )
+          .join('')
+      }
+
+      /* ---------- drawer ---------- */
+      function buildDrawer() {
+        const count = (fn) => P.filter(fn).length
+        const sets = {
+          cats: CATS.map(([v, n]) => [v, esc(v), n]),
+          chains: CHAINS.map(([v, n]) => [v, esc(v), n]),
+          tvl: OPTS.tvl.map(([v, l]) => [v, l]),
+          covPct: OPTS.covPct.map(([v, l]) => [v, l]),
+          has: FEEDS.map((f) => [
+            f.id,
+            `<span class="ab">${f.abbr}</span>${esc(f.name)}`,
+            count((p) => p.s[f.id] && p.s[f.id].st !== 'none'),
+          ]),
+          miss: FEEDS.map((f) => [
+            f.id,
+            `<span class="ab">${f.abbr}</span>${esc(f.name)}`,
+            count((p) => !p.s[f.id] || p.s[f.id].st === 'none'),
+          ]),
+          fresh: OPTS.fresh.map(([v, l]) => [v, l]),
+        }
+        document.querySelectorAll('[data-set]').forEach((el) => {
+          const key = el.dataset.set
+          el.innerHTML =
+            sets[key]
+              .map(
+                ([v, html, n], i) =>
+                  `<button type="button" class="chip${key === 'chains' && i >= 8 ? ' extra' : ''}" data-k="${key}" data-v="${esc(v)}">${html}${n != null ? `<span class="n">${n}</span>` : ''}</button>`,
+              )
+              .join('') +
+            (key === 'chains' && sets.chains.length > 8
+              ? `<button type="button" class="more-toggle" id="chains-more"></button>`
+              : '')
+        })
+        $('drawer-x').innerHTML = ICON.close
+      }
+
+      function syncDrawer() {
+        const f = S.f
+        document.querySelectorAll('.drawer .chip[data-k]').forEach((b) => {
+          const k = b.dataset.k
+          const v = b.dataset.v
+          b.setAttribute('aria-pressed', Array.isArray(f[k]) ? f[k].includes(v) : f[k] === v)
+          if (b.classList.contains('extra')) b.hidden = !S.chainsAll && !f.chains.includes(v)
+        })
+        const more = $('chains-more')
+        if (more)
+          more.textContent = S.chainsAll ? 'Show fewer' : `+${CHAINS.length - 8} more chains`
+        document.querySelectorAll('.drawer [data-f]').forEach((i) => {
+          if (i.type === 'checkbox') i.checked = !!f[i.dataset.f]
+          else i.value = f[i.dataset.f]
+        })
+        document
+          .querySelectorAll('.drawer [data-sig]')
+          .forEach((i) => (i.checked = f.sig.includes(i.dataset.sig)))
+        $('o-minFeeds').textContent = f.minFeeds ? `≥ ${f.minFeeds} / ${NF}` : 'Any'
+        $('o-minAudits').textContent = f.minAudits
+      }
+
+      function openDrawer(open) {
+        $('drawer').hidden = !open
+        $('scrim').hidden = !open
+        $('open-filters').setAttribute('aria-expanded', open)
+        document.body.style.overflow = open ? 'hidden' : ''
+        if (open) $('drawer-x').focus()
+        else $('open-filters').focus()
+      }
+
+      /* ---------- render ---------- */
+      function render(focusId) {
+        const list = P.filter(matches).sort(sortFn(S.sort))
+        const active = activeFilters()
+
+        $('count-all').textContent = P.length
+        $('count-shown').textContent =
+          list.length === P.length ? P.length : `${list.length} / ${P.length}`
+        document
+          .querySelectorAll('[data-view]')
+          .forEach((b) => b.setAttribute('aria-pressed', b.dataset.view === S.view))
+
+        const sortSel = $('sort')
+        const opts = Object.entries(SORTS).map(([k, [l]]) => [k, l])
+        if (S.sort.startsWith('src:'))
+          opts.push([S.sort, `Source: ${FEED[S.sort.slice(4)].name} (negative first)`])
+        sortSel.innerHTML = opts
+          .map(
+            ([k, l]) => `<option value="${k}"${k === S.sort ? ' selected' : ''}>${esc(l)}</option>`,
+          )
+          .join('')
+
+        const badge = $('filter-count')
+        badge.hidden = !active.length
+        badge.textContent = active.length
+        $('fchips').innerHTML = active.length
+          ? active
+              .map(
+                (a, i) =>
+                  `<span class="fchip">${esc(a.text)}<button type="button" data-undo="${i}" aria-label="Remove filter ${esc(a.text)}">${ICON.close}</button></span>`,
+              )
+              .join('') + `<button type="button" class="clear-all" data-clear>Clear all</button>`
+          : ''
+        S._active = active
+
+        $('results').innerHTML = list.length
+          ? S.view === 'intel'
+            ? intelTable(list)
+            : tableView(list)
+          : `<div class="empty"><h3>No protocols match</h3><p>Try removing a filter — coverage and freshness filters narrow the list quickly.</p><button class="btn primary" type="button" data-clear>Clear all filters</button></div>`
+
+        $('foot').innerHTML =
+          `<span>${list.length} of ${P.length} protocols · ${S.view === 'intel' ? 'click a row to preview, a cell to open that source' : 'click a row to open the protocol'}</span>
+    <span class="legend">
+      <span><i class="cell st-pos"></i>Positive</span><span><i class="cell st-neu"></i>Neutral</span><span><i class="cell st-neg"></i>Negative</span><span><i class="cell st-none"></i>No information</span>
+      <span><i class="fresh-dot"></i>Updated ≤ 48h</span>
+      <span>States are what each source published — never combined.</span>
+    </span>`
+        $('f-apply').textContent = `Show ${list.length} protocol${list.length === 1 ? '' : 's'}`
+
+        renderPulse()
+        syncDrawer()
+        if (focusId) document.querySelector(`tr[data-id="${focusId}"]`)?.focus()
+      }
+
+      /* ---------- tooltip ---------- */
+      const tip = $('tip')
+      function showTip(el) {
+        const p = P.find((x) => x.id === el.dataset.p)
+        const x = p.sig.find((s) => s.f.id === el.dataset.f)
+        tip.innerHTML = `<div class="tip-h"><span class="mark st-${x.st}">${x.f.abbr}</span><b>${esc(x.f.name)}</b><span class="prov src"><b>SOURCE</b></span></div>
+    <div class="tip-row"><span class="state st-${x.st}">${ST[x.st]}</span>${x.lab ? `<span class="srclabel">${esc(x.lab)}</span>` : ''}${x.st !== 'none' && x.h <= NEW_H ? '<span class="newb">NEW</span>' : ''}</div>
+    ${
+      x.st === 'none'
+        ? `<div class="tip-sum">${esc(x.why)}</div><div class="tip-meta">${x.by === 'cp0x' ? `${prov('cp0x')} pipeline status` : `${esc(p.name)} · ${esc(x.f.topic)}`}</div>`
+        : `<div class="tip-meta">${ICON.clock} Last updated ${fmtDate(x.h)}, ${fmtTime(x.h)} UTC · ${ago(x.h)}</div>
+         <div class="tip-sum"><q>${esc(x.sum)}</q></div>
+         <div class="tip-foot">Click to open this source card →</div>`
+    }`
+        tip.hidden = false
+        const r = el.getBoundingClientRect()
+        const w = tip.offsetWidth
+        const hgt = tip.offsetHeight
+        tip.style.left = `${Math.max(8, Math.min(r.left + r.width / 2 - w / 2, innerWidth - w - 8))}px`
+        tip.style.top = `${r.bottom + hgt + 12 > innerHeight ? r.top - hgt - 8 : r.bottom + 8}px`
+        document.querySelector(`.strip.abbr [data-col="${x.f.id}"]`)?.classList.add('hl')
+      }
+      function hideTip() {
+        tip.hidden = true
+        document.querySelectorAll('.strip.abbr .hl').forEach((b) => b.classList.remove('hl'))
+      }
+
+      /* ---------- events ---------- */
+      function setSort(key) {
+        S.sort = key === 'cov' && S.sort === 'cov' ? 'covAsc' : key
+      }
+      function toggleRow(id) {
+        S.open.has(id) ? S.open.delete(id) : S.open.add(id)
+        render(id)
+      }
+
+      $('search-ico').outerHTML = ICON.search
+      $('filter-ico').outerHTML = ICON.filter
+      $('q').addEventListener('input', (e) => {
+        S.q = e.target.value
+        render()
+      })
+      $('sort').addEventListener('change', (e) => {
+        S.sort = e.target.value
+        render()
+      })
+      document.querySelectorAll('[data-view]').forEach((b) =>
+        b.addEventListener('click', () => {
+          S.view = b.dataset.view
+          try {
+            localStorage.setItem('defi-dna-mock-view', S.view)
+          } catch (e) {
+            /* storage may be disabled */
+          }
+          render()
+        }),
+      )
+      $('pulse').addEventListener('click', (e) => {
+        const card = e.target.closest('[data-pulse]')
+        if (!card) return
+        PULSE[card.dataset.pulse].flip()
+        render()
+      })
+
+      document.addEventListener('click', (e) => {
+        const undo = e.target.closest('[data-undo]')
+        if (undo) {
+          S._active[undo.dataset.undo].undo()
+          return render()
+        }
+        if (e.target.closest('[data-clear]')) {
+          S.f = blank()
+          S.q = ''
+          $('q').value = ''
+          return render()
+        }
+      })
+
+      $('results').addEventListener('click', (e) => {
+        const sortBtn = e.target.closest('[data-sort]')
+        if (sortBtn) {
+          setSort(sortBtn.dataset.sort)
+          return render()
+        }
+        if (e.target.closest('a')) return
+        const row = e.target.closest('tr.prow')
+        if (row) return toggleRow(row.dataset.id)
+        const trow = e.target.closest('tr.trow')
+        if (trow) location.href = `protocol.html?p=${trow.dataset.id}`
+      })
+      $('results').addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return
+        const row = e.target.closest('tr.prow, tr.trow')
+        if (!row || e.target !== row) return
+        e.preventDefault()
+        row.classList.contains('prow')
+          ? toggleRow(row.dataset.id)
+          : (location.href = `protocol.html?p=${row.dataset.id}`)
+      })
+      $('results').addEventListener('mouseover', (e) => {
+        const c = e.target.closest('.cell')
+        if (c) showTip(c)
+      })
+      $('results').addEventListener('mouseout', (e) => {
+        if (e.target.closest('.cell') && !e.relatedTarget?.closest?.('.cell')) hideTip()
+      })
+      $('results').addEventListener('focusin', (e) => {
+        const c = e.target.closest('.cell')
+        c ? showTip(c) : hideTip()
+      })
+      $('results').addEventListener('focusout', hideTip)
+      window.addEventListener('scroll', hideTip, { passive: true })
+
+      $('open-filters').addEventListener('click', () => openDrawer(true))
+      $('scrim').addEventListener('click', () => openDrawer(false))
+      document
+        .querySelectorAll('[data-close]')
+        .forEach((b) => b.addEventListener('click', () => openDrawer(false)))
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !$('drawer').hidden) openDrawer(false)
+      })
+      const resetAll = () => {
+        S.f = blank()
+        render()
+      }
+      $('f-reset').addEventListener('click', resetAll)
+      $('f-reset-top').addEventListener('click', resetAll)
+
+      const drawerBody = $('drawer-b')
+      drawerBody.addEventListener('click', (e) => {
+        if (e.target.id === 'chains-more') {
+          S.chainsAll = !S.chainsAll
+          return syncDrawer()
+        }
+        const step = e.target.closest('[data-step]')
+        if (step) {
+          S.f.minAudits = Math.max(0, Math.min(40, S.f.minAudits + Number(step.dataset.step) * 5))
+          return render()
+        }
+        const chip = e.target.closest('.chip[data-k]')
+        if (!chip) return
+        const { k, v } = chip.dataset
+        if (Array.isArray(S.f[k])) toggleIn(S.f[k], v)
+        else S.f[k] = S.f[k] === v ? '' : v
+        render()
+      })
+      drawerBody.addEventListener('input', (e) => {
+        const t = e.target
+        if (t.dataset.sig) toggleIn(S.f.sig, t.dataset.sig)
+        else if (t.dataset.f) S.f[t.dataset.f] = t.type === 'checkbox' ? t.checked : Number(t.value)
+        else return
+        render()
+      })
+
+      buildDrawer()
+      renderStream()
+      bindTheme()
+      render()
+    </script>
+  </body>
+</html>

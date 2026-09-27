@@ -1,0 +1,2680 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Protocols · defi-dna — UX mockup</title>
+    <script>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem('defi-dna-mockup-theme') === 'light' ? 'light' : 'dark'
+      } catch (e) {}
+    </script>
+    <style>
+      /* ------------------------------------------------------------------
+   Tokens — copied from apps/web/src/styles/tokens.css.
+   Status tones (--pos/--neu/--neg) render a feed's own characterization,
+   never a DeFi DNA judgement.
+------------------------------------------------------------------- */
+      :root {
+        color-scheme: light;
+        --font: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        --canvas: #f6f7f9;
+        --surface: #ffffff;
+        --surface-alt: #eef3f2;
+        --subtle: #f7f8fa;
+        --header: #ffffffed;
+        --ink: #192c3a;
+        --muted: #627180;
+        --faint: #93a0ad;
+        --accent: #146b57;
+        --accent-hover: #0b503f;
+        --on-accent: #ffffff;
+        --accent-tint: #e9f3ef;
+        --accent-line: #cce3d9;
+        --focus: #24967b;
+        --line: #e3e8ed;
+        --line-strong: #bdc9d2;
+        --row-hover: #fafcfc;
+        --amber: #906012;
+        --amber-tint: #fbf5e8;
+        --amber-line: #ebdcbc;
+        --shadow: 0 2px 5px #172d3b03, 0 12px 26px #172d3b02;
+        --pop-shadow: 0 8px 32px #0002;
+        --avatar-border: #00000005;
+        --avatar-0: #e9e7f4;
+        --avatar-ink-0: #62527f;
+        --avatar-1: #e3eff3;
+        --avatar-ink-1: #3e6b7e;
+        --avatar-2: #f4eae0;
+        --avatar-ink-2: #8d6040;
+        --avatar-3: #e4eee8;
+        --avatar-ink-3: #49745d;
+        --avatar-4: #ede9ed;
+        --avatar-ink-4: #786276;
+        --source-0: #e8eef9;
+        --source-ink-0: #4865a2;
+        --source-1: #f1eaf7;
+        --source-ink-1: #795997;
+        --pos: #1c7a52;
+        --pos-seg: #2f9a6a;
+        --pos-tint: #e8f4ee;
+        --neu: #906012;
+        --neu-seg: #d39b2a;
+        --neu-tint: #fbf5e8;
+        --neg: #b0403a;
+        --neg-seg: #c9534b;
+        --neg-tint: #fbeeed;
+        --none-seg: #d5dde4;
+      }
+      :root[data-theme='dark'] {
+        color-scheme: dark;
+        --canvas: #111c24;
+        --surface: #19262f;
+        --surface-alt: #192d2e;
+        --subtle: #1e2e38;
+        --header: #15222bec;
+        --ink: #e3edf2;
+        --muted: #9fb1bd;
+        --faint: #718694;
+        --accent: #7bd1b7;
+        --accent-hover: #a2e3ce;
+        --on-accent: #122c23;
+        --accent-tint: #203c36;
+        --accent-line: #345b4e;
+        --focus: #7bd1b7;
+        --line: #2c3d49;
+        --line-strong: #506774;
+        --row-hover: #1c2c36;
+        --amber: #e0bb74;
+        --amber-tint: #3a3425;
+        --amber-line: #5e5135;
+        --shadow: 0 2px 5px #00000008, 0 12px 26px #00000006;
+        --pop-shadow: 0 10px 36px #0009;
+        --avatar-border: #ffffff08;
+        --avatar-0: #39334c;
+        --avatar-ink-0: #c3b0df;
+        --avatar-1: #283f4c;
+        --avatar-ink-1: #9ac8dc;
+        --avatar-2: #453a32;
+        --avatar-ink-2: #ddbc9e;
+        --avatar-3: #2e4338;
+        --avatar-ink-3: #a2cdb4;
+        --avatar-4: #413442;
+        --avatar-ink-4: #cdb0ca;
+        --source-0: #2e3c55;
+        --source-ink-0: #afc5f3;
+        --source-1: #3d334e;
+        --source-ink-1: #d0b6e9;
+        --pos: #7bd1b7;
+        --pos-seg: #5fc29f;
+        --pos-tint: #203c36;
+        --neu: #e0bb74;
+        --neu-seg: #d9ac55;
+        --neu-tint: #3a3425;
+        --neg: #e99a94;
+        --neg-seg: #e0776f;
+        --neg-tint: #3a2725;
+        --none-seg: #34495a;
+      }
+
+      /* ------------------------------------------------------------------ base */
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--canvas);
+        color: var(--ink);
+        font: 13px/1.5 var(--font);
+        -webkit-font-smoothing: antialiased;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        border: 0;
+        background: none;
+        cursor: pointer;
+        border-radius: 6px;
+        padding: 0;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      p {
+        margin: 0;
+      }
+      dl,
+      dd {
+        margin: 0;
+      }
+      svg {
+        flex-shrink: 0;
+        vertical-align: middle;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-variant-numeric: tabular-nums;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .wrap {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+      [hidden] {
+        display: none !important;
+      }
+
+      /* mockup bar — not part of the product */
+      .mock-bar {
+        background: repeating-linear-gradient(
+          135deg,
+          var(--amber-tint) 0 10px,
+          var(--surface) 10px 20px
+        );
+        border-bottom: 1px solid var(--amber-line);
+        font-size: 11px;
+        color: var(--amber);
+      }
+      .mock-inner {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        height: 30px;
+      }
+      .mock-tag {
+        font: 700 10px/1 var(--mono);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        background: var(--amber);
+        color: var(--surface);
+        padding: 4px 6px;
+        border-radius: 3px;
+      }
+      .mock-inner nav {
+        margin-left: auto;
+        display: flex;
+        gap: 4px;
+      }
+      .mock-inner nav a {
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-weight: 700;
+      }
+      .mock-inner nav a:hover {
+        background: var(--amber-tint);
+      }
+      .mock-inner nav a[aria-current] {
+        background: var(--amber);
+        color: var(--surface);
+      }
+
+      /* header — mirrors .site-header in the product */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        border-bottom: 1px solid var(--line);
+        background: var(--header);
+        backdrop-filter: blur(16px);
+      }
+      .hdr {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        gap: 48px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 21px;
+        font-weight: 800;
+        letter-spacing: -1px;
+        line-height: 1;
+      }
+      .brand > svg,
+      .brand-dot {
+        color: var(--accent);
+      }
+      .primary-nav {
+        align-self: stretch;
+        display: flex;
+        gap: 28px;
+      }
+      .primary-nav a {
+        display: flex;
+        align-items: center;
+        border-bottom: 2px solid transparent;
+        padding-top: 2px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .primary-nav a:hover {
+        color: var(--ink);
+      }
+      .primary-nav a.active {
+        border-bottom-color: var(--accent);
+        color: var(--accent);
+      }
+      .hdr-tools {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .icon-btn {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+      }
+      .icon-btn:hover {
+        background: var(--subtle);
+        color: var(--ink);
+      }
+
+      /* provenance tags — the four kinds of information on every page */
+      .prov {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font: 700 9px/1 var(--mono);
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        padding: 3px 5px;
+        border-radius: 3px;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+      .prov.meta {
+        color: var(--muted);
+        border-color: var(--line-strong);
+        background: var(--surface);
+      }
+      .prov.cov {
+        color: var(--source-ink-0);
+        background: var(--source-0);
+      }
+      .prov.src {
+        color: var(--source-ink-1);
+        background: var(--source-1);
+      }
+      .prov.cp {
+        color: var(--surface);
+        background: var(--ink);
+      }
+
+      /* status dots / segments */
+      .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: var(--none-seg);
+      }
+      .dot.pos {
+        background: var(--pos-seg);
+      }
+      .dot.neu,
+      .dot.inf {
+        background: var(--neu-seg);
+      }
+      .dot.neg {
+        background: var(--neg-seg);
+      }
+      .dot.none {
+        background: transparent;
+        box-shadow: inset 0 0 0 1.5px var(--line-strong);
+      }
+      .ring path {
+        fill: none;
+        stroke-width: 5;
+        stroke: var(--none-seg);
+      }
+      .ring .pos {
+        stroke: var(--pos-seg);
+      }
+      .ring .neu,
+      .ring .inf {
+        stroke: var(--neu-seg);
+      }
+      .ring .neg {
+        stroke: var(--neg-seg);
+      }
+      .ring text {
+        font: 700 10px var(--mono);
+        fill: var(--ink);
+      }
+      .sbar {
+        display: inline-flex;
+        gap: 2px;
+      }
+      .sbar i {
+        width: 5px;
+        height: 14px;
+        border-radius: 1.5px;
+        background: var(--none-seg);
+      }
+      .sbar i.pos {
+        background: var(--pos-seg);
+      }
+      .sbar i.neu,
+      .sbar i.inf {
+        background: var(--neu-seg);
+      }
+      .sbar i.neg {
+        background: var(--neg-seg);
+      }
+
+      /* buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 36px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .btn:hover {
+        border-color: var(--line-strong);
+      }
+      .btn.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--on-accent);
+      }
+      .btn.primary:hover {
+        background: var(--accent-hover);
+      }
+      .btn.ghost {
+        border-color: transparent;
+        background: transparent;
+        color: var(--muted);
+      }
+      .btn.ghost:hover {
+        color: var(--ink);
+        background: var(--subtle);
+      }
+      .btn[aria-expanded='true'],
+      .btn.active {
+        border-color: var(--accent-line);
+        background: var(--accent-tint);
+        color: var(--accent);
+      }
+      .badge {
+        font: 700 10px/1 var(--mono);
+        background: var(--accent);
+        color: var(--on-accent);
+        border-radius: 9px;
+        padding: 3px 6px;
+      }
+
+      /* ------------------------------------------------------------------ page */
+      .page {
+        padding-top: 22px;
+        padding-bottom: 40px;
+      }
+      .page-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 16px;
+      }
+      .page-head h1 {
+        font-size: 26px;
+        font-weight: 750;
+        letter-spacing: -0.8px;
+      }
+      .page-head p {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .page-head p strong {
+        color: var(--ink);
+      }
+      .ph-stats {
+        display: flex;
+        gap: 0;
+      }
+      .ph-stats > div {
+        padding: 0 18px;
+        border-left: 1px solid var(--line);
+      }
+      .ph-stats dt {
+        white-space: nowrap;
+        font-size: 10px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 700;
+      }
+      .ph-stats dd {
+        font: 600 15px/1.4 var(--mono);
+      }
+
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 14px;
+        flex-wrap: wrap;
+      }
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 1 340px;
+        min-width: 240px;
+        height: 36px;
+        padding: 0 10px;
+        background: var(--canvas);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        color: var(--muted);
+      }
+      .search:focus-within {
+        outline: 2px solid var(--focus);
+        outline-offset: 1px;
+      }
+      .search input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        font-size: 12px;
+        color: var(--ink);
+      }
+      .search input::placeholder {
+        color: var(--muted);
+      }
+      kbd {
+        font: 10px var(--mono);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 0 5px;
+        color: var(--muted);
+      }
+      .sort {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 36px;
+        padding: 0 4px 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .sort select {
+        border: 0;
+        background: transparent;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--ink);
+        height: 32px;
+        cursor: pointer;
+      }
+      .spacer {
+        flex: 1;
+      }
+      .viewtoggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        padding: 2px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        height: 36px;
+      }
+      .viewtoggle > span {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--muted);
+        padding: 0 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+      .viewtoggle button {
+        height: 30px;
+        padding: 0 9px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .viewtoggle button:hover {
+        color: var(--ink);
+        background: var(--subtle);
+      }
+      .viewtoggle button.on {
+        background: var(--accent-tint);
+        color: var(--accent);
+      }
+      .result-count {
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        padding-left: 6px;
+      }
+      .result-count strong {
+        color: var(--ink);
+        font-family: var(--mono);
+      }
+
+      .chips-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding: 0 14px 12px;
+      }
+      .fchip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 24px;
+        padding: 0 4px 0 9px;
+        border-radius: 12px;
+        background: var(--accent-tint);
+        color: var(--accent);
+        border: 1px solid var(--accent-line);
+        font-size: 11px;
+        font-weight: 650;
+      }
+      .fchip button {
+        width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        color: inherit;
+        line-height: 1;
+      }
+      .fchip button:hover {
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+      .text-btn {
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .text-btn:hover {
+        text-decoration: underline;
+      }
+
+      /* ------------------------------------------------------------------ table */
+      .table-scroll {
+        overflow-x: auto;
+      }
+      table.grid {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        text-align: left;
+      }
+      .grid th,
+      .grid td {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+      .grid thead tr.grp th {
+        padding: 7px 12px 6px;
+        background: var(--subtle);
+        border-top: 1px solid var(--line);
+        border-bottom: 0;
+      }
+      .grid thead tr.grp th + th {
+        border-left: 5px solid var(--surface);
+      }
+      .grid thead tr.grp th.g-meta {
+        box-shadow: inset 0 -2px 0 var(--line-strong);
+      }
+      .grid thead tr.grp th.g-cov {
+        box-shadow: inset 0 -2px 0 var(--source-ink-0);
+      }
+      .grid thead tr.grp th.g-src {
+        box-shadow: inset 0 -2px 0 var(--source-ink-1);
+      }
+      .grid thead tr.grp th.g-cp {
+        box-shadow: inset 0 -2px 0 var(--ink);
+      }
+      .grp-note {
+        font-size: 10px;
+        color: var(--muted);
+        font-weight: 500;
+        margin-left: 6px;
+      }
+      .grid thead tr.cols th {
+        background: var(--subtle);
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 650;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      .th-sort {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: inherit;
+        font-weight: inherit;
+        padding: 3px 5px;
+        margin: -3px -5px;
+      }
+      .th-sort:hover {
+        color: var(--ink);
+        background: var(--surface);
+      }
+      .th-sort.sorted {
+        color: var(--accent);
+      }
+      .th-sort .arr {
+        font-size: 10px;
+        opacity: 0.5;
+      }
+      .th-sort.sorted .arr {
+        opacity: 1;
+      }
+      .th-sub {
+        display: block;
+        font-size: 9px;
+        font-weight: 500;
+        color: var(--faint);
+        margin-top: 1px;
+      }
+      .grid tbody tr {
+        cursor: pointer;
+      }
+      .grid tbody tr:hover {
+        background: var(--row-hover);
+      }
+      .grid tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      .grid .num {
+        text-align: right;
+      }
+      .grid td small,
+      .cell-sub {
+        display: block;
+        font-size: 10px;
+        color: var(--muted);
+        line-height: 1.3;
+        margin-top: 1px;
+      }
+
+      .pcell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .pcell strong {
+        font-size: 13px;
+        font-weight: 750;
+      }
+      .pcell:hover strong {
+        color: var(--accent);
+      }
+      .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: -0.4px;
+        border: 1px solid var(--avatar-border);
+        flex-shrink: 0;
+      }
+      .a0 {
+        background: var(--avatar-0);
+        color: var(--avatar-ink-0);
+      }
+      .a1 {
+        background: var(--avatar-1);
+        color: var(--avatar-ink-1);
+      }
+      .a2 {
+        background: var(--avatar-2);
+        color: var(--avatar-ink-2);
+      }
+      .a3 {
+        background: var(--avatar-3);
+        color: var(--avatar-ink-3);
+      }
+      .a4 {
+        background: var(--avatar-4);
+        color: var(--avatar-ink-4);
+      }
+      .new {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: 6px;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font: 700 9px/1.4 var(--mono);
+        letter-spacing: 0.3px;
+        background: var(--accent-tint);
+        color: var(--accent);
+        vertical-align: 1px;
+      }
+      .new::before {
+        content: '';
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .hit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 6px;
+        margin: -4px -6px;
+        border-radius: 6px;
+        text-align: left;
+      }
+      .hit:hover,
+      .hit.pinned {
+        background: var(--subtle);
+        box-shadow: inset 0 0 0 1px var(--line);
+      }
+      .cov-count {
+        font: 600 12px var(--mono);
+      }
+      .cov-count span {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      [data-view='ring'] .v-bar,
+      [data-view='bar'] .v-ring {
+        display: none;
+      }
+
+      .sig {
+        display: inline-flex;
+        gap: 10px;
+      }
+      .sc {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font: 600 12px var(--mono);
+        min-width: 24px;
+      }
+      .sc i {
+        width: 7px;
+        height: 7px;
+        border-radius: 2px;
+      }
+      .sc.neg i {
+        background: var(--neg-seg);
+      }
+      .sc.neu i {
+        background: var(--neu-seg);
+      }
+      .sc.pos i {
+        background: var(--pos-seg);
+      }
+      .sc.zero {
+        color: var(--faint);
+        font-weight: 400;
+      }
+      .sc.zero i {
+        opacity: 0.35;
+      }
+
+      .evt {
+        font-weight: 650;
+      }
+      .evt.zero {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .fresh {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font: 500 12px var(--mono);
+      }
+      .fresh.recent::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-tint);
+      }
+      .fresh.stale {
+        color: var(--amber);
+      }
+      .cpbar {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .cpbar b {
+        font: 600 12px var(--mono);
+        width: 34px;
+        text-align: right;
+      }
+      .meter {
+        width: 54px;
+        height: 5px;
+        border-radius: 3px;
+        background: var(--line);
+        overflow: hidden;
+      }
+      .meter i {
+        display: block;
+        height: 100%;
+        background: var(--muted);
+        border-radius: 3px;
+      }
+      .go {
+        color: var(--faint);
+        width: 28px;
+        text-align: center;
+      }
+      tr:hover .go {
+        color: var(--accent);
+      }
+
+      .empty {
+        padding: 48px 20px;
+        text-align: center;
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+      }
+      .empty strong {
+        display: block;
+        color: var(--ink);
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      .table-foot {
+        display: grid;
+        gap: 7px;
+        padding: 12px 14px;
+        border-top: 1px solid var(--line);
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 14px;
+      }
+      .legend > span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .lg-title {
+        font-weight: 750;
+        color: var(--ink);
+        min-width: 92px;
+      }
+
+      /* ------------------------------------------------------------------ popover */
+      .pop {
+        position: fixed;
+        z-index: 60;
+        width: 290px;
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        box-shadow: var(--pop-shadow);
+        font-size: 12px;
+      }
+      .pop-h {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+        padding: 11px 13px 2px;
+      }
+      .pop-h strong {
+        font-size: 13px;
+      }
+      .pop-sub {
+        padding: 0 13px 8px;
+        font-size: 10px;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line);
+      }
+      .pop-list {
+        list-style: none;
+        margin: 0;
+        padding: 5px 6px;
+      }
+      .pop-list li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 7px;
+        border-radius: 5px;
+      }
+      .pop-list li em {
+        margin-left: auto;
+        font-style: normal;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .pop-list li.pos em {
+        color: var(--pos);
+      }
+      .pop-list li.neu em,
+      .pop-list li.inf em {
+        color: var(--neu);
+      }
+      .pop-list li.neg em {
+        color: var(--neg);
+      }
+      .pop-list li.none {
+        color: var(--muted);
+      }
+      .pop-group {
+        padding: 8px 13px 2px;
+        font-size: 10px;
+        font-weight: 750;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .pop-body {
+        padding: 10px 13px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+      .pop-body b {
+        color: var(--ink);
+      }
+      .pop-f {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 13px;
+        border-top: 1px solid var(--line);
+        font-size: 11px;
+        color: var(--faint);
+      }
+      .pop-f a {
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .pop-f a:hover {
+        text-decoration: underline;
+      }
+      .bd {
+        display: grid;
+        grid-template-columns: 1fr 60px 34px;
+        align-items: center;
+        gap: 8px;
+        padding: 3px 13px;
+      }
+      .bd .meter {
+        width: 60px;
+      }
+      .bd b {
+        font: 600 11px var(--mono);
+        text-align: right;
+      }
+
+      /* ------------------------------------------------------------------ filter drawer */
+      .scrim {
+        position: fixed;
+        inset: 0;
+        z-index: 70;
+        background: #0b141a66;
+      }
+      .drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 71;
+        width: 400px;
+        max-width: 100vw;
+        display: flex;
+        flex-direction: column;
+        background: var(--surface);
+        border-left: 1px solid var(--line-strong);
+        box-shadow: var(--pop-shadow);
+        transform: translateX(105%);
+        transition: transform 0.18s ease;
+      }
+      .drawer.open {
+        transform: none;
+      }
+      .dr-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .dr-head h2 {
+        font-size: 16px;
+        font-weight: 750;
+      }
+      .dr-head .icon-btn {
+        margin-left: auto;
+      }
+      .dr-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 4px 18px 18px;
+      }
+      .fs {
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .fs:last-child {
+        border-bottom: 0;
+      }
+      .fs h3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .fs-note {
+        font-size: 11px;
+        color: var(--muted);
+        margin: -4px 0 10px;
+      }
+      .fl + .fl {
+        margin-top: 12px;
+      }
+      .fl-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .fl-label .muted {
+        font-weight: 500;
+        font-size: 11px;
+      }
+      .chipset {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .chk {
+        position: relative;
+      }
+      .chk input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .chk span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        height: 26px;
+        padding: 0 9px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 650;
+        cursor: pointer;
+      }
+      .chk span em {
+        font: normal 10px var(--mono);
+        color: var(--faint);
+      }
+      .chk span:hover {
+        border-color: var(--line-strong);
+      }
+      .chk input:checked + span {
+        background: var(--accent-tint);
+        border-color: var(--accent-line);
+        color: var(--accent);
+      }
+      .chk input:checked + span em {
+        color: var(--accent);
+      }
+      .chk input:focus-visible + span {
+        outline: 2px solid var(--focus);
+        outline-offset: 1px;
+      }
+      .seg {
+        display: inline-flex;
+        padding: 2px;
+        gap: 2px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--canvas);
+      }
+      .seg button {
+        height: 26px;
+        padding: 0 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        border-radius: 5px;
+      }
+      .seg button:hover {
+        color: var(--ink);
+      }
+      .seg button.on {
+        background: var(--surface);
+        color: var(--accent);
+        box-shadow: 0 0 0 1px var(--accent-line);
+      }
+      .seg.sm button {
+        height: 22px;
+        padding: 0 7px;
+        font-size: 10px;
+      }
+      .srcgrid {
+        display: grid;
+        gap: 4px;
+      }
+      .srcrow {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 3px 0;
+      }
+      .srcrow > span {
+        font-size: 12px;
+        font-weight: 650;
+      }
+      .srcrow small {
+        display: block;
+        font-size: 10px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .cb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .cb input {
+        width: 15px;
+        height: 15px;
+        margin: 0;
+        accent-color: var(--accent);
+      }
+      .cb .dot {
+        margin-left: -2px;
+      }
+      .numin {
+        width: 64px;
+        height: 28px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--canvas);
+        padding: 0 8px;
+        font: 12px var(--mono);
+      }
+      .dr-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 18px;
+        border-top: 1px solid var(--line);
+      }
+
+      /* footer — mirrors .site-footer */
+      .site-footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 24px;
+        padding-top: 20px;
+        padding-bottom: 28px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .site-footer .brand {
+        font-size: 16px;
+        color: var(--ink);
+      }
+      .site-footer .brand svg {
+        width: 18px;
+        height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mock-bar">
+      <div class="wrap mock-inner">
+        <span class="mock-tag">UX mockup</span>
+        <span
+          >Sample data — values are illustrative, not real assessments. Focus: information
+          architecture &amp; density.</span
+        >
+        <nav>
+          <a href="dashboard.html" aria-current="page">1 · Dashboard</a
+          ><a href="protocol-aave.html">2 · Protocol page (Aave)</a>
+        </nav>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <div class="wrap hdr">
+        <a class="brand" href="dashboard.html" aria-label="defi-dna home">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path d="M3 3h9v9H3zM16 3h9v9h-9zM3 16h9v9H3z" fill="currentColor" />
+            <path d="M16 25v-9h9" stroke="currentColor" stroke-width="3" />
+          </svg>
+          <span>defi-dna<span class="brand-dot">.</span></span>
+        </a>
+        <nav class="primary-nav" aria-label="Main navigation">
+          <a class="active" href="dashboard.html">Protocols</a>
+          <a href="#">Risk feeds</a>
+          <a href="#">How to read</a>
+          <a href="#">What changed</a>
+        </nav>
+        <div class="hdr-tools">
+          <span>Data cut <span class="mono">27 Sep 2026 · 08:00 UTC</span></span>
+          <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle theme">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap page">
+      <div class="page-head">
+        <div>
+          <h1>Protocols</h1>
+          <p>
+            What each source publishes about a protocol, with the source named on every value.
+            Colours are each feed’s own characterization —
+            <strong>DeFi DNA does not rate protocols.</strong>
+          </p>
+        </div>
+        <dl class="ph-stats">
+          <div>
+            <dt>Protocols</dt>
+            <dd id="statProtocols">18</dd>
+          </div>
+          <div>
+            <dt>Feeds connected</dt>
+            <dd>11</dd>
+          </div>
+          <div>
+            <dt>Updated in 24h</dt>
+            <dd id="statFresh">7</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="panel" id="panel" data-view="ring">
+        <div class="toolbar">
+          <label class="search">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m16 16 5 5" />
+            </svg>
+            <input
+              id="q"
+              type="search"
+              placeholder="Search protocols, categories or chains"
+              autocomplete="off"
+              aria-label="Search"
+            />
+            <kbd>/</kbd>
+          </label>
+          <button
+            class="btn"
+            id="openFilters"
+            type="button"
+            aria-expanded="false"
+            aria-controls="drawer"
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
+              <circle cx="16" cy="6" r="2" />
+              <circle cx="10" cy="12" r="2" />
+              <circle cx="18" cy="18" r="2" />
+            </svg>
+            Filters <span class="badge" id="fBadge" hidden>0</span>
+          </button>
+          <label class="sort"
+            >Sort
+            <select id="sort" aria-label="Sort protocols">
+              <option value="tvl-desc">TVL · high to low</option>
+              <option value="tvl-asc">TVL · low to high</option>
+              <option value="name-asc">Name · A–Z</option>
+              <option value="cov-desc">Feed coverage · most first</option>
+              <option value="cp-desc">CP0X coverage · highest first</option>
+              <option value="upd-asc">Recently updated</option>
+              <option value="audits-desc">Audits · most first</option>
+              <option value="events-desc">Security events · most first</option>
+              <option value="neg-desc">Negative source signals · most first</option>
+            </select>
+          </label>
+          <span class="result-count" id="count"></span>
+          <span class="spacer"></span>
+          <div class="viewtoggle" role="group" aria-label="Coverage indicator style">
+            <span>Coverage view</span>
+            <button type="button" data-view="ring" class="on">
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                <circle
+                  cx="7"
+                  cy="7"
+                  r="5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-dasharray="2.4 1.3"
+                /></svg
+              >Ring
+            </button>
+            <button type="button" data-view="bar">
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                <path
+                  d="M1 3v8M4 3v8M7 3v8M10 3v8M13 3v8"
+                  stroke="currentColor"
+                  stroke-width="2"
+                /></svg
+              >Bar
+            </button>
+            <button type="button" data-view="both">Compare</button>
+          </div>
+        </div>
+        <div class="chips-row" id="chips" hidden></div>
+
+        <div class="table-scroll">
+          <table class="grid">
+            <thead>
+              <tr class="grp">
+                <th colspan="3" class="g-meta">
+                  <span class="prov meta">Protocol metadata</span
+                  ><span class="grp-note">registry · TVL via DefiLlama</span>
+                </th>
+                <th class="g-cov"><span class="prov cov">Data coverage</span></th>
+                <th colspan="4" class="g-src">
+                  <span class="prov src">Source-reported</span
+                  ><span class="grp-note"
+                    >counts of what feeds published — not verified or scored by us</span
+                  >
+                </th>
+                <th colspan="2" class="g-cp"><span class="prov cp">CP0X derived</span></th>
+              </tr>
+              <tr class="cols">
+                <th>
+                  <button class="th-sort" data-sort="name-asc">
+                    Protocol <span class="arr">↕</span>
+                  </button>
+                </th>
+                <th>Category</th>
+                <th class="num">
+                  <button class="th-sort" data-sort="tvl-desc">
+                    TVL <span class="arr">↕</span>
+                  </button>
+                </th>
+                <th>
+                  <button class="th-sort" data-sort="cov-desc">
+                    Coverage <span class="arr">↕</span></button
+                  ><span class="th-sub">feeds with data · hover for list</span>
+                </th>
+                <th>
+                  <button class="th-sort" data-sort="neg-desc">
+                    Signals <span class="arr">↕</span></button
+                  ><span class="th-sub">negative · neutral/info · positive</span>
+                </th>
+                <th class="num">
+                  <button class="th-sort" data-sort="audits-desc">
+                    Audits <span class="arr">↕</span>
+                  </button>
+                </th>
+                <th>
+                  <button class="th-sort" data-sort="events-desc">
+                    Security events <span class="arr">↕</span></button
+                  ><span class="th-sub">source-reported</span>
+                </th>
+                <th>
+                  <button class="th-sort" data-sort="upd-asc">
+                    Updated <span class="arr">↕</span></button
+                  ><span class="th-sub">latest source change</span>
+                </th>
+                <th>
+                  <button class="th-sort" data-sort="cp-desc">
+                    CP0X Coverage <span class="arr">↕</span></button
+                  ><span class="th-sub">data completeness — not a rating</span>
+                </th>
+                <th aria-label="Open"></th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="empty" hidden>
+          <strong>No protocols match these filters.</strong>
+          An empty result means nothing in our registry matches — not that a protocol is safe or
+          unsafe.
+          <div style="margin-top: 10px">
+            <button class="text-btn" type="button" id="emptyReset">Clear all filters</button>
+          </div>
+        </div>
+
+        <div class="table-foot">
+          <div class="legend">
+            <span class="lg-title">Source status</span>
+            <span><i class="dot pos"></i>Positive</span>
+            <span><i class="dot neu"></i>Neutral / informational</span>
+            <span><i class="dot neg"></i>Negative</span>
+            <span><i class="dot none"></i>No data</span>
+            <span
+              >— position on <b>each feed’s own published scale</b>. “No data” means the feed has
+              not covered the protocol; it is not a signal.</span
+            >
+          </div>
+          <div class="legend">
+            <span class="lg-title">Provenance</span>
+            <span><span class="prov meta">Meta</span> protocol facts from our registry</span>
+            <span><span class="prov cov">Coverage</span> which feeds have data</span>
+            <span><span class="prov src">Source</span> published by a feed, shown as-is</span>
+            <span><span class="prov cp">CP0X</span> computed by DeFi DNA about our own data</span>
+          </div>
+          <div class="legend">
+            <span class="lg-title">Segment order</span>
+            <span id="segOrder"></span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="wrap site-footer">
+      <a class="brand" href="dashboard.html"
+        ><svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <path d="M3 3h9v9H3zM16 3h9v9h-9zM3 16h9v9H3z" fill="currentColor" />
+          <path d="M16 25v-9h9" stroke="currentColor" stroke-width="3" /></svg
+        ><span>defi-dna.</span></a
+      >
+      <span>Every verdict belongs to the feed that published it. No composite score.</span>
+    </footer>
+
+    <div class="pop" id="pop" role="dialog" hidden></div>
+
+    <div class="scrim" id="scrim" hidden></div>
+    <aside
+      class="drawer"
+      id="drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Filters"
+      aria-hidden="true"
+    >
+      <div class="dr-head">
+        <h2>Filters</h2>
+        <span class="muted" style="font-size: 11px">applied live</span>
+        <button class="icon-btn" type="button" id="closeDrawer" aria-label="Close filters">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </button>
+      </div>
+      <div class="dr-body">
+        <section class="fs">
+          <h3>Protocol <span class="prov meta">Meta</span></h3>
+          <div class="fl">
+            <div class="fl-label">Category</div>
+            <div class="chipset" id="fCats"></div>
+          </div>
+          <div class="fl">
+            <div class="fl-label">Chain <span class="muted">deployed on any of</span></div>
+            <div class="chipset" id="fChains"></div>
+          </div>
+        </section>
+        <section class="fs">
+          <h3>Size</h3>
+          <div class="fl">
+            <div class="fl-label">TVL</div>
+            <div class="seg" data-f="tvl">
+              <button type="button" data-v="0" class="on">Any</button
+              ><button type="button" data-v="10000000">&gt; $10M</button
+              ><button type="button" data-v="100000000">&gt; $100M</button
+              ><button type="button" data-v="1000000000">&gt; $1B</button>
+            </div>
+          </div>
+        </section>
+        <section class="fs">
+          <h3>Coverage <span class="prov cov">Coverage</span></h3>
+          <div class="fl">
+            <div class="fl-label">Feeds with data</div>
+            <div class="seg" data-f="feedsMin">
+              <button type="button" data-v="0" class="on">Any</button
+              ><button type="button" data-v="1">≥ 1</button
+              ><button type="button" data-v="5">≥ 5</button
+              ><button type="button" data-v="10">≥ 10</button>
+            </div>
+          </div>
+          <div class="fl">
+            <div class="fl-label">CP0X coverage <span class="prov cp">CP0X</span></div>
+            <div class="seg" data-f="cp">
+              <button type="button" data-v="0" class="on">Any</button
+              ><button type="button" data-v="50">&gt; 50%</button
+              ><button type="button" data-v="75">&gt; 75%</button
+              ><button type="button" data-v="100">100%</button>
+            </div>
+          </div>
+        </section>
+        <section class="fs">
+          <h3>Source <span class="prov src">Source</span></h3>
+          <p class="fs-note">
+            Filters on whether a feed has published data about the protocol — never on what the feed
+            says.
+          </p>
+          <div class="srcgrid" id="fSrc"></div>
+        </section>
+        <section class="fs">
+          <h3>Signals <span class="prov src">Source</span></h3>
+          <label class="cb"
+            ><input type="checkbox" data-sig="neg" /><i class="dot neg"></i>Has negative source
+            signals</label
+          >
+          <label class="cb"
+            ><input type="checkbox" data-sig="neu" /><i class="dot neu"></i>Has neutral /
+            informational source signals</label
+          >
+          <label class="cb"
+            ><input type="checkbox" data-sig="pos" /><i class="dot pos"></i>Has positive source
+            signals</label
+          >
+        </section>
+        <section class="fs">
+          <h3>Security / audits <span class="prov src">Source</span></h3>
+          <label class="cb"><input type="checkbox" id="fHasAudits" />Has audits</label>
+          <label class="cb"
+            >Audit count ≥
+            <input class="numin" type="number" min="0" step="1" id="fAuditMin" placeholder="0"
+          /></label>
+          <label class="cb"
+            ><input type="checkbox" id="fRecentAudit" />Latest audit less than 12 months old</label
+          >
+          <label class="cb"
+            ><input type="checkbox" id="fHasEvents" />Has source-reported security events</label
+          >
+        </section>
+        <section class="fs">
+          <h3>Freshness</h3>
+          <div class="fl">
+            <div class="fl-label">Updated</div>
+            <div class="seg" data-f="fresh">
+              <button type="button" data-v="" class="on">Any</button
+              ><button type="button" data-v="24h">24 hours</button
+              ><button type="button" data-v="7d">7 days</button
+              ><button type="button" data-v="30d">30 days</button
+              ><button type="button" data-v="old">&gt; 30 days</button>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="dr-foot">
+        <button class="btn ghost" type="button" id="resetF">Reset all</button>
+        <button class="btn primary" type="button" id="applyF">
+          Show <span id="drCount" class="mono">18</span>&nbsp;protocols
+        </button>
+      </div>
+    </aside>
+
+    <script>
+      /* ------------------------------------------------------------------ sample data */
+      const FEEDS = [
+        { id: 'defisafety', name: 'DeFiSafety' },
+        { id: 'llamarisk', name: 'LlamaRisk' },
+        { id: 'defiscan', name: 'DeFiScan' },
+        { id: 'risklayer', name: 'Risklayer' },
+        { id: 'philidor', name: 'Philidor' },
+        { id: 'audits', name: 'Audit Feed' },
+        { id: 'security', name: 'Security Feed' },
+        { id: 'immunefi', name: 'Immunefi' },
+        { id: 'oracle', name: 'Oracle Feed' },
+        { id: 'governance', name: 'Governance Feed' },
+        { id: 'feedx', name: 'Feed X' },
+      ]
+      // p positive · n neutral · i informational (data available, no polarity) · x negative · - no data
+      const ST = {
+        p: { cls: 'pos', label: 'Positive' },
+        n: { cls: 'neu', label: 'Neutral' },
+        i: { cls: 'inf', label: 'Data available' },
+        x: { cls: 'neg', label: 'Negative' },
+        '-': { cls: 'none', label: 'No data' },
+      }
+      // s = status per feed, in FEEDS order. upd = hours since latest source change. fresh = source updates in last 24h.
+      // auditAge = months since latest audit. cp = CP0X coverage %.
+      const P = [
+        {
+          id: 'aave',
+          name: 'Aave',
+          cat: 'Lending',
+          tvl: 31.4e9,
+          d7: 2.1,
+          s: 'pnpnpixin--',
+          audits: 14,
+          auditAge: 0,
+          events: 3,
+          lastEvent: 'Sep 25, 2026',
+          upd: 2,
+          fresh: 2,
+          cp: 91,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'Avalanche',
+            'BNB Chain',
+            'Gnosis',
+            'Scroll',
+            'Linea',
+            'zkSync',
+            'Sonic',
+          ],
+          recent: [
+            ['Security Feed', '2h', 'updated its assessment · 1 event added'],
+            ['Audit Feed', '19h', 'new audit listed · OpenZeppelin'],
+          ],
+        },
+        {
+          id: 'lido',
+          name: 'Lido',
+          cat: 'Liquid Staking',
+          tvl: 24.8e9,
+          d7: -0.6,
+          s: 'pnpn-i-inp-',
+          audits: 21,
+          auditAge: 4,
+          events: 0,
+          upd: 5,
+          fresh: 1,
+          cp: 88,
+          chains: ['Ethereum', 'Arbitrum', 'Optimism'],
+          recent: [['DeFiScan', '5h', 'stage page updated']],
+        },
+        {
+          id: 'eigenlayer',
+          name: 'EigenLayer',
+          cat: 'Restaking',
+          tvl: 9.8e9,
+          d7: -3.4,
+          s: '-nxn-i-i---',
+          audits: 11,
+          auditAge: 3,
+          events: 0,
+          upd: 144,
+          fresh: 0,
+          cp: 64,
+          chains: ['Ethereum'],
+        },
+        {
+          id: 'sky',
+          name: 'Sky',
+          cat: 'CDP',
+          tvl: 7.9e9,
+          d7: 0.4,
+          s: 'nnxn-i-inp-',
+          audits: 18,
+          auditAge: 6,
+          events: 1,
+          lastEvent: 'Mar 2025',
+          upd: 26,
+          fresh: 0,
+          cp: 84,
+          chains: ['Ethereum', 'Base', 'Arbitrum', 'Optimism'],
+        },
+        {
+          id: 'morpho',
+          name: 'Morpho',
+          cat: 'Lending',
+          tvl: 6.9e9,
+          d7: 4.8,
+          s: 'ppnnpi-in--',
+          audits: 27,
+          auditAge: 1,
+          events: 0,
+          upd: 3,
+          fresh: 3,
+          cp: 86,
+          chains: ['Ethereum', 'Base', 'Arbitrum', 'Polygon', 'Unichain', 'Optimism'],
+          recent: [
+            ['Philidor', '3h', '4 vault scores updated'],
+            ['LlamaRisk', '9h', 'assessment published'],
+            ['Audit Feed', '20h', 'new audit listed'],
+          ],
+        },
+        {
+          id: 'ethena',
+          name: 'Ethena',
+          cat: 'Stablecoin',
+          tvl: 6.2e9,
+          d7: -1.9,
+          s: '-nxn-i-in--',
+          audits: 9,
+          auditAge: 5,
+          events: 0,
+          upd: 30,
+          fresh: 0,
+          cp: 72,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'BNB Chain',
+            'Mantle',
+            'zkSync',
+            'Linea',
+          ],
+        },
+        {
+          id: 'uniswap',
+          name: 'Uniswap',
+          cat: 'DEX',
+          tvl: 4.6e9,
+          d7: 1.2,
+          s: 'p-pn-ixinp-',
+          audits: 16,
+          auditAge: 8,
+          events: 2,
+          lastEvent: 'Jun 2025',
+          upd: 22,
+          fresh: 1,
+          cp: 89,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'BNB Chain',
+            'Avalanche',
+            'Unichain',
+            'Gnosis',
+            'zkSync',
+            'Linea',
+            'Scroll',
+            'Blast',
+            'Celo',
+            'Zora',
+          ],
+          recent: [['Governance Feed', '22h', 'new proposal indexed']],
+        },
+        {
+          id: 'pendle',
+          name: 'Pendle',
+          cat: 'Yield',
+          tvl: 4.2e9,
+          d7: 6.3,
+          s: 'nnnnpixi---',
+          audits: 12,
+          auditAge: 7,
+          events: 1,
+          lastEvent: 'Jan 2026',
+          upd: 50,
+          fresh: 0,
+          cp: 78,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'BNB Chain',
+            'Mantle',
+            'Sonic',
+            'Optimism',
+            'Berachain',
+            'HyperEVM',
+          ],
+        },
+        {
+          id: 'spark',
+          name: 'Spark',
+          cat: 'Lending',
+          tvl: 3.1e9,
+          d7: 0.9,
+          s: 'pnpnpi-in--',
+          audits: 10,
+          auditAge: 3,
+          events: 0,
+          upd: 6,
+          fresh: 1,
+          cp: 83,
+          chains: ['Ethereum', 'Base', 'Gnosis'],
+          recent: [['Oracle Feed', '6h', 'price source table refreshed']],
+        },
+        {
+          id: 'curve',
+          name: 'Curve',
+          cat: 'DEX',
+          tvl: 2.3e9,
+          d7: -0.8,
+          s: 'nnnn-ixinp-',
+          audits: 15,
+          auditAge: 14,
+          events: 3,
+          lastEvent: 'Jul 2023',
+          upd: 150,
+          fresh: 0,
+          cp: 81,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'Avalanche',
+            'Gnosis',
+            'Fraxtal',
+            'Sonic',
+            'BNB Chain',
+            'zkSync',
+            'Mantle',
+          ],
+        },
+        {
+          id: 'compound',
+          name: 'Compound',
+          cat: 'Lending',
+          tvl: 2.1e9,
+          d7: -2.2,
+          s: 'pnpn-ixinp-',
+          audits: 19,
+          auditAge: 9,
+          events: 2,
+          lastEvent: 'Oct 2024',
+          upd: 47,
+          fresh: 0,
+          cp: 85,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'Scroll',
+            'Mantle',
+            'Linea',
+            'Unichain',
+          ],
+        },
+        {
+          id: 'rocketpool',
+          name: 'Rocket Pool',
+          cat: 'Liquid Staking',
+          tvl: 1.9e9,
+          d7: 0.2,
+          s: 'p-pn-i-inp-',
+          audits: 8,
+          auditAge: 16,
+          events: 0,
+          upd: 290,
+          fresh: 0,
+          cp: 76,
+          chains: ['Ethereum'],
+        },
+        {
+          id: 'fluid',
+          name: 'Fluid',
+          cat: 'Lending',
+          tvl: 1.4e9,
+          d7: 3.1,
+          s: '-nnnpi-in--',
+          audits: 6,
+          auditAge: 4,
+          events: 0,
+          upd: 96,
+          fresh: 0,
+          cp: 69,
+          chains: ['Ethereum', 'Arbitrum', 'Base', 'Polygon'],
+        },
+        {
+          id: 'euler',
+          name: 'Euler',
+          cat: 'Lending',
+          tvl: 0.98e9,
+          d7: 5.5,
+          s: 'n-nnpixin--',
+          audits: 29,
+          auditAge: 2,
+          events: 1,
+          lastEvent: 'Mar 2023',
+          upd: 20,
+          fresh: 1,
+          cp: 74,
+          chains: ['Ethereum', 'Base', 'Arbitrum', 'Sonic', 'BNB Chain', 'Avalanche', 'Unichain'],
+          recent: [['Audit Feed', '20h', 'new audit listed']],
+        },
+        {
+          id: 'balancer',
+          name: 'Balancer',
+          cat: 'DEX',
+          tvl: 0.61e9,
+          d7: -4.1,
+          s: 'nnxn-ixinp-',
+          audits: 13,
+          auditAge: 1,
+          events: 4,
+          lastEvent: 'Nov 2025',
+          upd: 2,
+          fresh: 4,
+          cp: 82,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'Avalanche',
+            'Gnosis',
+            'Sonic',
+            'zkSync',
+          ],
+          recent: [
+            ['Security Feed', '2h', 'post-mortem linked'],
+            ['LlamaRisk', '7h', 'assessment revised'],
+            ['DeFiScan', '11h', 'rosette updated'],
+            ['Governance Feed', '18h', 'proposal indexed'],
+          ],
+        },
+        {
+          id: 'gmx',
+          name: 'GMX',
+          cat: 'Derivatives',
+          tvl: 0.42e9,
+          d7: -1.1,
+          s: '---n-ixin--',
+          audits: 7,
+          auditAge: 11,
+          events: 1,
+          lastEvent: 'Jul 2025',
+          upd: 216,
+          fresh: 0,
+          cp: 58,
+          chains: ['Arbitrum', 'Avalanche'],
+        },
+        {
+          id: 'yearn',
+          name: 'Yearn',
+          cat: 'Vault',
+          tvl: 0.31e9,
+          d7: 0.3,
+          s: 'p-nnpixi---',
+          audits: 22,
+          auditAge: 19,
+          events: 3,
+          lastEvent: 'Apr 2023',
+          upd: 816,
+          fresh: 0,
+          cp: 71,
+          chains: ['Ethereum', 'Arbitrum', 'Base', 'Polygon', 'Optimism', 'Sonic'],
+        },
+        {
+          id: 'across',
+          name: 'Across',
+          cat: 'Bridge',
+          tvl: 0.12e9,
+          d7: 1.7,
+          s: '--nn-i-i---',
+          audits: 9,
+          auditAge: 10,
+          events: 0,
+          upd: 984,
+          fresh: 0,
+          cp: 52,
+          chains: [
+            'Ethereum',
+            'Arbitrum',
+            'Base',
+            'Optimism',
+            'Polygon',
+            'zkSync',
+            'Linea',
+            'Scroll',
+            'Blast',
+            'Mode',
+            'Lisk',
+            'Zora',
+            'World Chain',
+            'Unichain',
+            'Ink',
+          ],
+        },
+      ]
+      const CATEGORIES = [
+        'Lending',
+        'DEX',
+        'Vault',
+        'Stablecoin',
+        'CDP',
+        'Derivatives',
+        'Yield',
+        'Liquid Staking',
+        'Restaking',
+        'Bridge',
+      ]
+      const CHAINS = [
+        'Ethereum',
+        'Arbitrum',
+        'Base',
+        'Optimism',
+        'Polygon',
+        'Avalanche',
+        'BNB Chain',
+        'Gnosis',
+        'Sonic',
+        'Linea',
+        'Scroll',
+        'zkSync',
+        'Unichain',
+        'Mantle',
+      ]
+      const CP_PARTS = [
+        ['Protocol metadata', 9],
+        ['Deployments & contracts', 3],
+        ['Market metrics', -2],
+        ['Feed mapping', 5],
+        ['Protocol module data', -15],
+      ]
+
+      /* ------------------------------------------------------------------ helpers */
+      const $ = (sel) => document.querySelector(sel)
+      const usd = (v) =>
+        v >= 1e9 ? '$' + (v / 1e9).toFixed(1) + 'B' : '$' + Math.round(v / 1e6) + 'M'
+      const age = (h) => (h < 24 ? h + 'h' : Math.round(h / 24) + 'd')
+      const initials = (name) =>
+        name
+          .split(/\s+/)
+          .map((s) => s[0])
+          .join('')
+          .slice(0, 2)
+      const avatarTone = (id) => [...id].reduce((n, c) => n + c.charCodeAt(0), 0) % 5
+      const statuses = (p) => p.s.split('')
+      const covered = (p) => statuses(p).filter((c) => c !== '-').length
+      const counts = (p) => {
+        const st = statuses(p)
+        return {
+          neg: st.filter((c) => c === 'x').length,
+          neu: st.filter((c) => c === 'n' || c === 'i').length,
+          pos: st.filter((c) => c === 'p').length,
+        }
+      }
+
+      function ring(st, size = 30, label = '') {
+        const n = st.length,
+          c = size / 2,
+          r = size / 2 - 3,
+          gap = 0.16
+        let out = `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">`
+        for (let k = 0; k < n; k++) {
+          const a0 = -Math.PI / 2 + (k * 2 * Math.PI) / n + gap / 2
+          const a1 = -Math.PI / 2 + ((k + 1) * 2 * Math.PI) / n - gap / 2
+          out += `<path class="${ST[st[k]].cls}" d="M${(c + r * Math.cos(a0)).toFixed(2)} ${(c + r * Math.sin(a0)).toFixed(2)} A${r} ${r} 0 0 1 ${(c + r * Math.cos(a1)).toFixed(2)} ${(c + r * Math.sin(a1)).toFixed(2)}"/>`
+        }
+        if (label) out += `<text x="${c}" y="${c + 3.5}" text-anchor="middle">${label}</text>`
+        return out + '</svg>'
+      }
+      const bar = (st) =>
+        `<span class="sbar" aria-hidden="true">${st.map((c) => `<i class="${ST[c].cls}"></i>`).join('')}</span>`
+
+      /* ------------------------------------------------------------------ state */
+      const F = {
+        q: '',
+        cats: new Set(),
+        chains: new Set(),
+        tvl: 0,
+        feedsMin: 0,
+        cp: 0,
+        src: {},
+        sig: { neg: false, neu: false, pos: false },
+        hasAudits: false,
+        auditMin: 0,
+        recentAudit: false,
+        hasEvents: false,
+        fresh: '',
+      }
+      let sortKey = 'tvl-desc'
+
+      function pass(p) {
+        const st = statuses(p)
+        const q = F.q.trim().toLowerCase()
+        if (q && !(p.name + ' ' + p.cat + ' ' + p.chains.join(' ')).toLowerCase().includes(q))
+          return false
+        if (F.cats.size && !F.cats.has(p.cat)) return false
+        if (F.chains.size && !p.chains.some((c) => F.chains.has(c))) return false
+        if (F.tvl && p.tvl <= F.tvl) return false
+        if (F.feedsMin && covered(p) < F.feedsMin) return false
+        if (F.cp && (F.cp === 100 ? p.cp < 100 : p.cp <= F.cp)) return false
+        for (const [id, mode] of Object.entries(F.src)) {
+          const has = st[FEEDS.findIndex((f) => f.id === id)] !== '-'
+          if ((mode === 'has' && !has) || (mode === 'missing' && has)) return false
+        }
+        const c = counts(p)
+        for (const k of ['neg', 'neu', 'pos']) if (F.sig[k] && !c[k]) return false
+        if (F.hasAudits && !p.audits) return false
+        if (F.auditMin && p.audits < F.auditMin) return false
+        if (F.recentAudit && p.auditAge >= 12) return false
+        if (F.hasEvents && !p.events) return false
+        if (F.fresh === '24h' && p.upd > 24) return false
+        if (F.fresh === '7d' && p.upd > 168) return false
+        if (F.fresh === '30d' && p.upd > 720) return false
+        if (F.fresh === 'old' && p.upd <= 720) return false
+        return true
+      }
+
+      const SORTS = {
+        'tvl-desc': (a, b) => b.tvl - a.tvl,
+        'tvl-asc': (a, b) => a.tvl - b.tvl,
+        'name-asc': (a, b) => a.name.localeCompare(b.name),
+        'cov-desc': (a, b) => covered(b) - covered(a) || b.tvl - a.tvl,
+        'cp-desc': (a, b) => b.cp - a.cp,
+        'upd-asc': (a, b) => a.upd - b.upd,
+        'audits-desc': (a, b) => b.audits - a.audits,
+        'events-desc': (a, b) => b.events - a.events || b.tvl - a.tvl,
+        'neg-desc': (a, b) => counts(b).neg - counts(a).neg || b.tvl - a.tvl,
+      }
+
+      /* ------------------------------------------------------------------ render table */
+      function rowHtml(p) {
+        const i = P.indexOf(p),
+          st = statuses(p),
+          cov = covered(p),
+          c = counts(p)
+        const extra = p.chains.length - 1
+        const sc = (k, n) => `<span class="sc ${k}${n ? '' : ' zero'}"><i></i>${n}</span>`
+        return `<tr data-href="protocol-aave.html">
+    <td><a class="pcell" href="protocol-aave.html">
+      <span class="avatar a${avatarTone(p.id)}">${initials(p.name)}</span>
+      <span><strong>${p.name}</strong>${p.fresh ? `<span class="new" data-pop="upd" data-i="${i}">NEW · ${p.fresh}</span>` : ''}
+        <small>${p.chains[0]}${extra ? ` <span class="muted">+${extra}</span>` : ''}</small></span>
+    </a></td>
+    <td>${p.cat}</td>
+    <td class="num"><span class="mono">${usd(p.tvl)}</span><small class="mono">${p.d7 > 0 ? '▲' : '▼'} ${Math.abs(p.d7).toFixed(1)}% 7d</small></td>
+    <td><button type="button" class="hit" data-pop="cov" data-i="${i}" aria-label="${cov} of 11 feeds have data — show list">
+      <span class="v-ring">${ring(st)}</span><span class="v-bar">${bar(st)}</span>
+      <span class="cov-count">${cov}<span>/11</span></span></button></td>
+    <td><button type="button" class="hit sig" data-pop="sig" data-i="${i}" aria-label="Source signals">${sc('neg', c.neg)}${sc('neu', c.neu)}${sc('pos', c.pos)}</button></td>
+    <td class="num"><span class="mono">${p.audits}</span><small>latest ${p.auditAge ? p.auditAge + ' mo' : '<1 mo'} ago</small></td>
+    <td>${
+      p.events
+        ? `<button type="button" class="hit" data-pop="evt" data-i="${i}"><span><span class="evt">${p.events} reported</span><small>latest ${p.lastEvent}</small></span></button>`
+        : `<span class="evt zero">0 reported</span>`
+    }</td>
+    <td><span class="fresh${p.upd < 24 ? ' recent' : ''}${p.upd > 720 ? ' stale' : ''}">${age(p.upd)}</span></td>
+    <td><button type="button" class="hit cpbar" data-pop="cp" data-i="${i}" aria-label="CP0X coverage breakdown"><b>${p.cp}%</b><span class="meter"><i style="width:${p.cp}%"></i></span></button></td>
+    <td class="go">→</td>
+  </tr>`
+      }
+
+      function render() {
+        const list = P.filter(pass).sort(SORTS[sortKey])
+        $('#rows').innerHTML = list.map(rowHtml).join('')
+        $('#empty').hidden = list.length > 0
+        $('#count').innerHTML =
+          list.length === P.length
+            ? `<strong>${P.length}</strong> protocols`
+            : `Showing <strong>${list.length}</strong> of ${P.length}`
+        $('#drCount').textContent = list.length
+        document
+          .querySelectorAll('.th-sort')
+          .forEach((b) => b.classList.toggle('sorted', b.dataset.sort === sortKey))
+        renderChips()
+      }
+
+      /* ------------------------------------------------------------------ active filter chips */
+      function activeFilters() {
+        const out = []
+        F.cats.forEach((c) => out.push([`Category: ${c}`, () => F.cats.delete(c)]))
+        F.chains.forEach((c) => out.push([`Chain: ${c}`, () => F.chains.delete(c)]))
+        if (F.tvl) out.push([`TVL > ${usd(F.tvl).replace('.0', '')}`, () => (F.tvl = 0)])
+        if (F.feedsMin) out.push([`Feeds with data ≥ ${F.feedsMin}`, () => (F.feedsMin = 0)])
+        if (F.cp)
+          out.push([
+            `CP0X coverage ${F.cp === 100 ? '= 100%' : '> ' + F.cp + '%'}`,
+            () => (F.cp = 0),
+          ])
+        Object.entries(F.src).forEach(([id, mode]) => {
+          const name = FEEDS.find((f) => f.id === id).name
+          out.push([
+            `${mode === 'has' ? 'Has data from' : 'Missing data from'} ${name}`,
+            () => delete F.src[id],
+          ])
+        })
+        const sigLabel = { neg: 'negative', neu: 'neutral/info', pos: 'positive' }
+        for (const k in F.sig)
+          if (F.sig[k]) out.push([`Has ${sigLabel[k]} signals`, () => (F.sig[k] = false)])
+        if (F.hasAudits) out.push(['Has audits', () => (F.hasAudits = false)])
+        if (F.auditMin) out.push([`Audits ≥ ${F.auditMin}`, () => (F.auditMin = 0)])
+        if (F.recentAudit) out.push(['Audit < 12 months', () => (F.recentAudit = false)])
+        if (F.hasEvents) out.push(['Has security events', () => (F.hasEvents = false)])
+        const fl = {
+          '24h': 'Updated ≤ 24h',
+          '7d': 'Updated ≤ 7d',
+          '30d': 'Updated ≤ 30d',
+          old: 'Updated > 30d ago',
+        }
+        if (F.fresh) out.push([fl[F.fresh], () => (F.fresh = '')])
+        return out
+      }
+      function renderChips() {
+        const act = activeFilters()
+        const box = $('#chips')
+        box.hidden = act.length === 0
+        box.innerHTML =
+          act
+            .map(
+              ([label], k) =>
+                `<span class="fchip">${label}<button type="button" data-k="${k}" aria-label="Remove ${label}">×</button></span>`,
+            )
+            .join('') +
+          (act.length
+            ? '<button class="text-btn" type="button" data-k="all">Clear all</button>'
+            : '')
+        box.onclick = (e) => {
+          const b = e.target.closest('button')
+          if (!b) return
+          if (b.dataset.k === 'all') resetFilters()
+          else {
+            act[+b.dataset.k][1]()
+            syncDrawer()
+            render()
+          }
+        }
+        $('#fBadge').hidden = act.length === 0
+        $('#fBadge').textContent = act.length
+      }
+
+      /* ------------------------------------------------------------------ popovers */
+      const pop = $('#pop')
+      let pinned = null
+      const feedLi = (f, c) =>
+        `<li class="${ST[c].cls}"><i class="dot ${ST[c].cls}"></i><span>${f.name}</span><em>${ST[c].label}</em></li>`
+      const BUILD = {
+        cov(p) {
+          const st = statuses(p)
+          return `<div class="pop-h"><strong>${p.name}</strong><span class="mono">${covered(p)} / 11 feeds</span></div>
+      <div class="pop-sub">Status as each source characterizes its own data</div>
+      <ul class="pop-list">${FEEDS.map((f, k) => feedLi(f, st[k])).join('')}</ul>
+      <div class="pop-f"><span>${pinned ? 'Esc to close' : 'Click to pin'}</span><a href="protocol-aave.html#risk">Risk Intelligence →</a></div>`
+        },
+        sig(p) {
+          const st = statuses(p)
+          const group = (title, codes) => {
+            const items = FEEDS.map((f, k) => [f, st[k]]).filter(([, c]) => codes.includes(c))
+            return items.length
+              ? `<div class="pop-group">${title} · ${items.length}</div><ul class="pop-list">${items.map(([f, c]) => feedLi(f, c)).join('')}</ul>`
+              : ''
+          }
+          return `<div class="pop-h"><strong>Source signals · ${p.name}</strong></div>
+      <div class="pop-sub">Counts of feeds by their own characterization. Not combined into a verdict.</div>
+      ${group('Negative', ['x'])}${group('Neutral / informational', ['n', 'i'])}${group('Positive', ['p'])}
+      <div class="pop-f"><span>${covered(p)} of 11 feeds reporting</span><a href="protocol-aave.html#risk">Read each source →</a></div>`
+        },
+        evt(p) {
+          return `<div class="pop-h"><strong>Security events · ${p.name}</strong></div>
+      <div class="pop-body"><b>${p.events} event${p.events > 1 ? 's' : ''}</b> reported by <b>Security Feed</b>. Latest: ${p.lastEvent}.<br>
+      Listed as the source published them. DeFi DNA does not verify, classify or score incidents.</div>
+      <div class="pop-f"><span>Source: Security Feed</span><a href="protocol-aave.html#risk/security">Open events →</a></div>`
+        },
+        cp(p) {
+          const rows = CP_PARTS.map(([label, off]) => {
+            const v = Math.max(0, Math.min(100, p.cp + off))
+            return `<div class="bd"><span>${label}</span><span class="meter"><i style="width:${v}%"></i></span><b>${v}%</b></div>`
+          }).join('')
+          return `<div class="pop-h"><strong>CP0X coverage · ${p.cp}%</strong><span class="prov cp">CP0X</span></div>
+      <div class="pop-sub">How complete <b>our</b> collected data is for ${p.name}. Data completeness — not a risk rating.</div>
+      <div style="padding:6px 0">${rows}</div>
+      <div class="pop-f"><span>Derived by DeFi DNA</span><a href="#">Methodology →</a></div>`
+        },
+        upd(p) {
+          const items = (p.recent || [])
+            .map(
+              ([src, t, what]) =>
+                `<li><span class="mono muted" style="width:30px">${t}</span><span><b>${src}</b> ${what}</span></li>`,
+            )
+            .join('')
+          return `<div class="pop-h"><strong>${p.fresh} update${p.fresh > 1 ? 's' : ''} in the last 24h</strong></div>
+      <ul class="pop-list">${items}</ul>
+      <div class="pop-f"><span>Changes as published by sources</span><a href="protocol-aave.html#overview">Latest signals →</a></div>`
+        },
+      }
+      function showPop(el, pin) {
+        if (pinned) pinned.classList.remove('pinned')
+        pinned = pin ? el : null
+        if (pin) el.classList.add('pinned')
+        pop.innerHTML = BUILD[el.dataset.pop](P[+el.dataset.i])
+        pop.hidden = false
+        const r = el.getBoundingClientRect(),
+          w = pop.offsetWidth,
+          h = pop.offsetHeight
+        let top = r.bottom + 6
+        if (top + h > innerHeight - 8) top = Math.max(8, r.top - h - 6)
+        pop.style.left = Math.max(12, Math.min(r.left - 6, innerWidth - w - 12)) + 'px'
+        pop.style.top = top + 'px'
+      }
+      function hidePop() {
+        if (pinned) pinned.classList.remove('pinned')
+        pinned = null
+        pop.hidden = true
+      }
+      const rowsEl = $('#rows')
+      rowsEl.addEventListener('mouseover', (e) => {
+        const el = e.target.closest('[data-pop]')
+        if (el && !pinned) showPop(el, false)
+      })
+      rowsEl.addEventListener('mouseout', (e) => {
+        const el = e.target.closest('[data-pop]')
+        if (el && !pinned && !el.contains(e.relatedTarget)) hidePop()
+      })
+      rowsEl.addEventListener('click', (e) => {
+        const el = e.target.closest('[data-pop]')
+        if (el) {
+          e.preventDefault()
+          e.stopPropagation()
+          pinned === el ? hidePop() : showPop(el, true)
+          return
+        }
+        const tr = e.target.closest('tr[data-href]')
+        if (tr && !e.target.closest('a')) location.href = tr.dataset.href
+      })
+      document.addEventListener('click', (e) => {
+        if (pinned && !pop.contains(e.target)) hidePop()
+      })
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (!pop.hidden) hidePop()
+        },
+        true,
+      )
+
+      /* ------------------------------------------------------------------ drawer */
+      const drawer = $('#drawer'),
+        scrim = $('#scrim')
+      function openDrawer() {
+        hidePop()
+        scrim.hidden = false
+        drawer.classList.add('open')
+        drawer.setAttribute('aria-hidden', 'false')
+        $('#openFilters').setAttribute('aria-expanded', 'true')
+        setTimeout(() => $('#closeDrawer').focus(), 50)
+      }
+      function closeDrawer() {
+        scrim.hidden = true
+        drawer.classList.remove('open')
+        drawer.setAttribute('aria-hidden', 'true')
+        $('#openFilters').setAttribute('aria-expanded', 'false')
+      }
+      $('#openFilters').onclick = openDrawer
+      $('#closeDrawer').onclick = closeDrawer
+      $('#applyF').onclick = closeDrawer
+      scrim.onclick = closeDrawer
+
+      const countBy = (fn) => P.filter(fn).length
+      $('#fCats').innerHTML = CATEGORIES.map(
+        (c) =>
+          `<label class="chk"><input type="checkbox" value="${c}"><span>${c} <em>${countBy((p) => p.cat === c)}</em></span></label>`,
+      ).join('')
+      $('#fChains').innerHTML = CHAINS.map(
+        (c) =>
+          `<label class="chk"><input type="checkbox" value="${c}"><span>${c} <em>${countBy((p) => p.chains.includes(c))}</em></span></label>`,
+      ).join('')
+      $('#fSrc').innerHTML = FEEDS.map((f, k) => {
+        const n = countBy((p) => statuses(p)[k] !== '-')
+        return `<div class="srcrow"><span>${f.name}<small>data for ${n} of ${P.length} protocols</small></span>
+    <div class="seg sm" data-src="${f.id}"><button type="button" data-v="" class="on">Any</button><button type="button" data-v="has">Has data</button><button type="button" data-v="missing">Missing</button></div></div>`
+      }).join('')
+      $('#segOrder').textContent =
+        FEEDS.map((f, k) => `${k + 1} ${f.name}`).join(' · ') +
+        ' — same order in every row, clockwise from 12 o’clock in the ring.'
+
+      $('#fCats').onchange = (e) => {
+        e.target.checked ? F.cats.add(e.target.value) : F.cats.delete(e.target.value)
+        render()
+      }
+      $('#fChains').onchange = (e) => {
+        e.target.checked ? F.chains.add(e.target.value) : F.chains.delete(e.target.value)
+        render()
+      }
+      drawer.addEventListener('click', (e) => {
+        const b = e.target.closest('.seg button')
+        if (!b) return
+        const seg = b.parentElement
+        seg.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b))
+        if (seg.dataset.src) {
+          if (b.dataset.v) F.src[seg.dataset.src] = b.dataset.v
+          else delete F.src[seg.dataset.src]
+        } else {
+          const key = seg.dataset.f
+          F[key] = key === 'fresh' ? b.dataset.v : Number(b.dataset.v)
+        }
+        render()
+      })
+      drawer.querySelectorAll('[data-sig]').forEach(
+        (cb) =>
+          (cb.onchange = () => {
+            F.sig[cb.dataset.sig] = cb.checked
+            render()
+          }),
+      )
+      $('#fHasAudits').onchange = (e) => {
+        F.hasAudits = e.target.checked
+        render()
+      }
+      $('#fRecentAudit').onchange = (e) => {
+        F.recentAudit = e.target.checked
+        render()
+      }
+      $('#fHasEvents').onchange = (e) => {
+        F.hasEvents = e.target.checked
+        render()
+      }
+      $('#fAuditMin').oninput = (e) => {
+        F.auditMin = Math.max(0, parseInt(e.target.value, 10) || 0)
+        render()
+      }
+
+      // Pushes the state back into the drawer controls after a chip is removed.
+      function syncDrawer() {
+        $('#fCats')
+          .querySelectorAll('input')
+          .forEach((i) => (i.checked = F.cats.has(i.value)))
+        $('#fChains')
+          .querySelectorAll('input')
+          .forEach((i) => (i.checked = F.chains.has(i.value)))
+        drawer.querySelectorAll('.seg').forEach((seg) => {
+          const cur = seg.dataset.src
+            ? F.src[seg.dataset.src] || ''
+            : String(F[seg.dataset.f] || (seg.dataset.f === 'fresh' ? '' : 0))
+          seg
+            .querySelectorAll('button')
+            .forEach((b) => b.classList.toggle('on', b.dataset.v === cur))
+        })
+        drawer.querySelectorAll('[data-sig]').forEach((cb) => (cb.checked = F.sig[cb.dataset.sig]))
+        $('#fHasAudits').checked = F.hasAudits
+        $('#fRecentAudit').checked = F.recentAudit
+        $('#fHasEvents').checked = F.hasEvents
+        $('#fAuditMin').value = F.auditMin || ''
+      }
+      function resetFilters() {
+        Object.assign(F, {
+          cats: new Set(),
+          chains: new Set(),
+          tvl: 0,
+          feedsMin: 0,
+          cp: 0,
+          src: {},
+          sig: { neg: false, neu: false, pos: false },
+          hasAudits: false,
+          auditMin: 0,
+          recentAudit: false,
+          hasEvents: false,
+          fresh: '',
+        })
+        syncDrawer()
+        render()
+      }
+      $('#resetF').onclick = resetFilters
+      $('#emptyReset').onclick = () => {
+        F.q = ''
+        $('#q').value = ''
+        resetFilters()
+      }
+
+      /* ------------------------------------------------------------------ toolbar */
+      $('#q').oninput = (e) => {
+        F.q = e.target.value
+        render()
+      }
+      $('#sort').onchange = (e) => {
+        sortKey = e.target.value
+        render()
+      }
+      document.querySelectorAll('.th-sort').forEach(
+        (b) =>
+          (b.onclick = (e) => {
+            e.stopPropagation()
+            sortKey = b.dataset.sort
+            $('#sort').value = sortKey
+            render()
+          }),
+      )
+      document.querySelectorAll('.viewtoggle button').forEach(
+        (b) =>
+          (b.onclick = () => {
+            document
+              .querySelectorAll('.viewtoggle button')
+              .forEach((x) => x.classList.toggle('on', x === b))
+            $('#panel').dataset.view = b.dataset.view
+          }),
+      )
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          hidePop()
+          closeDrawer()
+        }
+        if (e.key === '/' && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) {
+          e.preventDefault()
+          $('#q').focus()
+        }
+      })
+      $('#themeBtn').onclick = () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'
+        document.documentElement.dataset.theme = next
+        try {
+          localStorage.setItem('defi-dna-mockup-theme', next)
+        } catch (e) {}
+      }
+
+      $('#statFresh').textContent = P.filter((p) => p.upd < 24).length
+      render()
+
+      // Deep links for sharing mockup states: #filters opens the drawer, #view-bar / #view-both switch the coverage indicator.
+      const hash = location.hash.slice(1)
+      if (hash.startsWith('view-'))
+        document.querySelector(`.viewtoggle [data-view="${hash.slice(5)}"]`)?.click()
+      if (hash === 'filters') openDrawer()
+    </script>
+  </body>
+</html>
