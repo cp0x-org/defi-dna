@@ -663,7 +663,7 @@
 
       .mstrip {
         display: grid;
-        grid-template-columns: repeat(8, minmax(0, 1fr));
+        grid-template-columns: repeat(7, minmax(0, 1fr));
         margin-top: 16px;
         background: var(--surface);
         border: 1px solid var(--line);
@@ -684,10 +684,6 @@
       }
       button.m:hover .m-v {
         color: var(--accent);
-      }
-      .m.derived {
-        background: var(--subtle);
-        border-radius: 0 10px 10px 0;
       }
       .m-l {
         display: flex;
@@ -1973,11 +1969,6 @@
           <div class="m-v">2h <small>ago</small></div>
           <div class="m-s">Security Feed changed</div>
         </div>
-        <div class="m derived">
-          <div class="m-l">CP0X Coverage <span class="prov cp">CP0X</span></div>
-          <div class="m-v">91%</div>
-          <div class="m-s">completeness, not a rating</div>
-        </div>
       </section>
 
       <!-- feed coverage bar -->
@@ -2090,8 +2081,7 @@
                   <span class="seg" id="tlFilter"
                     ><button type="button" data-k="all" class="on">All</button
                     ><button type="button" data-k="source">Sources</button
-                    ><button type="button" data-k="meta">Metadata</button
-                    ><button type="button" data-k="cp0x">CP0X</button></span
+                    ><button type="button" data-k="meta">Metadata</button></span
                   >
                 </span>
               </div>
@@ -2172,8 +2162,8 @@
                 <div>
                   <span class="prov cp">CP0X</span
                   ><span
-                    >Computed by DeFi DNA about <i>our data</i> — completeness, freshness, status
-                    mapping. Never a verdict on the protocol.</span
+                    >Computed by DeFi DNA about <i>our data</i> — freshness, status mapping. Never a
+                    verdict on the protocol.</span
                   >
                 </div>
               </div>
@@ -2935,13 +2925,6 @@
           det: 'Deployment added: Aave v3 on Sonic. Edited in the DeFi DNA registry.',
         },
         {
-          d: 'Sep 19',
-          t: '15:20',
-          kind: 'cp0x',
-          what: 'CP0X coverage recalculated',
-          det: '88% → 91% after the Sonic deployment was mapped.',
-        },
-        {
           d: 'Sep 10',
           t: '11:48',
           kind: 'source',
@@ -3293,14 +3276,10 @@
             const f = e.feed && feedById(e.feed)
             const who = f
               ? `<span class="smark s${f.tone}" title="${f.name}">${f.name[0]}</span>`
-              : e.kind === 'meta'
-                ? '<span class="prov meta">Meta</span>'
-                : '<span class="prov cp">CP0X</span>'
+              : '<span class="prov meta">Meta</span>'
             const go = f
               ? `<a class="go" href="#risk/${f.id}">View source →</a>`
-              : e.kind === 'meta'
-                ? '<a class="go" href="#data">View →</a>'
-                : '<span></span>'
+              : '<a class="go" href="#data">View →</a>'
             return `<li><span class="d">${e.d}<small>${e.t} UTC</small></span><span class="who">${who}</span><div><div class="what">${e.what}</div><div class="det">${e.det}</div></div>${go}</li>`
           })
           .join('')

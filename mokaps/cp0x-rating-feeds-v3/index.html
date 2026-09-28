@@ -11,8 +11,8 @@
       } catch (e) {}
     </script>
     <style>
-      /* Tokens: apps/web/src/styles/tokens.css. --cp* is the cp0x layer (own ratings and marks);
-   --pos/--neu/--neg are cp0x signal classes, never a feed's own value. */
+      /* Tokens: apps/web/src/styles/tokens.css. Segment colours place each feed's value on that
+   feed's own scale. defi-dna publishes no rating or score of its own. */
       :root {
         color-scheme: light;
         --font: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -61,22 +61,15 @@
         --source-ink-3: #55703f;
         --source-4: #f6ebe4;
         --source-ink-4: #90603e;
-        --pos: #1c7a52;
-        --pos-seg: #2f9a6a;
         --pos-tint: #e8f4ee;
-        --neu: #8a5d0f;
-        --neu-seg: #d39b2a;
         --neu-tint: #fbf5e8;
-        --neg: #b0403a;
-        --neg-seg: #c9534b;
         --neg-tint: #fbeeed;
+        --pos-seg: #2f9a6a;
+        --neu-seg: #d39b2a;
+        --neg-seg: #c9534b;
         --unc: #5b72a8;
         --none-seg: #d5dde4;
         --err: #192c3a;
-        --cp: #4a52c4;
-        --cp-tint: #eff0fc;
-        --cp-line: #cfd2f4;
-        --on-cp: #ffffff;
       }
       :root[data-theme='dark'] {
         color-scheme: dark;
@@ -124,22 +117,15 @@
         --source-ink-3: #b5cfa2;
         --source-4: #453529;
         --source-ink-4: #dfb894;
-        --pos: #7bd1b7;
-        --pos-seg: #5fc29f;
         --pos-tint: #203c36;
-        --neu: #e0bb74;
-        --neu-seg: #d9ac55;
         --neu-tint: #3a3425;
-        --neg: #e99a94;
-        --neg-seg: #e0776f;
         --neg-tint: #3a2725;
+        --pos-seg: #5fc29f;
+        --neu-seg: #d9ac55;
+        --neg-seg: #e0776f;
         --unc: #8fa6dc;
         --none-seg: #34495a;
         --err: #e3edf2;
-        --cp: #a4abff;
-        --cp-tint: #252a4a;
-        --cp-line: #3f467a;
-        --on-cp: #141836;
       }
 
       /* ------------------------------------------------------------------ base (app.css) */
@@ -361,10 +347,6 @@
         color: var(--muted);
         border: 1px solid var(--line-strong);
         background: var(--surface);
-      }
-      .layer.l2 {
-        color: var(--on-cp);
-        background: var(--cp);
       }
       .layer.l3 {
         color: var(--ink);
@@ -1033,35 +1015,6 @@
         font-weight: 600;
       }
 
-      .rating {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 30px;
-        height: 26px;
-        padding: 0 7px;
-        border-radius: 6px;
-        background: var(--cp);
-        color: var(--on-cp);
-        font: 700 14px var(--mono);
-      }
-      .rating.lg {
-        min-width: 44px;
-        height: 38px;
-        font-size: 22px;
-        border-radius: 9px;
-      }
-      .rating.none {
-        background: transparent;
-        color: var(--muted);
-        box-shadow: inset 0 0 0 1px var(--line-strong);
-        font: 600 11px var(--font);
-      }
-      .rating-cell {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-      }
       .fresh {
         display: inline-flex;
         align-items: center;
@@ -1124,8 +1077,8 @@
       }
       .legend-note {
         padding: 8px 12px;
-        border-left: 3px solid var(--cp);
-        background: var(--cp-tint);
+        border-left: 3px solid var(--line-strong);
+        background: var(--subtle);
         color: var(--ink);
         border-radius: 0 6px 6px 0;
       }
@@ -1167,13 +1120,6 @@
       }
       .pop-h .x:hover {
         background: var(--subtle);
-      }
-      .pop-note {
-        padding: 7px 14px;
-        font-size: 11px;
-        color: var(--muted);
-        background: var(--cp-tint);
-        border-bottom: 1px solid var(--line);
       }
       .pop-group {
         padding: 8px 14px 3px;
@@ -1221,21 +1167,6 @@
       }
       .mk {
         font-weight: 700;
-      }
-      .mk.pos {
-        color: var(--pos);
-      }
-      .mk.neu {
-        color: var(--neu);
-      }
-      .mk.neg {
-        color: var(--neg);
-      }
-      .mk.mix {
-        color: var(--ink);
-      }
-      .mk.unc {
-        color: var(--unc);
       }
       .mk.err {
         color: var(--ink);
@@ -1343,7 +1274,7 @@
 
       .protocol-summary {
         display: grid;
-        grid-template-columns: 1fr 1.05fr 1.25fr 0.85fr;
+        grid-template-columns: 1fr 1.25fr 0.85fr;
         border: 1px solid var(--line);
         border-radius: 12px;
         padding: 20px 0;
@@ -1356,13 +1287,6 @@
       }
       .protocol-summary > div + div {
         border-left: 1px solid var(--line);
-      }
-      .protocol-summary .cp-cell {
-        background: var(--cp-tint);
-        margin: -20px 0;
-        padding-top: 20px;
-        padding-bottom: 20px;
-        box-shadow: inset 0 3px 0 var(--cp);
       }
       .summary-label {
         display: flex;
@@ -1427,42 +1351,12 @@
         padding: 2px 6px;
         border-radius: 4px;
       }
-      .section-nav .nav-cp {
-        color: var(--cp);
-      }
       .page-section {
         scroll-margin-top: 136px;
         margin-bottom: 40px;
       }
 
-      /* cp0x overview (layer 2) */
-      .cp-panel {
-        border: 1px solid var(--cp-line);
-        border-radius: 12px;
-        background: var(--surface);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-      }
-      .cp-panel-h {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        padding: 12px 18px;
-        background: var(--cp-tint);
-        border-bottom: 1px solid var(--cp-line);
-      }
-      .cp-panel-h h3 {
-        font-size: 15px;
-      }
-      .cp-panel-h .aside {
-        margin-left: auto;
-        font-size: 11px;
-        color: var(--muted);
-      }
-      .cp-panel-b {
-        padding: 14px 18px 16px;
-      }
+      /* protocol overview */
       .cp-grid {
         display: grid;
         grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
@@ -1472,16 +1366,10 @@
       .cp-grid + .cp-grid {
         margin-top: 16px;
       }
-      .why {
+      .side-stack {
         display: grid;
-        grid-template-columns: auto 1fr;
         gap: 16px;
-        align-items: start;
-        margin-bottom: 14px;
-      }
-      .why p {
-        font-size: 13px;
-        line-height: 1.65;
+        min-width: 0;
       }
       .card {
         background: var(--surface);
@@ -1564,31 +1452,6 @@
         border: 1px solid var(--line);
         border-radius: 8px;
       }
-      .factor-level {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        font-weight: 700;
-        white-space: nowrap;
-      }
-      .pips {
-        display: inline-flex;
-        gap: 2px;
-      }
-      .pips i {
-        width: 7px;
-        height: 10px;
-        border-radius: 2px;
-        background: var(--cp-line);
-      }
-      .pips i.on {
-        background: var(--cp);
-      }
-      .refs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
       .ref {
         display: inline-flex;
         align-items: center;
@@ -1604,53 +1467,6 @@
       .ref:hover {
         border-color: var(--accent-line);
         color: var(--accent);
-      }
-      .factor-row summary {
-        display: grid;
-        grid-template-columns: minmax(0, 1.4fr) 48px 150px minmax(0, 1.2fr) 16px;
-        gap: 12px;
-        align-items: center;
-        padding: 9px 0;
-        border-bottom: 1px solid var(--line);
-        font-size: 12px;
-      }
-      .factor-row summary > b {
-        font-weight: 700;
-      }
-      .factor-row summary > .chev {
-        color: var(--muted);
-        transition: transform 0.15s;
-      }
-      .factor-row[open] summary > .chev {
-        transform: rotate(180deg);
-      }
-      .factor-row p {
-        font-size: 12px;
-        color: var(--muted);
-        padding: 8px 0 12px;
-        border-bottom: 1px solid var(--line);
-        max-width: 90ch;
-      }
-      .factor-head {
-        display: grid;
-        grid-template-columns: minmax(0, 1.4fr) 48px 150px minmax(0, 1.2fr) 16px;
-        gap: 12px;
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
-        color: var(--muted);
-        padding-bottom: 6px;
-        border-bottom: 1px solid var(--line);
-      }
-      .not-avg {
-        margin-top: 12px;
-        padding: 9px 12px;
-        border-radius: 7px;
-        font-size: 12px;
-        color: var(--ink);
-        background: var(--cp-tint);
-        border-left: 3px solid var(--cp);
       }
       .ev-list {
         list-style: none;
@@ -1893,21 +1709,6 @@
         display: flex;
         gap: 14px;
         align-items: center;
-      }
-      .cp-strip {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        flex-wrap: wrap;
-        padding: 9px 18px;
-        background: var(--cp-tint);
-        border-bottom: 1px solid var(--cp-line);
-        box-shadow: inset 3px 0 0 var(--cp);
-        font-size: 12px;
-      }
-      .cp-strip .why-text {
-        flex: 1 1 380px;
-        color: var(--ink);
       }
       .fb-body {
         padding: 14px 18px 16px;
@@ -2195,58 +1996,6 @@
         color: var(--muted);
       }
 
-      /* methodology dialog */
-      .scrim {
-        position: fixed;
-        inset: 0;
-        z-index: 80;
-        background: #0b141a80;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        padding: 60px 20px;
-        overflow-y: auto;
-      }
-      .dialog {
-        width: min(760px, 100%);
-        background: var(--surface);
-        border: 1px solid var(--line-strong);
-        border-radius: 14px;
-        box-shadow: var(--pop-shadow);
-      }
-      .dialog-h {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 16px 20px;
-        border-bottom: 1px solid var(--line);
-        background: var(--cp-tint);
-        border-radius: 14px 14px 0 0;
-      }
-      .dialog-h h2 {
-        font-size: 18px;
-      }
-      .dialog-h .icon-button {
-        margin-left: auto;
-      }
-      .dialog-b {
-        padding: 16px 20px 20px;
-        font-size: 13px;
-      }
-      .dialog-b h4 {
-        font-size: 13px;
-        margin: 14px 0 5px;
-      }
-      .dialog-b p,
-      .dialog-b li {
-        color: var(--muted);
-        line-height: 1.65;
-      }
-      .dialog-b ul {
-        margin: 0;
-        padding-left: 18px;
-      }
-
       @media (max-width: 1100px) {
         .wrap {
           padding: 0 20px;
@@ -2300,7 +2049,6 @@
         </nav>
         <div class="header-tools">
           <span>by cp0x</span>
-          <button class="button" type="button" data-method>cp0x methodology</button>
           <button class="icon-button" type="button" id="themeBtn" aria-label="Toggle theme">
             <svg
               width="18"
@@ -2332,71 +2080,12 @@
         ><span>defi-dna.</span></a
       >
       <span
-        >Every feed’s conclusion belongs to that feed. The cp0x rating and cp0x marks are labelled
-        and shown separately.</span
+        >Every feed’s conclusion belongs to that feed. defi-dna publishes no rating, score or
+        ranking of its own.</span
       >
     </footer>
 
     <div class="pop" id="pop" role="dialog" aria-label="Feed coverage" hidden></div>
-    <div class="scrim" id="method" hidden>
-      <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="methodTitle">
-        <div class="dialog-h">
-          <span class="layer l2">cp0x assessment</span>
-          <h2 id="methodTitle">cp0x methodology</h2>
-          <span class="demo">DEMO</span>
-          <button class="icon-button" type="button" data-close-method aria-label="Close">✕</button>
-        </div>
-        <div class="dialog-b">
-          <p>
-            This methodology text is a demo. It shows which rules should be visible to the user next
-            to cp0x assessments.
-          </p>
-          <h4>cp0x rating</h4>
-          <ul>
-            <li>
-              Scale A–E: A is the lowest risk under the cp0x methodology, E the highest. “Not rated”
-              means cp0x does not have enough material.
-            </li>
-            <li>
-              Factors and weights: governance and admin rights — 25, audits and code verification —
-              20, dependencies (oracles, bridges) — 20, public incidents — 20, transparency and
-              disclosure — 15.
-            </li>
-            <li>
-              The rating is cp0x’s own analysis. It is not an average, sum or conversion of feed
-              assessments; feed data serves as material and is cited by link.
-            </li>
-          </ul>
-          <h4>cp0x marks for feed signals</h4>
-          <ul>
-            <li>
-              <b>Positive / neutral / negative</b> — how cp0x reads what the feed published, on the
-              feed’s own scale. The feed’s value is never changed.
-            </li>
-            <li>
-              <b>Mixed signals</b> — the feed’s headline and its components point in different
-              directions.
-            </li>
-            <li>
-              <b>Unclassified</b> — data exists, but cp0x has no rule for this format (for example,
-              reference metrics).
-            </li>
-            <li>
-              <b>Stale</b> — the source’s publication date is older than 12 months. The mark is
-              added on top of the signal class.
-            </li>
-            <li>
-              <b>Fetch error</b> — cp0x could not read the feed on the last refresh. That is our
-              problem, not a statement about the protocol.
-            </li>
-            <li>
-              <b>No data</b> — the feed publishes nothing cp0x can attribute to the protocol. That
-              is a coverage gap, not an assessment.
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
 
     <script>
       /* ==================================================================
@@ -4699,6 +4388,7 @@
         f.index = k
         f.demo = !f.real
       })
+      // Signal colour: where the feed's value sits on that feed's own scale. Not a defi-dna rating.
       const MARK = {
         p: { cls: 'pos', label: 'Positive signal' },
         n: { cls: 'neu', label: 'Neutral signal' },
@@ -4715,17 +4405,11 @@
         yield: 'Yield / vaults',
         'liquid-staking': 'Liquid staking',
       }
-      const RATINGS = ['A', 'B', 'C', 'D', 'E']
-      const LEVEL = {
-        low: ['low risk', 1],
-        moderate: ['moderate', 2],
-        elevated: ['elevated', 3],
-        high: ['high', 4],
-      }
 
       /* ==================================================================
    3. Demo layer (everything here is invented and rendered with a DEMO mark)
-   code: cp0x mark per feed in FEEDS order — p n x m u, '-' no data, e fetch error.
+   code: signal colour per feed in FEEDS order — p n x m u (position on the feed's own scale),
+   '-' no data, e fetch error. Real feeds keep their real availability whatever the code says.
    Real feeds keep their real availability whatever the code says.
    ================================================================== */
       const CH = {
@@ -4753,8 +4437,6 @@
       const DEMO = {
         aave: {
           code: 'nmp-nxuepupm--',
-          rating: 'B',
-          ratedAt: '2026-09-22',
           upd: 2,
           audits: 6,
           desc: 'Pooled lending: users supply assets and borrow against over-collateralized positions. Market parameters are set by the Aave DAO; the protocol also issues the GHO stablecoin.',
@@ -4763,44 +4445,6 @@
             GitHub: 'https://github.com/aave',
             Governance: 'https://governance.aave.com',
           },
-          why: 'cp0x rates Aave B. The codebase is mature and widely reviewed, and upgrade rights sit with the DAO behind timelocks. The rating is held back by dependencies on oracles and bridged assets: in 2026 sources documented two episodes related to them (see “Public events”).',
-          factors: [
-            [
-              'Governance and admin rights',
-              25,
-              'moderate',
-              'Upgrades go through on-chain voting and timelocks; emergency powers are limited to pausing and freezing reserves.',
-              ['risklayer', 'defiscan', 'demo-m3'],
-            ],
-            [
-              'Audits and code verification',
-              20,
-              'low',
-              'Regular audits for every version; some L2 deployments lack verified source code.',
-              ['demo-d2', 'risklayer'],
-            ],
-            [
-              'Dependencies: oracles and bridges',
-              20,
-              'elevated',
-              'Collateral valuation depends on external price feeds and CAPO adapters; bridged assets are accepted as collateral.',
-              ['risklayer', 'demo-m2'],
-            ],
-            [
-              'Public incidents',
-              20,
-              'moderate',
-              'DefiLlama’s registry holds one 2026 incident with funds fully returned; Risklayer describes another episode involving a bridged asset.',
-              ['hacks', 'risklayer'],
-            ],
-            [
-              'Transparency and disclosure',
-              15,
-              'low',
-              'Post-mortems and market parameters are published openly.',
-              ['demo-s1'],
-            ],
-          ],
           gov: [
             ['Model', 'DAO · AAVE / stkAAVE'],
             ['Voting', 'on-chain, Governance V3'],
@@ -4823,17 +4467,6 @@
               'demo-m1',
             ],
           ],
-          reasons: {
-            defiscan:
-              'All three v3 deployments are Stage 0 on DeFiScan’s scale. cp0x takes into account that upgrade rights sit with a timelocked DAO and reads this as a neutral signal. The reviews are older than 12 months.',
-            risklayer:
-              'Headline 4.8/10 · medium, but the key findings include critical/high items on contract verification and incidents. cp0x marks the signal as mixed.',
-            hacks:
-              'One incident in DefiLlama’s registry (12 Mar 2026); per the registry, the funds were fully returned.',
-            philidor:
-              'Most Aave vaults rated by Philidor sit in the Prime and Core tiers. cp0x does not average vault scores.',
-            'demo-m1': 'The stream contains a HIGH-level alert within the last 7 days.',
-          },
           d1: {
             kind: 'lending',
             metrics: [
@@ -4853,8 +4486,6 @@
         },
         uniswap: {
           code: 'pnp--ueppp-p--',
-          rating: 'A',
-          ratedAt: '2026-09-15',
           upd: 5,
           audits: 5,
           stale: ['demo-r1'],
@@ -4864,44 +4495,6 @@
             GitHub: 'https://github.com/Uniswap',
             Governance: 'https://gov.uniswap.org',
           },
-          why: 'cp0x rates Uniswap A. The core AMM contracts are immutable with no upgrade proxies, and DefiLlama’s registry lists no core incidents. Administration of non-Ethereum deployments and third-party v4 hooks need attention — they are counted in the “Governance” factor.',
-          factors: [
-            [
-              'Governance and admin rights',
-              25,
-              'moderate',
-              'Ethereum uses Governor Bravo with a timelock; some L2 deployments are administered separately.',
-              ['risklayer', 'demo-m3'],
-            ],
-            [
-              'Audits and code verification',
-              20,
-              'low',
-              'The v3/v4 core went through several independent audits and a contest.',
-              ['demo-s1', 'risklayer'],
-            ],
-            [
-              'Dependencies: oracles and bridges',
-              20,
-              'low',
-              'The core AMM does not depend on external oracles.',
-              ['risklayer'],
-            ],
-            [
-              'Public incidents',
-              20,
-              'low',
-              'DefiLlama’s registry lists no incidents for v2, v3 or v4 on Ethereum.',
-              ['hacks'],
-            ],
-            [
-              'Transparency and disclosure',
-              15,
-              'low',
-              'Open code and documentation for every version.',
-              ['defiscan'],
-            ],
-          ],
           gov: [
             ['Model', 'DAO · UNI'],
             ['Voting', 'on-chain, Governor Bravo'],
@@ -4923,13 +4516,6 @@
               'demo-m1',
             ],
           ],
-          reasons: {
-            defiscan:
-              'Stage 2 for v2 and v3 — the top of DeFiScan’s scale; no review for v4. The reviews are older than 12 months.',
-            risklayer:
-              'Headline 4.3/10 · medium with no critical findings in the core — a neutral signal.',
-            philidor: 'Pools rated by Philidor sit in the Prime and Core tiers.',
-          },
           d1: {
             kind: 'dex',
             metrics: [
@@ -4949,8 +4535,6 @@
         },
         balancer: {
           code: '--xnxm-n-eu-x-',
-          rating: 'D',
-          ratedAt: '2026-09-26',
           upd: 1,
           audits: 4,
           stale: ['demo-s2'],
@@ -4960,44 +4544,6 @@
             GitHub: 'https://github.com/balancer',
             Governance: 'https://forum.balancer.fi',
           },
-          why: 'cp0x rates Balancer D. The deciding factor is public incidents: DefiLlama’s registry holds three Balancer V2 events, including the November 2025 incident. None of DeFiScan, Risklayer or Philidor publishes data about Balancer, so there is less material for assessing governance.',
-          factors: [
-            [
-              'Governance and admin rights',
-              25,
-              'moderate',
-              'Governance via veBAL and a multisig; no independent decentralization assessments.',
-              ['demo-m3'],
-            ],
-            [
-              'Audits and code verification',
-              20,
-              'moderate',
-              'v3 went through several audits; post-mortems are taken into account for v2.',
-              ['demo-d2'],
-            ],
-            [
-              'Dependencies: oracles and bridges',
-              20,
-              'moderate',
-              'Dependencies on external tokens in composable pools.',
-              ['demo-r2'],
-            ],
-            [
-              'Public incidents',
-              20,
-              'high',
-              'Three Balancer V2 incidents in DefiLlama’s registry, the largest on 3 Nov 2025.',
-              ['hacks', 'demo-m1'],
-            ],
-            [
-              'Transparency and disclosure',
-              15,
-              'moderate',
-              'Post-mortems are published; some data lives only on the forum.',
-              ['demo-s2'],
-            ],
-          ],
           gov: [
             ['Model', 'DAO · veBAL'],
             ['Voting', 'Snapshot + multisig execution'],
@@ -5018,10 +4564,6 @@
               'demo-m1',
             ],
           ],
-          reasons: {
-            hacks:
-              'Three Balancer V2 incidents in DefiLlama’s registry, including 3 Nov 2025 ($128,000,000).',
-          },
           d1: {
             kind: 'dex',
             metrics: [
@@ -5040,8 +4582,6 @@
         },
         morpho: {
           code: 'pnp--npupppp--',
-          rating: 'B',
-          ratedAt: '2026-09-18',
           upd: 3,
           audits: 5,
           desc: 'Isolated Morpho Blue lending markets and curated vaults built on top of them; markets are created permissionlessly.',
@@ -5050,44 +4590,6 @@
             GitHub: 'https://github.com/morpho-org',
             Governance: 'https://forum.morpho.org',
           },
-          why: 'cp0x rates Morpho B. The Morpho Blue core is immutable, and isolated markets limit how far a failure spreads. The rating is held back by governance concentrated in a multisig and by permissionless oracle selection: the risk of a given market depends on its curator.',
-          factors: [
-            [
-              'Governance and admin rights',
-              25,
-              'elevated',
-              '5/9 multisig without a protocol-wide timelock; the core itself is immutable.',
-              ['risklayer', 'defiscan'],
-            ],
-            [
-              'Audits and code verification',
-              20,
-              'low',
-              'Several core audits and formal verification.',
-              ['demo-d2', 'risklayer'],
-            ],
-            [
-              'Dependencies: oracles and bridges',
-              20,
-              'moderate',
-              'The oracle is chosen per market; its quality depends on the curator.',
-              ['risklayer', 'demo-m2'],
-            ],
-            [
-              'Public incidents',
-              20,
-              'low',
-              'DefiLlama’s registry lists no incidents for Morpho Blue; Risklayer mentions losses at the level of individual markets.',
-              ['hacks', 'risklayer'],
-            ],
-            [
-              'Transparency and disclosure',
-              15,
-              'low',
-              'Market and vault parameters are public on-chain.',
-              ['philidor'],
-            ],
-          ],
           gov: [
             ['Model', 'DAO · MORPHO'],
             ['Voting', 'Snapshot, executed by a multisig'],
@@ -5109,12 +4611,6 @@
               'demo-m1',
             ],
           ],
-          reasons: {
-            defiscan:
-              'Stage 1 for Morpho Blue on DeFiScan’s scale. The review is older than 12 months.',
-            risklayer: 'Headline 4.8/10 · medium.',
-            philidor: 'Most large Morpho vaults at Philidor sit in the Core and Prime tiers.',
-          },
           d1: {
             kind: 'lending',
             metrics: [
@@ -5133,21 +4629,18 @@
         },
         compound: {
           code: 'nnp-x-n-pup---',
-          rating: 'B',
           upd: 26,
           audits: 3,
           desc: 'Lending protocol: cToken markets (v2) and Comet markets with one borrowable asset each (v3).',
         },
         cowswap: {
           code: '--n-n--u--p---',
-          rating: 'C',
           upd: 170,
           audits: 2,
           desc: 'Trading protocol built on batch auctions; trades are settled by external solvers.',
         },
         curve: {
           code: 'nnppmn---ppn--',
-          rating: 'C',
           upd: 50,
           audits: 3,
           stale: ['demo-r2'],
@@ -5155,28 +4648,24 @@
         },
         euler: {
           code: '--n---u---p---',
-          rating: 'C',
           upd: 400,
           audits: 4,
           desc: 'Modular lending vaults (Euler v2).',
         },
         fluid: {
           code: '----n----u----',
-          rating: 'C',
           upd: 90,
           audits: 2,
           desc: 'Lending and DEX on a shared liquidity layer.',
         },
         gearbox: {
           code: '----------u---',
-          rating: null,
           upd: 900,
           audits: 0,
           desc: 'Leverage protocol built on credit accounts.',
         },
         lido: {
           code: 'pnpp-npu-pppnu',
-          rating: 'B',
           upd: 8,
           audits: 4,
           stale: ['demo-s1'],
@@ -5184,49 +4673,42 @@
         },
         liquity: {
           code: 'p-p-------p---',
-          rating: 'A',
           upd: 300,
           audits: 2,
           desc: 'Stablecoin borrowing against ETH: interest-free (v1) and with user-set rates (v2).',
         },
         mellow: {
           code: '-----e--------',
-          rating: null,
           upd: 1200,
           audits: 0,
           desc: 'Curated vaults for restaking and yield strategies.',
         },
         oneinch: {
           code: '----x-----u---',
-          rating: 'D',
           upd: 72,
           audits: 1,
           desc: 'Swap aggregator routing across many DEXs.',
         },
         pendle: {
           code: 'nnn--un--ppm--',
-          rating: 'C',
           upd: 20,
           audits: 3,
           desc: 'Yield tokenization: splitting assets into PT and YT and trading them.',
         },
         rocketpool: {
           code: '-np-n-p---p---',
-          rating: 'B',
           upd: 130,
           audits: 2,
           desc: 'Decentralized ETH liquid staking: the rETH token and an open operator set.',
         },
         spark: {
           code: 'pnp--nu-ppp---',
-          rating: 'B',
           upd: 12,
           audits: 3,
           desc: 'Lending protocol of the Sky ecosystem: SparkLend markets and liquidity allocation.',
         },
         yearn: {
           code: '--n-x--npup---',
-          rating: 'C',
           upd: 44,
           audits: 2,
           stale: ['demo-m3'],
@@ -5234,7 +4716,6 @@
         },
         zerox: {
           code: '----------u--e',
-          rating: null,
           upd: 2000,
           audits: 0,
           desc: 'Swap infrastructure and aggregator (Matcha).',
@@ -5340,39 +4821,6 @@
           fetched: REAL.generatedAt.slice(0, 10),
         }
       }
-      function genericReason(type, code) {
-        const R = {
-          Rating: {
-            p: 'The assessment sits in the upper part of the provider’s own scale.',
-            n: 'The assessment sits in the middle of the provider’s own scale.',
-            x: 'The assessment sits in the lower part of the provider’s own scale.',
-            m: 'The headline and individual components point in different directions.',
-            u: 'The provider’s scale does not allow an unambiguous reading of the signal.',
-          },
-          Monitoring: {
-            p: 'No high-level events or alerts in the period.',
-            n: 'Informational events only.',
-            x: 'High-level events or losses within the last 12 months.',
-            m: 'Both critical events and events closed without losses.',
-            u: 'Stream received; no classification rules for this format yet.',
-          },
-          Dashboard: {
-            p: 'Metrics within cp0x thresholds.',
-            n: 'Metrics without a clear signal.',
-            x: 'Metrics outside cp0x thresholds.',
-            m: 'Some metrics outside cp0x thresholds.',
-            u: 'Reference metrics: cp0x does not assign them a direction.',
-          },
-          Research: {
-            p: 'cp0x reads the research conclusion as positive.',
-            n: 'Descriptive research without a clear conclusion.',
-            x: 'The research highlights material risks.',
-            m: 'The research describes both strengths and material risks.',
-            u: 'Text received; not classified.',
-          },
-        }
-        return R[type][code] || ''
-      }
       const PROTOCOLS = REAL.groups.map((g) => {
         const d = DEMO[g.id]
         const withTvl = g.versions.filter((v) => v.tvl != null)
@@ -5402,8 +4850,7 @@
           }
           const has = !['-', 'e'].includes(code)
           const stale = has && !!date && NOW - Date.parse(date) > 365 * DAY
-          const reason = has ? (d.reasons && d.reasons[f.id]) || genericReason(f.type, code) : ''
-          return { feed: f, code, has, date, fetched, stale, reason, real }
+          return { feed: f, code, has, date, fetched, stale, real }
         })
         const incidents = feeds.find((s) => s.feed.id === 'hacks').real.list
         const rlFindings = g.versions
@@ -5444,9 +4891,6 @@
           tvl: withTvl.length ? withTvl.reduce((s, v) => s + v.tvl, 0) : null,
           tvlParts: withTvl,
           tvlAt: g.versions[0].tvlAt,
-          rating: d.rating,
-          ratedAt:
-            d.ratedAt || new Date(NOW - ((hash(g.id) % 40) + 5) * DAY).toISOString().slice(0, 10),
           updated: NOW - d.upd * 36e5,
           withData: feeds.filter((s) => s.has).length,
           audits: d.audits,
@@ -5478,7 +4922,6 @@
         if (s.code === 'e') return 'fetch error'
         return MARK[s.code].label + (s.stale ? ' · stale' : '')
       }
-      const markHtml = (s) => `<span class="mk ${MARK[s.code].cls}">${MARK[s.code].label}</span>`
 
       /* ==================================================================
    6. Dashboard
@@ -5488,7 +4931,6 @@
         cat: '',
         chain: '',
         tvl: '',
-        rating: '',
         feed: '',
         minFeeds: 0,
         types: new Set(),
@@ -5539,7 +4981,6 @@
           if (F.tvl === 'none' ? p.tvl != null : p.tvl == null || p.tvl < b[1] || p.tvl >= b[2])
             return false
         }
-        if (F.rating && (F.rating === 'none' ? p.rating : p.rating !== F.rating)) return false
         if (F.feed && !p.feeds.find((s) => s.feed.id === F.feed).has) return false
         if (F.minFeeds && p.withData < F.minFeeds) return false
         for (const t of F.types) if (!p.feeds.some((s) => s.feed.type === t && s.has)) return false
@@ -5563,37 +5004,34 @@
         name: (a, b) => a.name.localeCompare(b.name),
         tvl: (a, b) => (a.tvl ?? -1) - (b.tvl ?? -1),
         cov: (a, b) => a.withData - b.withData,
-        rating: (a, b) => RATINGS.indexOf(b.rating) - RATINGS.indexOf(a.rating),
         upd: (a, b) => b.updated - a.updated,
       }
       const sortLabel = {
         name: 'Protocol',
         tvl: 'TVL',
         cov: 'Coverage',
-        rating: 'cp0x rating',
         upd: 'Updated',
       }
 
       function renderDashboard() {
         const total = PROTOCOLS.length
-        const rated = PROTOCOLS.filter((p) => p.rating).length
         const categories = [...new Set(PROTOCOLS.flatMap((p) => p.cats))]
         const chains = [...new Set(PROTOCOLS.flatMap((p) => p.chains))]
         $('#app').innerHTML = `
   <section class="home-hero">
     <div class="hero-copy">
-      <div class="eyebrow"><span class="tiny-square"></span> DeFi protocols · cp0x assessment and feed data</div>
+      <div class="eyebrow"><span class="tiny-square"></span> DeFi protocols · feed data</div>
       <h1>Find a protocol — <span>and see at once who says what about it.</span></h1>
-      <p>The cp0x rating and cp0x marks are labelled separately. Data from the ${FEEDS.length} registry feeds opens on the protocol page unchanged — in the providers’ own scales and words.</p>
+      <p>defi-dna publishes no rating of its own. Data from the ${FEEDS.length} registry feeds opens on the protocol page unchanged — in the providers’ own scales and words.</p>
     </div>
     <div class="hero-summary">
       <div class="eyebrow">The current picture</div>
       <div class="hero-numbers">
         <div><strong>${total}</strong><span>protocols in the catalog</span></div>
         <div><strong>${FEEDS.length}</strong><span>feeds in the registry</span></div>
-        <div><strong>${rated}</strong><span>with a cp0x rating ${DEMO_TAG}</span></div>
+        <div><strong>${PROTOCOLS.filter((p) => p.withData > 0).length}</strong><span>with data from at least one feed</span></div>
       </div>
-      <div class="hero-summary-bottom"><span><strong>${PROTOCOLS.filter((p) => p.withData > 0).length} of ${total}</strong> have data from at least one feed</span><button class="text-link" type="button" data-method>cp0x methodology →</button></div>
+      <div class="hero-summary-bottom"><span>Each feed’s data is shown as published. No rating, score or ranking of our own.</span></div>
     </div>
   </section>
 
@@ -5620,7 +5058,6 @@
         )
           .map(([k, b]) => `<option value="${k}">${b[0]}</option>`)
           .join('')}</select>
-        <select class="toolbar-select" data-f="rating" aria-label="cp0x rating"><option value="">Any cp0x rating</option>${RATINGS.map((r) => `<option value="${r}">Rating ${r}</option>`).join('')}<option value="none">Not rated</option></select>
         <select class="toolbar-select" data-f="feed" aria-label="Has feed data"><option value="">Data from any feed</option>${TYPES.map(
           (t) =>
             `<optgroup label="${t.id}">${FEEDS.filter((f) => f.type === t.id)
@@ -5640,11 +5077,11 @@
         )
           .map(([k, v]) => `<button type="button" data-v="${k}">${v[0]}</button>`)
           .join('')}</div></div>
-        <div class="mf-group"><h4>cp0x materials ${DEMO_TAG}</h4>
+        <div class="mf-group"><h4>Protocol data ${DEMO_TAG}</h4>
           <label class="cb"><input type="checkbox" data-bool="audits">Has audit reports</label>
           <label class="cb"><input type="checkbox" data-bool="events">Has public events</label></div>
         <div class="mf-group"><h4>Feed types with data</h4><div class="cb-grid">${TYPES.map((t) => `<label class="cb"><input type="checkbox" data-type="${t.id}">${t.id}</label>`).join('')}</div></div>
-        <div class="mf-group" style="grid-column: span 2"><h4><span class="layer l2">cp0x marks</span> on feed signals ${DEMO_TAG}</h4><div class="cb-grid" style="grid-template-columns: repeat(4, auto); justify-content: start; gap: 0 18px">
+        <div class="mf-group" style="grid-column: span 2"><h4>Signal colour ${DEMO_TAG}</h4><div class="cb-grid" style="grid-template-columns: repeat(4, auto); justify-content: start; gap: 0 18px">
           ${Object.entries(MARK_FILTERS)
             .map(
               ([k, v]) =>
@@ -5661,7 +5098,6 @@
             <th>Chains ${DEMO_TAG}</th>
             <th class="num"><button class="th-sort" data-sort="tvl">TVL · Ethereum <span class="arr">↕</span></button><span class="th-sub">DefiLlama · ${fmtDate(PROTOCOLS[0].tvlAt)}</span></th>
             <th><button class="th-sort" data-sort="cov">Feed coverage <span class="arr">↕</span></button><span class="th-sub">Rating · Monitoring · Dashboard · Research</span></th>
-            <th><button class="th-sort" data-sort="rating">cp0x rating <span class="arr">↕</span></button><span class="th-sub">scale A–E · cp0x assessment</span></th>
             <th><button class="th-sort" data-sort="upd">Updated <span class="arr">↕</span></button><span class="th-sub">latest change ${DEMO_TAG}</span></th>
             <th aria-label="Open"></th>
           </tr></thead>
@@ -5675,7 +5111,7 @@
           <span><i class="seg mix"></i>mixed signals</span><span><i class="seg unc"></i>data, unclassified</span>
           <span><i class="seg pos stale"></i>stale (&gt; 12 mo.)</span><span><i class="seg err"></i>fetch error</span><span><i class="seg none"></i>no data</span></div>
         <div class="legend-row"><span class="legend-title">Order</span><span>one segment per registry feed; groups from left to right: ${TYPES.map((t) => `${t.id} (${FEEDS.filter((f) => f.type === t.id).length})`).join(' · ')}</span></div>
-        <div class="legend-note"><span class="layer l2">cp0x assessment</span> Segment colours are <b>cp0x’s classification of signals</b>, not a modified feed rating. Each feed’s original values are on the protocol page, on its own scale and unchanged. The cp0x rating is a separate cp0x assessment, not an average of feed ratings. ${DEMO_TAG}</div>
+        <div class="legend-note">Segment colours place each feed’s value on that feed’s own scale. Each feed’s original values are on the protocol page, unchanged. defi-dna publishes no rating of its own.</div>
       </div>
     </div>
   </section>`
@@ -5715,18 +5151,11 @@
         if (F.cat) a.push([`Category: ${CAT[F.cat]}`, () => (F.cat = '')])
         if (F.chain) a.push([`Chain: ${F.chain}`, () => (F.chain = '')])
         if (F.tvl) a.push([`TVL: ${TVL_BANDS[F.tvl][0]}`, () => (F.tvl = '')])
-        if (F.rating)
-          a.push([
-            F.rating === 'none' ? 'Not rated by cp0x' : `cp0x rating: ${F.rating}`,
-            () => (F.rating = ''),
-          ])
         if (F.feed)
           a.push([`Has data: ${FEEDS.find((f) => f.id === F.feed).name}`, () => (F.feed = '')])
         if (F.minFeeds) a.push([`Feeds with data ≥ ${F.minFeeds}`, () => (F.minFeeds = 0)])
         F.types.forEach((t) => a.push([`Has ${t} data`, () => F.types.delete(t)]))
-        F.marks.forEach((m) =>
-          a.push([`cp0x mark: has ${MARK_FILTERS[m]}`, () => F.marks.delete(m)]),
-        )
+        F.marks.forEach((m) => a.push([`Has ${MARK_FILTERS[m]}`, () => F.marks.delete(m)]))
         if (F.upd) a.push([`Updated ${UPD[F.upd][0]}`, () => (F.upd = '')])
         if (F.audits) a.push(['Has audit reports', () => (F.audits = false)])
         if (F.events) a.push(['Has public events', () => (F.events = false)])
@@ -5742,15 +5171,13 @@
     <td class="chains-cell" title="${esc(p.chains.join(', '))}">${p.chains[0]}${p.chains.length > 1 ? ` <span>+${p.chains.length - 1}</span>` : ''}</td>
     <td class="num"><span class="metric-value">${usd(p.tvl)}</span><span class="cell-secondary">${p.tvl == null ? 'not published by DefiLlama' : p.tvlParts.length > 1 ? 'sum of ' + p.tvlParts.length + ' versions' : 'DefiLlama'}</span></td>
     <td><button type="button" class="cov-hit" data-cov="${p.id}" aria-label="${p.withData} of ${FEEDS.length} feeds with data — show the list">${segbar(p)}<span class="cov-text"><b>${p.withData}</b> of ${FEEDS.length} feeds</span></button></td>
-    <td><span class="rating-cell">${p.rating ? `<span class="rating" title="cp0x rating on the A–E scale">${p.rating}</span>${DEMO_TAG}` : `<span class="rating none">not rated</span>`}</span></td>
     <td><span class="fresh${days < 1 ? ' recent' : ''}${days > 30 ? ' old' : ''}">${ago(p.updated)}</span></td>
     <td class="row-go">→</td></tr>`
       }
 
       function renderRows() {
-        // Missing TVL or rating always sorts last, whatever the direction.
-        const blank = (p) =>
-          (sort.key === 'rating' && !p.rating) || (sort.key === 'tvl' && p.tvl == null) ? 1 : 0
+        // Missing TVL always sorts last, whatever the direction.
+        const blank = (p) => (sort.key === 'tvl' && p.tvl == null ? 1 : 0)
         const list = PROTOCOLS.filter(pass).sort(
           (a, b) =>
             blank(a) - blank(b) || SORTS[sort.key](a, b) * sort.dir || a.name.localeCompare(b.name),
@@ -5787,7 +5214,6 @@
           cat: '',
           chain: '',
           tvl: '',
-          rating: '',
           feed: '',
           minFeeds: 0,
           types: new Set(),
@@ -5811,7 +5237,6 @@
         popFor = btn
         btn.classList.add('open')
         pop.innerHTML = `<div class="pop-h"><strong>${esc(p.name)}</strong><span class="muted">${p.withData} of ${FEEDS.length} feeds with data</span><button class="x" type="button" data-close-pop aria-label="Close">×</button></div>
-    <div class="pop-note"><span class="layer l2">cp0x</span> Colour and mark are cp0x’s classification ${DEMO_TAG}. Feed values live in their blocks on the protocol page.</div>
     ${TYPES.map(
       (t) =>
         `<div class="pop-group">${t.id}</div>` +
@@ -5821,7 +5246,7 @@
             (s) => `
       <div class="pop-row">${segHtml(s)}<b>${esc(s.feed.name)} ${s.feed.demo ? DEMO_TAG : ''}</b>
         <a class="go" href="#/p/${p.id}/${s.feed.id}">to block →</a>
-        <span class="st">${s.code === '-' ? 'no data' : s.code === 'e' ? '<span class="mk err">fetch error</span> · last attempt ' + fmtDate(s.fetched) : `data · ${markHtml(s)}${s.stale ? ' · <span class="stale-tag">stale</span>' : ''} · ${s.feed.id === 'hacks' ? 'fetched ' + fmtDate(s.fetched) : fmtDate(s.date)}`}</span>
+        <span class="st">${s.code === '-' ? 'no data' : s.code === 'e' ? '<span class="mk err">fetch error</span> · last attempt ' + fmtDate(s.fetched) : `data · ${MARK[s.code].label.toLowerCase()}${s.stale ? ' · <span class="stale-tag">stale</span>' : ''} · ${s.feed.id === 'hacks' ? 'fetched ' + fmtDate(s.fetched) : fmtDate(s.date)}`}</span>
       </div>`,
           )
           .join(''),
@@ -5843,71 +5268,8 @@
       /* ==================================================================
    7. Protocol page
    ================================================================== */
-      function levelHtml(level) {
-        const [label, n] = LEVEL[level]
-        return `<span class="factor-level"><span class="pips">${[1, 2, 3, 4].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>${label}</span>`
-      }
-      function genericFactors(p) {
-        const r = p.rating
-        const lv = {
-          A: ['low', 'low', 'low', 'low', 'low'],
-          B: ['moderate', 'low', 'moderate', 'moderate', 'low'],
-          C: ['moderate', 'moderate', 'elevated', 'moderate', 'moderate'],
-          D: ['elevated', 'moderate', 'elevated', 'high', 'moderate'],
-          E: ['high', 'elevated', 'high', 'high', 'elevated'],
-        }[r]
-        const refs = (type) =>
-          p.feeds
-            .filter((s) => s.has && s.feed.type === type)
-            .slice(0, 2)
-            .map((s) => s.feed.id)
-        return [
-          [
-            'Governance and admin rights',
-            25,
-            lv[0],
-            `Governance model of ${p.name} and admin powers, per cp0x data.`,
-            refs('Rating').concat(refs('Monitoring')).slice(0, 2),
-          ],
-          [
-            'Audits and code verification',
-            20,
-            lv[1],
-            `Audit reports in the cp0x registry: ${p.audits}.`,
-            refs('Dashboard'),
-          ],
-          [
-            'Dependencies: oracles and bridges',
-            20,
-            lv[2],
-            'External dependencies that affect asset valuation.',
-            refs('Monitoring'),
-          ],
-          [
-            'Public incidents',
-            20,
-            lv[3],
-            p.events.length
-              ? `Public events: ${p.events.length} (see the list below).`
-              : 'No public events in cp0x materials.',
-            p.events.length ? [p.events[0].src] : [],
-          ],
-          [
-            'Transparency and disclosure',
-            15,
-            lv[4],
-            'Availability of documentation, parameters and post-mortems.',
-            refs('Research'),
-          ],
-        ]
-      }
       function overviewHtml(p) {
         const d = p.d
-        const factors = p.rating ? d.factors || genericFactors(p) : null
-        const why = p.rating
-          ? d.why ||
-            `cp0x rates ${p.name} ${p.rating}. The rating is based on cp0x’s own analysis across five factors; feed data is used as material and cited by link.`
-          : `cp0x has not rated ${p.name} yet: ${p.withData} of ${FEEDS.length} feeds have data, and cp0x’s own material is not enough for an assessment.`
         const gov = d.gov || [
           ['Model', 'DAO / multisig'],
           ['Voting', 'per cp0x data'],
@@ -5928,28 +5290,8 @@
         }
         return `
   <section class="page-section" id="sec-overview">
-    <div class="section-heading"><div><h2><span class="layer l2">cp0x assessment</span> cp0x overview ${DEMO_TAG}</h2>
-      <p>cp0x’s own explanations and assessments. The feed data below is shown separately and unchanged — here it is only linked.</p></div>
-      <button class="text-link" type="button" data-method>cp0x methodology →</button></div>
-    <div class="cp-grid">
-      <div class="cp-panel">
-        <div class="cp-panel-h"><h3>${p.rating ? 'Why rating ' + p.rating : 'No rating assigned'}</h3><span class="layer l2">cp0x assessment</span>${DEMO_TAG}<span class="aside">${p.rating ? 'assigned ' + fmtDate(p.ratedAt) : ''}</span></div>
-        <div class="cp-panel-b">
-          <div class="why">${p.rating ? `<span class="rating lg">${p.rating}</span>` : '<span class="rating lg none">—</span>'}<p>${why}</p></div>
-          ${
-            factors
-              ? `<div class="factor-head"><span>cp0x factor</span><span>Weight</span><span>cp0x assessment</span><span>Materials</span><span></span></div>
-          ${factors.map(([name, w, level, text, refs]) => `<details class="factor-row"><summary><b>${name}</b><span class="mono">${w}%</span>${levelHtml(level)}<span class="refs">${refs.map(ref).join('') || '<span class="muted small">no materials</span>'}</span><span class="chev">▾</span></summary><p>${text}</p></details>`).join('')}`
-              : ''
-          }
-          <div class="not-avg">The cp0x rating is not an average, sum or conversion of feed assessments. The feeds in the “Materials” column are sources cp0x read; their conclusions remain theirs.</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h3>Governance</h3><span class="layer l1">Protocol data</span>${DEMO_TAG}</div>
-        <div class="card-b"><dl class="facts">${gov.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></div>
-      </div>
-    </div>
+    <div class="section-heading"><div><h2>Protocol overview</h2>
+      <p>Protocol facts and events, each linked to its source. The feed data below is shown separately and unchanged.</p></div></div>
     <div class="cp-grid">
       <div class="card">
         <div class="card-h"><h3>Public events <span class="count-badge">${p.events.length}</span></h3><span class="aside">every event links to its source</span></div>
@@ -5963,8 +5305,13 @@
             <span>Source: <b>${esc(f.name)}</b></span>${e.url ? extLink(e.url, 'original') : ''}<button type="button" class="ref" data-scroll="feed-${f.id}">feed block →</button></div></div></li>`
                 })
                 .join('')}</ul>`
-            : '<p class="muted small">cp0x materials contain no publicly documented events. That is not proof that nothing happened.</p>'
+            : '<p class="muted small">The collected sources contain no publicly documented events. That is not proof that nothing happened.</p>'
         }</div>
+      </div>
+      <div class="side-stack">
+      <div class="card">
+        <div class="card-h"><h3>Governance</h3><span class="layer l1">Protocol data</span>${DEMO_TAG}</div>
+        <div class="card-b"><dl class="facts">${gov.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></div>
       </div>
       <div class="card">
         <div class="card-h"><h3>Audit reports <span class="count-badge">${audits.length}</span></h3><span class="layer l1">Protocol data</span>${DEMO_TAG}</div>
@@ -5975,6 +5322,7 @@
             : '<p class="muted small">cp0x has not collected audit reports for this protocol.</p>'
         }</div>
       </div>
+      </div>
     </div>
   </section>`
       }
@@ -5983,7 +5331,7 @@
         return `<section class="page-section" id="sec-catalog">
     <div class="section-heading"><div><h2>Feed catalog <span class="count-badge">${FEEDS.length}</span></h2>
       <p>Every registry feed, including those with no data about ${esc(p.name)}. Click a feed to scroll to its block.</p></div>
-      <span class="section-aside"><span class="seg pos" style="width:7px;height:13px"></span> colour — cp0x mark ${DEMO_TAG}</span></div>
+      <span class="section-aside"><span class="seg pos" style="width:7px;height:13px"></span> colour — position on the feed’s own scale</span></div>
     <div class="catalog">${TYPES.map((t) => {
       const items = p.feeds.filter((s) => s.feed.type === t.id)
       return `<div class="cat-col"><div class="cat-col-h"><h3>${t.id} <span class="count-badge">${items.filter((s) => s.has).length} / ${items.length}</span></h3><p>${t.desc}</p></div>
@@ -6212,14 +5560,13 @@
             f.real && f.id !== 'hacks'
               ? p.g.versions.map((v) => v.feeds[f.id] && v.feeds[f.id].note).filter(Boolean)
               : []
-          body = `<div class="fb-body empty-body"><h4>This feed publishes no data about ${esc(p.name)}</h4><p>That is a coverage gap, not an assessment of the protocol. cp0x does not classify missing data.</p>
+          body = `<div class="fb-body empty-body"><h4>This feed publishes no data about ${esc(p.name)}</h4><p>That is a coverage gap, not an assessment of the protocol.</p>
       ${notes.map(collectNote).join('') || (f.id === 'hacks' ? collectNote('Absence from DefiLlama’s registry is not proof that nothing happened.') : '')}</div>`
         } else if (s.code === 'e') {
           body = `<div class="fb-body empty-body"><h4>cp0x could not fetch this feed on the last refresh</h4><p>That is a cp0x data-collection problem — not a statement about the protocol and not a coverage gap. ${DEMO_TAG}</p>
       ${collectNote('Source response: HTTP 503 · retry scheduled')}</div>`
         } else {
-          body = `<div class="cp-strip"><span class="layer l2">cp0x mark</span>${markHtml(s)}${s.stale ? '<span class="stale-tag">· stale</span>' : ''}${DEMO_TAG}<span class="why-text">${esc(s.reason)}</span></div>
-      <div class="fb-body"><div class="src-label"><span class="layer l3">Feed data</span><span>As published by ${esc(f.name)} — values, text and scale unchanged${f.demo ? ' · <b>demo feed content is invented</b>' : ''}</span></div>
+          body = `<div class="fb-body"><div class="src-label"><span class="layer l3">Feed data</span><span>As published by ${esc(f.name)} — values, text and scale unchanged${f.demo ? ' · <b>demo feed content is invented</b>' : ''}</span></div>
       <div class="src-area">${INNER[f.id](p, s)}</div></div>`
         }
         return `<article class="feed-block${s.has ? '' : ' is-missing'}" id="feed-${f.id}" tabindex="-1">${head}${body}</article>`
@@ -6256,20 +5603,17 @@
       <div class="summary-value">${usd(p.tvl)}</div>
       <small>${p.tvl == null ? 'DefiLlama publishes no TVL for these versions' : `${p.tvlParts.map((v) => `${esc(v.name)} ${usd(v.tvl)}`).join(' + ')} · fetched ${fmtDate(p.tvlAt)}`}${p.tvlParts.length > 1 ? ' · sum computed by cp0x' : ''}</small>
       <small>${p.tvlParts[0] ? extLink(p.tvlParts[0].tvlUrl, 'defillama.com') : ''}</small></div>
-    <div class="cp-cell"><span class="summary-label">cp0x rating <span class="layer l2">cp0x assessment</span>${DEMO_TAG}</span>
-      <div class="summary-value">${p.rating ? `<span class="rating lg">${p.rating}</span><span class="total">scale A–E</span>` : '<span class="total">not assigned</span>'}</div>
-      <small>${p.rating ? 'assigned ' + fmtDate(p.ratedAt) + ' · ' : ''}<button class="text-link" type="button" data-method>Methodology →</button> · <button class="text-link" type="button" data-scroll="sec-overview">${p.rating ? 'Why ' + p.rating : 'Why not rated'} →</button></small></div>
     <div><span class="summary-label">Feed coverage</span>
       <div class="summary-value">${p.withData}<span class="total">of ${FEEDS.length} feeds</span></div>
       <div style="margin-top:6px">${segbar(p, true)}</div>
-      <small>colours — cp0x marks ${DEMO_TAG} · click a segment to jump to that feed</small></div>
+      <small>colour — position on each feed’s own scale · click a segment to jump to that feed</small></div>
     <div><span class="summary-label">Updated ${DEMO_TAG}</span>
       <div class="summary-value" style="font-size:20px">${ago(p.updated)}</div>
       <small>latest feed publication: ${latest ? esc(latest.feed.name) + ', ' + fmtDate(latest.date) : '—'}</small></div>
   </div>
 
   <nav class="section-nav" aria-label="Page sections">
-    <button type="button" class="nav-cp" data-scroll="sec-overview">cp0x overview</button>
+    <button type="button" data-scroll="sec-overview">Overview</button>
     <button type="button" data-scroll="sec-catalog">Feed catalog <span>${FEEDS.length}</span></button>
     ${TYPES.map((t) => `<button type="button" data-scroll="grp-${t.id}">${t.id} <span>${p.feeds.filter((s) => s.feed.type === t.id && s.has).length}/${p.feeds.filter((s) => s.feed.type === t.id).length}</span></button>`).join('')}
   </nav>
@@ -6355,16 +5699,6 @@
       document.addEventListener('click', (e) => {
         const t = e.target
         const closest = (s) => t.closest(s)
-        if (closest('[data-method]')) {
-          e.preventDefault()
-          $('#method').hidden = false
-          $('[data-close-method]').focus()
-          return
-        }
-        if (closest('[data-close-method]') || t.id === 'method') {
-          $('#method').hidden = true
-          return
-        }
         if (closest('[data-close-pop]')) {
           closePop()
           return
@@ -6437,7 +5771,6 @@
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           closePop()
-          $('#method').hidden = true
         }
         if (
           e.key === '/' &&

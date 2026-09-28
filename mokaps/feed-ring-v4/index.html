@@ -46,29 +46,18 @@
         --amber-tint: #fbf5e8;
         --shadow: 0 2px 5px #172d3b05, 0 12px 26px #172d3b04;
         --pop: 0 14px 40px #10202c2e;
-        /* cp0x marks (never the feed's own data) */
-        --pos: #1c7a52;
+        /* signal colours: where a value sits on its feed's own scale */
         --pos-fill: #3a9a6c;
-        --pos-tint: #e8f4ee;
-        --neu: #906012;
         --neu-fill: #d9a53a;
-        --neu-tint: #fbf5e8;
-        --neg: #b0403a;
         --neg-fill: #d0554c;
-        --neg-tint: #fbeeed;
-        --noconc: #50657a;
         --noconc-bg: #dfe6ee;
         --noconc-line: #6b8197;
-        --noconc-tint: #eef2f6;
-        --none: #7d8a97;
         --none-fill: #e3e8ed;
-        --none-tint: #f2f4f6;
         /* technical labels — neutral ink, not a risk colour */
         --tech: #4f5f6e;
         --tech-tint: #eef1f4;
         --demo: #7a4fb0;
         --demo-tint: #f3edfa;
-        --cp0x-tint: #eef3f2;
         --avatar-0: #e9e7f4;
         --avatar-ink-0: #62527f;
         --avatar-1: #e3eff3;
@@ -102,27 +91,16 @@
         --amber-tint: #3a3425;
         --shadow: 0 2px 5px #00000010, 0 12px 26px #0000000c;
         --pop: 0 14px 40px #00000070;
-        --pos: #7bd1b7;
         --pos-fill: #45b088;
-        --pos-tint: #203c36;
-        --neu: #e0bb74;
         --neu-fill: #d0a24f;
-        --neu-tint: #3a3425;
-        --neg: #ee9f98;
         --neg-fill: #d8625a;
-        --neg-tint: #3a2725;
-        --noconc: #a9bccd;
         --noconc-bg: #34495a;
         --noconc-line: #8fa6ba;
-        --noconc-tint: #223340;
-        --none: #7f94a2;
         --none-fill: #2b3c48;
-        --none-tint: #1e2e38;
         --tech: #b7c6d1;
         --tech-tint: #243541;
         --demo: #c8a8f0;
         --demo-tint: #2e2640;
-        --cp0x-tint: #182a2c;
         --avatar-0: #39334c;
         --avatar-ink-0: #c3b0df;
         --avatar-1: #283f4c;
@@ -535,11 +513,6 @@
         border: 1px solid var(--line-strong);
         color: var(--muted);
       }
-      .prov.cp0x b {
-        background: var(--ink);
-        color: var(--surface);
-        border: 1px solid var(--ink);
-      }
       .avatar {
         display: inline-flex;
         align-items: center;
@@ -578,7 +551,7 @@
         color: var(--avatar-ink-4);
       }
 
-      /* cp0x marks & technical labels */
+      /* signal colours & technical labels */
       .seg-pos {
         stroke: var(--pos-fill);
       }
@@ -631,44 +604,6 @@
       .sw.none {
         background: var(--none-fill);
         box-shadow: inset 0 0 0 1px var(--line-strong);
-      }
-      .mark {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11.5px;
-        font-weight: 700;
-        padding: 2px 8px 2px 6px;
-        border-radius: 5px;
-        white-space: nowrap;
-      }
-      .mark.pos {
-        color: var(--pos);
-        background: var(--pos-tint);
-      }
-      .mark.neu {
-        color: var(--neu);
-        background: var(--neu-tint);
-      }
-      .mark.neg {
-        color: var(--neg);
-        background: var(--neg-tint);
-      }
-      .mark.mixed {
-        color: var(--ink);
-        background: var(--subtle);
-      }
-      .mark.noconc {
-        color: var(--noconc);
-        background: var(--noconc-tint);
-      }
-      .mark.none {
-        color: var(--none);
-        background: var(--none-tint);
-      }
-      .mark .sw {
-        width: 10px;
-        height: 10px;
       }
       .tech {
         display: inline-flex;
@@ -1167,28 +1102,6 @@
       .tvl.alt b {
         color: var(--muted);
       }
-      .grade {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .grade .g {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
-        border-radius: 8px;
-        font: 800 14px var(--mono);
-        background: var(--cp0x-tint);
-        border: 1px solid var(--accent-line);
-        color: var(--ink);
-      }
-      .grade small {
-        display: block;
-        font-size: 10.5px;
-        color: var(--muted);
-      }
       .upd {
         font-size: 12.5px;
         white-space: nowrap;
@@ -1286,7 +1199,7 @@
       }
       .facts {
         display: grid;
-        grid-template-columns: 1.1fr 1fr 1.5fr 1fr;
+        grid-template-columns: 1.1fr 1.5fr 1fr;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 12px;
@@ -1324,9 +1237,6 @@
         flex-wrap: wrap;
         align-items: center;
         gap: 4px 8px;
-      }
-      .fact.cp0x {
-        background: var(--cp0x-tint);
       }
       .fact .ring-btn {
         margin-top: 2px;
@@ -1391,112 +1301,11 @@
         color: var(--muted);
       }
 
-      .cp0x-zone {
-        border: 1px solid var(--accent-line);
-        background: var(--cp0x-tint);
-        border-radius: 14px;
-        padding: 16px;
-      }
-      .zone-label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        color: var(--muted);
-        margin-bottom: 12px;
-      }
       .ov-grid {
         display: grid;
         grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
         gap: 14px;
         align-items: start;
-      }
-      .rating-card {
-        padding: 18px;
-      }
-      .rc-top {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-      }
-      .rc-grade {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 64px;
-        height: 64px;
-        border-radius: 14px;
-        font: 800 30px var(--mono);
-        background: var(--surface);
-        border: 2px solid var(--accent);
-      }
-      .rc-top .score {
-        font: 650 20px var(--mono);
-      }
-      .rc-top p {
-        font-size: 12.5px;
-        color: var(--muted);
-        margin-top: 3px;
-        max-width: 56ch;
-      }
-      .method {
-        margin-top: 14px;
-        font-size: 12.5px;
-      }
-      .method summary {
-        cursor: pointer;
-        font-weight: 700;
-        color: var(--accent);
-      }
-      .method ul {
-        margin-top: 8px;
-        padding-left: 18px;
-        list-style: disc;
-        color: var(--muted);
-        display: grid;
-        gap: 4px;
-      }
-      .ftable {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 12.5px;
-        margin-top: 14px;
-      }
-      .ftable th {
-        text-align: left;
-        font-size: 11px;
-        font-weight: 650;
-        color: var(--muted);
-        padding: 7px 10px;
-        border-bottom: 1px solid var(--line);
-      }
-      .ftable td {
-        padding: 9px 10px;
-        border-bottom: 1px solid var(--line);
-        vertical-align: top;
-      }
-      .ftable tr:last-child td {
-        border-bottom: 0;
-      }
-      .ftable .num {
-        text-align: right;
-        font-family: var(--mono);
-        white-space: nowrap;
-      }
-      .bar {
-        display: block;
-        width: 70px;
-        height: 5px;
-        border-radius: 3px;
-        background: var(--none-fill);
-        overflow: hidden;
-        margin-top: 5px;
-        margin-left: auto;
-      }
-      .bar i {
-        display: block;
-        height: 100%;
-        background: var(--accent);
       }
       .gov .kv {
         display: grid;
@@ -1679,32 +1488,6 @@
         background: var(--tech);
         border-radius: 1px;
         transform: rotate(45deg);
-      }
-      .cp0x-note {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
-        gap: 12px;
-        align-items: start;
-        margin: 14px 18px 0;
-        padding: 12px 14px;
-        border-radius: 10px;
-        background: var(--cp0x-tint);
-        border: 1px solid var(--accent-line);
-        font-size: 12.5px;
-      }
-      .cp0x-note .lbl {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-      .cp0x-note p {
-        color: var(--ink);
-      }
-      .cp0x-note small {
-        display: block;
-        color: var(--muted);
-        margin-top: 4px;
-        font-size: 11px;
       }
       .content {
         margin: 14px 18px 18px;
@@ -2143,8 +1926,7 @@
           <a href="#/" class="active">Protocols</a>
         </nav>
         <div class="tools">
-          <span class="prov cp0x"><b>CP0X</b></span
-          ><span>Data cut: 20 Sep 2026</span>
+          <span>Data cut: 20 Sep 2026</span>
           <button class="icon-btn" id="theme-toggle" type="button"></button>
         </div>
       </div>
@@ -2153,12 +1935,11 @@
     <div class="ringpop" id="ringpop" role="dialog" aria-label="Protocol feeds" hidden></div>
     <footer class="site-footer">
       <span
-        ><b>defi-dna.</b> Feed data is shown exactly as the provider published it. Colours and the
-        rating are separate cp0x marks.</span
+        ><b>defi-dna.</b> Feed data is shown exactly as the provider published it. Colours place a
+        value on its feed's own scale; defi-dna publishes no rating of its own.</span
       >
       <span
         ><span class="prov src"><b>SOURCE</b>name</span> — data origin ·
-        <span class="prov cp0x"><b>CP0X</b></span> — cp0x conclusion ·
         <span class="demo">DEMO</span> — invented data</span
       >
     </footer>
@@ -4606,15 +4387,6 @@
       ]
       const REGISTRY_SIZES = [6, 14, 24]
 
-      /* cp0x rating (DEMO): five weighted factors, 0–100 each. */
-      const FACTORS = [
-        { k: 'Feed coverage', w: 15 },
-        { k: 'cp0x marks on feeds', w: 30 },
-        { k: 'Incident history', w: 20 },
-        { k: 'Governance and upgradeability', w: 20 },
-        { k: 'Audits', w: 15 },
-      ]
-
       const PROTOCOLS = [
         {
           id: 'aave',
@@ -4643,9 +4415,6 @@
             Governance: 'https://governance.aave.com',
           },
           profile: { cov: 0.9, bias: 0.2 },
-          scores: [90, 55, 60, 65, 85],
-          verdict:
-            'A mature protocol with deep audit coverage; in 2026, incidents involving an oracle and dependencies.',
           gov: [
             ['Governance model', 'Aave DAO, on-chain AAVE / stkAAVE voting (Governance v3)'],
             ['Execution', 'Executor Level 1 and Level 2 with 1- and 7-day timelocks'],
@@ -4655,13 +4424,6 @@
               'Pool and PoolConfigurator are upgradeable proxies controlled by the Executor',
             ],
             ['Token', 'AAVE'],
-          ],
-          notes: [
-            [
-              'Divergence',
-              'DeFiScan (Stage 0) and Risklayer (4.8/10 · medium) assess different things — decentralization and overall risk. cp0x does not merge them into one value.',
-              'feed:defiscan',
-            ],
           ],
         },
         {
@@ -4691,22 +4453,12 @@
             Governance: 'https://gov.uniswap.org',
           },
           profile: { cov: 0.85, bias: 0.6 },
-          scores: [85, 75, 95, 80, 80],
-          verdict:
-            'Immutable pool core and a long history without core exploits; open questions concern v4 governance on L2s.',
           gov: [
             ['Governance model', 'Uniswap DAO, UNI voting (Governor Bravo)'],
             ['Execution', 'Through the Timelock contract'],
             ['Upgradeability', 'The v2 and v3 pool core cannot be upgraded'],
             ['Protocol fee', 'Switched on and configured by governance'],
             ['Token', 'UNI'],
-          ],
-          notes: [
-            [
-              'Coverage',
-              'DeFiScan publishes separate reviews for v2 and v3; there is no v4 review in the data.',
-              'feed:defiscan',
-            ],
           ],
         },
         {
@@ -4732,8 +4484,6 @@
             Governance: 'https://forum.balancer.fi',
           },
           profile: { cov: 0.6, bias: -0.6 },
-          scores: [35, 30, 15, 50, 70],
-          verdict: 'A major exploit in November 2025; the project’s real feeds publish no data.',
           gov: [
             ['Governance model', 'Balancer DAO, veBAL voting (Snapshot)'],
             ['Execution', 'DAO multisig'],
@@ -4742,13 +4492,6 @@
               'Vault v2 cannot be upgraded; permissions are granted through the Authorizer',
             ],
             ['Token', 'BAL'],
-          ],
-          notes: [
-            [
-              'Coverage',
-              'None of DeFiScan, Philidor or Risklayer publishes data on Balancer — coverage rests on demo feeds only.',
-              null,
-            ],
           ],
         },
         {
@@ -4765,21 +4508,11 @@
             Governance: 'https://forum.morpho.org',
           },
           profile: { cov: 0.8, bias: 0.3 },
-          scores: [85, 65, 95, 60, 90],
-          verdict:
-            'A minimal immutable core and strong audit coverage; the risks shift to oracles and curators.',
           gov: [
             ['Governance model', 'Morpho DAO, MORPHO token'],
             ['Upgradeability', 'The Morpho Blue core is immutable'],
             ['Owner powers', 'Enabling new IRMs and LLTVs, setting the fee'],
             ['Token', 'MORPHO'],
-          ],
-          notes: [
-            [
-              'No conclusion',
-              'Philidor rates individual vaults and publishes no protocol score — cp0x draws no conclusion about Morpho from those scores.',
-              'feed:philidor',
-            ],
           ],
         },
         {
@@ -4806,9 +4539,6 @@
             Governance: 'https://research.lido.fi',
           },
           profile: { cov: 0.85, bias: 0.3 },
-          scores: [80, 60, 95, 55, 85],
-          verdict:
-            'The dominant staking provider; concentration and governance complexity are the main questions.',
           gov: [
             ['Governance model', 'Lido DAO, LDO voting'],
             ['Token', 'LDO'],
@@ -4838,8 +4568,6 @@
             Governance: 'https://gov.curve.fi',
           },
           profile: { cov: 0.75, bias: -0.1 },
-          scores: [70, 40, 45, 55, 60],
-          verdict: 'Broad coverage, but an incident history and a high risk level at Risklayer.',
           gov: [
             ['Governance model', 'Curve DAO, veCRV voting'],
             ['Token', 'CRV · crvUSD'],
@@ -4860,9 +4588,6 @@
             Governance: 'https://forum.sky.money',
           },
           profile: { cov: 0.7, bias: 0.3 },
-          scores: [75, 60, 95, 55, 70],
-          verdict:
-            'Lending infrastructure tied to Sky; governance is inherited from the Sky ecosystem.',
           gov: [
             ['Governance model', 'Governed through the Sky ecosystem'],
             ['Token', 'SPK'],
@@ -4883,9 +4608,6 @@
             Governance: 'https://www.comp.xyz',
           },
           profile: { cov: 0.7, bias: 0 },
-          scores: [80, 40, 40, 55, 75],
-          verdict:
-            'A long history, but a high risk level at Risklayer and a major v2 incident in the past.',
           gov: [
             ['Governance model', 'Compound DAO, COMP voting (Governor Bravo)'],
             ['Token', 'COMP'],
@@ -4906,8 +4628,6 @@
             Governance: 'https://snapshot.box/#/s:pendle.eth',
           },
           profile: { cov: 0.55, bias: 0 },
-          scores: [60, 45, 95, 45, 60],
-          verdict: 'Complex yield mechanics; Risklayer — high, DeFiScan — Stage 0.',
           gov: [
             ['Governance model', 'vePENDLE voting'],
             ['Token', 'PENDLE'],
@@ -4928,10 +4648,7 @@
             Governance: 'https://forum.cow.fi',
           },
           profile: { cov: 0.35, bias: 0.3 },
-          scores: [30, 50, 80, 60, 55],
           alt: { label: 'Trading volume, 30d', value: 5.1e9 },
-          verdict:
-            'An aggregator with no TVL of its own; the project’s real feeds publish no data.',
           gov: [
             ['Governance model', 'CoW DAO, COW voting'],
             ['Token', 'COW'],
@@ -4999,6 +4716,7 @@
       ]
       const TYPE = Object.fromEntries(TYPES.map((t) => [t.id, t]))
       const PMAP = Object.fromEntries(PROTOCOLS.map((p) => [p.id, p]))
+      // Signal colour per cell: where the value sits on that feed's own scale. Not a defi-dna rating.
       const CLS = {
         pos: 'positive',
         neu: 'neutral',
@@ -5008,6 +4726,7 @@
         none: 'no data',
       }
       const CLS_ORDER = ['pos', 'neu', 'neg', 'mixed', 'noconc', 'none']
+      const stateOf = (c) => (c.st === 'ok' ? c.cls : 'none')
 
       const esc = (s) =>
         String(s ?? '').replace(
@@ -5079,10 +4798,8 @@
       const pick = (r, a) => a[Math.floor(r() * a.length)]
       const between = (r, a, b) => a + r() * (b - a)
       const DEMO = '<span class="demo" title="Invented data for the mockup">DEMO</span>'
-      const prov = (kind, name) =>
-        kind === 'cp0x'
-          ? `<span class="prov cp0x" title="A cp0x assessment or conclusion, not feed data"><b>CP0X</b>${name ? esc(name) : ''}</span>`
-          : `<span class="prov src" title="Data source"><b>SOURCE</b>${esc(name)}</span>`
+      const prov = (name) =>
+        `<span class="prov src" title="Data source"><b>SOURCE</b>${esc(name)}</span>`
       const svg = (d, size = 16) =>
         `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`
       const ICON = {
@@ -5107,7 +4824,6 @@
         ICON.err +
         'fetch error</span>'
       const sw = (cls) => `<i class="sw ${cls}" aria-hidden="true"></i>`
-      const markTag = (cls) => `<span class="mark ${cls}">${sw(cls)}${CLS[cls]}</span>`
       const avatar = (p, lg) =>
         `<span class="avatar av-${hash(p.id) % 5}${lg ? ' lg' : ''}" aria-hidden="true">${esc(p.name[0])}</span>`
 
@@ -5116,7 +4832,6 @@
         cats: [],
         chains: [],
         tvl: '',
-        grade: [],
         feed: '',
         feedMode: 'has',
         minFeeds: 0,
@@ -5176,55 +4891,26 @@
           date,
           value: rec.value,
           fetchedAt: Date.parse(rec.fetchedAt),
-          ...classifyReal(f.id, rec),
+          cls: signalOf(f.id, rec),
         }
       }
 
-      /** cp0x rules for the real feeds. The rule is ours; the record it reads is untouched. */
-      function classifyReal(id, rec) {
-        if (id === 'defiscan') {
-          const v = rec.value
-          if (v === 'Stage 2')
-            return {
-              cls: 'pos',
-              why: '“Stage 2” is the top step of DeFiScan’s scale (Stage 0 → Stage 2).',
-            }
-          if (v === 'Stage 1')
-            return {
-              cls: 'neu',
-              why: '“Stage 1” is the middle step of DeFiScan’s scale (Stage 0 → Stage 2).',
-            }
-          if (v === 'Stage 0')
-            return {
-              cls: 'neg',
-              why: '“Stage 0” is the bottom step of DeFiScan’s scale (Stage 0 → Stage 2).',
-            }
-          return {
-            cls: 'noconc',
-            why: `The value “${v}” is outside the stage scale — cp0x draws no conclusion.`,
-          }
-        }
+      /** Signal colour of a real record: the step of the feed's own scale it publishes. */
+      function signalOf(id, rec) {
+        if (id === 'defiscan')
+          return { 'Stage 2': 'pos', 'Stage 1': 'neu', 'Stage 0': 'neg' }[rec.value] || 'noconc'
         if (id === 'risklayer') {
           const lvl = rec.extra && rec.extra.riskLevel
           const crit = ((rec.extra && rec.extra.keyFindings) || []).filter(
             (k) => k.severity === 'critical',
           ).length
-          const caveat =
-            ' Risklayer publishes no ordering for its levels — reading a level as the “middle” or “edge” of the scale is cp0x’s interpretation.'
-          if (lvl === 'low') return { cls: 'pos', why: `Level “low”.${caveat}` }
-          if (lvl === 'high') return { cls: 'neg', why: `Level “high”.${caveat}` }
-          if (lvl === 'medium' && crit >= 3)
-            return {
-              cls: 'mixed',
-              why: `Level “medium”, but ${crit} ${plural(crit, 'key finding', 'key findings', 'key findings')} with severity “critical” — the signals diverge.${caveat}`,
-            }
-          if (lvl === 'medium') return { cls: 'neu', why: `Level “medium”.${caveat}` }
-          return { cls: 'noconc', why: 'No risk level given.' }
+          if (lvl === 'low') return 'pos'
+          if (lvl === 'high') return 'neg'
+          if (lvl === 'medium') return crit >= 3 ? 'mixed' : 'neu'
+          return 'noconc'
         }
-        return {
-          cls: 'noconc',
-          why: 'Philidor rates individual vaults and publishes no protocol score. cp0x draws no protocol-level conclusion from vault scores.',
-        }
+        // Philidor rates individual vaults, not protocols: no protocol-level colour.
+        return 'noconc'
       }
 
       function demoCell(p, f) {
@@ -5257,7 +4943,6 @@
           demo: true,
           date,
           cls,
-          why: out.why,
           value: out.value,
           content: out.content,
           fetchedAt: NOW - between(r, 0.5, 8) * 36e5,
@@ -5322,10 +5007,6 @@
           return {
             value: content.rating,
             content,
-            why:
-              cls === 'mixed'
-                ? `Rating components diverge (${comps.map((c) => c.grade).join(', ')}) — mixed signals.`
-                : `“${content.rating}” — in the ${pos} of the feed’s AAA … D scale.`,
           }
         },
         score100(p, f, cls, r) {
@@ -5352,10 +5033,6 @@
           return {
             value: `${score}/100`,
             content,
-            why:
-              cls === 'mixed'
-                ? 'The feed’s sub-scores diverge by more than 40 points — mixed signals.'
-                : `${score} of 100 on the feed’s scale: ${cls === 'pos' ? '≥ 75' : cls === 'neu' ? '50–74' : '< 50'} → ${CLS[cls]}.`,
           }
         },
         stars(p, f, cls, r) {
@@ -5373,10 +5050,6 @@
           return {
             value: `${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}`,
             content,
-            why:
-              cls === 'mixed'
-                ? 'The feed’s comment weighs strengths against weaknesses.'
-                : `${stars} of 5 stars → ${CLS[cls]}.`,
           }
         },
         tier(p, f, cls, r) {
@@ -5396,7 +5069,6 @@
           return {
             value: `Tier ${tier}`,
             content,
-            why: `“Tier ${tier}” on the feed’s Tier 1 … Tier 4 scale → ${CLS[cls]}.`,
           }
         },
         events(p, f, cls, r, date) {
@@ -5458,16 +5130,9 @@
             severityScale: s.join(' > '),
             events: ev,
           }
-          const why =
-            cls === 'neg'
-              ? `There is an open event of level “${s[0]}” (the top level of the feed’s scale).`
-              : cls === 'neu'
-                ? `There are events of level “${s[1]}” and below; no open top-level events.`
-                : 'Apart from service events, there are no alerts. The absence of alerts is not a conclusion about risk.'
           return {
             value: `${ev.length} ${plural(ev.length, 'event', 'events', 'events')} · 30d`,
             content,
-            why,
           }
         },
         research(p, f, cls, r, date) {
@@ -5514,14 +5179,7 @@
               { h: 'Conclusion', p: T[2] },
             ],
           }
-          const why = {
-            pos: 'The author’s conclusion — low risk without material caveats.',
-            neu: 'The author’s conclusion — moderate risk, comparable to peers.',
-            neg: 'The author’s conclusion — elevated risk until the open questions are closed.',
-            mixed:
-              'The author explicitly declines to give a single conclusion: strengths and weaknesses do not balance out.',
-          }[cls]
-          return { value: content.title, content, why }
+          return { value: content.title, content }
         },
         metrics(p, f, cls, r) {
           const n = (a, b, d = 0) => between(r, a, b).toFixed(d)
@@ -5575,10 +5233,6 @@
           return {
             value: `${metrics[0].label}: ${metrics[0].value}`,
             content,
-            why:
-              cls === 'neu'
-                ? 'The feed itself flags 2 of 12 thresholds as exceeded.'
-                : 'The dashboard publishes metrics only, without an assessment — we draw no conclusion.',
           }
         },
       }
@@ -5588,7 +5242,7 @@
         const cells = ordered().map((f) => cellOf(p, f))
         const withData = cells.filter((c) => c.st === 'ok')
         const counts = Object.fromEntries(CLS_ORDER.map((k) => [k, 0]))
-        cells.forEach((c) => counts[c.st === 'ok' ? c.cls : 'none']++)
+        cells.forEach((c) => counts[stateOf(c)]++)
         const dates = withData.map((c) => c.date).filter((d) => d != null)
         const fetched = cells.map((c) => c.fetchedAt || c.attempt).filter(Boolean)
         return {
@@ -5601,10 +5255,6 @@
           latest: dates.length ? Math.max(...dates) : null,
           fetched: fetched.length ? Math.max(...fetched) : null,
         }
-      }
-      function gradeOf(p) {
-        const score = Math.round(FACTORS.reduce((s, f, i) => s + (f.w * p.scores[i]) / 100, 0))
-        return { score, letter: score >= 80 ? 'A' : score >= 60 ? 'B' : score >= 45 ? 'C' : 'D' }
       }
       const tvlOf = (p) => (REAL[p.id] && REAL[p.id].tvl.value) || null
 
@@ -5635,8 +5285,8 @@
           const a0 = a
           const a1 = a + span
           a = a1 + gap + (f.type !== feeds[(i + 1) % N].type ? extra : 0)
-          const title = `${f.name}${f.real ? '' : ' (DEMO)'} — ${c.st === 'ok' ? `data available · cp0x mark: ${CLS[c.cls]}` : c.st === 'error' ? 'fetch error' : 'no data'}${c.stale ? ' · stale' : ''}`
-          body += `<path d="${arc(cx, rm, a0, a1)}" class="seg-${c.st === 'ok' ? c.cls : 'none'}" stroke-width="${c.st === 'ok' ? th : th * 0.45}" fill="none"><title>${esc(title)}</title></path>`
+          const title = `${f.name}${f.real ? '' : ' (DEMO)'} — ${c.st === 'ok' ? `data available · ${CLS[c.cls]}` : c.st === 'error' ? 'fetch error' : 'no data'}${c.stale ? ' · stale' : ''}`
+          body += `<path d="${arc(cx, rm, a0, a1)}" class="seg-${stateOf(c)}" stroke-width="${c.st === 'ok' ? th : th * 0.45}" fill="none"><title>${esc(title)}</title></path>`
           if (c.stale || c.st === 'error') {
             const m = ((a0 + a1) / 2) * (Math.PI / 180)
             const mx = cx + (R + 2.3) * Math.cos(m),
@@ -5661,7 +5311,7 @@
   </button>`
       }
       const LEGEND = () => `<div class="legend">
-  <span class="lead">Signal colour is a cp0x mark; the feed’s original data is shown unchanged.</span>
+  <span class="lead">Colour shows where each feed’s value sits on that feed’s own scale; the feed’s data is shown unchanged.</span>
   ${CLS_ORDER.map((k) => `<span>${sw(k)}${CLS[k]}</span>`).join('')}
   <span class="sep"></span>
   <span>${techStale(TYPE.rating)}${techErr}</span><span>— technical labels, not a risk assessment</span>
@@ -5722,7 +5372,7 @@
               .map(
                 (c) => `
       <a class="rp-row${c.st === 'ok' ? '' : ' nodata'}" href="#/p/${p.id}/feed/${c.f.id}">
-        ${sw(c.st === 'ok' ? c.cls : 'none')}
+        ${sw(stateOf(c))}
         <span><span class="nm">${esc(c.f.name)}${c.f.real ? '' : DEMO}</span>
           <span class="st">${c.st === 'ok' ? `<span>${esc(CLS[c.cls])}</span><span class="mono">${c.date ? fmtDate(c.date) : 'date not given by feed'}</span>` : c.st === 'error' ? `<span>no data</span>${techErr}` : '<span>no data</span>'}${c.stale ? techStale(TYPE[c.f.type]) : ''}</span></span>
         <span class="go">${c.st === 'ok' ? 'Open' : 'Details'} →</span>
@@ -5749,7 +5399,7 @@
       </div></div>
     </div>
     <div class="rp-list">${rows || '<p class="muted" style="padding:12px">No feeds in this state.</p>'}</div>
-    <div class="rp-f"><span>Colour is a cp0x mark</span><a class="text-link" href="#/p/${p.id}/feeds">All protocol feeds →</a></div>`
+    <div class="rp-f"><span>Colour — position on each feed’s own scale</span><a class="text-link" href="#/p/${p.id}/feeds">All protocol feeds →</a></div>`
       }
       pop.addEventListener('click', (e) => {
         if (e.target.closest('[data-pop-close]')) return closePop(true)
@@ -5799,8 +5449,6 @@
         ['name-asc', 'Name: A–Z'],
         ['feeds-desc', 'Feeds with data: most'],
         ['feeds-asc', 'Feeds with data: fewest'],
-        ['grade-desc', 'cp0x rating: best'],
-        ['grade-asc', 'cp0x rating: worst'],
         ['upd-desc', 'Updated: newest'],
       ]
       const uniq = (arr) => [...new Set(arr)]
@@ -5832,7 +5480,6 @@
                     : 'lt100'
           if (band !== f.tvl) return false
         }
-        if (f.grade.length && !f.grade.includes(gradeOf(p).letter)) return false
         const s = stats(p)
         if (f.feed) {
           const c = cellOf(
@@ -5847,13 +5494,7 @@
           !f.types.some((t) => s.cells.some((c) => c.st === 'ok' && c.f.type === t))
         )
           return false
-        if (
-          f.cls.length &&
-          !f.cls.some((k) =>
-            k === 'none' ? s.counts.none > 0 : s.cells.some((c) => c.st === 'ok' && c.cls === k),
-          )
-        )
-          return false
+        if (f.cls.length && !f.cls.some((k) => s.counts[k] > 0)) return false
         return true
       }
       function sorted(list) {
@@ -5863,11 +5504,9 @@
             ? (tvlOf(p) ?? -1)
             : key === 'feeds'
               ? stats(p).n
-              : key === 'grade'
-                ? gradeOf(p).score
-                : key === 'upd'
-                  ? stats(p).latest || 0
-                  : p.name
+              : key === 'upd'
+                ? stats(p).latest || 0
+                : p.name
         return list.slice().sort((a, b) => {
           const A = val(a),
             B = val(b)
@@ -5882,9 +5521,6 @@
         f.cats.forEach((v) => add(`Category: ${v}`, () => f.cats.splice(f.cats.indexOf(v), 1)))
         f.chains.forEach((v) => add(`Chain: ${v}`, () => f.chains.splice(f.chains.indexOf(v), 1)))
         if (f.tvl) add(`TVL: ${TVL_BANDS.find((b) => b[0] === f.tvl)[1]}`, () => (f.tvl = ''))
-        f.grade.forEach((v) =>
-          add(`cp0x rating: ${v}`, () => f.grade.splice(f.grade.indexOf(v), 1)),
-        )
         if (f.feed)
           add(
             `${f.feedMode === 'has' ? 'Has data' : 'No data'}: ${REGISTRY.find((x) => x.id === f.feed).name}`,
@@ -5894,7 +5530,9 @@
         f.types.forEach((v) =>
           add(`Feed type: ${TYPE[v].label}`, () => f.types.splice(f.types.indexOf(v), 1)),
         )
-        f.cls.forEach((v) => add(`cp0x mark: ${CLS[v]}`, () => f.cls.splice(f.cls.indexOf(v), 1)))
+        f.cls.forEach((v) =>
+          add(`Signal colour: ${CLS[v]}`, () => f.cls.splice(f.cls.indexOf(v), 1)),
+        )
         return out
       }
 
@@ -5906,7 +5544,7 @@
       <div>
         <div class="eyebrow"><span class="sq"></span>Neutral DeFi risk aggregator</div>
         <h1>Protocols <span class="count">${PROTOCOLS.length}</span></h1>
-        <p class="lede">One protocol, one row. The ring shows every registry feed as its own segment: the colour is a cp0x mark, and the feeds’ data opens unchanged.</p>
+        <p class="lede">One protocol, one row. The ring shows every registry feed as its own segment: the colour places the feed’s value on its own scale, and the feeds’ data opens unchanged.</p>
       </div>
       <div class="regsize">
         <span class="lbl">Feed registry size ${DEMO}</span>
@@ -5943,14 +5581,10 @@
       'chains',
       CHAINS.slice(0, 10).map((c) => [c, esc(c), cnt((p) => p.chains.includes(c))]),
     )}<p class="hint">Showing the 10 most common of ${CHAINS.length} chains</p></div>
-    <div class="fgroup"><h4>TVL ${prov('src', 'DefiLlama')}</h4>${chipset(
+    <div class="fgroup"><h4>TVL ${prov('DefiLlama')}</h4>${chipset(
       'tvl',
       TVL_BANDS.map(([v, l]) => [v, l]),
     )}<p class="hint">“No TVL” — protocols with an alternative metric</p></div>
-    <div class="fgroup"><h4>cp0x rating ${DEMO}</h4>${chipset(
-      'grade',
-      ['A', 'B', 'C', 'D'].map((g) => [g, g, cnt((p) => gradeOf(p).letter === g)]),
-    )}</div>
     <div class="fgroup"><h4>Data from a specific feed</h4>
       <select class="sel" id="ffeed" style="width:100%"><option value="">Any feed</option>${TYPES.map(
         (t) =>
@@ -5972,10 +5606,10 @@
       'types',
       TYPES.map((t) => [t.id, t.label]),
     )}<p class="hint">Has data from at least one feed of this type</p></div>
-    <div class="fgroup"><h4>cp0x mark</h4>${chipset(
+    <div class="fgroup"><h4>Signal colour</h4>${chipset(
       'cls',
       CLS_ORDER.map((k) => [k, `${sw(k)}${CLS[k]}`]),
-    )}<p class="hint">At least one feed with this mark</p></div>`
+    )}<p class="hint">At least one feed with this colour</p></div>`
       }
       function syncFilters() {
         const f = S.f
@@ -6015,12 +5649,11 @@
         document.getElementById('results').innerHTML = list.length
           ? `
     <table class="ptable">
-      <caption class="sr-only">Protocols: categories, chains, TVL, feeds, cp0x rating and updates</caption>
+      <caption class="sr-only">Protocols: categories, chains, TVL, feeds and updates</caption>
       <thead><tr>
         ${th('name', 'Protocol')}<th>Categories</th><th>Chains</th>
-        ${th('tvl', 'TVL', prov('src', 'DefiLlama · Ethereum'))}
-        ${th('feeds', 'Feeds', `<span class="prov" style="margin-top:5px;display:flex">colour — cp0x mark</span>`)}
-        ${th('grade', 'cp0x rating', prov('cp0x', 'DEMO'))}
+        ${th('tvl', 'TVL', prov('DefiLlama · Ethereum'))}
+        ${th('feeds', 'Feeds', `<span class="prov" style="margin-top:5px;display:flex">colour — feed’s own scale</span>`)}
         ${th('upd', 'Updated')}
       </tr></thead>
       <tbody>${list.map(row).join('')}</tbody>
@@ -6029,7 +5662,6 @@
       }
       function row(p) {
         const s = stats(p)
-        const g = gradeOf(p)
         const tvl = tvlOf(p)
         const shown = 2
         const tvlCell =
@@ -6047,7 +5679,6 @@
       )}${p.chains.length > shown ? `<span class="tag">+${p.chains.length - shown}</span>` : ''}</div></td>
     <td>${tvlCell}</td>
     <td>${ringButton(p, 54)}</td>
-    <td><div class="grade"><span class="g">${g.letter}</span><span><span class="mono">${g.score}/100</span><small>cp0x ${DEMO}</small></span></div></td>
     <td><div class="upd">${s.latest ? fmtDate(s.latest) : '—'}<small>${s.latest ? rel(s.latest) : 'no data'}${s.fetched ? ` · collected ${fmtDate(s.fetched)}` : ''}</small></div></td>
   </tr>`
       }
@@ -6057,7 +5688,6 @@
         S.view = 'protocol'
         document.title = `${p.name} · defi-dna · mockup v4`
         const s = stats(p)
-        const g = gradeOf(p)
         const tvl = REAL[p.id].tvl
         const reg = ordered()
         if (feedId && reg.some((f) => f.id === feedId)) S.sel[p.id] = feedId
@@ -6086,17 +5716,12 @@
 
     <section class="facts" aria-label="Key figures">
       <div class="fact">
-        <div class="l">${tvl.value != null ? 'TVL' : 'Alternative metric'} ${prov('src', 'DefiLlama')}</div>
+        <div class="l">${tvl.value != null ? 'TVL' : 'Alternative metric'} ${prov('DefiLlama')}</div>
         ${
           tvl.value != null
             ? `<div class="v">${money(tvl.value)}</div><div class="s">Ethereum mainnet · ${esc(REAL[p.id].tvlComponents.join(' + '))}</div><div class="s">Collected ${fmtDT(Date.parse(tvl.fetchedAt))} · <a class="text-link" href="${esc(tvl.url)}" target="_blank" rel="noopener noreferrer">source${ICON.ext}</a></div>`
             : `<div class="v">${money(p.alt.value)} ${DEMO}</div><div class="s">${esc(p.alt.label)} — instead of TVL</div><div class="s">DefiLlama: “${esc(tvl.note)}”</div>`
         }
-      </div>
-      <div class="fact cp0x">
-        <div class="l">cp0x rating ${prov('cp0x')} ${DEMO}</div>
-        <div class="v"><span class="rc-grade" style="width:40px;height:40px;font-size:20px;border-radius:10px">${g.letter}</span>${g.score}<span class="muted" style="font-size:13px">/100</span></div>
-        <div class="s">A cp0x assessment, not feed data · <button type="button" class="text-link" data-goto-sec="overview">methodology</button></div>
       </div>
       <div class="fact">
         <div class="l">Feed coverage</div>
@@ -6112,82 +5737,41 @@
     </section>
 
     <nav class="secnav" id="secnav" aria-label="Page sections">
-      <button type="button" data-goto-sec="overview">cp0x overview</button>
+      <button type="button" data-goto-sec="overview">Overview</button>
       <button type="button" data-goto-sec="feeds">Feeds <span class="count">${s.n}/${s.N}</span></button>
       <button type="button" data-goto-sec="sources">Sources and history</button>
       <span class="aside">Sections of a single protocol page</span>
     </nav>
 
-    <section class="psec" id="sec-overview">${overviewSection(p, s, g)}</section>
+    <section class="psec" id="sec-overview">${overviewSection(p, s)}</section>
     <section class="psec" id="sec-feeds">${feedsSection(p, s)}</section>
     <section class="psec" id="sec-sources">${sourcesSection(p, s)}</section>`
         renderFeedPanel(p)
         spy()
       }
 
-      /* ---------- cp0x overview ---------- */
-      function overviewSection(p, s, g) {
-        const inc = REAL[p.id].incidents.items
-        const all = REGISTRY.map((f) => cellOf(p, f))
-        const allN = all.filter((c) => c.st === 'ok').length
-        const cnt = (k) => all.filter((c) => c.st === 'ok' && c.cls === k).length
-        const basis = [
-          `${allN} of ${REGISTRY.length} feeds in the full registry have data`,
-          `${cnt('pos')} pos. · ${cnt('neu')} neut. · ${cnt('neg')} neg. · ${cnt('mixed')} mixed · ${cnt('noconc')} no concl.`,
-          inc.length
-            ? `${inc.length} ${plural(inc.length, 'incident', 'incidents', 'incidents')} in the DefiLlama registry, the largest ${usdEn(Math.max(...inc.map((i) => i.amountUsd || 0)))}`
-            : 'No incidents in the DefiLlama registry',
-          'Governance facts below; the bar is a timelock and an immutable core',
-          'Audit reports from the “Sources and history” section',
-        ]
+      /* ---------- overview ---------- */
+      function overviewSection(p, s) {
         return `
-    <div class="psec-h"><h2>cp0x overview</h2><p>cp0x’s own assessment and notes — kept apart from feed data.</p></div>
-    <div class="cp0x-zone">
-      <div class="zone-label">${prov('cp0x')} Everything in this section is a cp0x conclusion. Feed data is in the “Feeds” section, unchanged.</div>
-      <div class="ov-grid">
-        <div class="panel rating-card">
-          <div class="rc-top"><span class="rc-grade">${g.letter}</span><div>
-            <div class="score">${g.score}/100 ${DEMO}</div>
-            <p>${esc(p.verdict)}</p>
-          </div></div>
-          <details class="method"><summary>Short methodology</summary><ul>
-            <li>Five weighted factors, each scored from 0 to 100; the result is the weighted sum.</li>
-            <li>Scale: A ≥ 80 · B ≥ 60 · C ≥ 45 · D &lt; 45.</li>
-            <li>Feed marks are counted across the full registry (${REGISTRY.length} feeds), regardless of the selected registry size.</li>
-            <li>The rating neither replaces nor changes feed data: feeds are shown as published.</li>
-            <li>All rating numbers in this mockup are DEMO.</li>
-          </ul></details>
-          <table class="ftable"><thead><tr><th>Factor</th><th>Basis</th><th class="num">Weight</th><th class="num">Score ${DEMO}</th></tr></thead>
-          <tbody>${FACTORS.map((f, i) => `<tr><td><b>${esc(f.k)}</b></td><td class="muted">${esc(basis[i])}</td><td class="num">${f.w}%</td><td class="num">${p.scores[i]}<span class="bar"><i style="width:${p.scores[i]}%"></i></span></td></tr>`).join('')}</tbody></table>
-        </div>
-        <div style="display:grid;gap:14px">
-          <div class="panel gov">
-            <div class="panel-h"><h3>Protocol governance</h3><span class="aside">facts</span></div>
-            <dl class="kv">${p.gov.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}${prov('src', 'protocol docs')}</dd></div>`).join('')}</dl>
-          </div>
-          <div class="panel">
-            <div class="panel-h"><h3>cp0x marks</h3><span class="aside">${prov('cp0x')}</span></div>
-            <ul class="notes">${notesFor(p, s)
-              .map(
-                (n) =>
-                  `<li><span class="d">${n.date}</span><span><span class="tg">${esc(n.tag)}</span>${n.html}</span></li>`,
-              )
-              .join('')}</ul>
-          </div>
-        </div>
+    <div class="psec-h"><h2>Overview</h2><p>Protocol facts and data notes. Feed data is in the “Feeds” section, unchanged.</p></div>
+    <div class="ov-grid">
+      <div class="panel gov">
+        <div class="panel-h"><h3>Protocol governance</h3><span class="aside">facts</span></div>
+        <dl class="kv">${p.gov.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}${prov('protocol docs')}</dd></div>`).join('')}</dl>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3>Data notes</h3><span class="aside">collection and freshness</span></div>
+        <ul class="notes">${notesFor(p, s)
+          .map(
+            (n) =>
+              `<li><span class="d">${n.date}</span><span><span class="tg">${esc(n.tag)}</span>${n.html}</span></li>`,
+          )
+          .join('')}</ul>
       </div>
     </div>`
       }
       function notesFor(p, s) {
-        const out = p.notes.map(([tag, text, link]) => ({
-          date: fmtDate(NOW - DAY),
-          tag,
-          html:
-            esc(text) +
-            (link && link.startsWith('feed:') && registry().some((f) => f.id === link.slice(5))
-              ? ` <a href="#/p/${p.id}/feed/${link.slice(5)}">to feed →</a>`
-              : ''),
-        }))
+        const out = []
         s.cells
           .filter((c) => c.stale)
           .forEach((c) =>
@@ -6227,8 +5811,8 @@
           : [
               {
                 date: fmtDate(NOW - DAY),
-                tag: 'No marks',
-                html: 'cp0x has no notes for this protocol yet.',
+                tag: 'Notes',
+                html: 'No collection or freshness issues for this protocol.',
               },
             ]
       }
@@ -6247,7 +5831,7 @@
             .map(
               (c) => `
           <button type="button" class="fl-item${c.st === 'ok' ? '' : ' nodata'}" data-feed="${c.f.id}" aria-current="${S.sel[p.id] === c.f.id}">
-            ${sw(c.st === 'ok' ? c.cls : 'none')}
+            ${sw(stateOf(c))}
             <span><span class="nm">${esc(c.f.name)}${c.f.real ? '' : DEMO}</span>
             <span class="st">${c.st === 'ok' ? `<span class="mono">${c.date ? fmtDate(c.date) : 'no date'}</span>` : c.st === 'error' ? techErr : '<span>no data</span>'}${c.stale ? techStale(TYPE[c.f.type]) : ''}</span></span>
           </button>`,
@@ -6279,10 +5863,6 @@
               : c.fetchedAt
                 ? `<span>Checked: ${fmtDT(c.fetchedAt)}</span>`
                 : ''
-        const note =
-          c.st === 'ok'
-            ? `<div class="cp0x-note"><div class="lbl">${prov('cp0x', 'mark')}${markTag(c.cls)}</div><div><p>${esc(c.why)}</p><small>This is cp0x’s classification under ${f.real ? 'a cp0x rule' : 'a DEMO rule'}, not the feed’s conclusion.${f.real ? '' : ` ${DEMO}`}</small></div></div>`
-            : `<div class="cp0x-note"><div class="lbl">${prov('cp0x', 'mark')}${markTag('none')}</div><div><p>No data — no mark is given.${c.st === 'error' ? ' A fetch error is a technical label, not a risk assessment.' : ''}</p></div></div>`
         let body
         if (c.st === 'ok') {
           const origin = f.real
@@ -6302,14 +5882,13 @@
     <div class="ff-h">
       <div>
         <div class="ff-name"><span class="tag">${t.label}</span><h3>${esc(f.name)}</h3>${f.real ? '' : DEMO}${status}${c.stale ? techStale(t) : ''}</div>
-        <div class="ff-meta">${prov('src', f.real ? f.name : 'anonymized demo feed')}<span>${esc(f.topic)}</span>${dateLine}</div>
+        <div class="ff-meta">${prov(f.real ? f.name : 'anonymized demo feed')}<span>${esc(f.topic)}</span>${dateLine}</div>
       </div>
       <div class="ff-links">
         <a class="btn secondary sm" href="${esc(src)}" target="_blank" rel="noopener noreferrer">Original source ${ICON.ext}</a>
         <a class="text-link" href="${esc(method)}" target="_blank" rel="noopener noreferrer">Methodology${ICON.ext}</a>
       </div>
     </div>
-    ${note}
     ${body}`
       }
       const fmtLabel = (fmt) =>
@@ -6475,14 +6054,14 @@
     <div class="psec-h"><h2>Sources and history</h2><p>Audits, documented events and the origin of every figure on the page.</p></div>
     <div class="sh-grid">
       <div class="panel">
-        <div class="panel-h"><h3>Audit reports</h3>${DEMO}<span class="aside">${prov('src', 'cp0x audit registry')}</span></div>
+        <div class="panel-h"><h3>Audit reports</h3>${DEMO}<span class="aside">${prov('cp0x audit registry')}</span></div>
         <div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>Date</th><th>Auditor</th><th>Scope</th><th>Findings (crit. / high / med. / low)</th><th>Report</th><th>Origin</th></tr></thead>
-        <tbody>${audits.map((a) => `<tr><td class="mono">${fmtDate(a.date)}</td><td>${a.firm}</td><td>${esc(a.scope)}</td><td class="mono">${a.sev.join(' / ')}</td><td><a class="text-link" href="${esc(p.links.GitHub)}" target="_blank" rel="noopener noreferrer">repository${ICON.ext}</a></td><td>${prov('src', 'cp0x audit registry')} ${DEMO}</td></tr>`).join('')}</tbody></table></div>
+        <tbody>${audits.map((a) => `<tr><td class="mono">${fmtDate(a.date)}</td><td>${a.firm}</td><td>${esc(a.scope)}</td><td class="mono">${a.sev.join(' / ')}</td><td><a class="text-link" href="${esc(p.links.GitHub)}" target="_blank" rel="noopener noreferrer">repository${ICON.ext}</a></td><td>${prov('cp0x audit registry')} ${DEMO}</td></tr>`).join('')}</tbody></table></div>
         <div class="panel-note">Auditors are anonymized; dates and findings are invented (DEMO). In production every row links to the auditor’s PDF report.</div>
       </div>
 
       <div class="panel">
-        <div class="panel-h"><h3>Publicly documented events</h3><span class="aside">${prov('src', 'DefiLlama · Hacks')} collected ${fmtDate(Date.parse(R.incidents.fetchedAt))}</span></div>
+        <div class="panel-h"><h3>Publicly documented events</h3><span class="aside">${prov('DefiLlama · Hacks')} collected ${fmtDate(Date.parse(R.incidents.fetchedAt))}</span></div>
         ${
           incidents.length
             ? `<div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>date</th><th>name</th><th>classification</th><th>technique</th><th>amountUsd</th><th>returnedFunds</th><th>Link</th></tr></thead>
@@ -6496,10 +6075,9 @@
       <div class="panel">
         <div class="panel-h"><h3>Origin of the data on this page</h3></div>
         <div class="tbl-wrap" style="border:0;border-radius:0"><table class="dtable"><thead><tr><th>Figure</th><th>Source</th><th>Collected</th><th>Status</th><th>Link</th></tr></thead><tbody>
-          <tr><td>TVL</td><td>${prov('src', 'DefiLlama')}</td><td class="mono">${fmtDT(Date.parse(R.tvl.fetchedAt))}</td><td>${R.tvl.value != null ? 'data available' : esc(R.tvl.note)}</td><td><a class="text-link" href="${esc(R.tvl.url)}" target="_blank" rel="noopener noreferrer">open${ICON.ext}</a></td></tr>
-          <tr><td>Incidents</td><td>${prov('src', 'DefiLlama · Hacks')}</td><td class="mono">${fmtDT(Date.parse(R.incidents.fetchedAt))}</td><td>${incidents.length} ${plural(incidents.length, 'record', 'records', 'records')}</td><td><a class="text-link" href="${esc(R.incidents.url)}" target="_blank" rel="noopener noreferrer">open${ICON.ext}</a></td></tr>
-          ${s.cells.map((c) => `<tr><td>Feed · ${TYPE[c.f.type].label}</td><td>${prov('src', c.f.name)}${c.f.real ? '' : ` ${DEMO}`}</td><td class="mono">${c.fetchedAt ? fmtDT(c.fetchedAt) : c.attempt ? fmtDT(c.attempt) : '—'}</td><td>${c.st === 'ok' ? 'data available' : c.st === 'error' ? techErr : 'no data'}${c.stale ? ` ${techStale(TYPE[c.f.type])}` : ''}</td><td><a class="text-link" href="#/p/${p.id}/feed/${c.f.id}">to feed →</a></td></tr>`).join('')}
-          <tr><td>Rating and marks</td><td>${prov('cp0x')}</td><td class="mono">${fmtDT(NOW - 3 * 36e5)}</td><td>${DEMO}</td><td><button type="button" class="text-link" data-goto-sec="overview">methodology</button></td></tr>
+          <tr><td>TVL</td><td>${prov('DefiLlama')}</td><td class="mono">${fmtDT(Date.parse(R.tvl.fetchedAt))}</td><td>${R.tvl.value != null ? 'data available' : esc(R.tvl.note)}</td><td><a class="text-link" href="${esc(R.tvl.url)}" target="_blank" rel="noopener noreferrer">open${ICON.ext}</a></td></tr>
+          <tr><td>Incidents</td><td>${prov('DefiLlama · Hacks')}</td><td class="mono">${fmtDT(Date.parse(R.incidents.fetchedAt))}</td><td>${incidents.length} ${plural(incidents.length, 'record', 'records', 'records')}</td><td><a class="text-link" href="${esc(R.incidents.url)}" target="_blank" rel="noopener noreferrer">open${ICON.ext}</a></td></tr>
+          ${s.cells.map((c) => `<tr><td>Feed · ${TYPE[c.f.type].label}</td><td>${prov(c.f.name)}${c.f.real ? '' : ` ${DEMO}`}</td><td class="mono">${c.fetchedAt ? fmtDT(c.fetchedAt) : c.attempt ? fmtDT(c.attempt) : '—'}</td><td>${c.st === 'ok' ? 'data available' : c.st === 'error' ? techErr : 'no data'}${c.stale ? ` ${techStale(TYPE[c.f.type])}` : ''}</td><td><a class="text-link" href="#/p/${p.id}/feed/${c.f.id}">to feed →</a></td></tr>`).join('')}
         </tbody></table></div>
       </div>
 

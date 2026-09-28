@@ -323,10 +323,6 @@
         color: var(--source-ink-1);
         background: var(--source-1);
       }
-      .prov.cp {
-        color: var(--surface);
-        background: var(--ink);
-      }
 
       /* status dots / segments */
       .dot {
@@ -677,9 +673,6 @@
       .grid thead tr.grp th.g-src {
         box-shadow: inset 0 -2px 0 var(--source-ink-1);
       }
-      .grid thead tr.grp th.g-cp {
-        box-shadow: inset 0 -2px 0 var(--ink);
-      }
       .grp-note {
         font-size: 10px;
         color: var(--muted);
@@ -894,29 +887,6 @@
       .fresh.stale {
         color: var(--amber);
       }
-      .cpbar {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .cpbar b {
-        font: 600 12px var(--mono);
-        width: 34px;
-        text-align: right;
-      }
-      .meter {
-        width: 54px;
-        height: 5px;
-        border-radius: 3px;
-        background: var(--line);
-        overflow: hidden;
-      }
-      .meter i {
-        display: block;
-        height: 100%;
-        background: var(--muted);
-        border-radius: 3px;
-      }
       .go {
         color: var(--faint);
         width: 28px;
@@ -1053,20 +1023,6 @@
       }
       .pop-f a:hover {
         text-decoration: underline;
-      }
-      .bd {
-        display: grid;
-        grid-template-columns: 1fr 60px 34px;
-        align-items: center;
-        gap: 8px;
-        padding: 3px 13px;
-      }
-      .bd .meter {
-        width: 60px;
-      }
-      .bd b {
-        font: 600 11px var(--mono);
-        text-align: right;
       }
 
       /* ------------------------------------------------------------------ filter drawer */
@@ -1437,7 +1393,6 @@
               <option value="tvl-asc">TVL · low to high</option>
               <option value="name-asc">Name · A–Z</option>
               <option value="cov-desc">Feed coverage · most first</option>
-              <option value="cp-desc">CP0X coverage · highest first</option>
               <option value="upd-asc">Recently updated</option>
               <option value="audits-desc">Audits · most first</option>
               <option value="events-desc">Security events · most first</option>
@@ -1490,7 +1445,7 @@
                     >counts of what feeds published — not verified or scored by us</span
                   >
                 </th>
-                <th colspan="2" class="g-cp"><span class="prov cp">CP0X derived</span></th>
+                <th></th>
               </tr>
               <tr class="cols">
                 <th>
@@ -1529,11 +1484,6 @@
                     Updated <span class="arr">↕</span></button
                   ><span class="th-sub">latest source change</span>
                 </th>
-                <th>
-                  <button class="th-sort" data-sort="cp-desc">
-                    CP0X Coverage <span class="arr">↕</span></button
-                  ><span class="th-sub">data completeness — not a rating</span>
-                </th>
                 <th aria-label="Open"></th>
               </tr>
             </thead>
@@ -1566,7 +1516,6 @@
             <span><span class="prov meta">Meta</span> protocol facts from our registry</span>
             <span><span class="prov cov">Coverage</span> which feeds have data</span>
             <span><span class="prov src">Source</span> published by a feed, shown as-is</span>
-            <span><span class="prov cp">CP0X</span> computed by DeFi DNA about our own data</span>
           </div>
           <div class="legend">
             <span class="lg-title">Segment order</span>
@@ -1648,15 +1597,6 @@
               ><button type="button" data-v="1">≥ 1</button
               ><button type="button" data-v="5">≥ 5</button
               ><button type="button" data-v="10">≥ 10</button>
-            </div>
-          </div>
-          <div class="fl">
-            <div class="fl-label">CP0X coverage <span class="prov cp">CP0X</span></div>
-            <div class="seg" data-f="cp">
-              <button type="button" data-v="0" class="on">Any</button
-              ><button type="button" data-v="50">&gt; 50%</button
-              ><button type="button" data-v="75">&gt; 75%</button
-              ><button type="button" data-v="100">100%</button>
             </div>
           </div>
         </section>
@@ -1743,7 +1683,7 @@
         '-': { cls: 'none', label: 'No data' },
       }
       // s = status per feed, in FEEDS order. upd = hours since latest source change. fresh = source updates in last 24h.
-      // auditAge = months since latest audit. cp = CP0X coverage %.
+      // auditAge = months since latest audit.
       const P = [
         {
           id: 'aave',
@@ -1758,7 +1698,6 @@
           lastEvent: 'Sep 25, 2026',
           upd: 2,
           fresh: 2,
-          cp: 91,
           chains: [
             'Ethereum',
             'Arbitrum',
@@ -1790,7 +1729,6 @@
           events: 0,
           upd: 5,
           fresh: 1,
-          cp: 88,
           chains: ['Ethereum', 'Arbitrum', 'Optimism'],
           recent: [['DeFiScan', '5h', 'stage page updated']],
         },
@@ -1806,7 +1744,6 @@
           events: 0,
           upd: 144,
           fresh: 0,
-          cp: 64,
           chains: ['Ethereum'],
         },
         {
@@ -1822,7 +1759,6 @@
           lastEvent: 'Mar 2025',
           upd: 26,
           fresh: 0,
-          cp: 84,
           chains: ['Ethereum', 'Base', 'Arbitrum', 'Optimism'],
         },
         {
@@ -1837,7 +1773,6 @@
           events: 0,
           upd: 3,
           fresh: 3,
-          cp: 86,
           chains: ['Ethereum', 'Base', 'Arbitrum', 'Polygon', 'Unichain', 'Optimism'],
           recent: [
             ['Philidor', '3h', '4 vault scores updated'],
@@ -1857,7 +1792,6 @@
           events: 0,
           upd: 30,
           fresh: 0,
-          cp: 72,
           chains: [
             'Ethereum',
             'Arbitrum',
@@ -1882,7 +1816,6 @@
           lastEvent: 'Jun 2025',
           upd: 22,
           fresh: 1,
-          cp: 89,
           chains: [
             'Ethereum',
             'Arbitrum',
@@ -1915,7 +1848,6 @@
           lastEvent: 'Jan 2026',
           upd: 50,
           fresh: 0,
-          cp: 78,
           chains: [
             'Ethereum',
             'Arbitrum',
@@ -1940,7 +1872,6 @@
           events: 0,
           upd: 6,
           fresh: 1,
-          cp: 83,
           chains: ['Ethereum', 'Base', 'Gnosis'],
           recent: [['Oracle Feed', '6h', 'price source table refreshed']],
         },
@@ -1957,7 +1888,6 @@
           lastEvent: 'Jul 2023',
           upd: 150,
           fresh: 0,
-          cp: 81,
           chains: [
             'Ethereum',
             'Arbitrum',
@@ -1986,7 +1916,6 @@
           lastEvent: 'Oct 2024',
           upd: 47,
           fresh: 0,
-          cp: 85,
           chains: [
             'Ethereum',
             'Arbitrum',
@@ -2011,7 +1940,6 @@
           events: 0,
           upd: 290,
           fresh: 0,
-          cp: 76,
           chains: ['Ethereum'],
         },
         {
@@ -2026,7 +1954,6 @@
           events: 0,
           upd: 96,
           fresh: 0,
-          cp: 69,
           chains: ['Ethereum', 'Arbitrum', 'Base', 'Polygon'],
         },
         {
@@ -2042,7 +1969,6 @@
           lastEvent: 'Mar 2023',
           upd: 20,
           fresh: 1,
-          cp: 74,
           chains: ['Ethereum', 'Base', 'Arbitrum', 'Sonic', 'BNB Chain', 'Avalanche', 'Unichain'],
           recent: [['Audit Feed', '20h', 'new audit listed']],
         },
@@ -2059,7 +1985,6 @@
           lastEvent: 'Nov 2025',
           upd: 2,
           fresh: 4,
-          cp: 82,
           chains: [
             'Ethereum',
             'Arbitrum',
@@ -2091,7 +2016,6 @@
           lastEvent: 'Jul 2025',
           upd: 216,
           fresh: 0,
-          cp: 58,
           chains: ['Arbitrum', 'Avalanche'],
         },
         {
@@ -2107,7 +2031,6 @@
           lastEvent: 'Apr 2023',
           upd: 816,
           fresh: 0,
-          cp: 71,
           chains: ['Ethereum', 'Arbitrum', 'Base', 'Polygon', 'Optimism', 'Sonic'],
         },
         {
@@ -2122,7 +2045,6 @@
           events: 0,
           upd: 984,
           fresh: 0,
-          cp: 52,
           chains: [
             'Ethereum',
             'Arbitrum',
@@ -2169,13 +2091,6 @@
         'zkSync',
         'Unichain',
         'Mantle',
-      ]
-      const CP_PARTS = [
-        ['Protocol metadata', 9],
-        ['Deployments & contracts', 3],
-        ['Market metrics', -2],
-        ['Feed mapping', 5],
-        ['Protocol module data', -15],
       ]
 
       /* ------------------------------------------------------------------ helpers */
@@ -2225,7 +2140,6 @@
         chains: new Set(),
         tvl: 0,
         feedsMin: 0,
-        cp: 0,
         src: {},
         sig: { neg: false, neu: false, pos: false },
         hasAudits: false,
@@ -2245,7 +2159,6 @@
         if (F.chains.size && !p.chains.some((c) => F.chains.has(c))) return false
         if (F.tvl && p.tvl <= F.tvl) return false
         if (F.feedsMin && covered(p) < F.feedsMin) return false
-        if (F.cp && (F.cp === 100 ? p.cp < 100 : p.cp <= F.cp)) return false
         for (const [id, mode] of Object.entries(F.src)) {
           const has = st[FEEDS.findIndex((f) => f.id === id)] !== '-'
           if ((mode === 'has' && !has) || (mode === 'missing' && has)) return false
@@ -2268,7 +2181,6 @@
         'tvl-asc': (a, b) => a.tvl - b.tvl,
         'name-asc': (a, b) => a.name.localeCompare(b.name),
         'cov-desc': (a, b) => covered(b) - covered(a) || b.tvl - a.tvl,
-        'cp-desc': (a, b) => b.cp - a.cp,
         'upd-asc': (a, b) => a.upd - b.upd,
         'audits-desc': (a, b) => b.audits - a.audits,
         'events-desc': (a, b) => b.events - a.events || b.tvl - a.tvl,
@@ -2302,7 +2214,6 @@
         : `<span class="evt zero">0 reported</span>`
     }</td>
     <td><span class="fresh${p.upd < 24 ? ' recent' : ''}${p.upd > 720 ? ' stale' : ''}">${age(p.upd)}</span></td>
-    <td><button type="button" class="hit cpbar" data-pop="cp" data-i="${i}" aria-label="CP0X coverage breakdown"><b>${p.cp}%</b><span class="meter"><i style="width:${p.cp}%"></i></span></button></td>
     <td class="go">→</td>
   </tr>`
       }
@@ -2329,11 +2240,6 @@
         F.chains.forEach((c) => out.push([`Chain: ${c}`, () => F.chains.delete(c)]))
         if (F.tvl) out.push([`TVL > ${usd(F.tvl).replace('.0', '')}`, () => (F.tvl = 0)])
         if (F.feedsMin) out.push([`Feeds with data ≥ ${F.feedsMin}`, () => (F.feedsMin = 0)])
-        if (F.cp)
-          out.push([
-            `CP0X coverage ${F.cp === 100 ? '= 100%' : '> ' + F.cp + '%'}`,
-            () => (F.cp = 0),
-          ])
         Object.entries(F.src).forEach(([id, mode]) => {
           const name = FEEDS.find((f) => f.id === id).name
           out.push([
@@ -2416,16 +2322,6 @@
       <div class="pop-body"><b>${p.events} event${p.events > 1 ? 's' : ''}</b> reported by <b>Security Feed</b>. Latest: ${p.lastEvent}.<br>
       Listed as the source published them. DeFi DNA does not verify, classify or score incidents.</div>
       <div class="pop-f"><span>Source: Security Feed</span><a href="protocol-aave.html#risk/security">Open events →</a></div>`
-        },
-        cp(p) {
-          const rows = CP_PARTS.map(([label, off]) => {
-            const v = Math.max(0, Math.min(100, p.cp + off))
-            return `<div class="bd"><span>${label}</span><span class="meter"><i style="width:${v}%"></i></span><b>${v}%</b></div>`
-          }).join('')
-          return `<div class="pop-h"><strong>CP0X coverage · ${p.cp}%</strong><span class="prov cp">CP0X</span></div>
-      <div class="pop-sub">How complete <b>our</b> collected data is for ${p.name}. Data completeness — not a risk rating.</div>
-      <div style="padding:6px 0">${rows}</div>
-      <div class="pop-f"><span>Derived by DeFi DNA</span><a href="#">Methodology →</a></div>`
         },
         upd(p) {
           const items = (p.recent || [])
@@ -2603,7 +2499,6 @@
           chains: new Set(),
           tvl: 0,
           feedsMin: 0,
-          cp: 0,
           src: {},
           sig: { neg: false, neu: false, pos: false },
           hasAudits: false,
