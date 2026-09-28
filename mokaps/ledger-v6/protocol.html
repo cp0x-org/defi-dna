@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en" data-default-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Protocol sources · DeFi DNA Ledger mockup</title>
+    <script src="theme-init.js"></script>
+    <link rel="stylesheet" href="ui-controls.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data.js" defer></script>
+    <script src="demo-feeds.js" defer></script>
+    <script src="shared.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body data-page="protocol">
+    <a class="skip-link" href="#main">Skip to source record</a>
+    <header class="site-header">
+      <div class="shell site-header-inner">
+        <a class="brand" href="../" aria-label="DeFi DNA mockups home"
+          ><span class="brand-mark" aria-hidden="true">▦</span> defi-dna<span class="brand-period"
+            >.</span
+          ></a
+        >
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="./">Protocols</a><a href="../v7/">Browse by source</a>
+        </nav>
+        <span class="concept-label">Ledger · UX mockup</span>
+      </div>
+      <div class="controls-strip"><div class="shell" data-dna-controls></div></div>
+    </header>
+
+    <main id="main" class="shell detail-main">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="./">Protocols</a><span aria-hidden="true">/</span
+        ><span id="breadcrumb-name">Version</span>
+      </nav>
+      <div id="route-error" class="route-error" hidden>
+        <h1>Version not found</h1>
+        <p>This version is not in the frozen project snapshot.</p>
+        <a href="./">Return to protocols</a>
+      </div>
+      <div id="detail-content" hidden>
+        <div class="detail-header">
+          <div>
+            <p class="eyebrow">One version · independent source records</p>
+            <h1 id="version-title"></h1>
+            <p id="version-description" class="intro-copy"></p>
+          </div>
+          <label class="version-picker" for="version-select"
+            >Version in this protocol
+            <select id="version-select"></select
+          ></label>
+        </div>
+        <div class="record-summary">
+          <div>
+            <span class="summary-label">Category</span><strong id="version-category"></strong>
+          </div>
+          <div>
+            <span class="summary-label">TVL · this version</span><strong id="version-tvl"></strong
+            ><span class="summary-subline" id="tvl-provenance"></span>
+          </div>
+          <div>
+            <span class="summary-label">Connected source records</span
+            ><strong id="version-coverage"></strong
+            ><span class="summary-subline" id="preview-count"
+              >Technical coverage, not a risk score</span
+            >
+          </div>
+        </div>
+        <p class="source-rule">
+          Each connected source assesses its own subject and uses its own scale. Philidor rates
+          individual vaults, not this protocol as a whole. “Source assessed” and “Collected” are
+          different dates. Demo candidates have not been connected or assessed.
+        </p>
+
+        <div class="detail-layout">
+          <aside class="source-rail" aria-labelledby="source-rail-title">
+            <h2 id="source-rail-title">Risk sources</h2>
+            <p id="source-rail-note">Choose a connected record or a preview candidate.</p>
+            <div
+              id="source-list"
+              class="source-list"
+              role="group"
+              aria-label="Choose a risk source"
+            ></div>
+            <a class="rail-link" id="source-lens-link" href="../v7/"
+              >See protocols by source <span aria-hidden="true">↗</span></a
+            >
+          </aside>
+          <section
+            id="source-panel"
+            class="source-panel"
+            aria-live="polite"
+            aria-label="Selected source record"
+          ></section>
+        </div>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="shell">
+        DeFi DNA · Ledger concept · source values are shown in their original scope
+      </div>
+    </footer>
+    <script src="ui-controls.js" defer></script>
+  </body>
+</html>

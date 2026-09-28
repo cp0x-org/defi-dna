@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" data-default-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Protocol records · Source lens</title>
+    <script src="theme-init.js"></script>
+    <link rel="stylesheet" href="ui-controls.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="data.js"></script>
+    <script defer src="demo-feeds.js"></script>
+    <script defer src="shared.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body data-page="protocol">
+    <a class="skip-link" href="#main">Skip to source records</a>
+    <header class="masthead">
+      <div class="masthead-inner">
+        <a class="brand" href="index.html" aria-label="Source lens directory"
+          ><span class="brand-symbol">◫</span><span>DeFi DNA</span
+          ><span class="brand-suffix">/ Source lens</span></a
+        >
+        <a class="quiet-link" id="back-link" href="index.html">Back to protocols</a>
+      </div>
+      <div class="controls-strip"><div class="control-slot" data-dna-controls></div></div>
+    </header>
+    <div class="sample-strip">
+      Research mockup · Frozen public project snapshot <span id="snapshot-date">loading</span> ·
+      <span id="mode-caption">Feed set loading</span> · Source values are not cp0x ratings
+    </div>
+    <main id="main" class="page-shell detail-page">
+      <div id="route-error" class="route-error" hidden></div>
+      <div id="detail" hidden>
+        <div class="detail-heading">
+          <div>
+            <p class="section-kicker">Protocol / original feed records</p>
+            <h1 id="protocol-title"></h1>
+            <p id="protocol-description" class="muted"></p>
+          </div>
+          <label class="version-control" for="version-select"
+            >Version
+            <select id="version-select"></select
+          ></label>
+        </div>
+        <div class="detail-workbench">
+          <aside class="detail-rail" aria-labelledby="detail-rail-heading">
+            <h2 id="detail-rail-heading">Source records</h2>
+            <p>Scroll through full names. DEMO sources are not connected.</p>
+            <nav id="detail-source-nav" aria-label="Sources for this version"></nav>
+          </aside>
+          <section class="detail-main" aria-label="Source evidence">
+            <div class="compare-toolbar">
+              <span>Compare source records and previews</span
+              ><label for="compare-select"
+                >Second source
+                <select id="compare-select">
+                  <option value="">None</option>
+                </select></label
+              >
+            </div>
+            <div id="source-panels" class="source-panels"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <span>Connected sources keep their own scope and scale. DEMO names carry no assessment.</span
+      ><a href="index.html">Browse another source</a>
+    </footer>
+    <noscript
+      ><p class="no-script">
+        This interactive mockup needs JavaScript to show the frozen project snapshot.
+      </p></noscript
+    >
+    <script src="ui-controls.js"></script>
+  </body>
+</html>

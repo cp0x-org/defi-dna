@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" data-default-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Atlas · DeFi DNA UX explorations</title>
+    <script src="theme-init.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="ui-controls.css" />
+  </head>
+  <body data-page="index">
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="DeFi DNA mockup comparison"
+        ><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span
+        ><span>defi-dna<span class="brand-dot">.</span></span></a
+      >
+      <nav class="concept-nav" aria-label="Mockup concepts">
+        <a href="../v6/">Ledger</a>
+        <a href="../v7/">Source lens</a>
+        <a class="active" aria-current="page" href="index.html">Atlas</a>
+      </nav>
+      <a class="hub-link" href="../index.html">Compare concepts</a>
+    </header>
+
+    <div class="snapshot-strip">
+      <strong>Design exploration</strong
+      ><span
+        >Project data snapshot: <time id="snapshot-date">27 Sep 2026</time>. Three connected sources
+        remain verbatim; additional names are previews.</span
+      >
+      <div data-dna-controls></div>
+    </div>
+
+    <main class="page-shell">
+      <div class="page-heading">
+        <div>
+          <h1>Find a protocol</h1>
+          <p>
+            Start with the protocol you use. Each segment represents one source's
+            <strong>collection or preview state</strong>, never a risk score.
+          </p>
+        </div>
+        <div class="heading-art" aria-hidden="true">
+          <span class="art-ring"></span><span class="art-pulse"></span>
+        </div>
+      </div>
+
+      <section class="finder" aria-label="Find and filter protocols">
+        <div class="finder-main">
+          <label class="search-field"
+            ><span>Protocol or version</span
+            ><input
+              id="search"
+              type="search"
+              placeholder="Search Aave, Morpho, v3…"
+              autocomplete="off"
+          /></label>
+          <label class="category-field"
+            ><span>Category</span
+            ><select id="category">
+              <option value="all">All categories</option>
+              <option value="lending">Lending</option>
+              <option value="dex">DEX / AMM</option>
+              <option value="aggregator">Swap aggregator</option>
+              <option value="yield">Yield / vault</option>
+              <option value="liquid-staking">Liquid staking</option>
+            </select></label
+          >
+        </div>
+        <div class="sort-row" aria-label="Sort protocols">
+          <span class="control-label">Sort</span>
+          <button type="button" class="sort-button" data-sort="tvl" data-first="desc">
+            TVL <span class="sort-indicator" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="sort-button" data-sort="name" data-first="asc">
+            Name <span class="sort-indicator" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="sort-button" data-sort="coverage" data-first="desc">
+            Records <span class="sort-indicator" aria-hidden="true"></span>
+          </button>
+          <span id="sort-description" class="sort-description" aria-live="polite"
+            >Default: primary version TVL, highest first</span
+          >
+        </div>
+      </section>
+
+      <section class="reading-key" aria-labelledby="reading-key-title">
+        <div class="key-heading">
+          <h2 id="reading-key-title">Read the circles</h2>
+          <p>
+            Only the state of our collection is coloured. Open a circle to read each source's
+            original value.
+          </p>
+        </div>
+        <ul class="key-items">
+          <li><span class="state-swatch state-record"></span>Record collected</li>
+          <li><span class="state-swatch state-none"></span>No record for this version</li>
+          <li>
+            <span class="state-swatch state-preview"></span>Candidate · not connected <em>DEMO</em>
+          </li>
+          <li><span class="state-swatch state-old"></span>Collection overdue <em>demo only</em></li>
+          <li>
+            <span class="state-swatch state-error"></span>Collection failed <em>demo only</em>
+          </li>
+        </ul>
+      </section>
+
+      <div class="results-heading">
+        <div>
+          <h2>Protocols <span id="result-count"></span></h2>
+          <p>One entry per protocol; versions stay inside.</p>
+        </div>
+        <div class="view-controls">
+          <fieldset class="segmented-control" aria-label="Circle order">
+            <legend>Circle order</legend>
+            <button type="button" data-order="feed" aria-pressed="true">By source</button
+            ><button type="button" data-order="state" aria-pressed="false">Group states</button>
+          </fieldset>
+        </div>
+      </div>
+
+      <details class="stress-lab">
+        <summary>
+          <strong>Collection issue preview</strong
+          ><span>Simulate a missed check and a failed fetch on Aave</span>
+        </summary>
+        <div class="stress-controls">
+          <label class="demo-toggle"
+            ><input id="demo-failure" type="checkbox" /><span
+              >Show a collection issue on Aave <b>DEMO</b></span
+            ></label
+          >
+        </div>
+        <p>This simulation changes no source assessment and adds no actual incident.</p>
+      </details>
+
+      <div id="cards" class="protocol-grid" aria-live="polite"></div>
+    </main>
+
+    <aside
+      id="inspector"
+      class="inspector"
+      role="dialog"
+      aria-modal="false"
+      aria-label="Source records"
+      hidden
+    >
+      <div class="inspector-head">
+        <div>
+          <span class="inspector-kicker">Source records</span>
+          <h2 id="inspector-title"></h2>
+          <p id="inspector-subtitle"></p>
+        </div>
+        <button
+          id="inspector-close"
+          type="button"
+          class="icon-button"
+          aria-label="Close source inspector"
+        >
+          ×
+        </button>
+      </div>
+      <p class="inspector-explain">
+        Circle colours describe collection or preview state. Original values belong only to the
+        three connected sources; candidate examples are marked DEMO.
+      </p>
+      <div class="inspector-tabs" role="group" aria-label="Filter source records">
+        <button type="button" data-inspector-filter="all" aria-pressed="true">All</button
+        ><button type="button" data-inspector-filter="record" aria-pressed="false">
+          Original records</button
+        ><button type="button" data-inspector-filter="missing" aria-pressed="false">
+          Preview &amp; gaps
+        </button>
+      </div>
+      <div id="inspector-list" class="inspector-list"></div>
+      <div class="inspector-footer">
+        <a id="inspector-detail-link" href="protocol.html">View protocol details</a>
+      </div>
+    </aside>
+
+    <footer class="site-footer">
+      <span>DeFi DNA UX exploration</span
+      ><span>No protocol rating or risk score is calculated here.</span>
+    </footer>
+    <script src="data.js"></script>
+    <script src="demo-feeds.js"></script>
+    <script src="shared.js"></script>
+    <script src="ui-controls.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

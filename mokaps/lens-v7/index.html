@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" data-default-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Source lens · DeFi DNA UX studies</title>
+    <script src="theme-init.js"></script>
+    <link rel="stylesheet" href="ui-controls.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="data.js"></script>
+    <script defer src="demo-feeds.js"></script>
+    <script defer src="shared.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body data-page="index">
+    <a class="skip-link" href="#main">Skip to protocols</a>
+    <header class="masthead">
+      <div class="masthead-inner">
+        <a class="brand" href="../index.html" aria-label="DeFi DNA UX studies home"
+          ><span class="brand-symbol">◫</span><span>DeFi DNA</span
+          ><span class="brand-suffix">/ Source lens</span></a
+        >
+        <a class="quiet-link" href="../index.html">All concepts</a>
+      </div>
+      <div class="controls-strip"><div class="control-slot" data-dna-controls></div></div>
+    </header>
+    <div class="sample-strip">
+      Research mockup · Frozen public project snapshot <span id="snapshot-date">loading</span> ·
+      <span id="mode-caption">Feed set loading</span> · No cp0x risk rating
+    </div>
+    <main id="main" class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <h1 id="page-title">Start with the source you trust.</h1>
+          <p>
+            Choose a source to inspect its records by protocol. Unconnected DEMO sources show format
+            examples only.
+          </p>
+        </div>
+        <div class="intro-rule" aria-hidden="true"><span></span><span></span><span></span></div>
+      </section>
+      <label class="search-field" for="protocol-search">
+        <span>Find a protocol</span>
+        <span class="search-input-wrap"
+          ><svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="10.9" cy="10.9" r="6.4" />
+            <path d="m16 16 4.2 4.2" /></svg
+          ><input
+            id="protocol-search"
+            type="search"
+            autocomplete="off"
+            placeholder="Search Aave, Morpho, Balancer…"
+        /></span>
+      </label>
+      <div class="workbench">
+        <aside class="source-rail" aria-labelledby="source-rail-heading">
+          <h2 id="source-rail-heading">Choose a feed</h2>
+          <p>Browse full source names. Scroll the list for more; DEMO names are not connected.</p>
+          <nav id="source-nav" aria-label="Risk data sources"></nav>
+          <div class="rail-note">
+            A source’s assessment date and the date we read it are separate facts.
+          </div>
+        </aside>
+        <section class="results" aria-labelledby="results-heading">
+          <div class="results-heading-row">
+            <div>
+              <p class="section-kicker">Records by protocol</p>
+              <h2 id="results-heading">Loading source</h2>
+              <p id="source-description" class="muted"></p>
+            </div>
+            <span id="result-count" class="result-count" aria-live="polite"></span>
+          </div>
+          <div class="sort-bar" aria-label="Sort protocols">
+            <span>Sort:</span>
+            <button type="button" data-sort="name" data-first="asc">
+              Protocol <span class="sort-arrow" aria-hidden="true"></span>
+            </button>
+            <button type="button" data-sort="tvl" data-first="desc">
+              Primary version TVL <span class="sort-arrow" aria-hidden="true"></span>
+            </button>
+            <button type="button" data-sort="date" data-first="desc">
+              Source assessment date <span class="sort-arrow" aria-hidden="true"></span>
+            </button>
+          </div>
+          <p id="sort-status" class="sort-status" aria-live="polite">Original order</p>
+          <div id="protocol-list" class="protocol-list" aria-live="polite"></div>
+        </section>
+      </div>
+    </main>
+    <footer class="footer">
+      <span
+        >Connected sources retain their original scope and scale. DEMO names carry no
+        assessment.</span
+      ><a href="../v6/">Try the protocol-first ledger</a>
+    </footer>
+    <noscript
+      ><p class="no-script">
+        This interactive mockup needs JavaScript to show the frozen project snapshot.
+      </p></noscript
+    >
+    <script src="ui-controls.js"></script>
+  </body>
+</html>

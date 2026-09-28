@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" data-default-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Protocols · DeFi DNA Ledger mockup</title>
+    <script src="theme-init.js"></script>
+    <link rel="stylesheet" href="ui-controls.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data.js" defer></script>
+    <script src="demo-feeds.js" defer></script>
+    <script src="shared.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body data-page="index">
+    <a class="skip-link" href="#main">Skip to protocols</a>
+    <header class="site-header">
+      <div class="shell site-header-inner">
+        <a class="brand" href="../" aria-label="DeFi DNA mockups home"
+          ><span class="brand-mark" aria-hidden="true">▦</span> defi-dna<span class="brand-period"
+            >.</span
+          ></a
+        >
+        <nav class="main-nav" aria-label="Main navigation">
+          <a aria-current="page" href="./">Protocols</a>
+          <a href="../v7/">Browse by source</a>
+          <a href="#how">How to read</a>
+        </nav>
+        <span class="concept-label">Ledger · UX mockup</span>
+      </div>
+      <div class="controls-strip"><div class="shell" data-dna-controls></div></div>
+    </header>
+
+    <main id="main" class="shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">An open view of independent risk sources</p>
+          <h1 id="page-title">Find a protocol. Read each source.</h1>
+          <p class="intro-copy">
+            Choose a protocol to read each connected source in its own scope. Demo modes add clearly
+            unassessed source names to test the layout at larger registry sizes.
+          </p>
+        </div>
+        <p class="snapshot-note" id="snapshot-note">Frozen project snapshot</p>
+      </section>
+
+      <section class="directory" aria-labelledby="directory-title">
+        <div class="directory-head">
+          <div>
+            <h2 id="directory-title">
+              Protocols <span id="result-count" class="count-badge"></span>
+            </h2>
+            <p>Open a row for version-level records. Select its name for the source detail page.</p>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <label class="search-field" for="protocol-search"
+            ><span class="search-icon" aria-hidden="true">⌕</span
+            ><span class="sr-only">Search protocols or versions</span
+            ><input
+              id="protocol-search"
+              type="search"
+              placeholder="Search protocols or versions"
+              autocomplete="off"
+          /></label>
+          <label class="category-field" for="category-filter"
+            ><span>Category</span
+            ><select id="category-filter">
+              <option value="">All categories</option>
+            </select></label
+          >
+          <a class="toolbar-link" href="../v7/"
+            >Start with a source <span aria-hidden="true">↗</span></a
+          >
+        </div>
+        <div class="mobile-sort-controls" aria-label="Sort protocols">
+          <span>Sort:</span>
+          <button type="button" class="sort-button" data-sort="name">
+            Protocol <span class="sort-indicator" aria-hidden="true">↕</span>
+          </button>
+          <button type="button" class="sort-button" data-sort="category">
+            Category <span class="sort-indicator" aria-hidden="true">↕</span>
+          </button>
+          <button type="button" class="sort-button" data-sort="tvl">
+            TVL <span class="sort-indicator" aria-hidden="true">↕</span>
+          </button>
+        </div>
+
+        <p id="scroll-hint" class="scroll-hint" hidden></p>
+        <div
+          class="table-scroll"
+          role="region"
+          aria-label="Protocol source table; scroll horizontally to see all source names"
+          tabindex="0"
+        >
+          <table class="protocol-table">
+            <caption class="sr-only">
+              Protocols and technical source-record coverage. Demo columns are unassessed layout
+              previews. Values inside expanded rows belong to the named source and version.
+            </caption>
+            <thead>
+              <tr id="table-header-row">
+                <th scope="col">
+                  <button type="button" class="sort-button" data-sort="name">
+                    Protocol <span class="sort-indicator" aria-hidden="true">↕</span>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button" class="sort-button" data-sort="category">
+                    Category <span class="sort-indicator" aria-hidden="true">↕</span>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button type="button" class="sort-button" data-sort="tvl">
+                    Primary version TVL
+                    <span class="sort-indicator" aria-hidden="true">↕</span></button
+                  ><small>DefiLlama · Ethereum</small>
+                </th>
+                <th id="expand-header" scope="col">
+                  <span class="sr-only">Expand version records</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="protocol-rows"></tbody>
+          </table>
+        </div>
+        <p id="empty-state" class="empty-state" hidden>
+          No protocols match this search and category. Clear either filter to see the full list.
+        </p>
+        <p id="table-footnote" class="table-footnote">
+          “Record” means the project collected a source entry for at least one listed version. It
+          says nothing about safety. Philidor entries concern individual vaults.
+        </p>
+      </section>
+
+      <section id="how" class="how-panel" aria-labelledby="how-title">
+        <h2 id="how-title">What the columns mean</h2>
+        <div class="how-grid">
+          <div>
+            <h3>One protocol, separate versions</h3>
+            <p>
+              Rows group related versions for navigation. Expand one to read each version's records;
+              their values are never combined.
+            </p>
+          </div>
+          <div>
+            <h3>Source date and collection date</h3>
+            <p>
+              “Source assessed” is when the provider dated its assessment. “Collected” is when the
+              project last retrieved that entry. An older assessment is not a failed collection.
+            </p>
+          </div>
+          <div>
+            <h3>No cp0x risk rating</h3>
+            <p>
+              Each provider has its own subject and scale. This directory reports coverage and shows
+              the original records without a shared grade or ranking.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="shell">
+        DeFi DNA · Ledger concept · illustrative interface using a frozen project snapshot
+      </div>
+    </footer>
+    <script src="ui-controls.js" defer></script>
+  </body>
+</html>
