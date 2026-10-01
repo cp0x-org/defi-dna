@@ -81,6 +81,11 @@ to `main` in the separate `cp0x-org/defi-dna-data` repository. To enable the
 cross-repository push, add a `DEFI_DNA_DATA_TOKEN` Actions secret to this
 repository. It must grant Contents read and write access to `defi-dna-data`.
 
+The pigi.finance feed needs an API key. Add it as a `PIGI_API_KEY` Actions
+secret for the workflow, and as `PIGI_API_KEY` in a local `.env` (see
+`.env.example`) for local collection. Without it the pigi column keeps its
+previous values and the run reports the failure.
+
 ## Docker
 
 ```bash
@@ -102,8 +107,9 @@ address in the project's `.env` file (copy `.env.example`; for example,
 ## Sources and contributions
 
 Risk feeds currently include [DeFiScan](https://www.defiscan.info),
-[Risklayer](https://risklayer.online) and
-[Philidor](https://analytics.philidor.io). Independent measurements come from
+[Risklayer](https://risklayer.online),
+[Philidor](https://analytics.philidor.io) and
+[pigi.finance](https://pigi.finance). Independent measurements come from
 DefiLlama's Ethereum TVL and incident history. A feed with no data for a
 protocol is distinct from a collection error; a failed refresh retains the
 previous value.

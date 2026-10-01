@@ -1,0 +1,15 @@
+{
+  "aave-v3": "Aave",
+  "curve": "Curve",
+  "euler": "Euler",
+  "fluid": ["Fluid (InstaDapp)", "Fluid Lite"],
+  "gearbox": "Gearbox",
+  "lido": "Lido",
+  "liquity-v1": "Liquity v1",
+  "liquity-v2": "Liquity V2",
+  "mellow": "Mellow",
+  "morpho-vaults": ["Morpho", "Morpho v2"],
+  "spark": ["SparkLend", "Spark"],
+  "uniswap-v3": "Uniswap",
+  "yearn": ["Yearn", "Yearn v3"]
+}

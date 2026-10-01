@@ -128,7 +128,14 @@ cover this". Keeping those apart is what stops a broken run from looking like a
 coverage gap.
 
 `ctx` gives you `getJson`, `getText` (both cached on disk, so `--offline`
-works), `log` and `now`. Adapters never call `fetch` themselves.
+works), `postJson` (never cached), `log` and `now`. Adapters never call `fetch`
+themselves.
+
+A feed behind an API key reads it from the environment (`.env` locally, an
+Actions secret in the refresh workflow) and trades it for a token through
+`postJson`. Pass the token as a `headers` function to `getJson`: it runs only
+when the request really goes to the network, so a cached or `--offline` read
+needs no key. See `adapters/feeds/pigi`.
 
 ## Metric adapters
 

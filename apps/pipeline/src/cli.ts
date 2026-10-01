@@ -1,6 +1,14 @@
 #!/usr/bin/env -S npx tsx
 import { bundle, collect, type CollectOptions } from '@defi-dna/core'
 
+// Feed API keys (PIGI_API_KEY) live in the git-ignored .env locally and arrive
+// as environment variables in CI. Variables already set are not overridden.
+try {
+  process.loadEnvFile()
+} catch {
+  /* no .env: the environment is all there is */
+}
+
 const HELP = `
 defi-dna — collect what risk feeds publish about DeFi protocols.
 

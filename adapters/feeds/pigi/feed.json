@@ -1,0 +1,9 @@
+{
+  "id": "pigi",
+  "name": "pigi.finance",
+  "topic": "Vault risk",
+  "focus": "Vault-level risk ratings: bands A–F and a 0–100 score (higher = safer), recomputed nightly for individual vaults, lending reserves and pools.",
+  "homepage": "https://pigi.finance",
+  "methodologyUrl": "https://app.pigi.finance/risk",
+  "enabled": true
+}
