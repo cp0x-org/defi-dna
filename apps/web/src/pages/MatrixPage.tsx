@@ -14,6 +14,40 @@ const tvlLabel = metricById('tvl')?.name ?? 'DefiLlama · Ethereum TVL'
 
 const defaultDir = (key: string): Dir => (key === 'name' ? 'asc' : 'desc')
 
+/** The registry joined with nothing: names and categories without any collected fact. */
+const NO_DATA: IndexBundle = { generatedAt: '', rows: [] }
+
+/**
+ * What stands in for the rows while the dataset is missing. The table stays
+ * empty and says why: an empty table must never read as "no risk found".
+ */
+const DatasetState = ({ error }: { error: string | null }) =>
+  error ? (
+    <div className="empty-state" role="alert">
+      <h3>The dataset could not be loaded</h3>
+      <p>
+        The table stays empty until it is. An empty table here means no data, not &ldquo;no risk
+        found&rdquo;.
+      </p>
+      <button className="button primary" onClick={() => window.location.reload()}>
+        Try again
+      </button>
+      <details>
+        <summary>Technical details</summary>
+        <p>{error}</p>
+        <p>
+          Running locally? Copy the published data with <code>npm run pull</code>, or collect it
+          with <code>npm run refresh</code>.
+        </p>
+      </details>
+    </div>
+  ) : (
+    <div className="empty-state" role="status">
+      <h3>Loading the latest collected data…</h3>
+      <div className="loading-track" />
+    </div>
+  )
+
 /**
  * The dashboard: rows are protocol versions, columns are feeds, and a cell says
  * one thing — whether that feed publishes data about that version.
@@ -24,7 +58,13 @@ const defaultDir = (key: string): Dir => (key === 'name' ? 'asc' : 'desc')
  * a protocol, another the vaults inside it, so their values are not comparable
  * side by side. They live one click away, in each feed's own words.
  */
-export const MatrixPage = ({ index }: { index: IndexBundle }) => {
+export const MatrixPage = ({
+  index,
+  error,
+}: {
+  index: IndexBundle | null
+  error: string | null
+}) => {
   const [params, setParams] = useSearchParams()
   const [hidden, setHidden] = useState<string[]>(readHiddenFeeds)
 
@@ -65,10 +105,11 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
     setParams(next, { replace: true })
   }
 
-  const all = useMemo(() => groupRows(index, () => true), [index])
+  const all = useMemo(() => groupRows(index ?? NO_DATA, () => true), [index])
   const categories = [...new Set(all.flatMap((g) => g.rows.map((r) => r.protocol.category)))].sort()
 
   const groups = useMemo(() => {
+    if (!index) return []
     const band = TVL_BANDS[tvl]
     const filtered = groupRows(index, (row) => {
       const { protocol } = row
@@ -200,6 +241,33 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
     </tr>
   )
 
+  const head = (
+    <thead>
+      <tr>
+        {sortable('name', 'Protocol')}
+        {sortable('tvl', tvlLabel, 'metric-column')}
+        {visibleFeeds.map((feed) =>
+          sortable(
+            `feed:${feed.id}`,
+            <>
+              <SourceMark id={feed.id} />
+              <span>
+                {feed.name}
+                <small>{feed.topic}</small>
+              </span>
+            </>,
+            'flag-column',
+            'source-head',
+          ),
+        )}
+        {sortable('coverage', 'Feeds', 'coverage-column')}
+        <th scope="col">
+          <span className="sr-only">Details</span>
+        </th>
+      </tr>
+    </thead>
+  )
+
   return (
     <div>
       <section className="home-hero">
@@ -239,7 +307,7 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
           <div className="hero-summary-bottom">
             <span>
               <strong>
-                {withAnyData} of {versions}
+                {index ? withAnyData : '—'} of {versions}
               </strong>{' '}
               have data from at least one feed
             </span>
@@ -375,7 +443,24 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
             ))}
           </div>
 
-          {groups.length > 0 ? (
+          {!index ? (
+            <>
+              <div
+                className="matrix-scroll"
+                role="region"
+                aria-label="Protocol coverage comparison"
+              >
+                <table className="risk-matrix">
+                  <caption className="sr-only">
+                    The coverage table is empty: the dataset is not loaded.
+                  </caption>
+                  {head}
+                  <tbody />
+                </table>
+              </div>
+              <DatasetState error={error} />
+            </>
+          ) : groups.length > 0 ? (
             <>
               <div
                 className="matrix-scroll"
@@ -388,30 +473,7 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
                     Which of {visibleFeeds.length} risk feeds publish data about {shown} protocol
                     versions. A green dot means data is available. Column headers sort the table.
                   </caption>
-                  <thead>
-                    <tr>
-                      {sortable('name', 'Protocol')}
-                      {sortable('tvl', tvlLabel, 'metric-column')}
-                      {visibleFeeds.map((feed) =>
-                        sortable(
-                          `feed:${feed.id}`,
-                          <>
-                            <SourceMark id={feed.id} />
-                            <span>
-                              {feed.name}
-                              <small>{feed.topic}</small>
-                            </span>
-                          </>,
-                          'flag-column',
-                          'source-head',
-                        ),
-                      )}
-                      {sortable('coverage', 'Feeds', 'coverage-column')}
-                      <th scope="col">
-                        <span className="sr-only">Details</span>
-                      </th>
-                    </tr>
-                  </thead>
+                  {head}
                   <tbody>
                     {groups.map((group) =>
                       group.rows.length === 1 && group.rows[0] ? (
@@ -512,7 +574,7 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
 
           <div className="table-footer">
             <span aria-live="polite">
-              {shown} of {versions} versions
+              {index ? `${shown} of ${versions} versions` : 'Data not loaded'}
               {active && (
                 <button className="text-button" onClick={() => setParams({})}>
                   Clear filters
@@ -532,7 +594,7 @@ export const MatrixPage = ({ index }: { index: IndexBundle }) => {
 
         <div className="below-table">
           <span>
-            TVL snapshot: {dateInfo(index.generatedAt).label} · DefiLlama
+            TVL snapshot: {index ? dateInfo(index.generatedAt).label : '—'} · DefiLlama
             <Info label="About the size column">
               TVL is the Ethereum-mainnet figure DefiLlama publishes for that version. It is a
               measured quantity, not a safety rating, and it is never combined with what a feed

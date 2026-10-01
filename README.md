@@ -28,11 +28,13 @@ apps/web/                   React and Vite dashboard
 ```
 
 The registry and adapter metadata are maintained by hand and compiled into the
-frontend. The pipeline writes generated snapshots to `data/` and copies them to
-`apps/web/public/data/` for the local site. The site reads data at runtime from
-the URL in `config.json`. The container uses [configs/config.json](configs/config.json),
-which points to the separate `defi-dna-data` repository; the local frontend
-defaults to `./data`. This allows data updates without rebuilding the site.
+frontend. Generated data is not kept in this repository: the
+[refresh workflow](.github/workflows/refresh-data.yml) publishes it to
+[cp0x-org/defi-dna-data](https://github.com/cp0x-org/defi-dna-data). The site
+reads data at runtime from the URL in `config.json`. The container and GitHub
+Pages use [configs/config.json](configs/config.json), which points to that
+repository; the local frontend defaults to `./data`, a git-ignored local copy.
+This allows data updates without rebuilding the site.
 
 ## Development
 
@@ -41,21 +43,25 @@ expected Node version is in `.nvmrc`.
 
 ```bash
 npm ci
+npm run pull         # local copy of the published data
 npm run dev          # local dashboard at http://localhost:5173
 ```
 
-`npm ci` installs all workspaces and sets up the Git hooks. The repository
-includes a snapshot in `apps/web/public/data/` so the dashboard and build work
-without collecting fresh data. To collect current data from the feeds, run
-`npm run refresh`; this makes network requests and updates generated files.
+`npm ci` installs all workspaces and sets up the Git hooks. `npm run pull`
+downloads the published data from `defi-dna-data` into `data/` and
+`apps/web/public/data/`; both are git-ignored. To collect current data from the
+feeds instead, run `npm run refresh`; this makes network requests and replaces
+the local copy. Running `pull` first lets a local collection carry previous
+values forward, as the scheduled workflow does.
 
 | Command                                   | Purpose                                                        |
 | ----------------------------------------- | -------------------------------------------------------------- |
 | `npm run collect`                         | Collect feed and metric data into `data/protocols/*.json`      |
 | `npm run bundle`                          | Build `data/index.json` and copy generated data to the web app |
 | `npm run refresh`                         | Collect, then bundle                                           |
+| `npm run pull`                            | Download the published data into `data/` and the web app       |
 | `npm run dev`                             | Start the dashboard                                            |
-| `npm run build`                           | Build the dashboard from the committed snapshot                |
+| `npm run build`                           | Build the dashboard; it reads data at runtime                  |
 | `npm run preview`                         | Preview the built dashboard                                    |
 | `npm run lint` / `npm run lint:fix`       | Check or fix lint issues                                       |
 | `npm run format:check` / `npm run format` | Check or apply formatting                                      |
@@ -81,6 +87,11 @@ to `main` in the separate `cp0x-org/defi-dna-data` repository. To enable the
 cross-repository push, add a `DEFI_DNA_DATA_TOKEN` Actions secret to this
 repository. It must grant Contents read and write access to `defi-dna-data`.
 
+The pigi.finance feed needs an API key. Add it as a `PIGI_API_KEY` Actions
+secret for the workflow, and as `PIGI_API_KEY` in a local `.env` (see
+`.env.example`) for local collection. Without it the pigi column keeps its
+previous values and the run reports the failure.
+
 ## Docker
 
 ```bash
@@ -102,8 +113,9 @@ address in the project's `.env` file (copy `.env.example`; for example,
 ## Sources and contributions
 
 Risk feeds currently include [DeFiScan](https://www.defiscan.info),
-[Risklayer](https://risklayer.online) and
-[Philidor](https://analytics.philidor.io). Independent measurements come from
+[Risklayer](https://risklayer.online),
+[Philidor](https://analytics.philidor.io) and
+[pigi.finance](https://pigi.finance). Independent measurements come from
 DefiLlama's Ethereum TVL and incident history. A feed with no data for a
 protocol is distinct from a collection error; a failed refresh retains the
 previous value.

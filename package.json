@@ -16,6 +16,7 @@
     "collect": "tsx apps/pipeline/src/cli.ts collect",
     "bundle": "tsx apps/pipeline/src/cli.ts bundle",
     "refresh": "tsx apps/pipeline/src/cli.ts run",
+    "pull": "tsx apps/pipeline/src/cli.ts pull",
     "dev": "npm run dev --workspace @defi-dna/web",
     "build": "npm run build --workspaces --if-present",
     "preview": "npm run preview --workspace @defi-dna/web",

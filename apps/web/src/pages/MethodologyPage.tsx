@@ -14,7 +14,7 @@ const QUESTIONS: [string, string][] = [
   ],
   [
     'Why does the dashboard show only a dot?',
-    'Because the feeds do not measure the same thing. DeFiScan grades a protocol’s decentralization, Philidor grades the individual vaults inside a protocol, Risklayer publishes a beta figure on bands it does not document — and a feed does not always say which slice of a protocol it looked at. A shared column of values would invite a comparison none of them supports, so the dashboard reports only whether data exists.',
+    'Because the feeds do not measure the same thing. DeFiScan grades a protocol’s decentralization, Philidor and pigi.finance grade the individual vaults inside a protocol on scales of their own, Risklayer publishes a beta figure on bands it does not document — and a feed does not always say which slice of a protocol it looked at. A shared column of values would invite a comparison none of them supports, so the dashboard reports only whether data exists.',
   ],
   [
     'Where are the actual values then?',
@@ -38,7 +38,7 @@ const QUESTIONS: [string, string][] = [
   ],
 ]
 
-export const MethodologyPage = ({ index }: { index: IndexBundle }) => (
+export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
   <>
     <section className="page-intro">
       <span className="eyebrow">THE READING GUIDE</span>
@@ -192,7 +192,9 @@ export const MethodologyPage = ({ index }: { index: IndexBundle }) => (
                   <td className="muted">{feed.topic}</td>
                   <td>{feed.focus}</td>
                   <td className="mono">
-                    {index.rows.filter((row) => row.feeds[feed.id]).length} / {index.rows.length}
+                    {index
+                      ? `${index.rows.filter((row) => row.feeds[feed.id]).length} / ${index.rows.length}`
+                      : '—'}
                   </td>
                 </tr>
               ))}

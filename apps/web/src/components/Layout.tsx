@@ -8,7 +8,7 @@ import { ExternalLink } from './UI.tsx'
 const REPO = 'https://github.com/cp0x-org/defi-dna'
 const DATA_REPO = 'https://github.com/cp0x-org/defi-dna-data'
 
-export const Layout = ({ index }: { index: IndexBundle }) => {
+export const Layout = ({ index }: { index: IndexBundle | null }) => {
   const location = useLocation()
   const [dark, setDark] = useState(() => {
     try {
@@ -101,8 +101,8 @@ export const Layout = ({ index }: { index: IndexBundle }) => {
           <ExternalLink href={REPO}>GitHub · AGPL-3.0</ExternalLink>
         </div>
         <div className="footer-note">
-          Data cut {dateInfo(index.generatedAt).label}. Individual assessment dates vary — always
-          verify against the linked source before acting.
+          {index ? `Data cut ${dateInfo(index.generatedAt).label}. ` : null}Individual assessment
+          dates vary — always verify against the linked source before acting.
         </div>
       </footer>
     </div>

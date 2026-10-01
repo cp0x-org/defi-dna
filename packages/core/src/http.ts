@@ -49,7 +49,11 @@ export class Http {
     for (let attempt = 0; attempt <= RETRIES; attempt++) {
       if (attempt > 0) await wait(500 * attempt)
       try {
-        const headers: Record<string, string> = { 'user-agent': USER_AGENT, accept: '*/*' }
+        const headers: Record<string, string> = {
+          ...(await options.headers?.()),
+          'user-agent': USER_AGENT,
+          accept: '*/*',
+        }
         if (options.rangeBytes) headers.range = `bytes=${options.rangeBytes.join('-')}`
         const response = await fetch(url, {
           headers,
@@ -86,6 +90,33 @@ export class Http {
       return JSON.parse(text) as T
     } catch {
       throw new Error(`response from ${url} is not valid JSON`)
+    }
+  }
+
+  /**
+   * POST a JSON body. Never cached and never retried: it exists to exchange an
+   * API key for a token, and a token has no business on disk.
+   */
+  async postJson<T>(url: string, body: unknown): Promise<T> {
+    if (this.options.offline) throw new Error(`offline: cannot POST to ${url}`)
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'user-agent': USER_AGENT,
+        accept: 'application/json',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(60_000),
+    })
+    const text = await response.text()
+    // The error body names the cause (`invalid_api_key`); it never echoes the key.
+    if (!response.ok)
+      throw new Error(`HTTP ${response.status} for POST ${url}: ${text.slice(0, 200)}`)
+    try {
+      return JSON.parse(text) as T
+    } catch {
+      throw new Error(`response from POST ${url} is not valid JSON`)
     }
   }
 }

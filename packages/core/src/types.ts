@@ -220,6 +220,12 @@ export interface FetchOptions {
   rangeBytes?: [number, number]
   /** Treat 404 as an empty body instead of an error. */
   allowNotFound?: boolean
+  /**
+   * Extra request headers, such as a bearer token. A function is called only
+   * when the request really goes to the network, so a cached or offline read
+   * never mints a credential. Headers take no part in the cache key.
+   */
+  headers?: () => Promise<Record<string, string>>
 }
 
 /**
@@ -230,6 +236,8 @@ export interface FetchOptions {
 export interface AdapterContext {
   getJson<T>(url: string, options?: FetchOptions): Promise<T>
   getText(url: string, options?: FetchOptions): Promise<string>
+  /** POST a JSON body and read JSON back. Never cached: it is for exchanging credentials. */
+  postJson<T>(url: string, body: unknown): Promise<T>
   log(message: string): void
   now: Date
 }
