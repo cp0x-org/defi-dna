@@ -1,5 +1,5 @@
 #!/usr/bin/env -S npx tsx
-import { bundle, collect, type CollectOptions } from '@defi-dna/core'
+import { bundle, collect, pull, type CollectOptions } from '@defi-dna/core'
 
 // Feed API keys (PIGI_API_KEY) live in the git-ignored .env locally and arrive
 // as environment variables in CI. Variables already set are not overridden.
@@ -15,6 +15,7 @@ defi-dna — collect what risk feeds publish about DeFi protocols.
   collect    run every adapter and write data/protocols/<id>.json
   bundle     merge those files into data/index.json and copy them to the web app
   run        collect, then bundle (default)
+  pull       download the published data from the data repository instead
 
 Flags
   --protocol <ids>   comma-separated protocol ids to limit the run
@@ -23,6 +24,7 @@ Flags
   --verbose          log every adapter step
 
 Examples
+  npm run pull
   npm run refresh
   npm run collect -- --source defiscan --protocol aave-v3 --verbose
   npm run collect -- --offline
@@ -60,9 +62,16 @@ async function runBundle(): Promise<void> {
   )
 }
 
+async function runPull(): Promise<void> {
+  const { source, records } = await pull()
+  console.log(`pull    ${records} records from ${source}`)
+  await runBundle()
+}
+
 const { command, options } = parse(process.argv.slice(2))
 if (command === 'collect') await runCollect(options)
 else if (command === 'bundle') await runBundle()
+else if (command === 'pull') await runPull()
 else if (command === 'run') {
   await runCollect(options)
   await runBundle()

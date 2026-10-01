@@ -29,3 +29,9 @@ pnpm-debug.log*
 
 # OS
 .DS_Store
+
+# Generated data. The refresh workflow publishes it to cp0x-org/defi-dna-data;
+# `npm run pull` brings a local copy. Never committed here.
+/data
+/apps/web/public/data
+/.cache
