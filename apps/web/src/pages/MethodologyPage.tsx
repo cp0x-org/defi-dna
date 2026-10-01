@@ -38,7 +38,7 @@ const QUESTIONS: [string, string][] = [
   ],
 ]
 
-export const MethodologyPage = ({ index }: { index: IndexBundle }) => (
+export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
   <>
     <section className="page-intro">
       <span className="eyebrow">THE READING GUIDE</span>
@@ -192,7 +192,9 @@ export const MethodologyPage = ({ index }: { index: IndexBundle }) => (
                   <td className="muted">{feed.topic}</td>
                   <td>{feed.focus}</td>
                   <td className="mono">
-                    {index.rows.filter((row) => row.feeds[feed.id]).length} / {index.rows.length}
+                    {index
+                      ? `${index.rows.filter((row) => row.feeds[feed.id]).length} / ${index.rows.length}`
+                      : '—'}
                   </td>
                 </tr>
               ))}

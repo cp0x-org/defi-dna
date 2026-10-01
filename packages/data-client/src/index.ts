@@ -75,5 +75,5 @@ export const loadIndex = (): Promise<IndexBundle> => load<IndexBundle>('index.js
 export const loadProtocol = (id: string): Promise<ProtocolRecord> =>
   load<ProtocolRecord>(`protocols/${id}.json`)
 
-export const loadChangelog = (): Promise<Change[]> =>
-  load<Change[]>('changelog.json').catch(() => [])
+/** A log we could not read is reported as such — never as an empty log. */
+export const loadChangelog = (): Promise<Change[]> => load<Change[]>('changelog.json')
