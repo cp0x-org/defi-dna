@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import type { Protocol, ProtocolRecord } from '@defi-dna/data'
 import { useProtocol } from '../hooks/useIndex.ts'
 import { feeds as allFeeds, metricById, protocolById, protocols } from '../lib/registry.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../lib/view.ts'
@@ -11,6 +12,10 @@ import { DataAgeHelp, ExternalLink, Info, ProtocolAvatar } from '../components/U
 const tvlLabel = metricById('tvl')?.name ?? 'DefiLlama · Ethereum TVL'
 const incidentsLabel = metricById('incidents')?.name ?? 'DefiLlama · Incident history'
 
+/**
+ * The heading comes from the hand-maintained registry and always renders; the
+ * rest comes from the generated record and waits for it.
+ */
 export const ProtocolPage = () => {
   const { id = '' } = useParams()
   const protocol = protocolById(id)
@@ -27,35 +32,9 @@ export const ProtocolPage = () => {
       </div>
     )
   }
-  if (error) {
-    return (
-      <div className="empty-state page-empty">
-        <h1>Protocol not found</h1>
-        <p>{error}</p>
-        <Link to="/" className="button primary">
-          Back to the matrix <IconArrow />
-        </Link>
-      </div>
-    )
-  }
-  if (!data) {
-    return (
-      <div className="empty-state page-empty" role="status">
-        <h1>Loading {id}…</h1>
-        <div className="loading-track" />
-      </div>
-    )
-  }
-
-  const { metrics, feeds } = data
   const siblings = protocols.filter(
     (other) => protocol.group && other.group === protocol.group && other.id !== protocol.id,
   )
-  const tvl = metrics['tvl']
-  const incidents = metrics['incidents']
-
-  const withData = allFeeds.filter((feed) => feeds[feed.id]?.status === 'ok')
-  const missing = allFeeds.filter((feed) => feeds[feed.id] && feeds[feed.id]?.status !== 'ok')
 
   return (
     <>
@@ -95,6 +74,70 @@ export const ProtocolPage = () => {
         </p>
       ) : null}
 
+      {data ? (
+        <ProtocolRecordView protocol={protocol} record={data} />
+      ) : error ? (
+        <div className="empty-state" role="alert">
+          <h3>What the feeds publish about {protocol.name} could not be loaded</h3>
+          <p>
+            Nothing is shown until it is. A missing card here means missing data, not a missing
+            risk.
+          </p>
+          <button className="button primary" onClick={() => window.location.reload()}>
+            Try again
+          </button>
+          <details>
+            <summary>Technical details</summary>
+            <p>{error}</p>
+          </details>
+        </div>
+      ) : (
+        <div className="empty-state" role="status">
+          <h3>Loading what the feeds publish…</h3>
+          <div className="loading-track" />
+        </div>
+      )}
+
+      {siblings.length > 0 ? (
+        <p className="sibling-line">
+          Other {protocol.group} versions:{' '}
+          {siblings.map((sibling, position) => (
+            <span key={sibling.id}>
+              {position > 0 ? ' · ' : ''}
+              <Link to={`/protocol/${sibling.id}`}>{sibling.name}</Link>
+            </span>
+          ))}
+          . Each is collected on its own — nothing is carried across versions.
+        </p>
+      ) : null}
+
+      <div className="page-end-note">
+        <span>Spotted an outdated value or a missing feed?</span>
+        <Link to="/methodology#contribute" className="text-link">
+          Send a correction <IconArrow />
+        </Link>
+      </div>
+    </>
+  )
+}
+
+/** Everything that comes from the generated record: figures, assessments, incidents. */
+const ProtocolRecordView = ({
+  protocol,
+  record,
+}: {
+  protocol: Protocol
+  record: ProtocolRecord
+}) => {
+  const { metrics, feeds } = record
+  const tvl = metrics['tvl']
+  const incidents = metrics['incidents']
+
+  const withData = allFeeds.filter((feed) => feeds[feed.id]?.status === 'ok')
+  const missing = allFeeds.filter((feed) => feeds[feed.id] && feeds[feed.id]?.status !== 'ok')
+
+  return (
+    <>
       <div className="protocol-summary">
         <div>
           <span className="summary-label">
@@ -221,26 +264,6 @@ export const ProtocolPage = () => {
         <IncidentsExtra incidents={incidents?.extra?.incidents} note={incidents?.note} />
         <TextExtra text={incidents?.extra?.text} />
       </section>
-
-      {siblings.length > 0 ? (
-        <p className="sibling-line">
-          Other {protocol.group} versions:{' '}
-          {siblings.map((sibling, position) => (
-            <span key={sibling.id}>
-              {position > 0 ? ' · ' : ''}
-              <Link to={`/protocol/${sibling.id}`}>{sibling.name}</Link>
-            </span>
-          ))}
-          . Each is collected on its own — nothing is carried across versions.
-        </p>
-      ) : null}
-
-      <div className="page-end-note">
-        <span>Spotted an outdated value or a missing feed?</span>
-        <Link to="/methodology#contribute" className="text-link">
-          Send a correction <IconArrow />
-        </Link>
-      </div>
     </>
   )
 }

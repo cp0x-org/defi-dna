@@ -8,7 +8,6 @@ on:
       - 'packages/**'
       - 'adapters/**'
       - 'registry/**'
-      - 'data/**'
       - 'mokaps/**'
       - 'package.json'
       - 'package-lock.json'
@@ -35,16 +34,17 @@ jobs:
           cache: npm
       - run: npm ci
 
-      # Builds from committed data — no network calls, so a deploy can never be
-      # blocked by a third-party feed being down.
+      # The build carries no data. The site reads it at runtime from the data
+      # repository named in configs/config.json, so new data needs no redeploy
+      # and a deploy can never be blocked by a third-party feed being down.
       - name: Build
         env:
           # Set to a repository subpath ("/defi-dna/") for a project page,
           # or "./" for relative paths when serving from IPFS.
           DEFI_DNA_BASE: ${{ vars.DEFI_DNA_BASE || '/' }}
         run: |
-          if [ -f data/index.json ]; then npm run bundle; fi
           npm run build
+          cp configs/config.json apps/web/dist/config.json
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

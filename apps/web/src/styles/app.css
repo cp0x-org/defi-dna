@@ -2987,3 +2987,12 @@ details[open] > summary > svg:last-child {
 .sibling-line a {
   color: var(--accent);
 }
+.empty-state .loading-track {
+  margin: 18px auto 0;
+}
+.empty-state details {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}

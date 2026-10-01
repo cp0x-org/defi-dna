@@ -14,6 +14,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.
 export const paths = {
   root,
   protocols: path.join(root, 'registry', 'protocols.json'),
+  /** Names the data repository the deployed site and `pull` read from. */
+  config: path.join(root, 'configs', 'config.json'),
   feeds: path.join(root, 'adapters', 'feeds'),
   metrics: path.join(root, 'adapters', 'metrics'),
   records: path.join(root, 'data', 'protocols'),

@@ -4,7 +4,8 @@ import { feeds, metrics } from '../lib/registry.ts'
 import { IconArrow, IconChevron } from '../components/Icons.tsx'
 import { ExternalLink, SourceMark } from '../components/UI.tsx'
 
-export const SourcesPage = ({ index }: { index: IndexBundle }) => (
+/** Coverage counts need the dataset; everything else here is hand-maintained. */
+export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
   <>
     <section className="page-intro">
       <span className="eyebrow">THE FEED REGISTRY</span>
@@ -22,13 +23,13 @@ export const SourcesPage = ({ index }: { index: IndexBundle }) => (
 
     <div className="directory-grid">
       {feeds.map((feed) => {
-        const covered = index.rows.filter((row) => row.feeds[feed.id]).length
+        const covered = index?.rows.filter((row) => row.feeds[feed.id]).length
         return (
           <article className="directory-card" key={feed.id} id={`feed-${feed.id}`} tabIndex={-1}>
             <div className="directory-heading">
               <SourceMark id={feed.id} />
               <span className="outline-badge">
-                {covered} / {index.rows.length} versions
+                {index ? `${covered} / ${index.rows.length} versions` : '— versions'}
               </span>
             </div>
             <h2>{feed.name}</h2>
@@ -38,7 +39,7 @@ export const SourcesPage = ({ index }: { index: IndexBundle }) => (
               <div>
                 <dt>Coverage here</dt>
                 <dd>
-                  {covered} of {index.rows.length} protocol versions
+                  {index ? `${covered} of ${index.rows.length} protocol versions` : 'Not loaded'}
                 </dd>
               </div>
               <div>

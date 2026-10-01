@@ -3,7 +3,6 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useIndex } from './hooks/useIndex.ts'
 import { protocolById } from './lib/registry.ts'
 import { Layout } from './components/Layout.tsx'
-import { IconMark } from './components/Icons.tsx'
 import { MatrixPage } from './pages/MatrixPage.tsx'
 import { ProtocolPage } from './pages/ProtocolPage.tsx'
 import { SourcesPage } from './pages/SourcesPage.tsx'
@@ -16,6 +15,11 @@ const TITLES: Record<string, string> = {
   '/changelog': 'What changed',
 }
 
+/**
+ * The dataset is not a gate. Everything hand-maintained — the registry, the
+ * feeds, the methodology — renders without it; only the matrix waits for it,
+ * and says so instead of looking empty.
+ */
 export function App() {
   const { data: index, error } = useIndex()
   const location = useLocation()
@@ -31,44 +35,10 @@ export function App() {
     document.title = `${page} · defi-dna`
   }, [location.pathname])
 
-  if (error) {
-    return (
-      <main className="app-state">
-        <IconMark />
-        <h1>We couldn’t load the dataset.</h1>
-        <p>
-          Nothing is shown until the data is available — an empty table would read as &ldquo;no risk
-          found&rdquo;, and it means no such thing.
-        </p>
-        <button className="button primary" onClick={() => window.location.reload()}>
-          Try again
-        </button>
-        <details>
-          <summary>Technical details</summary>
-          <p>{error}</p>
-          <p>
-            Running locally? Generate the data with <code>npm run refresh</code>.
-          </p>
-        </details>
-      </main>
-    )
-  }
-
-  if (!index) {
-    return (
-      <main className="app-state" role="status">
-        <IconMark />
-        <h1>Bringing the feeds together.</h1>
-        <p>Loading the latest collected snapshot…</p>
-        <div className="loading-track" />
-      </main>
-    )
-  }
-
   return (
     <Routes>
       <Route element={<Layout index={index} />}>
-        <Route index element={<MatrixPage index={index} />} />
+        <Route index element={<MatrixPage index={index} error={error} />} />
         <Route path="protocol/:id" element={<ProtocolPage />} />
         <Route path="sources" element={<SourcesPage index={index} />} />
         <Route path="methodology" element={<MethodologyPage index={index} />} />
