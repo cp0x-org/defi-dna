@@ -92,7 +92,10 @@ The pigi.finance feed needs an API key. Add it as a `PIGI_API_KEY` Actions
 secret for the workflow, and as `PIGI_API_KEY` in a local `.env` (see
 `.env.example`) for local collection. Without it the run skips pigi: the
 column keeps its previous values and the run reports it once. Offline runs
-need no key.
+need no key. An online run makes about twelve pigi requests (the node listing
+and one per mapped protocol), so two scheduled runs a day use about 730 of the
+free plan's 1,000 requests a month; manual and local runs draw on the same
+quota.
 
 ## Docker
 

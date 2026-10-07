@@ -47,6 +47,12 @@ export const IconInfo = () => (
     <path d="M12 11v5m0-9h.01" />
   </Svg>
 )
+export const IconHelp = () => (
+  <Svg size={16}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.4m0 3.2h.01" />
+  </Svg>
+)
 export const IconSort = ({ dir }: { dir: 'asc' | 'desc' | null }) => (
   <Svg size={14}>
     {dir === null ? (

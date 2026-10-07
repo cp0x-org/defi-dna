@@ -1336,7 +1336,15 @@ code {
   font-size: 11px;
 }
 .dimension-preview dt {
+  display: inline-flex;
+  align-items: center;
   color: var(--muted);
+}
+/* The help button must not make a preview row taller than its text. */
+.dimension-preview .info-button {
+  width: 22px;
+  height: 22px;
+  margin: -6px 0 -6px 2px;
 }
 .dimension-preview dd {
   font-family: var(--mono);

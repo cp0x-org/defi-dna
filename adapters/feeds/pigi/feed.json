@@ -1,9 +1,9 @@
 {
   "id": "pigi",
   "name": "pigi.finance",
-  "topic": "Vault risk",
-  "focus": "Vault-level risk ratings: bands A–F and a 0–100 score (higher = safer), recomputed nightly for individual vaults, lending reserves and pools.",
-  "assesses": "vault",
+  "topic": "Protocol risk",
+  "focus": "Cumulative protocol ratings: a 0–100 score (higher = safer) and a band A–F per protocol node, published as 0.6 × pigi’s rating of the node plus 0.4 × the TVL-weighted mean of the scores of the rated vaults that deposit into it.",
+  "assesses": "protocol",
   "homepage": "https://pigi.finance",
   "methodologyUrl": "https://app.pigi.finance/risk",
   "enabled": true
