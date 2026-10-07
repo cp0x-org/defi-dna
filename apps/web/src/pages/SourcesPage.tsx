@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { feeds, metrics } from '../lib/registry.ts'
-import { assessesLabel } from '../lib/view.ts'
+import { assessesLabel, dateInfo } from '../lib/view.ts'
 import { IconArrow, IconChevron } from '../components/Icons.tsx'
 import { ExternalLink, SourceMark } from '../components/UI.tsx'
 
@@ -25,6 +25,7 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
     <div className="directory-grid">
       {feeds.map((feed) => {
         const covered = index?.rows.filter((row) => row.feeds[feed.id]).length
+        const status = index?.sources?.[feed.id]
         return (
           <article className="directory-card" key={feed.id} id={`feed-${feed.id}`} tabIndex={-1}>
             <div className="directory-heading">
@@ -50,6 +51,17 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
               <div>
                 <dt>How values are shown</dt>
                 <dd>Verbatim, with the feed’s own date and a link</dd>
+              </div>
+              <div>
+                <dt>Last read without errors</dt>
+                <dd>
+                  {!index
+                    ? 'Not loaded'
+                    : status?.lastOkAt
+                      ? dateInfo(status.lastOkAt).label
+                      : 'Never'}
+                  {status?.note ? <small className="muted"> · {status.note}</small> : null}
+                </dd>
               </div>
             </dl>
             <details className="directory-details">

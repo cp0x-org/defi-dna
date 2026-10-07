@@ -22,6 +22,8 @@ export async function pull(): Promise<{ source: string; records: number }> {
 
   // Read everything first: a failed download leaves the local copy untouched.
   const changelog = await download(`${source}/changelog.json`)
+  const metrics = await download(`${source}/metrics.json`)
+  const status = await download(`${source}/status.json`)
   const records = await Promise.all(
     protocols.map(async ({ id }) => ({
       id,
@@ -40,6 +42,9 @@ export async function pull(): Promise<{ source: string; records: number }> {
     written++
   }
   await fs.writeFile(paths.changelog, changelog ?? '[]\n', 'utf8')
+  await fs.writeFile(paths.metricsData, metrics ?? '{}\n', 'utf8')
+  if (status) await fs.writeFile(paths.status, status, 'utf8')
+  else await fs.rm(paths.status, { force: true })
   return { source, records: written }
 }
 

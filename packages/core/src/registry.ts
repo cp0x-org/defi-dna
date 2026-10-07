@@ -28,6 +28,8 @@ export const paths = {
   feeds: path.join(root, 'adapters', 'feeds'),
   metrics: path.join(root, 'adapters', 'metrics'),
   records: path.join(root, 'data', 'protocols'),
+  metricsData: path.join(root, 'data', 'metrics.json'),
+  status: path.join(root, 'data', 'status.json'),
   index: path.join(root, 'data', 'index.json'),
   changelog: path.join(root, 'data', 'changelog.json'),
   cache: path.join(root, '.cache', 'http'),

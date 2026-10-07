@@ -54,19 +54,19 @@ feeds instead, run `npm run refresh`; this makes network requests and replaces
 the local copy. Running `pull` first lets a local collection carry previous
 values forward, as the scheduled workflow does.
 
-| Command                                   | Purpose                                                        |
-| ----------------------------------------- | -------------------------------------------------------------- |
-| `npm run collect`                         | Collect feed and metric data into `data/protocols/*.json`      |
-| `npm run bundle`                          | Build `data/index.json` and copy generated data to the web app |
-| `npm run refresh`                         | Collect, then bundle                                           |
-| `npm run pull`                            | Download the published data into `data/` and the web app       |
-| `npm run dev`                             | Start the dashboard                                            |
-| `npm run build`                           | Build the dashboard; it reads data at runtime                  |
-| `npm run preview`                         | Preview the built dashboard                                    |
-| `npm run lint` / `npm run lint:fix`       | Check or fix lint issues                                       |
-| `npm run format:check` / `npm run format` | Check or apply formatting                                      |
-| `npm run typecheck`                       | Type-check the pipeline, adapters and frontend                 |
-| `npm test`                                | Run the adapter unit tests                                     |
+| Command                                   | Purpose                                                                      |
+| ----------------------------------------- | ---------------------------------------------------------------------------- |
+| `npm run collect`                         | Collect feeds into `data/protocols/*.json`, metrics into `data/metrics.json` |
+| `npm run bundle`                          | Build `data/index.json` and copy generated data to the web app               |
+| `npm run refresh`                         | Collect, then bundle                                                         |
+| `npm run pull`                            | Download the published data into `data/` and the web app                     |
+| `npm run dev`                             | Start the dashboard                                                          |
+| `npm run build`                           | Build the dashboard; it reads data at runtime                                |
+| `npm run preview`                         | Preview the built dashboard                                                  |
+| `npm run lint` / `npm run lint:fix`       | Check or fix lint issues                                                     |
+| `npm run format:check` / `npm run format` | Check or apply formatting                                                    |
+| `npm run typecheck`                       | Type-check the pipeline, adapters and frontend                               |
+| `npm test`                                | Run the adapter unit tests                                                   |
 
 The collection commands accept `--protocol`, `--source`, `--offline` and
 `--verbose`. For example:
@@ -82,7 +82,8 @@ checking on commits. CI also runs tests and a build.
 
 The scheduled [refresh workflow](.github/workflows/refresh-data.yml) runs twice a
 day and can also be started manually. It restores the previous snapshot before
-collecting, then commits `index.json`, `changelog.json` and `protocols/*.json`
+collecting, then commits `index.json`, `protocols/*.json`, `metrics.json`,
+`changelog.json` and `status.json`
 to `main` in the separate `cp0x-org/defi-dna-data` repository. To enable the
 cross-repository push, add a `DEFI_DNA_DATA_TOKEN` Actions secret to this
 repository. It must grant Contents read and write access to `defi-dna-data`.

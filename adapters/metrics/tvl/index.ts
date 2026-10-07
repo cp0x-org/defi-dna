@@ -35,11 +35,11 @@ const adapter: MetricAdapter<Map<string, Entry>> = {
     const ids = ctx.mapping[protocol.id] ?? []
     if (ids.length === 0) return null
 
+    // Whole dollars: DefiLlama's fractional cents are float noise, not a measurement.
     const components = ids.flatMap((id) => {
       const entry = listed.get(id)
-      return entry
-        ? [{ id, name: entry.name, tvl: entry.chainTvls?.['Ethereum']?.tvl ?? null }]
-        : []
+      const tvl = entry?.chainTvls?.['Ethereum']?.tvl
+      return entry ? [{ id, name: entry.name, tvl: tvl == null ? null : Math.round(tvl) }] : []
     })
     const measured = components.filter((component) => component.tvl != null)
     const first = components[0]

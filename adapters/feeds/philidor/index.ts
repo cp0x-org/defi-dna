@@ -30,6 +30,11 @@ const number = (value: unknown): number | null => {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : null
 }
+/** Whole dollars: the cents of a vault's TVL are noise that would change the record every run. */
+const dollars = (value: unknown): number | null => {
+  const parsed = number(value)
+  return parsed == null ? null : Math.round(parsed)
+}
 
 const scoredAt = (vault: Vault): string =>
   (vault.score_computed_at ?? vault.last_synced_at ?? '').slice(0, 10)
@@ -167,7 +172,7 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
           curator: vault.curator_name ?? null,
           tier: vault.risk_tier,
           score: number(vault.total_score),
-          tvlUsd: number(vault.tvl_usd),
+          tvlUsd: dollars(vault.tvl_usd),
           scoredAt: scoredAt(vault) || null,
           url: `${SITE}/vault/ethereum/${vault.address}`,
         })),

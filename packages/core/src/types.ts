@@ -165,7 +165,12 @@ export interface FeedResult {
 export interface FeedData extends FeedResult {
   /** `ok` — the feed has data; `none` — it has none; `error` — we failed to read it. */
   status: 'ok' | 'none' | 'error'
-  fetchedAt: string
+  /**
+   * The run that last changed this cell. Content that stayed the same keeps
+   * its earlier time, so a record changes only when a feed's content does and
+   * the git history of the data is the history of what the feeds published.
+   */
+  since: string
 }
 
 /** An independent measurement (TVL, incidents) — a quantity, never a verdict. */
@@ -178,22 +183,47 @@ export interface MetricResult {
 }
 
 export interface MetricData extends MetricResult {
+  /** When we read it. Metrics move daily, so this is refreshed on every run. */
   fetchedAt: string
 }
 
 /**
- * data/protocols/<id>.json — everything we collected about one protocol.
+ * data/protocols/<id>.json — what every feed published about one protocol.
  *
  * Generated, and generated only: the protocol's name, group and description are
- * hand-maintained in registry/protocols.json and never copied in here.
+ * hand-maintained in registry/protocols.json and never copied in here. The
+ * file changes only when a feed's content does; measured quantities, which
+ * move every day, live in data/metrics.json.
  */
 export interface ProtocolRecord {
-  generatedAt: string
   protocolId: string
-  /** Keyed by metric id: `tvl`, `incidents`. */
-  metrics: Record<string, MetricData>
   /** Keyed by feed id. */
   feeds: Record<string, FeedData>
+}
+
+/** data/metrics.json — measured quantities for every protocol, by protocol id then metric id. */
+export type MetricsFile = Record<string, Record<string, MetricData>>
+
+/** What the protocol page renders: the record joined with the protocol's metrics. */
+export interface ProtocolDetail extends ProtocolRecord {
+  /** Keyed by metric id: `tvl`, `incidents`. */
+  metrics: Record<string, MetricData>
+}
+
+/** When we last read a source. Facts about this pipeline, never about a protocol. */
+export interface SourceStatus {
+  /** The last run that tried the source. */
+  lastRunAt?: string
+  /** The last run that read it without a failure. */
+  lastOkAt?: string
+  /** Why the last run fell short, when it did. */
+  note?: string
+}
+
+/** data/status.json — the last run, and when each source was last read. */
+export interface RunStatus {
+  generatedAt: string
+  sources: Record<string, SourceStatus>
 }
 
 /**
@@ -213,7 +243,10 @@ export interface IndexRow {
 
 /** data/index.json — one request, everything the dashboard needs at runtime. */
 export interface IndexBundle {
+  /** When the data was collected. */
   generatedAt: string
+  /** When each feed and metric was last read; absent when the run status is not available. */
+  sources?: Record<string, SourceStatus>
   rows: IndexRow[]
 }
 

@@ -2,22 +2,13 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/schemas/protocol-record.schema.json",
   "title": "defi-dna protocol record",
-  "description": "Generated data/protocols/<id>.json. Each optional extra field has a defined shape and a dedicated frontend view.",
+  "description": "Generated data/protocols/<id>.json: what every feed published about one protocol. Changes only when a feed's content does; measured quantities live in metrics.json. Each optional extra field has a defined shape and a dedicated frontend view.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["generatedAt", "protocolId", "metrics", "feeds"],
+  "required": ["protocolId", "feeds"],
   "properties": {
-    "generatedAt": {
-      "type": "string"
-    },
     "protocolId": {
       "type": "string"
-    },
-    "metrics": {
-      "type": "object",
-      "additionalProperties": {
-        "$ref": "#/definitions/metricData"
-      }
     },
     "feeds": {
       "type": "object",
@@ -30,7 +21,7 @@
     "feedData": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "fetchedAt"],
+      "required": ["status", "since"],
       "allOf": [
         {
           "if": {
@@ -73,7 +64,8 @@
         "extra": {
           "$ref": "#/definitions/extra"
         },
-        "fetchedAt": {
+        "since": {
+          "description": "Added by the runner: the run that last changed this cell. Unchanged content keeps its earlier time.",
           "type": "string"
         }
       }
@@ -99,6 +91,7 @@
           "$ref": "#/definitions/extra"
         },
         "fetchedAt": {
+          "description": "When we read it. Refreshed on every run.",
           "type": "string"
         }
       }

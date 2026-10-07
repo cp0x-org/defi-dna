@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import type { Protocol, ProtocolRecord } from '@defi-dna/data'
+import type { Protocol, ProtocolDetail } from '@defi-dna/data'
 import { useProtocol } from '../hooks/useIndex.ts'
 import { feeds as allFeeds, metricById, protocolById, protocols } from '../lib/registry.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../lib/view.ts'
@@ -127,7 +127,7 @@ const ProtocolRecordView = ({
   record,
 }: {
   protocol: Protocol
-  record: ProtocolRecord
+  record: ProtocolDetail
 }) => {
   const { metrics, feeds } = record
   const tvl = metrics['tvl']

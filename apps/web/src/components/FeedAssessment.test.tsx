@@ -19,7 +19,7 @@ describe('FeedAssessment', () => {
       status: 'ok',
       value: 'Stage 1',
       url: 'https://example.com/protocol',
-      fetchedAt: '2026-10-01T00:00:00.000Z',
+      since: '2026-10-01T00:00:00.000Z',
     }
     const html = renderToStaticMarkup(<FeedAssessment feed={feed} data={data} />)
     expect(html).toContain('assesses individual vaults, not the protocol')
@@ -31,7 +31,7 @@ describe('FeedAssessment', () => {
     const data: FeedData = {
       status: 'none',
       note: 'Nothing mapped.',
-      fetchedAt: '2026-10-01T00:00:00.000Z',
+      since: '2026-10-01T00:00:00.000Z',
     }
     const html = renderToStaticMarkup(<FeedAssessment feed={feed} data={data} />)
     expect(html).toContain('No data in this feed')

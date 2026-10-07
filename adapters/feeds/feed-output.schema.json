@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/adapters/feeds/feed-output.schema.json",
   "title": "defi-dna feed output",
-  "description": "What one feed adapter produces for one protocol. collect() returns the fields below, or null when the feed has nothing for that protocol; the runner adds `status` and `fetchedAt` and stores the result under data/protocols/<protocol>.json in `feeds.<feed id>`.",
+  "description": "What one feed adapter produces for one protocol. collect() returns the fields below, or null when the feed has nothing for that protocol; the runner adds `status` and `since` and stores the result under data/protocols/<protocol>.json in `feeds.<feed id>`.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -34,7 +34,7 @@
       }
     },
     "updatedAt": {
-      "description": "When the feed itself last updated this assessment (ISO date or date-time). The fetch time is recorded separately as fetchedAt.",
+      "description": "When the feed itself last updated this assessment (ISO date or date-time). The run that last changed the cell is recorded separately as `since`.",
       "type": "string"
     },
     "url": {
@@ -50,8 +50,8 @@
       "description": "Optional structured data, each recognized type rendered by its own frontend component.",
       "$ref": "../../schemas/protocol-record.schema.json#/definitions/extra"
     },
-    "fetchedAt": {
-      "description": "Added by the runner: when we read the source.",
+    "since": {
+      "description": "Added by the runner: the run that last changed this cell. Unchanged content keeps its earlier time.",
       "type": "string"
     }
   },
@@ -77,12 +77,12 @@
       "updatedAt": "2025-05-07",
       "url": "https://www.defiscan.info/protocols/morpho/ethereum",
       "extra": { "reviews": [] },
-      "fetchedAt": "2026-09-20T21:01:09.359Z"
+      "since": "2026-09-20T21:01:09.359Z"
     },
     {
       "status": "none",
       "note": "Risklayer lists balancer.fi but has published no completed analysis.",
-      "fetchedAt": "2026-09-20T21:01:09.359Z"
+      "since": "2026-09-20T21:01:09.359Z"
     }
   ]
 }

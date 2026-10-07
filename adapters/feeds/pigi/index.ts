@@ -110,7 +110,8 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
         curator: null,
         tier: vault.risk_band,
         score: vault.risk_score,
-        tvlUsd: vault.tvl_30d_ma,
+        // Whole dollars: the cents are noise that would change the record every run.
+        tvlUsd: vault.tvl_30d_ma == null ? null : Math.round(vault.tvl_30d_ma),
         scoredAt: ratedOn(vault) || null,
         url: `${SITE}/vault/${vault.strategy_id}`,
       })),
