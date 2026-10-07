@@ -36,6 +36,16 @@ describe('adapter folders', () => {
     }
   })
 
+  it('the template lists every registry protocol, so a new feed never guesses an id', async () => {
+    const { protocols } = await readJson<{ protocols: Protocol[] }>(paths.protocols)
+    const template = await readJson<Record<string, unknown>>(
+      path.join(paths.feeds, '_template', 'mapping.json'),
+    )
+    const listed = Object.keys(template).filter((key) => !key.startsWith('_'))
+    expect([...listed].sort()).toEqual(protocols.map((protocol) => protocol.id).sort())
+    for (const id of listed) expect(template[`_${id}`], `comment for ${id}`).toBeTypeOf('string')
+  })
+
   it('declare a known assessed object in feed.json', async () => {
     for (const id of await listAdapters(paths.feeds)) {
       const feed = await readJson<Feed>(path.join(paths.feeds, id, 'feed.json'))

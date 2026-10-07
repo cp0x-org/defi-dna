@@ -52,7 +52,10 @@ cells are dropped from the records on the next run (the git history keeps them).
 ## mapping.json
 
 Our protocol id on the left, the feed's own id on the right. Nothing else — no
-flags, no notes, no coverage bookkeeping.
+flags, no notes, no coverage bookkeeping. The template's `mapping.json` lists
+every protocol in the registry with an empty value and a comment saying what
+it is: fill in the ones the feed covers and delete the rest, so you never guess
+how an id is spelled.
 
 ```json
 {
