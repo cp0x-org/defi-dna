@@ -45,7 +45,9 @@ every value, so a vault tier is never read as a verdict on the protocol. The
 frontend imports this file at build time.
 
 `id` must equal the folder name. `enabled: false` stops the feed being collected
-and removes its column.
+and removes its column; the cells already stored are kept, so switching the feed
+back on resumes from its last read. To retire a feed, delete its folder: its
+cells are dropped from the records on the next run (the git history keeps them).
 
 ## mapping.json
 

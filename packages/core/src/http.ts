@@ -7,7 +7,7 @@ import type { FetchOptions } from './types.ts'
 const USER_AGENT =
   'defi-dna-aggregator/0.1 (+https://github.com/cp0x-org/defi-dna) risk feed aggregation'
 const DEFAULT_TTL = 3600
-const RETRIES = 2
+const DEFAULT_RETRIES = 2
 /** Longest we sit out a rate-limit window before giving up on a request. */
 const MAX_WAIT_MS = 60_000
 
@@ -27,12 +27,23 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
  * produces the same records from the last successful fetch. A response older
  * than its TTL is refreshed, and kept as a fallback if the refresh fails.
  */
+export interface HttpOptions {
+  offline?: boolean
+  verbose?: boolean
+  /** Where responses are cached. Default: the repository's .cache/http. */
+  cacheDir?: string
+  /** Retries after a failed request. Default: 2. */
+  retries?: number
+  /** The fetch to use; tests pass a fake. */
+  fetch?: typeof fetch
+}
+
 export class Http {
-  constructor(private readonly options: { offline?: boolean; verbose?: boolean } = {}) {}
+  constructor(private readonly options: HttpOptions = {}) {}
 
   async getText(url: string, options: FetchOptions = {}): Promise<string> {
     const file = path.join(
-      paths.cache,
+      this.options.cacheDir ?? paths.cache,
       `${createHash('sha256')
         .update(url + (options.rangeBytes ?? ''))
         .digest('hex')
@@ -45,8 +56,9 @@ export class Http {
     }
     if (this.options.offline) throw new Error(`offline and nothing cached for ${url}`)
 
+    const fetchImpl = this.options.fetch ?? fetch
     let lastError: unknown
-    for (let attempt = 0; attempt <= RETRIES; attempt++) {
+    for (let attempt = 0; attempt <= (this.options.retries ?? DEFAULT_RETRIES); attempt++) {
       if (attempt > 0) await wait(500 * attempt)
       try {
         const headers: Record<string, string> = {
@@ -55,7 +67,7 @@ export class Http {
           accept: '*/*',
         }
         if (options.rangeBytes) headers.range = `bytes=${options.rangeBytes.join('-')}`
-        const response = await fetch(url, {
+        const response = await fetchImpl(url, {
           headers,
           signal: AbortSignal.timeout(60_000),
         })
@@ -99,7 +111,7 @@ export class Http {
    */
   async postJson<T>(url: string, body: unknown): Promise<T> {
     if (this.options.offline) throw new Error(`offline: cannot POST to ${url}`)
-    const response = await fetch(url, {
+    const response = await (this.options.fetch ?? fetch)(url, {
       method: 'POST',
       headers: {
         'user-agent': USER_AGENT,

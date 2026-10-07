@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Http } from './http.ts'
-import { loadRegistry, paths, readJson } from './registry.ts'
+import { dataPaths, loadRegistry, readJson, type Registry } from './registry.ts'
 import { validateFeedData, validateMetricData } from './validate.ts'
 import type {
   AdapterContext,
@@ -21,6 +21,12 @@ export interface CollectOptions {
   sources?: string[]
   offline?: boolean
   verbose?: boolean
+  /** Where the generated files live. Default: the repository's data/. */
+  dataDir?: string
+  /** The protocols and adapters to run. Default: whatever the adapter folders hold. */
+  registry?: Registry
+  /** Where the per-protocol progress line goes. Default: the console. */
+  print?: (line: string) => void
 }
 
 export interface CollectSummary {
@@ -47,7 +53,9 @@ const CONCURRENCY = 4
  *     the git history of a record is the history of what the feeds published.
  */
 export async function collect(options: CollectOptions = {}): Promise<CollectSummary> {
-  const registry = await loadRegistry()
+  const registry = options.registry ?? (await loadRegistry())
+  const data = dataPaths(options.dataDir)
+  const print = options.print ?? console.log
   const now = new Date()
   const fetchedAt = now.toISOString()
   const http = new Http(options)
@@ -97,18 +105,19 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
 
   const feedIds = registry.feeds.map(({ feed }) => feed.id)
   const metricIds = registry.metrics.map(({ metric }) => metric.id)
-  const metricsBefore = await readJson<MetricsFile>(paths.metricsData).catch(
+  const metricsBefore = await readJson<MetricsFile>(data.metricsData).catch(
     () => ({}) as MetricsFile,
   )
   const metricsFile: MetricsFile = {}
   const changes: Change[] = []
   const records = await inParallel(protocols, CONCURRENCY, async (protocol) => {
-    const previous = await readRecord(protocol.id)
+    const previous = await readRecord(protocol.id, data.records)
     const record: ProtocolRecord = {
       protocolId: protocol.id,
       // A partial run (--protocol / --source) refreshes part of a record; the
-      // rest is carried over so we never wipe a column we did not visit.
-      feeds: carry(previous?.feeds, feedIds),
+      // rest is carried over so we never wipe a column we did not visit. A
+      // disabled feed keeps its cells too; only a deleted folder drops them.
+      feeds: carry(previous?.feeds, [...feedIds, ...registry.disabledFeeds]),
     }
     const measured = carry(metricsBefore[protocol.id], metricIds)
     metricsFile[protocol.id] = measured
@@ -184,8 +193,8 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
       }
     }
 
-    await writeRecord(record)
-    console.log(`  ${protocol.id.padEnd(14)} ${flags(record, feedIds)}`)
+    await writeJson(path.join(data.records, `${record.protocolId}.json`), record)
+    print(`  ${protocol.id.padEnd(14)} ${flags(record, feedIds)}`)
     return record
   })
 
@@ -193,8 +202,9 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
   for (const protocol of registry.protocols) {
     metricsFile[protocol.id] ??= carry(metricsBefore[protocol.id], metricIds)
   }
-  await writeJson(paths.metricsData, metricsFile)
+  await writeJson(data.metricsData, metricsFile)
   await writeStatus(
+    data.status,
     [...feeds, ...metrics].map(({ adapter }) => adapter.id),
     [...feedIds, ...metricIds],
     (id) => {
@@ -207,7 +217,7 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
     },
     fetchedAt,
   )
-  await appendChangelog(changes)
+  await appendChangelog(data.changelog, changes)
   return { records, changes, failures }
 }
 
@@ -217,12 +227,13 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
  * registry are dropped.
  */
 async function writeStatus(
+  file: string,
   ran: string[],
   known: string[],
   outcome: (id: string) => { ok?: boolean; note?: string },
   now: string,
 ): Promise<void> {
-  const previous = await readJson<RunStatus>(paths.status).catch(() => null)
+  const previous = await readJson<RunStatus>(file).catch(() => null)
   const sources: Record<string, SourceStatus> = {}
   for (const id of known) {
     const before = previous?.sources[id] ?? {}
@@ -237,7 +248,7 @@ async function writeStatus(
       ...(note ? { note } : {}),
     }
   }
-  await writeJson(paths.status, { generatedAt: now, sources } satisfies RunStatus)
+  await writeJson(file, { generatedAt: now, sources } satisfies RunStatus)
 }
 
 /** Equal once `since` is set aside; key order and absent-vs-undefined do not count. */
@@ -271,16 +282,15 @@ function flags(record: ProtocolRecord, feedIds: string[]): string {
   return `[${feedIds.map(mark).join('')}]`
 }
 
-export async function readRecord(protocolId: string): Promise<ProtocolRecord | null> {
+export async function readRecord(
+  protocolId: string,
+  records: string = dataPaths().records,
+): Promise<ProtocolRecord | null> {
   try {
-    return await readJson<ProtocolRecord>(path.join(paths.records, `${protocolId}.json`))
+    return await readJson<ProtocolRecord>(path.join(records, `${protocolId}.json`))
   } catch {
     return null
   }
-}
-
-async function writeRecord(record: ProtocolRecord): Promise<void> {
-  await writeJson(path.join(paths.records, `${record.protocolId}.json`), record)
 }
 
 async function writeJson(file: string, value: unknown): Promise<void> {
@@ -301,11 +311,10 @@ function carry<T>(stored: Record<string, T> | undefined, ids: string[]): Record<
 const MAX_CHANGES = 1000
 
 /** The change log is append-only: it is the history of what the feeds published. */
-async function appendChangelog(changes: Change[]): Promise<void> {
+async function appendChangelog(file: string, changes: Change[]): Promise<void> {
   if (changes.length === 0) return
-  const existing = await readJson<Change[]>(paths.changelog).catch(() => [] as Change[])
-  const merged = [...changes, ...existing].slice(0, MAX_CHANGES)
-  await fs.writeFile(paths.changelog, `${JSON.stringify(merged, null, 2)}\n`, 'utf8')
+  const existing = await readJson<Change[]>(file).catch(() => [] as Change[])
+  await writeJson(file, [...changes, ...existing].slice(0, MAX_CHANGES))
 }
 
 async function inParallel<T, R>(

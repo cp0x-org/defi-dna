@@ -27,13 +27,21 @@ export const paths = {
   config: path.join(root, 'configs', 'config.json'),
   feeds: path.join(root, 'adapters', 'feeds'),
   metrics: path.join(root, 'adapters', 'metrics'),
-  records: path.join(root, 'data', 'protocols'),
-  metricsData: path.join(root, 'data', 'metrics.json'),
-  status: path.join(root, 'data', 'status.json'),
-  index: path.join(root, 'data', 'index.json'),
-  changelog: path.join(root, 'data', 'changelog.json'),
+  data: path.join(root, 'data'),
   cache: path.join(root, '.cache', 'http'),
   webData: path.join(root, 'apps', 'web', 'public', 'data'),
+}
+
+/** The generated files under one data directory: the repository's `data/` unless a caller (a test) says otherwise. */
+export function dataPaths(dir: string = paths.data) {
+  return {
+    dir,
+    records: path.join(dir, 'protocols'),
+    metricsData: path.join(dir, 'metrics.json'),
+    status: path.join(dir, 'status.json'),
+    index: path.join(dir, 'index.json'),
+    changelog: path.join(dir, 'changelog.json'),
+  }
 }
 
 export interface Registry {
@@ -42,6 +50,12 @@ export interface Registry {
   feeds: { feed: Feed; adapter: FeedAdapter; mapping: Mapping }[]
   /** Independent measurements, each with the adapter that reads it and its mapping. */
   metrics: { metric: Metric; adapter: MetricAdapter; mapping: Mapping }[]
+  /**
+   * Feeds switched off with `enabled: false`: not collected and not shown, but
+   * their stored cells are kept so switching one back on resumes from its last
+   * read. Deleting a feed's folder is what drops its cells.
+   */
+  disabledFeeds: string[]
 }
 
 /**
@@ -57,6 +71,7 @@ export async function loadRegistry(): Promise<Registry> {
   const known = new Set(protocols.map((protocol) => protocol.id))
 
   const feeds: Registry['feeds'] = []
+  const disabledFeeds: string[] = []
   for (const id of await listAdapters(paths.feeds)) {
     const folder = path.join(paths.feeds, id)
     const feed = await readJson<Feed>(path.join(folder, 'feed.json'))
@@ -66,7 +81,10 @@ export async function loadRegistry(): Promise<Registry> {
         `adapters/feeds/${id}/feed.json: "assesses" must be one of ${ASSESSED_OBJECTS.join(', ')}`,
       )
     }
-    if (!feed.enabled) continue
+    if (!feed.enabled) {
+      disabledFeeds.push(id)
+      continue
+    }
     feeds.push({
       feed,
       adapter: await loadAdapter<FeedAdapter>(paths.feeds, id),
@@ -87,7 +105,7 @@ export async function loadRegistry(): Promise<Registry> {
     })
   }
 
-  return { protocols, feeds, metrics }
+  return { protocols, feeds, metrics, disabledFeeds }
 }
 
 export async function readJson<T>(file: string): Promise<T> {
