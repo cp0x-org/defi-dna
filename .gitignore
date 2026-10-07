@@ -35,3 +35,6 @@ pnpm-debug.log*
 /data
 /apps/web/public/data
 /.cache
+
+# Grant working material: private, kept here only locally.
+/grant_data
