@@ -2,6 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Http } from './http.ts'
 import { loadRegistry, paths, readJson } from './registry.ts'
+import { validateFeedData, validateMetricData } from './validate.ts'
 import type {
   AdapterContext,
   Change,
@@ -127,7 +128,10 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
           ctx: context(id, mapping),
           prepared: prepared.get(id),
         })
-        measured[id] = { ...(result ?? { value: null }), fetchedAt }
+        const data = { ...(result ?? { value: null }), fetchedAt }
+        const invalid = validateMetricData(data)
+        if (invalid) throw new Error(`adapter output does not match the schema: ${invalid}`)
+        measured[id] = data
       } catch (error) {
         fail(id, protocol.id, error)
         measured[id] = unreadable(message(error))
@@ -160,6 +164,8 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
               ? { ...result, status: result.value ? 'ok' : 'none' }
               : { status: 'none', note: `${feed.name} has no data for ${protocol.name}.` },
           )
+          const invalid = validateFeedData(data)
+          if (invalid) throw new Error(`adapter output does not match the schema: ${invalid}`)
         } catch (error) {
           fail(feed.id, protocol.id, error)
           data = unreadable(message(error))

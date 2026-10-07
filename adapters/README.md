@@ -117,7 +117,10 @@ export default adapter
 ```
 
 The full shape, with every field described, is
-[`feeds/feed-output.schema.json`](feeds/feed-output.schema.json).
+[`feeds/feed-output.schema.json`](feeds/feed-output.schema.json). The runner
+checks every result against it before storing it, so a `value` that is not a
+string, an `ok` without a `url` or an unknown key in `extra` is reported as a
+failed read rather than published.
 The complete generated JSON, including metrics and every supported `extra` field,
 is defined in [`schemas/protocol-record.schema.json`](../schemas/protocol-record.schema.json).
 `extra` is structured rather than an arbitrary copy of the source response, and
@@ -139,6 +142,7 @@ Rules the runner applies to what you return:
 | `null`                                     | `none`                                           | grey dot  |
 | a thrown error                             | `error`, or the previous run's value             | grey dot  |
 | `prepare()` throws, or a secret is missing | the whole column keeps its values; reported once | unchanged |
+| a result the schema rejects                | `error`, or the previous run's value             | grey dot  |
 
 Throwing is for "we could not read the source" — never for "the feed does not
 cover this". Keeping those apart is what stops a broken run from looking like a
