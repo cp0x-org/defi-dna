@@ -1,0 +1,97 @@
+{
+  "node_id": "sparklend",
+  "label": "SparkLend — Aave v3.0.2 fork under Sky governance (Ethereum)",
+  "assessed": true,
+  "score": 82.23,
+  "band": "B",
+  "date": "2026-10-11",
+  "chain_id": 1,
+  "formula": {
+    "k1": 0.6,
+    "k2": 0.4,
+    "vault_aggregation": "tvl_weighted_mean",
+    "vault_max_age_days": 7,
+    "bands": [
+      ["A", 85],
+      ["B", 70],
+      ["C", 55],
+      ["D", 40],
+      ["F", 0]
+    ],
+    "note": "score = 0.6 × the protocol node's own rating + 0.4 × the TVL-weighted mean (weight = tvl_30d_ma share) of the latest published score of every rated vault that deposits into it; with no rated vault the node rating stands alone (applied.k1 = 1). The band is read straight off the thresholds, without the dwell rule that smooths vault bands, so it can move on any day. A vault that deposits into more than one protocol node (every Morpho vault: the framework and the Blue instance) counts toward each. Vault scores are the published ones — their caps were computed against the node rating as of their own date, so after a node re-rate the two terms agree again at the next nightly. chain_id narrows the vault set only."
+  },
+  "applied": {
+    "k1": 0.6,
+    "k2": 0.4,
+    "vault_aggregation": "tvl_weighted_mean"
+  },
+  "protocol": {
+    "rating": 80,
+    "date": "2026-09-22",
+    "methodology_version": "1.14.0",
+    "source": "in-house"
+  },
+  "vaults": {
+    "rated_count": 9,
+    "stale_excluded": 0,
+    "tvl_usd": 3873386439.15,
+    "score_tvl_weighted": 85.57,
+    "score_mean": 77,
+    "score_min": 55,
+    "score_max": 89.8,
+    "latest_date": "2026-10-11",
+    "bands": {
+      "A": 4,
+      "B": 2,
+      "C": 3,
+      "D": 0,
+      "F": 0
+    },
+    "chain_ids": [1],
+    "items": [
+      {
+        "strategy_id": 3906,
+        "name": "SparkLend WETH",
+        "chain_id": 1,
+        "protocol_name": "SparkLend",
+        "score": 89.8,
+        "band": "A",
+        "date": "2026-10-11",
+        "tvl_usd": 1560376499.25,
+        "weight": 0.402846,
+        "critical": true,
+        "cap_binding": false
+      },
+      {
+        "strategy_id": 3901,
+        "name": "SparkLend USDS",
+        "chain_id": 1,
+        "protocol_name": "SparkLend",
+        "score": 86,
+        "band": "A",
+        "date": "2026-10-11",
+        "tvl_usd": 1310265419.82,
+        "weight": 0.338274,
+        "critical": true,
+        "cap_binding": false
+      },
+      {
+        "strategy_id": 9,
+        "name": "Instadapp ETH v2",
+        "chain_id": 1,
+        "protocol_name": "Fluid (InstaDapp)",
+        "score": 55,
+        "band": "C",
+        "date": "2026-10-11",
+        "tvl_usd": 199648921.54,
+        "weight": 0.051544,
+        "critical": true,
+        "cap_binding": false
+      }
+    ]
+  },
+  "rubric": null,
+  "plan_required": {
+    "rubric": "custom"
+  }
+}

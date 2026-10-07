@@ -27,6 +27,24 @@ describe('FeedAssessment', () => {
     expect(html).not.toContain('&quot;value&quot;')
   })
 
+  it('puts a help button next to a previewed term that the feed explains', () => {
+    const data: FeedData = {
+      status: 'ok',
+      value: 'B 82.23/100',
+      details: [
+        { name: 'Node rating', value: '80/100', description: 'The node’s own rating.' },
+        { name: 'Weights', value: 'node 0.6 · vaults 0.4' },
+      ],
+      url: 'https://example.com/protocol',
+      since: '2026-10-01T00:00:00.000Z',
+    }
+    const preview = renderToStaticMarkup(<FeedAssessment feed={feed} data={data} />).split(
+      'assessment-details',
+    )[0]
+    expect(preview).toContain('aria-label="Node rating"')
+    expect(preview).not.toContain('aria-label="Weights"')
+  })
+
   it('explains an empty card without printing its stored JSON', () => {
     const data: FeedData = {
       status: 'none',
