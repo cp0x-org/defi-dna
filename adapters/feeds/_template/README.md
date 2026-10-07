@@ -10,11 +10,12 @@ npm run collect -- --source my-feed --verbose
 
 Folders starting with `_` are templates: the pipeline and the frontend skip them.
 
-| File           | What it is                                                |
-| -------------- | --------------------------------------------------------- |
-| `feed.json`    | what the feed is and what it assesses — shown on the site |
-| `mapping.json` | our protocol id → the feed's own id. Nothing else         |
-| `index.ts`     | how to read the feed: one `collect()` per protocol        |
+| File            | What it is                                                                      |
+| --------------- | ------------------------------------------------------------------------------- |
+| `feed.json`     | what the feed is and what it assesses — shown on the site                       |
+| `mapping.json`  | our protocol id → the feed's own id. Nothing else                               |
+| `index.ts`      | how to read the feed: one `collect()` per protocol                              |
+| `index.test.ts` | the adapter run over `fixtures/`: trimmed real responses, through `fakeContext` |
 
 What `collect()` returns is described by
 [`../feed-output.schema.json`](../feed-output.schema.json) — the same shape for

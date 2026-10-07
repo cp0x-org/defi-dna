@@ -1,0 +1,55 @@
+{
+  "data": [
+    {
+      "strategy_id": 1003,
+      "protocol_name": "Morpho",
+      "chain_id": 1,
+      "pool_name": "Gauntlet USDC Prime",
+      "display_name": "Gauntlet USDC Prime (Ethereum Mainnet · gtUSDC)",
+      "type": "Lending",
+      "tvl_30d_ma": 25774199.87,
+      "updated_at": "2026-10-01T00:00:00+00:00",
+      "risk_band": "B",
+      "risk_score": 79.8
+    },
+    {
+      "strategy_id": 46,
+      "protocol_name": "Morpho v2",
+      "chain_id": 1,
+      "pool_name": "Gauntlet USDC Prime",
+      "display_name": "Gauntlet USDC Prime (Ethereum Mainnet · gtusdcp)",
+      "type": "Lending",
+      "tvl_30d_ma": 92563087.88,
+      "updated_at": "2026-10-01T00:00:00+00:00",
+      "risk_band": "B",
+      "risk_score": 79
+    },
+    {
+      "strategy_id": 4016,
+      "protocol_name": "Morpho",
+      "chain_id": 1,
+      "pool_name": "Steakhouse Ethena USDT",
+      "display_name": "Steakhouse Ethena USDT",
+      "type": "Lending",
+      "tvl_30d_ma": 1.03,
+      "updated_at": "2026-10-01T00:00:00+00:00",
+      "risk_band": null,
+      "risk_score": null
+    },
+    {
+      "strategy_id": 80000,
+      "protocol_name": "Curve",
+      "chain_id": 1,
+      "pool_name": "LlamaLend crvUSD (sreUSD collateral)",
+      "display_name": "LlamaLend crvUSD (sreUSD collateral)",
+      "type": "Lending",
+      "tvl_30d_ma": 34731772.43,
+      "updated_at": "2026-10-01T00:00:00+00:00",
+      "risk_band": null,
+      "risk_score": null
+    }
+  ],
+  "pagination": {
+    "hasMore": false
+  }
+}

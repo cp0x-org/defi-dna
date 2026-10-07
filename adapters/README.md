@@ -170,5 +170,27 @@ quantities — they appear on the protocol page and never as a feed column. See
 
 ```bash
 npm run collect -- --source my-feed --protocol aave-v3 --verbose
-npm test          # tests live next to the adapter, as <name>.test.ts
+npm run collect -- --source my-feed --offline      # replay from .cache/http
+npm test
 ```
+
+Tests live next to the adapter as `index.test.ts` and run the adapter itself
+over canned responses, through `fakeContext` from `@defi-dna/core/testing`:
+
+```ts
+import { fakeContext } from '@defi-dna/core/testing'
+import listing from './fixtures/listing.json' with { type: 'json' }
+import adapter from './index.ts'
+
+const ctx = fakeContext({ 'https://my-feed.example/api/protocols': listing }, { mapping })
+const prepared = await adapter.prepare!(ctx)
+const result = await adapter.collect({ protocol, ctx, prepared })
+```
+
+A fixture is a real response, trimmed to a few entries: copy the `body` of the
+matching `.cache/http/<sha>.json` into `fixtures/`. An unknown URL throws, a
+`null` body is a 404, `POST <url>` keys serve `postJson`, and a request's
+`headers` function runs as it would on the network, so a key exchange is
+exercised too. Cover the three answers a feed gives: covered, listed but
+without a value (a `note`, no `value`), and not mapped (`null`). The template
+folder has a complete example.
