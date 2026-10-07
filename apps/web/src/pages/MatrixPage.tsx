@@ -298,10 +298,10 @@ export const MatrixPage = ({
           <span className="section-aside">
             Every feed measures something different
             <Info label="Why there is no value here">
-              A DeFiScan stage, a Risklayer 0-10 figure and a Philidor vault tier are not the same
-              kind of statement, and a feed does not always say which slice of a protocol it looked
-              at. The dashboard therefore reports only whether data exists; the values stay on the
-              protocol page, unmixed.
+              A decentralization stage, a 0-10 risk figure and a vault tier are not the same kind of
+              statement, and a feed does not always say which slice of a protocol it looked at. The
+              dashboard therefore reports only whether data exists; the values stay on the protocol
+              page, unmixed.
             </Info>
           </span>
         </div>
