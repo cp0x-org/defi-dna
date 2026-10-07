@@ -1519,6 +1519,33 @@ details[open] > summary > svg:last-child {
   color: var(--muted);
   font-size: 11px;
 }
+.raw-record {
+  margin-top: 12px;
+}
+.raw-record > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 7px 0;
+}
+.raw-record > pre {
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  max-height: 360px;
+  overflow: auto;
+  background: var(--subtle);
+  border-left: 2px solid var(--line-strong);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .assessment-card-footer {
   display: flex;
   align-items: center;
