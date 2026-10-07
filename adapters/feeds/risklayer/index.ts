@@ -103,11 +103,13 @@ const adapter: FeedAdapter = {
       url,
       note: 'Risklayer is in beta and publishes no ordering for its bands, so the figure is shown exactly as reported.',
       extra: {
-        domain,
-        riskLevel,
-        overallScore: Number.isFinite(score) ? score : null,
-        analysisStatus: analysis?.status ?? null,
-        keyFindings: findings,
+        facts: [
+          { name: 'Analyzed domain', value: domain },
+          ...(riskLevel ? [{ name: 'Risk level', value: riskLevel }] : []),
+          ...(Number.isFinite(score) ? [{ name: 'Overall score', value: String(score) }] : []),
+          ...(analysis?.status ? [{ name: 'Analysis status', value: analysis.status }] : []),
+        ],
+        findings,
       },
     }
   },

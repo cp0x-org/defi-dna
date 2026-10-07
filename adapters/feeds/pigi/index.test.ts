@@ -45,7 +45,10 @@ describe('assess', () => {
       ['Small', 'F · 17/100'],
     ])
     expect(result.updatedAt).toBe('2026-10-01')
-    expect(result.extra).toMatchObject({ vaultsListed: 3, vaultsRated: 2 })
+    expect(result.extra?.facts).toEqual([
+      { name: 'Vaults listed', value: '3' },
+      { name: 'Vaults rated', value: '2' },
+    ])
     expect(result.extra?.vaults?.[0]).toEqual({
       name: 'Large',
       version: 'Morpho v2',
@@ -82,7 +85,7 @@ describe('assess', () => {
     )
     const result = assess(['Morpho'], many)
     expect(result.value).toBe('120 vaults rated')
-    expect(result.extra?.vaultsRated).toBe(120)
+    expect(result.extra?.facts).toContainEqual({ name: 'Vaults rated', value: '120' })
     expect(result.extra?.vaults).toHaveLength(100)
     expect(result.extra?.vaults?.[0]?.name).toBe('Vault 119')
     expect(result.note).toContain('20 more are at the source')

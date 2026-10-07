@@ -119,20 +119,20 @@ export interface ExtraTvlComponent {
   tvl: number | null
 }
 
-/** Recognized extra fields. Each optional type has its own frontend component. */
+/**
+ * Structured data beyond the headline, in the shapes the protocol page can
+ * render. The shapes are generic — a list of facts, a table of vaults — so a
+ * new feed picks from them; only a genuinely new shape needs a new type here,
+ * a schema entry and a component.
+ */
 export interface ExtraData {
+  /** Facts about the record in the source's own terms: "Vaults listed: 197", "Risk level: medium". */
+  facts?: Detail[]
+  /** Reviews the source files separately under this row, one deployment each. */
   reviews?: ExtraReview[]
-  keyFindings?: ExtraFinding[]
-  domain?: string
-  riskLevel?: string | null
-  overallScore?: number | null
-  analysisStatus?: string | null
-  philidorId?: string
-  versions?: string[]
-  vaultsListed?: number
-  vaultsLive?: number
-  vaultsShutdown?: number
-  vaultsRated?: number
+  /** Findings the source reports, with its own severity and category. */
+  findings?: ExtraFinding[]
+  /** Individually rated vaults, largest first. */
   vaults?: ExtraVault[]
   incidents?: ExtraIncident[]
   components?: ExtraTvlComponent[]

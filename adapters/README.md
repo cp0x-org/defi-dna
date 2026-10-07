@@ -120,13 +120,15 @@ The full shape, with every field described, is
 [`feeds/feed-output.schema.json`](feeds/feed-output.schema.json).
 The complete generated JSON, including metrics and every supported `extra` field,
 is defined in [`schemas/protocol-record.schema.json`](../schemas/protocol-record.schema.json).
-`extra` is structured rather than an arbitrary copy of the source response:
-DeFiScan reviews; Risklayer analysis and findings; Philidor vault coverage and
-vaults; DefiLlama incidents and TVL components. Each type has its own protocol
-page component and appears only when that field exists in the JSON. Optional
-`extra.text` is an array of source-supplied paragraphs for material that does
-not fit a more specific type. New extra fields need a TypeScript type, schema
-entry and frontend component.
+`extra` is structured rather than an arbitrary copy of the source response, and
+its fields are _shapes_, not feed names: `facts` (name/value pairs about the
+record: "Vaults listed: 197", "Risk level: medium"), `reviews` (one per
+deployment the source files separately), `findings` (with the source's own
+severity and category), `vaults` (a table), `incidents`, `components` (what a
+TVL figure sums) and `text` (source-supplied paragraphs). Each shape has one
+protocol page component and appears only when the field exists in the JSON, so
+a new feed picks from the list and needs no frontend work. Only a genuinely new
+shape needs a TypeScript type, a schema entry and a component.
 
 Rules the runner applies to what you return:
 

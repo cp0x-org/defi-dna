@@ -100,8 +100,10 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
         ? ` The ${MAX_VAULTS} largest by TVL are listed here; ${omitted} more are at the source.`
         : ''),
     extra: {
-      vaultsListed: listed.length,
-      vaultsRated: rated.length,
+      facts: [
+        { name: 'Vaults listed', value: String(listed.length) },
+        { name: 'Vaults rated', value: String(rated.length) },
+      ],
       vaults: rated.slice(0, MAX_VAULTS).map((vault) => ({
         name: vaultName(vault),
         version: vault.protocol_name,

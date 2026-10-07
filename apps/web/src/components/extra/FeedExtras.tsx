@@ -1,29 +1,28 @@
-import type { ExtraData, ExtraFinding, ExtraReview, ExtraVault } from '@defi-dna/data'
+import type { Detail, ExtraData, ExtraFinding, ExtraReview, ExtraVault } from '@defi-dna/data'
 import { formatUsd } from '../../lib/view.ts'
 import { IconChevron } from '../Icons.tsx'
 import { ExternalLink } from '../UI.tsx'
 import { TextExtra } from './TextExtra.tsx'
 
+/** True when any shape the page can render is present. Keys it does not know are ignored. */
 export const hasFeedExtras = (extra?: ExtraData): boolean =>
-  Boolean(
-    extra &&
-    ((Array.isArray(extra.reviews) && extra.reviews.length > 0) ||
-      (Array.isArray(extra.keyFindings) && extra.keyFindings.length > 0) ||
-      (Array.isArray(extra.vaults) && extra.vaults.length > 0) ||
-      (Array.isArray(extra.text) && extra.text.length > 0) ||
-      [
-        'domain',
-        'riskLevel',
-        'overallScore',
-        'analysisStatus',
-        'philidorId',
-        'versions',
-        'vaultsListed',
-        'vaultsLive',
-        'vaultsShutdown',
-        'vaultsRated',
-      ].some((key) => key in extra)),
-  )
+  Boolean(extra && Object.values(extra).some((value) => Array.isArray(value) && value.length > 0))
+
+/** Name/value facts about the record, in the feed's own terms. */
+const FactsExtra = ({ facts, feedName }: { facts?: Detail[]; feedName: string }) =>
+  Array.isArray(facts) && facts.length > 0 ? (
+    <section className="extra-section">
+      <h4>As filed by {feedName}</h4>
+      <dl className="extra-facts">
+        {facts.map((fact) => (
+          <div key={fact.name}>
+            <dt>{fact.name}</dt>
+            <dd>{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  ) : null
 
 const ReviewsExtra = ({ reviews, feedName }: { reviews?: ExtraReview[]; feedName: string }) =>
   Array.isArray(reviews) && reviews.length > 0 ? (
@@ -43,45 +42,6 @@ const ReviewsExtra = ({ reviews, feedName }: { reviews?: ExtraReview[]; feedName
       </ul>
     </section>
   ) : null
-
-const RiskAnalysisExtra = ({ extra }: { extra?: ExtraData }) => {
-  if (
-    !extra ||
-    !['domain', 'riskLevel', 'overallScore', 'analysisStatus'].some((key) => key in extra)
-  )
-    return null
-  return (
-    <section className="extra-section">
-      <h4>Analysis context</h4>
-      <dl className="extra-facts">
-        {'domain' in extra ? (
-          <div>
-            <dt>Analyzed domain</dt>
-            <dd>{extra.domain ?? '—'}</dd>
-          </div>
-        ) : null}
-        {'riskLevel' in extra ? (
-          <div>
-            <dt>Risk level</dt>
-            <dd>{extra.riskLevel ?? '—'}</dd>
-          </div>
-        ) : null}
-        {'overallScore' in extra ? (
-          <div>
-            <dt>Overall score</dt>
-            <dd>{extra.overallScore ?? '—'}</dd>
-          </div>
-        ) : null}
-        {'analysisStatus' in extra ? (
-          <div>
-            <dt>Analysis status</dt>
-            <dd>{extra.analysisStatus ?? '—'}</dd>
-          </div>
-        ) : null}
-      </dl>
-    </section>
-  )
-}
 
 const FindingsExtra = ({ findings, feedName }: { findings?: ExtraFinding[]; feedName: string }) =>
   Array.isArray(findings) && findings.length > 0 ? (
@@ -105,59 +65,6 @@ const FindingsExtra = ({ findings, feedName }: { findings?: ExtraFinding[]; feed
       </div>
     </section>
   ) : null
-
-const VaultOverviewExtra = ({ extra }: { extra?: ExtraData }) => {
-  if (
-    !extra ||
-    !['philidorId', 'versions', 'vaultsListed', 'vaultsLive', 'vaultsShutdown', 'vaultsRated'].some(
-      (key) => key in extra,
-    )
-  )
-    return null
-  return (
-    <section className="extra-section">
-      <h4>Vault coverage</h4>
-      <dl className="extra-facts">
-        {'philidorId' in extra ? (
-          <div>
-            <dt>Philidor protocol</dt>
-            <dd>{extra.philidorId ?? '—'}</dd>
-          </div>
-        ) : null}
-        {'versions' in extra ? (
-          <div>
-            <dt>Versions</dt>
-            <dd>{extra.versions?.join(', ') || 'All'}</dd>
-          </div>
-        ) : null}
-        {'vaultsListed' in extra ? (
-          <div>
-            <dt>Listed</dt>
-            <dd>{extra.vaultsListed ?? '—'}</dd>
-          </div>
-        ) : null}
-        {'vaultsLive' in extra ? (
-          <div>
-            <dt>Live</dt>
-            <dd>{extra.vaultsLive ?? '—'}</dd>
-          </div>
-        ) : null}
-        {'vaultsShutdown' in extra ? (
-          <div>
-            <dt>Shut down</dt>
-            <dd>{extra.vaultsShutdown ?? '—'}</dd>
-          </div>
-        ) : null}
-        {'vaultsRated' in extra ? (
-          <div>
-            <dt>Rated</dt>
-            <dd>{extra.vaultsRated ?? '—'}</dd>
-          </div>
-        ) : null}
-      </dl>
-    </section>
-  )
-}
 
 const VaultsExtra = ({ vaults }: { vaults?: ExtraVault[] }) =>
   Array.isArray(vaults) && vaults.length > 0 ? (
@@ -198,13 +105,13 @@ const VaultsExtra = ({ vaults }: { vaults?: ExtraVault[] }) =>
     </details>
   ) : null
 
+/** One component per shape; each renders only when its field is present. */
 export const FeedExtras = ({ extra, feedName }: { extra?: ExtraData; feedName: string }) =>
   hasFeedExtras(extra) ? (
     <>
+      <FactsExtra facts={extra?.facts} feedName={feedName} />
       <ReviewsExtra reviews={extra?.reviews} feedName={feedName} />
-      <RiskAnalysisExtra extra={extra} />
-      <FindingsExtra findings={extra?.keyFindings} feedName={feedName} />
-      <VaultOverviewExtra extra={extra} />
+      <FindingsExtra findings={extra?.findings} feedName={feedName} />
       <VaultsExtra vaults={extra?.vaults} />
       <TextExtra text={extra?.text} />
     </>

@@ -153,12 +153,14 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
           ? ` The ${MAX_VAULTS} largest by TVL are listed here; ${omitted} more are at the source.`
           : ''),
       extra: {
-        philidorId,
-        versions,
-        vaultsListed: listed.length,
-        vaultsLive: live.length,
-        vaultsShutdown: shutdown,
-        vaultsRated: rated.length,
+        facts: [
+          { name: 'Philidor protocol', value: philidorId },
+          { name: 'Versions', value: versions.length ? versions.join(', ') : 'All' },
+          { name: 'Vaults listed', value: String(listed.length) },
+          { name: 'Vaults live', value: String(live.length) },
+          { name: 'Vaults shut down', value: String(shutdown) },
+          { name: 'Vaults rated', value: String(rated.length) },
+        ],
         vaults: rated.slice(0, MAX_VAULTS).map((vault) => ({
           name: vault.name,
           version: vault.protocol_version,
