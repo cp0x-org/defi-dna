@@ -101,7 +101,8 @@ describe('collect', () => {
     await run(registry([answering('f1', { p1: A })]))
     const first = (await record('p1')).feeds['f1']
     const summary = await run(registry([answering('f1', { p1: boom, p2: boom })]))
-    expect(summary.failures).toEqual(['p1/f1: boom', 'p2/f1: boom'])
+    // Protocols run in parallel, so the failures arrive in completion order.
+    expect([...summary.failures].sort()).toEqual(['p1/f1: boom', 'p2/f1: boom'])
     const cell = (await record('p1')).feeds['f1']
     expect(cell).toEqual(first) // value, status and since all kept
     expect((await read<RunStatus>('status.json')).sources['f1']).toMatchObject({
@@ -134,7 +135,8 @@ describe('collect', () => {
 
     const third = await run(registry([answering('f1', { p1: B })]))
     const after = (await record('p1')).feeds['f1']
-    expect(after?.since).not.toBe(before?.since)
+    // Stamped with this run's time; two runs may share a millisecond, so compare to the run.
+    expect(after?.since).toBe((await read<RunStatus>('status.json')).generatedAt)
     expect(third.changes).toMatchObject([{ from: 'A', to: 'B' }])
     expect(first.changes).toHaveLength(1)
     expect((await read<Change[]>('changelog.json')).map((c) => c.to)).toEqual(['B', 'A'])
@@ -193,7 +195,7 @@ describe('bundle', () => {
       { id: 'p2', tvl: null, feeds: { f1: false } },
     ])
     expect(index.sources?.['f1']?.lastOkAt).toBe(index.generatedAt)
-    expect(await fs.readdir(web)).toEqual([
+    expect((await fs.readdir(web)).sort()).toEqual([
       'changelog.json',
       'index.json',
       'metrics.json',
