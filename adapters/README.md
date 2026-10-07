@@ -31,6 +31,7 @@ What the feed is. Shown on the Feeds page, nothing more.
   "name": "DeFiScan",
   "topic": "Decentralization",
   "focus": "Decentralization maturity: who controls the keys and the upgrades.",
+  "assesses": "deployment",
   "homepage": "https://www.defiscan.info",
   "methodologyUrl": "https://www.defiscan.info/framework",
   "enabled": true
@@ -38,7 +39,10 @@ What the feed is. Shown on the Feeds page, nothing more.
 ```
 
 `topic` is the two or three words printed under the feed's name in the column
-header. The frontend imports this file at build time.
+header. `assesses` names the object the feed's values are about — `protocol`,
+`deployment`, `vault`, `pool`, `asset` or `research` — and is printed next to
+every value, so a vault tier is never read as a verdict on the protocol. The
+frontend imports this file at build time.
 
 `id` must equal the folder name. `enabled: false` stops the feed being collected
 and removes its column.
@@ -65,28 +69,38 @@ things under one of our rows, the value may be a list:
 { "aave-v3": ["aave/ethereum.md", "aave/prime.md"] }
 ```
 
+The pipeline reads this file itself and hands it to the adapter as
+`ctx.mapping`, with every value as a list. Every key is checked against the
+registry when the pipeline starts (and by `npm test`): a typo fails loudly
+instead of being stored as "the feed has no data for this protocol".
+
 ## index.ts
 
 A default-exported adapter with an `id` and a `collect()`:
 
 ```ts
 import type { FeedAdapter, FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
-const table: Record<string, string> = mapping
-
-const adapter: FeedAdapter = {
+// The type parameter is what prepare() returns; collect() receives it typed.
+const adapter: FeedAdapter<Set<string>> = {
   id: 'my-feed',
+
+  // Environment variables the feed needs, if any. A missing one skips the feed
+  // for the run (the column keeps its previous values) and is reported once.
+  secrets: ['MY_FEED_API_KEY'],
 
   // Optional. Runs once per run; whatever it returns is passed to collect()
   // as `prepared`. Use it to fetch a listing once instead of once per protocol.
+  // If it throws, collect() is not called and the column keeps its values.
   async prepare(ctx) {
-    return ctx.getJson('https://my-feed.example/api/protocols')
+    const listed = await ctx.getJson<{ id: string }[]>('https://my-feed.example/api/protocols')
+    return new Set(listed.map((entry) => entry.id))
   },
 
-  async collect({ protocol, ctx }): Promise<FeedResult | null> {
-    const id = table[protocol.id]
+  async collect({ protocol, ctx, prepared }): Promise<FeedResult | null> {
+    const [id] = ctx.mapping[protocol.id] ?? []
     if (!id) return null // the feed has nothing for this protocol
+    if (!prepared.has(id)) return { note: `The feed lists nothing for ${protocol.name}.` }
 
     const data = await ctx.getJson<{ rating: string; updated: string }>(
       `https://my-feed.example/api/${id}`,
@@ -116,26 +130,28 @@ entry and frontend component.
 
 Rules the runner applies to what you return:
 
-| Return                                     | Stored as                            | Dashboard |
-| ------------------------------------------ | ------------------------------------ | --------- |
-| a result with a `value`                    | `ok`                                 | green dot |
-| a result without a `value` (with a `note`) | `none`                               | grey dot  |
-| `null`                                     | `none`                               | grey dot  |
-| a thrown error                             | `error`, or the previous run's value | grey dot  |
+| Return                                     | Stored as                                        | Dashboard |
+| ------------------------------------------ | ------------------------------------------------ | --------- |
+| a result with a `value`                    | `ok`                                             | green dot |
+| a result without a `value` (with a `note`) | `none`                                           | grey dot  |
+| `null`                                     | `none`                                           | grey dot  |
+| a thrown error                             | `error`, or the previous run's value             | grey dot  |
+| `prepare()` throws, or a secret is missing | the whole column keeps its values; reported once | unchanged |
 
 Throwing is for "we could not read the source" — never for "the feed does not
 cover this". Keeping those apart is what stops a broken run from looking like a
 coverage gap.
 
-`ctx` gives you `getJson`, `getText` (both cached on disk, so `--offline`
-works), `postJson` (never cached), `log` and `now`. Adapters never call `fetch`
-themselves.
+`ctx` gives you `mapping` (this folder's `mapping.json`, normalized),
+`getJson`, `getText` (both cached on disk, so `--offline` works), `postJson`
+(never cached), `log` and `now`. Adapters never call `fetch` themselves.
 
-A feed behind an API key reads it from the environment (`.env` locally, an
-Actions secret in the refresh workflow) and trades it for a token through
-`postJson`. Pass the token as a `headers` function to `getJson`: it runs only
-when the request really goes to the network, so a cached or `--offline` read
-needs no key. See `adapters/feeds/pigi`.
+A feed behind an API key declares it in `secrets`, reads it from the
+environment (`.env` locally, an Actions secret in the refresh workflow) and
+trades it for a token through `postJson`. Pass the token as a `headers`
+function to `getJson`: it runs only when the request really goes to the
+network, so a cached or `--offline` read needs no key. See
+`adapters/feeds/pigi`.
 
 ## Metric adapters
 

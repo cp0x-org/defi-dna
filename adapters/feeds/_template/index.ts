@@ -1,20 +1,6 @@
 import type { Detail, FeedAdapter, FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const API = 'https://example.com/api'
-
-/**
- * our protocol id -> the feed's own id.
- *
- * A protocol the feed does not cover is simply absent: collect() returns null,
- * the cell stays grey and nothing breaks. Use a list when the feed files
- * several things under one of our rows.
- */
-const table: Record<string, string | string[]> = mapping
-const ids = (id: string): string[] => {
-  const value = table[id]
-  return value == null ? [] : typeof value === 'string' ? [value] : value
-}
 
 /** What the feed's own endpoint returns. Replace with its real shape. */
 interface Assessment {
@@ -24,13 +10,26 @@ interface Assessment {
   updated?: string
 }
 
-const adapter: FeedAdapter = {
+/**
+ * `mapping.json` next to this file maps our protocol ids to the feed's own
+ * ids. The pipeline reads it, checks every key against the registry and hands
+ * it in as `ctx.mapping`, with every value as a list. A protocol the feed does
+ * not cover is simply absent: collect() returns null, the cell stays grey and
+ * nothing breaks.
+ *
+ * The type parameter is whatever prepare() returns; collect() receives it typed.
+ */
+const adapter: FeedAdapter<Set<string>> = {
   id: '_template',
+
+  // Environment variables the feed needs, if any. A missing one skips the feed
+  // for the run and reports it once; `--offline` reads need none.
+  // secrets: ['EXAMPLE_API_KEY'],
 
   /**
    * Optional. Runs once per run; whatever it returns is handed to every
    * collect() call as `prepared`. Use it to pull one listing instead of one
-   * request per protocol.
+   * request per protocol. If it throws, the column keeps the previous values.
    */
   async prepare(ctx): Promise<Set<string>> {
     const listed = await ctx.getJson<{ id: string }[]>(`${API}/protocols`, { ttlSeconds: 21_600 })
@@ -39,11 +38,11 @@ const adapter: FeedAdapter = {
   },
 
   async collect({ protocol, ctx, prepared }): Promise<FeedResult | null> {
-    const [id] = ids(protocol.id)
+    const [id] = ctx.mapping[protocol.id] ?? []
     if (!id) return null // the feed has nothing for this protocol
 
     // Optional: a listed-but-empty protocol is still "no data", not an error.
-    if (!(prepared as Set<string> | undefined)?.has(id)) {
+    if (!prepared.has(id)) {
       return { note: `The feed lists no assessment for ${protocol.name}.` }
     }
 

@@ -1,5 +1,4 @@
 import type { Detail, FeedAdapter, FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const API = 'https://risklayer.online/api'
 const SITE = 'https://risklayer.online/protocol'
@@ -8,9 +7,6 @@ const DAY = 86_400
 const SUMMARY_CHARS = 700
 /** Findings carried into `extra` for the protocol page. */
 const MAX_FINDINGS = 12
-
-/** our protocol id -> the domain Risklayer files its analysis under */
-const table: Record<string, string> = mapping
 
 interface Dimension {
   name: string
@@ -46,13 +42,14 @@ const trim = (text: string | undefined, max = SUMMARY_CHARS): string | undefined
  *
  * Risklayer publishes a 0-10 figure where a higher number means more risk, plus
  * a word for the band. Both are carried verbatim: they document no ordering for
- * the bands anywhere we can link to, so we add none of our own.
+ * the bands anywhere we can link to, so we add none of our own. `mapping.json`
+ * names the domain Risklayer files each protocol under.
  */
 const adapter: FeedAdapter = {
   id: 'risklayer',
 
   async collect({ protocol, ctx }): Promise<FeedResult | null> {
-    const domain = table[protocol.id]
+    const [domain] = ctx.mapping[protocol.id] ?? []
     if (!domain) return null
 
     const url = `${SITE}/${domain}`

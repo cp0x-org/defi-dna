@@ -89,8 +89,9 @@ repository. It must grant Contents read and write access to `defi-dna-data`.
 
 The pigi.finance feed needs an API key. Add it as a `PIGI_API_KEY` Actions
 secret for the workflow, and as `PIGI_API_KEY` in a local `.env` (see
-`.env.example`) for local collection. Without it the pigi column keeps its
-previous values and the run reports the failure.
+`.env.example`) for local collection. Without it the run skips pigi: the
+column keeps its previous values and the run reports it once. Offline runs
+need no key.
 
 ## Docker
 

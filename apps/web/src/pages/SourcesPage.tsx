@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { feeds, metrics } from '../lib/registry.ts'
+import { assessesLabel } from '../lib/view.ts'
 import { IconArrow, IconChevron } from '../components/Icons.tsx'
 import { ExternalLink, SourceMark } from '../components/UI.tsx'
 
@@ -36,6 +37,10 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
             <span className="source-topic">{feed.topic}</span>
             <p>{feed.focus}</p>
             <dl className="directory-meta">
+              <div>
+                <dt>What it assesses</dt>
+                <dd>{assessesLabel(feed.assesses)}</dd>
+              </div>
               <div>
                 <dt>Coverage here</dt>
                 <dd>

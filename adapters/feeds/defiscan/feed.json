@@ -3,6 +3,7 @@
   "name": "DeFiScan",
   "topic": "Decentralization",
   "focus": "Decentralization maturity: who controls the keys, the upgrades and the admin powers.",
+  "assesses": "deployment",
   "homepage": "https://www.defiscan.info",
   "methodologyUrl": "https://www.defiscan.info/framework",
   "enabled": true

@@ -1,4 +1,4 @@
-import type { FeedData } from '@defi-dna/data'
+import type { AssessedObject, FeedData } from '@defi-dna/data'
 
 export { formatUsd } from '@defi-dna/data'
 
@@ -12,6 +12,21 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 export const categoryLabel = (category: string): string => CATEGORY_LABELS[category] ?? category
+
+/**
+ * What a feed's values are about, in words. Printed next to every value so a
+ * vault tier is never read as a statement about the protocol.
+ */
+const ASSESSES_LABELS: Record<AssessedObject, string> = {
+  protocol: 'the protocol',
+  deployment: 'each deployment separately',
+  vault: 'individual vaults, not the protocol',
+  pool: 'individual pools, not the protocol',
+  asset: 'individual assets, not the protocol',
+  research: 'in published research, without a rating scale',
+}
+
+export const assessesLabel = (assesses: AssessedObject): string => ASSESSES_LABELS[assesses]
 
 /** The three states a cell can be in. None of them is a safety judgement. */
 export const coverageLabel = (status: FeedData['status']): string =>

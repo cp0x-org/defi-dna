@@ -26,6 +26,20 @@ export interface Protocol {
 }
 
 /**
+ * What a feed's values are about. A feed that grades vaults says nothing about
+ * the protocol as a whole, and the dashboard says so next to every value.
+ */
+export const ASSESSED_OBJECTS = [
+  'protocol',
+  'deployment',
+  'vault',
+  'pool',
+  'asset',
+  'research',
+] as const
+export type AssessedObject = (typeof ASSESSED_OBJECTS)[number]
+
+/**
  * A risk feed: one column on the dashboard.
  *
  * Hand-maintained in adapters/feeds/<id>/feed.json, next to the adapter that
@@ -38,6 +52,8 @@ export interface Feed {
   topic: string
   /** One line: what this feed looks at. */
   focus: string
+  /** The object the feed assesses: the protocol, each deployment, individual vaults, ... */
+  assesses: AssessedObject
   homepage: string
   methodologyUrl?: string
   /** false: the feed is not collected and does not appear. */
@@ -213,6 +229,13 @@ export interface Change {
 
 /* ------------------------------------------------------- adapter contract */
 
+/**
+ * adapters/<kind>/<id>/mapping.json, normalized: our protocol id -> the
+ * source's own id(s) for it. Every value is a list, and every key was checked
+ * against registry/protocols.json when the registry loaded.
+ */
+export type Mapping = Record<string, string[]>
+
 export interface FetchOptions {
   /** How long a cached response stays usable. Default: one hour. */
   ttlSeconds?: number
@@ -238,6 +261,8 @@ export interface AdapterContext {
   getText(url: string, options?: FetchOptions): Promise<string>
   /** POST a JSON body and read JSON back. Never cached: it is for exchanging credentials. */
   postJson<T>(url: string, body: unknown): Promise<T>
+  /** This adapter's mapping.json. Empty when the folder has none. */
+  mapping: Mapping
   log(message: string): void
   now: Date
 }
@@ -245,11 +270,24 @@ export interface AdapterContext {
 /**
  * One source of data. The folder it lives in names it:
  * `adapters/feeds/<id>` for a column, `adapters/metrics/<id>` for a measurement.
+ *
+ * `Prepared` is whatever `prepare()` returns; declare it (`FeedAdapter<Map<…>>`)
+ * and `collect()` receives it typed.
  */
-export interface Adapter<Result> {
+export interface Adapter<Result, Prepared = unknown> {
   id: string
-  /** Runs once per run. Fetch a listing here instead of once per protocol. */
-  prepare?(ctx: AdapterContext): Promise<unknown>
+  /**
+   * Environment variables the source needs, such as an API key. When one is
+   * missing the adapter is skipped for the run — its column keeps the previous
+   * values and the run reports it once. `--offline` reads need no secret.
+   */
+  secrets?: string[]
+  /**
+   * Runs once per run. Fetch a listing here instead of once per protocol. If
+   * it throws, collect() is not called: the whole column keeps the previous
+   * run's values and the failure is reported once.
+   */
+  prepare?(ctx: AdapterContext): Promise<Prepared>
   /**
    * Read one protocol. Return null when the source has nothing for it — that is
    * a normal answer, not a failure. Throw when the source could not be read.
@@ -257,9 +295,9 @@ export interface Adapter<Result> {
   collect(args: {
     protocol: Protocol
     ctx: AdapterContext
-    prepared: unknown
+    prepared: Prepared
   }): Promise<Result | null>
 }
 
-export type FeedAdapter = Adapter<FeedResult>
-export type MetricAdapter = Adapter<MetricResult>
+export type FeedAdapter<Prepared = unknown> = Adapter<FeedResult, Prepared>
+export type MetricAdapter<Prepared = unknown> = Adapter<MetricResult, Prepared>

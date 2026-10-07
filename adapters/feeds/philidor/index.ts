@@ -1,5 +1,4 @@
 import { formatUsd, type Detail, type FeedAdapter, type FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const API = 'https://api.philidor.io/v1'
 const SITE = 'https://analytics.philidor.io'
@@ -9,17 +8,6 @@ const PAGE = 100
 const MAX_PAGES = 5
 /** Vaults listed individually on the protocol page, largest by TVL. */
 const TOP_VAULTS = 10
-
-/**
- * our protocol id -> the Philidor vaults that belong to it, as
- * `<philidor protocol>` or `<philidor protocol>:<protocol_version>`.
- * Without a version the entry takes every version Philidor files.
- */
-const table: Record<string, string | string[]> = mapping
-const entries = (id: string): string[] => {
-  const value = table[id]
-  return value == null ? [] : typeof value === 'string' ? [value] : value
-}
 
 interface Vault {
   address: string
@@ -64,13 +52,19 @@ const verdict = (vault: Vault): string => {
  *
  * Anonymous access is rate-limited, so the vault list is pulled once per run in
  * prepare() and the per-protocol pass touches no network.
+ *
+ * `mapping.json` names the vaults that belong to a row as `<philidor protocol>`
+ * or `<philidor protocol>:<protocol_version>`; without a version the entry
+ * takes every version Philidor files.
  */
-const adapter: FeedAdapter = {
+const adapter: FeedAdapter<VaultsByProtocol> = {
   id: 'philidor',
 
   async prepare(ctx): Promise<VaultsByProtocol> {
     const wanted = new Set(
-      Object.keys(table).flatMap((id) => entries(id).map((entry) => entry.split(':')[0] as string)),
+      Object.values(ctx.mapping)
+        .flat()
+        .map((entry) => entry.split(':')[0] as string),
     )
     const vaults: VaultsByProtocol = new Map()
     for (const philidorId of wanted) {
@@ -97,12 +91,9 @@ const adapter: FeedAdapter = {
     return vaults
   },
 
-  async collect({ protocol, prepared }): Promise<FeedResult | null> {
-    const mapped = entries(protocol.id)
+  async collect({ protocol, ctx, prepared: listing }): Promise<FeedResult | null> {
+    const mapped = ctx.mapping[protocol.id] ?? []
     if (mapped.length === 0) return null
-
-    const listing = prepared as VaultsByProtocol | undefined
-    if (!listing) throw new Error('Philidor vault listing unavailable')
 
     const philidorId = mapped[0]?.split(':')[0] as string
     const versions = mapped

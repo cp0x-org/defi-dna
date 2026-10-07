@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Http } from './http.ts'
 import { loadRegistry, paths, readJson } from './registry.ts'
-import type { AdapterContext, Change, FeedData, ProtocolRecord } from './types.ts'
+import type { AdapterContext, Change, FeedData, Mapping, ProtocolRecord } from './types.ts'
 
 export interface CollectOptions {
   /** Limit the run to these protocol ids. */
@@ -45,25 +45,36 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
     (p) => !options.protocols || options.protocols.includes(p.id),
   )
 
-  const context = (id: string): AdapterContext => ({
+  const context = (id: string, mapping: Mapping): AdapterContext => ({
     getJson: (url, opts) => http.getJson(url, opts),
     getText: (url, opts) => http.getText(url, opts),
     postJson: (url, body) => http.postJson(url, body),
+    mapping,
     log: (message) => options.verbose && console.log(`  ${id}: ${message}`),
     now,
   })
 
-  // One prepare() per adapter per run: fetch a listing once, not once per protocol.
+  // One prepare() per adapter per run: fetch a listing once, not once per
+  // protocol. An adapter that cannot start — a secret missing, a listing
+  // unreachable — is skipped for the whole run: its column keeps the previous
+  // values and the failure is reported once, not once per protocol.
   const prepared = new Map<string, unknown>()
-  const failures: string[] = []
-  for (const { adapter } of [...feeds, ...metrics]) {
-    if (!adapter.prepare) continue
-    try {
-      prepared.set(adapter.id, await adapter.prepare(context(adapter.id)))
-    } catch (error) {
-      failures.push(`${adapter.id}: ${message(error)}`)
+  const skipped = new Map<string, string>()
+  for (const { adapter, mapping } of [...feeds, ...metrics]) {
+    const missing = options.offline
+      ? []
+      : (adapter.secrets ?? []).filter((name) => !process.env[name])
+    if (missing.length > 0) {
+      skipped.set(adapter.id, `${missing.join(', ')} is not set`)
+    } else if (adapter.prepare) {
+      try {
+        prepared.set(adapter.id, await adapter.prepare(context(adapter.id, mapping)))
+      } catch (error) {
+        skipped.set(adapter.id, message(error))
+      }
     }
   }
+  const failures = [...skipped].map(([id, why]) => `${id}: skipped, ${why}`)
 
   const feedIds = registry.feeds.map(({ feed }) => feed.id)
   const metricIds = registry.metrics.map(({ metric }) => metric.id)
@@ -79,41 +90,50 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
       feeds: carry(previous?.feeds, feedIds),
     }
 
-    for (const { metric, adapter } of metrics) {
+    for (const { metric, adapter, mapping } of metrics) {
       const id = metric.id
+      const before = previous?.metrics[id]
+      const unreadable = (why: string) => before ?? { value: null, fetchedAt, note: why }
+      const skip = skipped.get(id)
+      if (skip) {
+        record.metrics[id] = unreadable(skip)
+        continue
+      }
       try {
         const result = await adapter.collect({
           protocol,
-          ctx: context(id),
+          ctx: context(id, mapping),
           prepared: prepared.get(id),
         })
         record.metrics[id] = { ...(result ?? { value: null }), fetchedAt }
       } catch (error) {
         failures.push(`${protocol.id}/${id}: ${message(error)}`)
-        const before = previous?.metrics[id]
-        if (before) record.metrics[id] = before
-        else record.metrics[id] = { value: null, fetchedAt, note: message(error) }
+        record.metrics[id] = unreadable(message(error))
       }
     }
 
-    for (const { feed, adapter } of feeds) {
+    for (const { feed, adapter, mapping } of feeds) {
       const before = previous?.feeds[feed.id]
+      const unreadable = (why: string): FeedData =>
+        before && before.status !== 'error' ? before : { status: 'error', fetchedAt, note: why }
+      const skip = skipped.get(feed.id)
       let data: FeedData
-      try {
-        const result = await adapter.collect({
-          protocol,
-          ctx: context(feed.id),
-          prepared: prepared.get(feed.id),
-        })
-        data = result
-          ? { ...result, status: result.value ? 'ok' : 'none', fetchedAt }
-          : { status: 'none', fetchedAt, note: `${feed.name} has no data for ${protocol.name}.` }
-      } catch (error) {
-        failures.push(`${protocol.id}/${feed.id}: ${message(error)}`)
-        data =
-          before && before.status !== 'error'
-            ? before
-            : { status: 'error', fetchedAt, note: message(error) }
+      if (skip) {
+        data = unreadable(skip)
+      } else {
+        try {
+          const result = await adapter.collect({
+            protocol,
+            ctx: context(feed.id, mapping),
+            prepared: prepared.get(feed.id),
+          })
+          data = result
+            ? { ...result, status: result.value ? 'ok' : 'none', fetchedAt }
+            : { status: 'none', fetchedAt, note: `${feed.name} has no data for ${protocol.name}.` }
+        } catch (error) {
+          failures.push(`${protocol.id}/${feed.id}: ${message(error)}`)
+          data = unreadable(message(error))
+        }
       }
       record.feeds[feed.id] = data
       if ((before?.value ?? null) !== (data.value ?? null)) {

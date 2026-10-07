@@ -1,15 +1,11 @@
-import type { MetricAdapter, MetricResult } from '@defi-dna/core'
+import { normalizeMapping, type MetricAdapter, type MetricResult } from '@defi-dna/core'
 import mapping from '../tvl/mapping.json' with { type: 'json' }
 
 const HACKS = 'https://api.llama.fi/hacks'
 const DAY = 86_400
 
 /** The same protocol ids as TVL: DefiLlama files both under one numeric id. */
-const table: Record<string, string | string[]> = mapping
-const llamaIds = (id: string): string[] => {
-  const value = table[id]
-  return value == null ? [] : typeof value === 'string' ? [value] : value
-}
+const table = normalizeMapping(mapping)
 
 interface Hack {
   date: number
@@ -28,7 +24,7 @@ interface Hack {
  * Matched on DefiLlama's numeric protocol id only. Attributing an incident to a
  * protocol is their editorial call; guessing at it by name would make it ours.
  */
-const adapter: MetricAdapter = {
+const adapter: MetricAdapter<Map<string, Hack[]>> = {
   id: 'incidents',
 
   async prepare(ctx): Promise<Map<string, Hack[]>> {
@@ -43,11 +39,9 @@ const adapter: MetricAdapter = {
     return byId
   },
 
-  async collect({ protocol, prepared }): Promise<MetricResult | null> {
-    const ids = llamaIds(protocol.id)
+  async collect({ protocol, prepared: listed }): Promise<MetricResult | null> {
+    const ids = table[protocol.id] ?? []
     if (ids.length === 0) return null
-    const listed = prepared as Map<string, Hack[]> | undefined
-    if (!listed) throw new Error('DefiLlama incident list unavailable')
 
     const events = ids.flatMap((id) => listed.get(id) ?? []).sort((a, b) => b.date - a.date)
 

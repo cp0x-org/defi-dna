@@ -1,6 +1,7 @@
 import type { Change, IndexBundle, ProtocolRecord } from '@defi-dna/core/types'
 
 export type {
+  AssessedObject,
   Change,
   Detail,
   ExtraData,
