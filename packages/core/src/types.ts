@@ -129,7 +129,7 @@ export interface ExtraData {
  * because every feed publishes something different.
  */
 export interface FeedResult {
-  /** The feed's headline value, verbatim: "Stage 1", "4.8/10 · medium", "7 vaults rated". */
+  /** The feed's headline value, verbatim: "20 admins · $116M capital at risk", "4.8/10 · medium". */
   value?: string
   /** The feed's own text about the protocol. */
   summary?: string
