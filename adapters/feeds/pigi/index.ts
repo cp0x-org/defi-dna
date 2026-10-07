@@ -14,6 +14,8 @@ const MAX_PAGES = 5
 const ETHEREUM = 1
 /** Vaults listed individually on the protocol page, largest by TVL. */
 const TOP_VAULTS = 10
+/** Vaults carried into `extra`, largest by TVL. Keeps a record of a big protocol under ~100 KB. */
+const MAX_VAULTS = 100
 
 /** The fields of pigi's Vault object this adapter reads. */
 export interface Vault {
@@ -82,6 +84,7 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
   }))
 
   const updatedAt = rated.map(ratedOn).filter(Boolean).sort().at(-1)
+  const omitted = Math.max(0, rated.length - MAX_VAULTS)
 
   return {
     value: `${rated.length} vaults rated`,
@@ -92,11 +95,14 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
     note:
       `Counted: ${rated.length} rated of the ${listed.length} Ethereum vault(s) pigi lists under ${scope}. ` +
       `Bands run A (safest) to F and scores 0–100, higher = safer. No vault stands in for the ` +
-      `protocol and nothing is averaged — pigi publishes no protocol-level rating.`,
+      `protocol and nothing is averaged — pigi publishes no protocol-level rating.` +
+      (omitted > 0
+        ? ` The ${MAX_VAULTS} largest by TVL are listed here; ${omitted} more are at the source.`
+        : ''),
     extra: {
       vaultsListed: listed.length,
       vaultsRated: rated.length,
-      vaults: rated.map((vault) => ({
+      vaults: rated.slice(0, MAX_VAULTS).map((vault) => ({
         name: vaultName(vault),
         version: vault.protocol_name,
         curator: null,

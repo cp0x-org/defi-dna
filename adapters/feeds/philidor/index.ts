@@ -8,6 +8,8 @@ const PAGE = 100
 const MAX_PAGES = 5
 /** Vaults listed individually on the protocol page, largest by TVL. */
 const TOP_VAULTS = 10
+/** Vaults carried into `extra`, largest by TVL. Keeps a record of a big protocol under ~100 KB. */
+const MAX_VAULTS = 100
 
 interface Vault {
   address: string
@@ -132,6 +134,7 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
     }))
 
     const shutdown = listed.length - live.length
+    const omitted = Math.max(0, rated.length - MAX_VAULTS)
     const updatedAt = rated.map(scoredAt).filter(Boolean).sort().at(-1)
     const scope = versions.length ? `version ${versions.join(', ')}` : 'every version it files'
 
@@ -145,7 +148,10 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
         `Counted: ${rated.length} of the ${live.length} live vault(s) Philidor lists for ` +
         `${philidorId} under ${scope}` +
         (shutdown > 0 ? `, with ${shutdown} shut-down vault(s) left out` : '') +
-        `. No vault stands in for the protocol and nothing is averaged — Philidor publishes no protocol-level score.`,
+        `. No vault stands in for the protocol and nothing is averaged — Philidor publishes no protocol-level score.` +
+        (omitted > 0
+          ? ` The ${MAX_VAULTS} largest by TVL are listed here; ${omitted} more are at the source.`
+          : ''),
       extra: {
         philidorId,
         versions,
@@ -153,7 +159,7 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
         vaultsLive: live.length,
         vaultsShutdown: shutdown,
         vaultsRated: rated.length,
-        vaults: rated.map((vault) => ({
+        vaults: rated.slice(0, MAX_VAULTS).map((vault) => ({
           name: vault.name,
           version: vault.protocol_version,
           curator: vault.curator_name ?? null,

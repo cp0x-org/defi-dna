@@ -69,4 +69,22 @@ describe('assess', () => {
       note: 'pigi lists no Ethereum vault under Gearbox.',
     })
   })
+
+  it('counts every rated vault but carries only the 100 largest into extra', () => {
+    const many = Array.from({ length: 120 }, (_, i) =>
+      vault({
+        strategy_id: i,
+        display_name: `Vault ${i}`,
+        tvl_30d_ma: i,
+        risk_band: 'C',
+        risk_score: 50,
+      }),
+    )
+    const result = assess(['Morpho'], many)
+    expect(result.value).toBe('120 vaults rated')
+    expect(result.extra?.vaultsRated).toBe(120)
+    expect(result.extra?.vaults).toHaveLength(100)
+    expect(result.extra?.vaults?.[0]?.name).toBe('Vault 119')
+    expect(result.note).toContain('20 more are at the source')
+  })
 })
