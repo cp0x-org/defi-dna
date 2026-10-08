@@ -114,8 +114,9 @@ address in the project's `.env` file (copy `.env.example`; for example,
 
 Risk feeds currently include [DeFiScan](https://www.defiscan.info),
 [Risklayer](https://risklayer.online),
-[Philidor](https://analytics.philidor.io) and
-[pigi.finance](https://pigi.finance). Independent measurements come from
+[Philidor](https://analytics.philidor.io),
+[pigi.finance](https://pigi.finance) and
+[DeFi Scoring](https://defiscoring.com). Independent measurements come from
 DefiLlama's Ethereum TVL and incident history. A feed with no data for a
 protocol is distinct from a collection error; a failed refresh retains the
 previous value.

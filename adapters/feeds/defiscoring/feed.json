@@ -1,0 +1,9 @@
+{
+  "id": "defiscoring",
+  "name": "DeFi Scoring",
+  "topic": "Protocol score",
+  "focus": "Protocol risk score with Trust, Liveness and Security pillars, plus a colour band.",
+  "homepage": "https://defiscoring.com",
+  "methodologyUrl": "https://defiscoring.com/methodology/",
+  "enabled": true
+}
