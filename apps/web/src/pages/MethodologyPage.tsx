@@ -126,9 +126,10 @@ export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
         <article>
           <h2>Quoted</h2>
           <p>
-            The value is stored as a string, exactly as published: <code>Stage 1</code>,{' '}
-            <code>4.8/10 · medium</code>, <code>82 vaults rated</code>. Never restated in our
-            vocabulary, never converted into another feed’s units.
+            The value is stored as a string, exactly as published:{' '}
+            <code>20 admins · $116M capital at risk</code>, <code>4.8/10 · medium</code>,{' '}
+            <code>82 vaults rated</code>. Never restated in our vocabulary, never converted into
+            another feed’s units.
           </p>
         </article>
         <article>
