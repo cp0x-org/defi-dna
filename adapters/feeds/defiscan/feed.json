@@ -2,8 +2,8 @@
   "id": "defiscan",
   "name": "DeFiScan",
   "topic": "Decentralization",
-  "focus": "Decentralization maturity: who controls the keys, the upgrades and the admin powers.",
+  "focus": "On-chain admin rights and dependencies: who can change contracts and how much capital those powers reach.",
   "homepage": "https://www.defiscan.info",
-  "methodologyUrl": "https://www.defiscan.info/framework",
+  "methodologyUrl": "https://docs.defiscan.info/researchers/methodology",
   "enabled": true
 }

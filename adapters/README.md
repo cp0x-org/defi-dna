@@ -30,9 +30,9 @@ What the feed is. Shown on the Feeds page, nothing more.
   "id": "defiscan",
   "name": "DeFiScan",
   "topic": "Decentralization",
-  "focus": "Decentralization maturity: who controls the keys and the upgrades.",
+  "focus": "On-chain admin rights and dependencies: who can change contracts and how much capital those powers reach.",
   "homepage": "https://www.defiscan.info",
-  "methodologyUrl": "https://www.defiscan.info/framework",
+  "methodologyUrl": "https://docs.defiscan.info/researchers/methodology",
   "enabled": true
 }
 ```
@@ -62,7 +62,7 @@ A protocol the feed does not cover is simply left out: the adapter returns
 things under one of our rows, the value may be a list:
 
 ```json
-{ "aave-v3": ["aave/ethereum.md", "aave/prime.md"] }
+{ "aave-v3": ["aave-v3", "aave-v3-prime"] }
 ```
 
 ## index.ts
@@ -107,7 +107,7 @@ The full shape, with every field described, is
 The complete generated JSON, including metrics and every supported `extra` field,
 is defined in [`schemas/protocol-record.schema.json`](../schemas/protocol-record.schema.json).
 `extra` is structured rather than an arbitrary copy of the source response:
-DeFiScan reviews; Risklayer analysis and findings; Philidor vault coverage and
+DeFiScan admin/capital totals; Risklayer analysis and findings; Philidor vault coverage and
 vaults; DefiLlama incidents and TVL components. Each type has its own protocol
 page component and appears only when that field exists in the JSON. Optional
 `extra.text` is an array of source-supplied paragraphs for material that does

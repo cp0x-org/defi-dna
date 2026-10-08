@@ -11,7 +11,7 @@
       "enum": ["ok", "none", "error"]
     },
     "value": {
-      "description": "The feed's headline value, verbatim and as a string: \"Stage 1\", \"4.8/10 · medium\", \"82 vaults rated\". Never converted into another feed's units. Its absence is what makes a cell grey.",
+      "description": "The feed's headline value, verbatim and as a string: \"20 admins · $116M capital at risk\", \"4.8/10 · medium\", \"82 vaults rated\". Never converted into another feed's units. Its absence is what makes a cell grey.",
       "type": "string",
       "minLength": 1
     },
@@ -64,19 +64,14 @@
   "examples": [
     {
       "status": "ok",
-      "value": "Stage 1",
-      "summary": "Morpho Blue is an immutable lending primitive…",
+      "value": "20 admins · $115.5M capital at risk",
+      "summary": "Lido is a liquid-staking protocol…",
       "details": [
-        { "name": "Upgradeability", "value": "L" },
-        {
-          "name": "Exit Window",
-          "value": "H",
-          "description": "Centralized operators control the permissioned functions."
-        }
+        { "name": "Admins", "value": "20" },
+        { "name": "Capital at risk", "value": "$115.5M" }
       ],
-      "updatedAt": "2025-05-07",
-      "url": "https://www.defiscan.info/protocols/morpho/ethereum",
-      "extra": { "reviews": [] },
+      "updatedAt": "2025-06-19",
+      "url": "https://www.defiscan.info/protocol/lido",
       "fetchedAt": "2026-09-20T21:01:09.359Z"
     },
     {
