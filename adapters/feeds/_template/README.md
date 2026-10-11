@@ -149,7 +149,8 @@ not mapped. `npm test`.
 - `.github/workflows/refresh-data.yml`: pass the secret to `npm run refresh`.
 - `npm run lint && npm run format:check && npm run typecheck && npm test && npm run build`
 - `npm run dev`, then open the protocol page and the feeds page: the card and
-  the column render, and the raw record behind the card shows what you stored.
+  the column render. What you stored is in `data/protocols/<id>.json`; the page
+  does not reprint it.
 - The pull request carries the feed card from step 0 and one sample record.
 
 ## Rules that do not bend

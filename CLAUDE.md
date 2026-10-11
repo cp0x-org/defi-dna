@@ -10,3 +10,5 @@
 - `docs/prompts.md` — ready-made prompts the team uses for feeds, plan items and
   adapter review.
 - Answer in the language the user writes in; keep repository files in English.
+- Never add raw data to the interface — no raw-record view, no JSON dump of a
+  cell or of `extra`. The data is public in git; see AGENTS.md, "Do not".

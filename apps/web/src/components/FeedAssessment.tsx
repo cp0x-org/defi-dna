@@ -5,21 +5,6 @@ import { AssessmentDate, DataAgeHelp, ExternalLink, Info, SourceMark } from './U
 import { FeedExtras, hasFeedExtras } from './extra/FeedExtras.tsx'
 
 /**
- * The stored record behind the card, as collected. Nothing is hidden behind
- * our choice of what to display (charter §2), and a feed whose structured
- * data has no component yet is still fully visible.
- */
-const RawRecord = ({ data }: { data: FeedData }) => (
-  <details className="raw-record">
-    <summary>
-      Raw record
-      <IconChevron />
-    </summary>
-    <pre>{JSON.stringify(data, null, 2)}</pre>
-  </details>
-)
-
-/**
  * One feed's full say about one protocol.
  *
  * Everything with a value in it — the headline, the breakdown, the quote — is
@@ -124,7 +109,6 @@ export const FeedAssessment = ({ feed, data }: { feed: Feed; data: FeedData }) =
               </div>
             </details>
           ) : null}
-          <RawRecord data={data} />
 
           <div className="assessment-card-footer">
             <span className="date-with-help">
@@ -155,7 +139,6 @@ export const FeedAssessment = ({ feed, data }: { feed: Feed; data: FeedData }) =
               <p>{data.note}</p>
             </details>
           ) : null}
-          <RawRecord data={data} />
           <ExternalLink href={data.url ?? feed.homepage}>Check the feed</ExternalLink>
         </div>
       )}

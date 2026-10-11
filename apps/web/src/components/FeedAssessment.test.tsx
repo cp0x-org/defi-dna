@@ -14,7 +14,7 @@ const feed: Feed = {
 }
 
 describe('FeedAssessment', () => {
-  it('shows the raw record and the assessed object behind a card with data', () => {
+  it('names the assessed object and prints no stored JSON on a card with data', () => {
     const data: FeedData = {
       status: 'ok',
       value: 'Stage 1',
@@ -23,11 +23,11 @@ describe('FeedAssessment', () => {
     }
     const html = renderToStaticMarkup(<FeedAssessment feed={feed} data={data} />)
     expect(html).toContain('assesses individual vaults, not the protocol')
-    expect(html).toContain('Raw record')
-    expect(html).toContain('&quot;value&quot;: &quot;Stage 1&quot;')
+    // The record is public in the data repository; the page never reprints it.
+    expect(html).not.toContain('&quot;value&quot;')
   })
 
-  it('shows the raw record behind an empty card too', () => {
+  it('explains an empty card without printing its stored JSON', () => {
     const data: FeedData = {
       status: 'none',
       note: 'Nothing mapped.',
@@ -35,7 +35,6 @@ describe('FeedAssessment', () => {
     }
     const html = renderToStaticMarkup(<FeedAssessment feed={feed} data={data} />)
     expect(html).toContain('No data in this feed')
-    expect(html).toContain('Raw record')
-    expect(html).toContain('&quot;status&quot;: &quot;none&quot;')
+    expect(html).not.toContain('&quot;status&quot;')
   })
 })

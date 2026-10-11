@@ -81,8 +81,8 @@ CI runs the last line. The pre-commit hook runs lint-staged and typecheck.
   Pick from them; only a genuinely new shape needs a type, a schema entry and
   a component. When nothing fits, use `extra.text`.
 - Cap lists you put into `extra` (100 vaults is the current cap); a protocol
-  record should stay well under ~200 KB. Every card shows its raw record, so
-  `extra` is visible even before it has a component.
+  record should stay well under ~200 KB. A new `extra` shape is not visible
+  on the page until it has a component.
 - Tests sit next to the code as `*.test.ts` / `*.test.tsx` (vitest, node
   environment, `renderToStaticMarkup` for components). An adapter test runs the
   adapter through `fakeContext` (`@defi-dna/core/testing`) over `fixtures/`
@@ -112,6 +112,10 @@ CI runs the last line. The pre-commit hook runs lint-staged and typecheck.
   written permission; prefer documented APIs, public repositories, then manual
   curation with a date and a link.
 - Do not change `CHARTER.md` section 1.
+- Do not show raw data in the interface: no "Raw record" dropdown, no `<pre>`
+  or `JSON.stringify` dump of a record, a cell or `extra`. The stored JSON is
+  public in git (`cp0x-org/defi-dna-data`, charter §2); the page renders it
+  through components only.
 
 ## For AI agents specifically
 
