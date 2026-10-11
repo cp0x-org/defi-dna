@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest'
-import { assess, type Vault } from './index.ts'
+import { fakeContext } from '@defi-dna/core/testing'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import listing from './fixtures/vaults.json' with { type: 'json' }
+import adapter, { assess, type Vault } from './index.ts'
 
 const vault = (overrides: Partial<Vault>): Vault => ({
   strategy_id: 1,
@@ -45,7 +47,10 @@ describe('assess', () => {
       ['Small', 'F · 17/100'],
     ])
     expect(result.updatedAt).toBe('2026-10-01')
-    expect(result.extra).toMatchObject({ vaultsListed: 3, vaultsRated: 2 })
+    expect(result.extra?.facts).toEqual([
+      { name: 'Vaults listed', value: '3' },
+      { name: 'Vaults rated', value: '2' },
+    ])
     expect(result.extra?.vaults?.[0]).toEqual({
       name: 'Large',
       version: 'Morpho v2',
@@ -68,5 +73,65 @@ describe('assess', () => {
     expect(assess(['Gearbox'], [])).toMatchObject({
       note: 'pigi lists no Ethereum vault under Gearbox.',
     })
+  })
+
+  it('counts every rated vault but carries only the 100 largest into extra', () => {
+    const many = Array.from({ length: 120 }, (_, i) =>
+      vault({
+        strategy_id: i,
+        display_name: `Vault ${i}`,
+        tvl_30d_ma: i,
+        risk_band: 'C',
+        risk_score: 50,
+      }),
+    )
+    const result = assess(['Morpho'], many)
+    expect(result.value).toBe('120 vaults rated')
+    expect(result.extra?.facts).toContainEqual({ name: 'Vaults rated', value: '120' })
+    expect(result.extra?.vaults).toHaveLength(100)
+    expect(result.extra?.vaults?.[0]?.name).toBe('Vault 119')
+    expect(result.note).toContain('20 more are at the source')
+  })
+})
+
+const LISTING = 'https://pigi.finance/api/v1/vaults?chain_id=1&sort=id_asc&limit=1000&offset=0'
+const TOKEN = 'POST https://pigi.finance/api/v1/auth/token'
+
+describe('prepare and collect', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  it('trades the key for a token once, reads one listing, and never touches the network per protocol', async () => {
+    vi.stubEnv('PIGI_API_KEY', 'test-key')
+    const ctx = fakeContext(
+      { [TOKEN]: { token: 't' }, [LISTING]: listing },
+      { mapping: { 'morpho-vaults': ['Morpho', 'Morpho v2'], curve: ['Curve'] } },
+    )
+    const prepared = await adapter.prepare!(ctx)
+    expect(ctx.requests).toEqual([LISTING, TOKEN])
+
+    const morpho = await adapter.collect({
+      protocol: { id: 'morpho-vaults', name: 'Morpho Vaults', category: 'yield' },
+      ctx,
+      prepared,
+    })
+    expect(morpho?.value).toBe('2 vaults rated')
+    expect(morpho?.extra?.facts).toEqual([
+      { name: 'Vaults listed', value: '3' },
+      { name: 'Vaults rated', value: '2' },
+    ])
+    expect(morpho?.extra?.vaults?.map((vault) => vault.tier)).toEqual(['B', 'B'])
+
+    const curve = await adapter.collect({
+      protocol: { id: 'curve', name: 'Curve', category: 'dex' },
+      ctx,
+      prepared,
+    })
+    expect(curve?.value).toBeUndefined()
+    expect(curve?.note).toContain('1 Ethereum vault(s) under Curve')
+    expect(ctx.requests).toHaveLength(2)
+  })
+
+  it('declares the key it needs', () => {
+    expect(adapter.secrets).toEqual(['PIGI_API_KEY'])
   })
 })

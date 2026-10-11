@@ -1,14 +1,6 @@
 import type { MetricAdapter, MetricResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const LIST = 'https://api.llama.fi/lite/protocols2'
-
-/** our protocol id -> the DefiLlama numeric id(s) that make up that row */
-const table: Record<string, string | string[]> = mapping
-const llamaIds = (id: string): string[] => {
-  const value = table[id]
-  return value == null ? [] : typeof value === 'string' ? [value] : value
-}
 
 interface Entry {
   name: string
@@ -24,10 +16,10 @@ const slug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
  *
  * A measured quantity, not a verdict: it is shown next to the assessments and
  * never combined with them. A protocol usually has several deployments, so the
- * figure is the sum of exactly the ids the mapping names, and the breakdown
- * travels with it so the sum stays checkable.
+ * figure is the sum of exactly the DefiLlama numeric ids `mapping.json` names,
+ * and the breakdown travels with it so the sum stays checkable.
  */
-const adapter: MetricAdapter = {
+const adapter: MetricAdapter<Map<string, Entry>> = {
   id: 'tvl',
 
   async prepare(ctx): Promise<Map<string, Entry>> {
@@ -39,17 +31,15 @@ const adapter: MetricAdapter = {
     return byId
   },
 
-  async collect({ protocol, prepared }): Promise<MetricResult | null> {
-    const ids = llamaIds(protocol.id)
+  async collect({ protocol, ctx, prepared: listed }): Promise<MetricResult | null> {
+    const ids = ctx.mapping[protocol.id] ?? []
     if (ids.length === 0) return null
-    const listed = prepared as Map<string, Entry> | undefined
-    if (!listed) throw new Error('DefiLlama protocol list unavailable')
 
+    // Whole dollars: DefiLlama's fractional cents are float noise, not a measurement.
     const components = ids.flatMap((id) => {
       const entry = listed.get(id)
-      return entry
-        ? [{ id, name: entry.name, tvl: entry.chainTvls?.['Ethereum']?.tvl ?? null }]
-        : []
+      const tvl = entry?.chainTvls?.['Ethereum']?.tvl
+      return entry ? [{ id, name: entry.name, tvl: tvl == null ? null : Math.round(tvl) }] : []
     })
     const measured = components.filter((component) => component.tvl != null)
     const first = components[0]

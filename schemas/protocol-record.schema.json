@@ -2,49 +2,72 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/schemas/protocol-record.schema.json",
   "title": "defi-dna protocol record",
-  "description": "Generated data/protocols/<id>.json. Each optional extra field has a defined shape and a dedicated frontend view.",
+  "description": "Generated data/protocols/<id>.json: what every feed published about one protocol. Changes only when a feed's content does; measured quantities live in metrics.json. Each optional extra field has a defined shape and a dedicated frontend view.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["generatedAt", "protocolId", "metrics", "feeds"],
+  "required": ["protocolId", "feeds"],
   "properties": {
-    "generatedAt": { "type": "string" },
-    "protocolId": { "type": "string" },
-    "metrics": { "type": "object", "additionalProperties": { "$ref": "#/definitions/metricData" } },
-    "feeds": { "type": "object", "additionalProperties": { "$ref": "#/definitions/feedData" } }
+    "protocolId": {
+      "type": "string"
+    },
+    "feeds": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/feedData"
+      }
+    }
   },
   "definitions": {
     "feedData": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "fetchedAt"],
+      "required": ["status", "since"],
       "allOf": [
         {
-          "if": { "properties": { "status": { "const": "ok" } } },
-          "then": { "required": ["value", "url"] }
+          "if": {
+            "properties": {
+              "status": {
+                "const": "ok"
+              }
+            }
+          },
+          "then": {
+            "required": ["value", "url"]
+          }
         }
       ],
       "properties": {
-        "status": { "enum": ["ok", "none", "error"] },
-        "value": { "type": "string" },
-        "summary": { "type": "string" },
+        "status": {
+          "enum": ["ok", "none", "error"]
+        },
+        "value": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
         "details": {
           "type": "array",
           "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["name", "value"],
-            "properties": {
-              "name": { "type": "string" },
-              "value": { "type": "string" },
-              "description": { "type": "string" }
-            }
+            "$ref": "#/definitions/detail"
           }
         },
-        "updatedAt": { "type": "string" },
-        "url": { "type": "string" },
-        "note": { "type": "string" },
-        "extra": { "$ref": "#/definitions/extra" },
-        "fetchedAt": { "type": "string" }
+        "updatedAt": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "extra": {
+          "$ref": "#/definitions/extra"
+        },
+        "since": {
+          "description": "Added by the runner: the run that last changed this cell. Unchanged content keeps its earlier time.",
+          "type": "string"
+        }
       }
     },
     "metricData": {
@@ -52,38 +75,97 @@
       "additionalProperties": false,
       "required": ["value", "fetchedAt"],
       "properties": {
-        "value": { "type": ["number", "null"] },
-        "updatedAt": { "type": "string" },
-        "url": { "type": "string" },
-        "note": { "type": "string" },
-        "extra": { "$ref": "#/definitions/extra" },
-        "fetchedAt": { "type": "string" }
+        "value": {
+          "type": ["number", "null"]
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "extra": {
+          "$ref": "#/definitions/extra"
+        },
+        "fetchedAt": {
+          "description": "When we read it. Refreshed on every run.",
+          "type": "string"
+        }
+      }
+    },
+    "detail": {
+      "description": "A named part of an assessment or a fact about the record, in the source's words.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        }
       }
     },
     "extra": {
-      "description": "Optional source-supplied data. Unknown keys are invalid; add a schema entry, TypeScript type and frontend component for each new type.",
+      "description": "Structured data beyond the headline, in the shapes the protocol page renders. Unknown keys are invalid; a new shape needs a schema entry, a TypeScript type and a component.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "reviews": { "type": "array", "items": { "$ref": "#/definitions/review" } },
-        "domain": { "type": "string" },
-        "riskLevel": { "type": ["string", "null"] },
-        "overallScore": { "type": ["number", "null"] },
-        "analysisStatus": { "type": ["string", "null"] },
-        "keyFindings": { "type": "array", "items": { "$ref": "#/definitions/finding" } },
-        "philidorId": { "type": "string" },
-        "versions": { "type": "array", "items": { "type": "string" } },
-        "vaultsListed": { "type": "integer", "minimum": 0 },
-        "vaultsLive": { "type": "integer", "minimum": 0 },
-        "vaultsShutdown": { "type": "integer", "minimum": 0 },
-        "vaultsRated": { "type": "integer", "minimum": 0 },
-        "vaults": { "type": "array", "items": { "$ref": "#/definitions/vault" } },
-        "incidents": { "type": "array", "items": { "$ref": "#/definitions/incident" } },
-        "components": { "type": "array", "items": { "$ref": "#/definitions/tvlComponent" } },
-        "text": {
-          "description": "Optional source-supplied paragraphs for information that has no more specific type.",
+        "facts": {
+          "description": "Facts about the record in the source's own terms, as name/value pairs.",
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "$ref": "#/definitions/detail"
+          }
+        },
+        "reviews": {
+          "description": "Reviews the source files separately under this row, one deployment each.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/review"
+          }
+        },
+        "findings": {
+          "description": "Findings the source reports, with its own severity and category.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/finding"
+          }
+        },
+        "vaults": {
+          "description": "Individually rated vaults, largest first.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/vault"
+          }
+        },
+        "incidents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/incident"
+          }
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tvlComponent"
+          }
+        },
+        "text": {
+          "description": "Optional source-supplied paragraphs for information that has no more specific shape.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -92,11 +174,24 @@
       "additionalProperties": false,
       "required": ["file", "stage", "risks", "date", "url"],
       "properties": {
-        "file": { "type": "string" },
-        "stage": { "type": "string" },
-        "risks": { "type": "array", "items": { "type": "string" } },
-        "date": { "type": ["string", "null"] },
-        "url": { "type": "string" }
+        "file": {
+          "type": "string"
+        },
+        "stage": {
+          "type": "string"
+        },
+        "risks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "date": {
+          "type": ["string", "null"]
+        },
+        "url": {
+          "type": "string"
+        }
       }
     },
     "finding": {
@@ -104,10 +199,18 @@
       "additionalProperties": false,
       "required": ["title", "severity", "category", "description"],
       "properties": {
-        "title": { "type": "string" },
-        "severity": { "type": ["string", "null"] },
-        "category": { "type": ["string", "null"] },
-        "description": { "type": ["string", "null"] }
+        "title": {
+          "type": "string"
+        },
+        "severity": {
+          "type": ["string", "null"]
+        },
+        "category": {
+          "type": ["string", "null"]
+        },
+        "description": {
+          "type": ["string", "null"]
+        }
       }
     },
     "vault": {
@@ -115,14 +218,30 @@
       "additionalProperties": false,
       "required": ["name", "version", "curator", "tier", "score", "tvlUsd", "scoredAt", "url"],
       "properties": {
-        "name": { "type": "string" },
-        "version": { "type": ["string", "null"] },
-        "curator": { "type": ["string", "null"] },
-        "tier": { "type": ["string", "null"] },
-        "score": { "type": ["number", "null"] },
-        "tvlUsd": { "type": ["number", "null"] },
-        "scoredAt": { "type": ["string", "null"] },
-        "url": { "type": "string" }
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": ["string", "null"]
+        },
+        "curator": {
+          "type": ["string", "null"]
+        },
+        "tier": {
+          "type": ["string", "null"]
+        },
+        "score": {
+          "type": ["number", "null"]
+        },
+        "tvlUsd": {
+          "type": ["number", "null"]
+        },
+        "scoredAt": {
+          "type": ["string", "null"]
+        },
+        "url": {
+          "type": "string"
+        }
       }
     },
     "incident": {
@@ -138,13 +257,27 @@
         "source"
       ],
       "properties": {
-        "date": { "type": "string" },
-        "name": { "type": "string" },
-        "amountUsd": { "type": ["number", "null"] },
-        "classification": { "type": "string" },
-        "technique": { "type": "string" },
-        "returnedFunds": { "type": ["number", "null"] },
-        "source": { "type": ["string", "null"] }
+        "date": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "amountUsd": {
+          "type": ["number", "null"]
+        },
+        "classification": {
+          "type": "string"
+        },
+        "technique": {
+          "type": "string"
+        },
+        "returnedFunds": {
+          "type": ["number", "null"]
+        },
+        "source": {
+          "type": ["string", "null"]
+        }
       }
     },
     "tvlComponent": {
@@ -152,9 +285,15 @@
       "additionalProperties": false,
       "required": ["id", "name", "tvl"],
       "properties": {
-        "id": { "type": "string" },
-        "name": { "type": "string" },
-        "tvl": { "type": ["number", "null"] }
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "tvl": {
+          "type": ["number", "null"]
+        }
       }
     }
   }

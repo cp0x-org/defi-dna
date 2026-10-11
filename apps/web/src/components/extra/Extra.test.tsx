@@ -5,7 +5,7 @@ import { IncidentsExtra, TvlComponentsExtra } from './MetricExtras.tsx'
 import { TextExtra } from './TextExtra.tsx'
 
 describe('optional extra views', () => {
-  it('renders only feed types present in the record', () => {
+  it('renders only the shapes present in the record', () => {
     const extra = {
       reviews: [
         {
@@ -24,42 +24,37 @@ describe('optional extra views', () => {
     expect(html).toContain('DeFiScan reviews')
     expect(html).toContain('ethereum.md')
     expect(html).toContain('A source-supplied note.')
-    expect(html).not.toContain('Vault coverage')
-    expect(html).not.toContain('Analysis context')
+    expect(html).not.toContain('As filed by')
+    expect(html).not.toContain('Vaults (')
     expect(renderToStaticMarkup(<FeedExtras feedName="DeFiScan" />)).toBe('')
   })
 
-  it('renders analysis, findings and vault data from their typed fields', () => {
+  it('renders facts, findings and vault data from their shapes', () => {
     const analysis = renderToStaticMarkup(
       <FeedExtras
         feedName="Risklayer"
         extra={{
-          domain: 'example.org',
-          riskLevel: 'medium',
-          overallScore: 4.8,
-          analysisStatus: 'complete',
-          keyFindings: [
+          facts: [
+            { name: 'Analyzed domain', value: 'example.org' },
+            { name: 'Risk level', value: 'medium' },
+          ],
+          findings: [
             { title: 'Oracle risk', severity: 'high', category: 'Oracle', description: 'Details' },
           ],
         }}
       />,
     )
-    expect(analysis).toContain('Analysis context')
+    expect(analysis).toContain('As filed by Risklayer')
     expect(analysis).toContain('example.org')
     expect(analysis).toContain('Oracle risk')
     expect(analysis).toContain('Oracle')
-    expect(analysis).not.toContain('Vault coverage')
+    expect(analysis).not.toContain('Vaults (')
 
     const vaults = renderToStaticMarkup(
       <FeedExtras
         feedName="Philidor"
         extra={{
-          philidorId: 'example',
-          versions: ['v1'],
-          vaultsListed: 1,
-          vaultsLive: 1,
-          vaultsShutdown: 0,
-          vaultsRated: 1,
+          facts: [{ name: 'Vaults rated', value: '1' }],
           vaults: [
             {
               name: 'Example vault',
@@ -75,10 +70,10 @@ describe('optional extra views', () => {
         }}
       />,
     )
-    expect(vaults).toContain('Vault coverage')
+    expect(vaults).toContain('As filed by Philidor')
     expect(vaults).toContain('Vaults (1)')
     expect(vaults).toContain('Example vault')
-    expect(vaults).not.toContain('Analysis context')
+    expect(vaults).not.toContain('Findings reported')
   })
 
   it('renders each metric extra only when its JSON field exists', () => {

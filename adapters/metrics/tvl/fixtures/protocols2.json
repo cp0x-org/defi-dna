@@ -1,0 +1,31 @@
+{
+  "protocols": [
+    {
+      "name": "Aave V3",
+      "defillamaId": "1599",
+      "chainTvls": {
+        "Ethereum": {
+          "tvl": 15272106283.485119
+        }
+      }
+    },
+    {
+      "name": "Morpho Blue",
+      "defillamaId": "4025",
+      "chainTvls": {
+        "Ethereum": {
+          "tvl": 5124539490.887048
+        }
+      }
+    },
+    {
+      "name": "SparkLend",
+      "defillamaId": "2929",
+      "chainTvls": {
+        "Ethereum": {
+          "tvl": 5677865887.0574875
+        }
+      }
+    }
+  ]
+}

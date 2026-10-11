@@ -1,18 +1,15 @@
 import { Fragment, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
+import { defaultDir, matrixGroups, resolveSort, selectedFeeds, type Dir } from '../lib/matrix.ts'
 import { readHiddenFeeds, writeHiddenFeeds } from '../lib/prefs.ts'
 import { feeds as allFeeds, metricById } from '../lib/registry.ts'
-import { dataCount, groupRows, type Group, type Row } from '../lib/rows.ts'
+import { dataCount, groupRows, type Row } from '../lib/rows.ts'
 import { TVL_BANDS, categoryLabel, dateInfo, formatUsd } from '../lib/view.ts'
 import { IconArrow, IconBook, IconSearch, IconSort } from '../components/Icons.tsx'
 import { DataFlag, Info, MultiSelect, ProtocolAvatar, SourceMark } from '../components/UI.tsx'
 
-type Dir = 'asc' | 'desc'
-
 const tvlLabel = metricById('tvl')?.name ?? 'DefiLlama · Ethereum TVL'
-
-const defaultDir = (key: string): Dir => (key === 'name' ? 'asc' : 'desc')
 
 /** The registry joined with nothing: names and categories without any collected fact. */
 const NO_DATA: IndexBundle = { generatedAt: '', rows: [] }
@@ -81,9 +78,7 @@ export const MatrixPage = ({
   }
 
   const feedIds = allFeeds.map((feed) => feed.id)
-  const selectedIds = feedIds.includes(pinned)
-    ? [pinned]
-    : feedIds.filter((id) => !hidden.includes(id))
+  const selectedIds = selectedFeeds(feedIds, hidden, pinned)
   const visibleFeeds = allFeeds.filter((feed) => selectedIds.includes(feed.id))
   const selectFeeds = (ids: string[]) => {
     const next = feedIds.filter((id) => !ids.includes(id))
@@ -92,11 +87,7 @@ export const MatrixPage = ({
     if (pinned) update('feed', '')
   }
 
-  const requested = params.get('sort') ?? 'tvl'
-  const sort =
-    requested.startsWith('feed:') && !selectedIds.includes(requested.slice(5)) ? 'tvl' : requested
-  const dir: Dir =
-    params.get('dir') === 'asc' ? 'asc' : params.get('dir') === 'desc' ? 'desc' : defaultDir(sort)
+  const { sort, dir } = resolveSort(params.get('sort'), params.get('dir'), selectedIds)
   const setSort = (key: string, nextDir: Dir) => {
     const next = new URLSearchParams(params)
     next.set('sort', key)
@@ -108,44 +99,17 @@ export const MatrixPage = ({
   const all = useMemo(() => groupRows(index ?? NO_DATA, () => true), [index])
   const categories = [...new Set(all.flatMap((g) => g.rows.map((r) => r.protocol.category)))].sort()
 
-  const groups = useMemo(() => {
-    if (!index) return []
-    const band = TVL_BANDS[tvl]
-    const filtered = groupRows(index, (row) => {
-      const { protocol } = row
-      const name = `${protocol.group ?? ''} ${protocol.name}`.toLowerCase()
-      if (q.trim() && !name.includes(q.trim().toLowerCase())) return false
-      if (cat && protocol.category !== cat) return false
-      if (band && (row.tvl == null || row.tvl < band.min || row.tvl >= band.max)) return false
-      // Coverage counts only the feeds currently selected: a hidden feed cannot leave a gap.
-      if (availability && selectedIds.length) {
-        const covered = dataCount(row.feeds, selectedIds)
-        const full = covered === selectedIds.length
-        if (availability === 'full' ? !full : full) return false
-      }
-      return true
-    })
-
-    const rank = (group: Group): number | null => {
-      if (sort.startsWith('feed:')) return group.feeds[sort.slice(5)] ? 1 : 0
-      if (sort === 'coverage') return dataCount(group.feeds, selectedIds)
-      return group.tvl
-    }
-    return filtered.sort((a, b) => {
-      if (sort === 'name') {
-        return dir === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-      }
-      const [rankA, rankB] = [rank(a), rank(b)]
-      if (rankA == null || rankB == null) {
-        return rankA == null && rankB == null
-          ? a.name.localeCompare(b.name)
-          : rankA == null
-            ? 1
-            : -1
-      }
-      return (dir === 'desc' ? rankB - rankA : rankA - rankB) || a.name.localeCompare(b.name)
-    })
-  }, [index, q, cat, tvl, availability, sort, dir, selectedIds])
+  const groups = useMemo(
+    () =>
+      index
+        ? matrixGroups(
+            index,
+            { q, category: cat, tvl, coverage: availability, sort, dir },
+            selectedIds,
+          )
+        : [],
+    [index, q, cat, tvl, availability, sort, dir, selectedIds],
+  )
 
   const shown = groups.reduce((total, group) => total + group.rows.length, 0)
   const versions = all.reduce((total, group) => total + group.rows.length, 0)
@@ -334,10 +298,10 @@ export const MatrixPage = ({
           <span className="section-aside">
             Every feed measures something different
             <Info label="Why there is no value here">
-              A DeFiScan stage, a Risklayer 0-10 figure and a Philidor vault tier are not the same
-              kind of statement, and a feed does not always say which slice of a protocol it looked
-              at. The dashboard therefore reports only whether data exists; the values stay on the
-              protocol page, unmixed.
+              A decentralization stage, a 0-10 risk figure and a vault tier are not the same kind of
+              statement, and a feed does not always say which slice of a protocol it looked at. The
+              dashboard therefore reports only whether data exists; the values stay on the protocol
+              page, unmixed.
             </Info>
           </span>
         </div>

@@ -1,0 +1,9 @@
+{
+  "rating": "A",
+  "text": "Example text the feed publishes about the protocol.",
+  "dimensions": [
+    { "name": "Governance", "value": "Low", "why": "A timelock guards every upgrade." },
+    { "name": "Oracle", "value": "Medium" }
+  ],
+  "updated": "2026-09-15"
+}

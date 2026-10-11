@@ -26,6 +26,20 @@ export interface Protocol {
 }
 
 /**
+ * What a feed's values are about. A feed that grades vaults says nothing about
+ * the protocol as a whole, and the dashboard says so next to every value.
+ */
+export const ASSESSED_OBJECTS = [
+  'protocol',
+  'deployment',
+  'vault',
+  'pool',
+  'asset',
+  'research',
+] as const
+export type AssessedObject = (typeof ASSESSED_OBJECTS)[number]
+
+/**
  * A risk feed: one column on the dashboard.
  *
  * Hand-maintained in adapters/feeds/<id>/feed.json, next to the adapter that
@@ -38,6 +52,8 @@ export interface Feed {
   topic: string
   /** One line: what this feed looks at. */
   focus: string
+  /** The object the feed assesses: the protocol, each deployment, individual vaults, ... */
+  assesses: AssessedObject
   homepage: string
   methodologyUrl?: string
   /** false: the feed is not collected and does not appear. */
@@ -103,20 +119,20 @@ export interface ExtraTvlComponent {
   tvl: number | null
 }
 
-/** Recognized extra fields. Each optional type has its own frontend component. */
+/**
+ * Structured data beyond the headline, in the shapes the protocol page can
+ * render. The shapes are generic — a list of facts, a table of vaults — so a
+ * new feed picks from them; only a genuinely new shape needs a new type here,
+ * a schema entry and a component.
+ */
 export interface ExtraData {
+  /** Facts about the record in the source's own terms: "Vaults listed: 197", "Risk level: medium". */
+  facts?: Detail[]
+  /** Reviews the source files separately under this row, one deployment each. */
   reviews?: ExtraReview[]
-  keyFindings?: ExtraFinding[]
-  domain?: string
-  riskLevel?: string | null
-  overallScore?: number | null
-  analysisStatus?: string | null
-  philidorId?: string
-  versions?: string[]
-  vaultsListed?: number
-  vaultsLive?: number
-  vaultsShutdown?: number
-  vaultsRated?: number
+  /** Findings the source reports, with its own severity and category. */
+  findings?: ExtraFinding[]
+  /** Individually rated vaults, largest first. */
   vaults?: ExtraVault[]
   incidents?: ExtraIncident[]
   components?: ExtraTvlComponent[]
@@ -149,7 +165,12 @@ export interface FeedResult {
 export interface FeedData extends FeedResult {
   /** `ok` — the feed has data; `none` — it has none; `error` — we failed to read it. */
   status: 'ok' | 'none' | 'error'
-  fetchedAt: string
+  /**
+   * The run that last changed this cell. Content that stayed the same keeps
+   * its earlier time, so a record changes only when a feed's content does and
+   * the git history of the data is the history of what the feeds published.
+   */
+  since: string
 }
 
 /** An independent measurement (TVL, incidents) — a quantity, never a verdict. */
@@ -162,22 +183,47 @@ export interface MetricResult {
 }
 
 export interface MetricData extends MetricResult {
+  /** When we read it. Metrics move daily, so this is refreshed on every run. */
   fetchedAt: string
 }
 
 /**
- * data/protocols/<id>.json — everything we collected about one protocol.
+ * data/protocols/<id>.json — what every feed published about one protocol.
  *
  * Generated, and generated only: the protocol's name, group and description are
- * hand-maintained in registry/protocols.json and never copied in here.
+ * hand-maintained in registry/protocols.json and never copied in here. The
+ * file changes only when a feed's content does; measured quantities, which
+ * move every day, live in data/metrics.json.
  */
 export interface ProtocolRecord {
-  generatedAt: string
   protocolId: string
-  /** Keyed by metric id: `tvl`, `incidents`. */
-  metrics: Record<string, MetricData>
   /** Keyed by feed id. */
   feeds: Record<string, FeedData>
+}
+
+/** data/metrics.json — measured quantities for every protocol, by protocol id then metric id. */
+export type MetricsFile = Record<string, Record<string, MetricData>>
+
+/** What the protocol page renders: the record joined with the protocol's metrics. */
+export interface ProtocolDetail extends ProtocolRecord {
+  /** Keyed by metric id: `tvl`, `incidents`. */
+  metrics: Record<string, MetricData>
+}
+
+/** When we last read a source. Facts about this pipeline, never about a protocol. */
+export interface SourceStatus {
+  /** The last run that tried the source. */
+  lastRunAt?: string
+  /** The last run that read it without a failure. */
+  lastOkAt?: string
+  /** Why the last run fell short, when it did. */
+  note?: string
+}
+
+/** data/status.json — the last run, and when each source was last read. */
+export interface RunStatus {
+  generatedAt: string
+  sources: Record<string, SourceStatus>
 }
 
 /**
@@ -197,7 +243,10 @@ export interface IndexRow {
 
 /** data/index.json — one request, everything the dashboard needs at runtime. */
 export interface IndexBundle {
+  /** When the data was collected. */
   generatedAt: string
+  /** When each feed and metric was last read; absent when the run status is not available. */
+  sources?: Record<string, SourceStatus>
   rows: IndexRow[]
 }
 
@@ -212,6 +261,13 @@ export interface Change {
 }
 
 /* ------------------------------------------------------- adapter contract */
+
+/**
+ * adapters/<kind>/<id>/mapping.json, normalized: our protocol id -> the
+ * source's own id(s) for it. Every value is a list, and every key was checked
+ * against registry/protocols.json when the registry loaded.
+ */
+export type Mapping = Record<string, string[]>
 
 export interface FetchOptions {
   /** How long a cached response stays usable. Default: one hour. */
@@ -238,6 +294,8 @@ export interface AdapterContext {
   getText(url: string, options?: FetchOptions): Promise<string>
   /** POST a JSON body and read JSON back. Never cached: it is for exchanging credentials. */
   postJson<T>(url: string, body: unknown): Promise<T>
+  /** This adapter's mapping.json. Empty when the folder has none. */
+  mapping: Mapping
   log(message: string): void
   now: Date
 }
@@ -245,11 +303,24 @@ export interface AdapterContext {
 /**
  * One source of data. The folder it lives in names it:
  * `adapters/feeds/<id>` for a column, `adapters/metrics/<id>` for a measurement.
+ *
+ * `Prepared` is whatever `prepare()` returns; declare it (`FeedAdapter<Map<…>>`)
+ * and `collect()` receives it typed.
  */
-export interface Adapter<Result> {
+export interface Adapter<Result, Prepared = unknown> {
   id: string
-  /** Runs once per run. Fetch a listing here instead of once per protocol. */
-  prepare?(ctx: AdapterContext): Promise<unknown>
+  /**
+   * Environment variables the source needs, such as an API key. When one is
+   * missing the adapter is skipped for the run — its column keeps the previous
+   * values and the run reports it once. `--offline` reads need no secret.
+   */
+  secrets?: string[]
+  /**
+   * Runs once per run. Fetch a listing here instead of once per protocol. If
+   * it throws, collect() is not called: the whole column keeps the previous
+   * run's values and the failure is reported once.
+   */
+  prepare?(ctx: AdapterContext): Promise<Prepared>
   /**
    * Read one protocol. Return null when the source has nothing for it — that is
    * a normal answer, not a failure. Throw when the source could not be read.
@@ -257,9 +328,9 @@ export interface Adapter<Result> {
   collect(args: {
     protocol: Protocol
     ctx: AdapterContext
-    prepared: unknown
+    prepared: Prepared
   }): Promise<Result | null>
 }
 
-export type FeedAdapter = Adapter<FeedResult>
-export type MetricAdapter = Adapter<MetricResult>
+export type FeedAdapter<Prepared = unknown> = Adapter<FeedResult, Prepared>
+export type MetricAdapter<Prepared = unknown> = Adapter<MetricResult, Prepared>
