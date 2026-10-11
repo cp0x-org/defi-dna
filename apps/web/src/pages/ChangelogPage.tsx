@@ -63,7 +63,7 @@ export const ChangelogPage = ({ index }: { index: IndexBundle | null }) => {
           <h3>Nothing recorded yet</h3>
           <p>The log fills up from the second pipeline run onward.</p>
           <Link className="button primary" to="/">
-            Back to the matrix <IconArrow />
+            Back to the protocols <IconArrow />
           </Link>
         </div>
       ) : (

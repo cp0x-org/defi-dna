@@ -6,11 +6,12 @@ source and date, side by side. The dashboard shows coverage; it does not compute
 its own score, rating or ranking. See the [project charter](CHARTER.md) for the
 rules behind this approach.
 
-The dashboard tracks protocol versions separately. Its coverage matrix has one
-row per version and one column per feed. A green dot means the feed has data; a
-grey dot means it does not. Opening a protocol shows each feed's value, words,
-source link and assessment date. Feeds measure different things, so their
-values are not merged.
+The dashboard tracks protocol versions separately, one row per version: its
+TVL, a coverage ring with one segment per feed (filled when the feed has data,
+empty when it does not), when a feed's value last changed, and the incidents
+DefiLlama records. No feed's value appears there. Opening a protocol shows each
+feed's value, words, source link and assessment date. Feeds measure different
+things, so their values are not merged.
 
 ## Repository layout
 
