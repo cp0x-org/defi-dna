@@ -1,7 +1,14 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
-import { dateInfo, safeUrl, sourceTone } from '../lib/view.ts'
-import { IconArrow, IconChevron, IconClock, IconExternal, IconInfo } from './Icons.tsx'
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react'
+import { safeUrl, sourceTone } from '../lib/view.ts'
+import { IconExternal, IconInfo } from './Icons.tsx'
 
 export const ExternalLink = ({
   href,
@@ -101,124 +108,37 @@ export const Info = ({
   )
 }
 
-export type MultiOption = {
-  id: string
-  label: string
-  hint?: string
-  mark?: ReactNode
-  href?: string
-}
-
-/** Checkbox dropdown. Keeps its own open state; the selection lives with the caller. */
-export const MultiSelect = ({
+/**
+ * A card pinned under an element — or above it when there is no room below.
+ * Mounted only while open, so it never renders on the server.
+ */
+export const Anchored = ({
+  anchor,
   label,
-  options,
-  selected,
-  onChange,
-  summary,
+  children,
 }: {
+  anchor: HTMLElement
   label: string
-  options: MultiOption[]
-  selected: string[]
-  onChange: (ids: string[]) => void
-  summary: (selected: string[], options: MultiOption[]) => string
+  children: ReactNode
 }) => {
-  const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const id = useId()
-  useEffect(() => {
-    if (!open) return
-    const close = (event: PointerEvent) => {
-      if (!ref.current?.contains(event.target as Node)) setOpen(false)
-    }
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setOpen(false)
-        ref.current?.querySelector('button')?.focus()
-      }
-    }
-    document.addEventListener('pointerdown', close)
-    document.addEventListener('keydown', escape)
-    return () => {
-      document.removeEventListener('pointerdown', close)
-      document.removeEventListener('keydown', escape)
-    }
-  }, [open])
-  const toggle = (optionId: string) =>
-    onChange(
-      selected.includes(optionId)
-        ? selected.filter((v) => v !== optionId)
-        : options.filter((o) => o.id === optionId || selected.includes(o.id)).map((o) => o.id),
-    )
+  const [style, setStyle] = useState<CSSProperties>({ visibility: 'hidden' })
+  useLayoutEffect(() => {
+    const card = ref.current
+    if (!card) return
+    const rect = anchor.getBoundingClientRect()
+    const below = rect.bottom + 6
+    setStyle({
+      left: Math.max(12, Math.min(rect.left - 6, window.innerWidth - card.offsetWidth - 12)),
+      top:
+        below + card.offsetHeight > window.innerHeight - 8
+          ? Math.max(8, rect.top - card.offsetHeight - 6)
+          : below,
+    })
+  }, [anchor])
   return (
-    <div
-      className="multiselect"
-      ref={ref}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false)
-      }}
-    >
-      <button
-        type="button"
-        className="multiselect-toggle"
-        aria-expanded={open}
-        aria-haspopup="true"
-        aria-controls={id}
-        onClick={() => setOpen(!open)}
-      >
-        <span className="sr-only">{label}: </span>
-        <span className="multiselect-label">{summary(selected, options)}</span>
-        <span className="multiselect-count">
-          {selected.length}/{options.length}
-        </span>
-        <IconChevron />
-      </button>
-      {open && (
-        <div className="multiselect-panel" id={id} role="group" aria-label={label}>
-          <div className="multiselect-head">
-            <span>{label}</span>
-            <span className="multiselect-actions">
-              <button
-                type="button"
-                className="text-button"
-                onClick={() => onChange(options.map((o) => o.id))}
-                disabled={selected.length === options.length}
-              >
-                All
-              </button>
-              <button
-                type="button"
-                className="text-button"
-                onClick={() => onChange([])}
-                disabled={selected.length === 0}
-              >
-                None
-              </button>
-            </span>
-          </div>
-          {options.map((o) => (
-            <div className="multiselect-option" key={o.id}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={selected.includes(o.id)}
-                  onChange={() => toggle(o.id)}
-                />
-                {o.mark}
-                <span>
-                  {o.label}
-                  {o.hint && <small>{o.hint}</small>}
-                </span>
-              </label>
-              {o.href && (
-                <Link className="multiselect-link" to={o.href} aria-label={`About ${o.label}`}>
-                  <IconArrow />
-                </Link>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+    <div className="pop" role="dialog" aria-label={label} ref={ref} style={style}>
+      {children}
     </div>
   )
 }
@@ -245,28 +165,33 @@ export const ProtocolAvatar = ({
   )
 }
 
-export const SourceMark = ({ id }: { id: string }) => (
-  <span className={`source-mark source-tone-${sourceTone(id)}`} aria-hidden="true">
+export const SourceMark = ({ id, large = false }: { id: string; large?: boolean }) => (
+  <span
+    className={`source-mark source-tone-${sourceTone(id)}${large ? ' large' : ''}`}
+    aria-hidden="true"
+  >
     {id.slice(0, 1).toUpperCase()}
   </span>
 )
 
-export const AssessmentDate = ({
-  value,
-  compact = false,
+/** One field of a feed's record, labelled with the field it came from. */
+export const Block = ({
+  type,
+  count,
+  children,
 }: {
-  value?: string | null
-  compact?: boolean
-}) => {
-  const date = dateInfo(value)
-  return (
-    <span className={`assessment-date${date.older ? ' older' : ''}`}>
-      <IconClock />
-      {date.label}
-      {!compact && date.older && <span className="date-age">· {date.age}d old</span>}
-    </span>
-  )
-}
+  type: string
+  count?: number
+  children: ReactNode
+}) => (
+  <div className="blk">
+    <div className="blk-type">
+      {type}
+      {count && count > 1 ? ` ×${count}` : ''}
+    </div>
+    <div className="blk-body">{children}</div>
+  </div>
+)
 
 export const DataAgeHelp = () => (
   <Info label="About assessment dates">
@@ -275,24 +200,3 @@ export const DataAgeHelp = () => (
     protocol does.
   </Info>
 )
-
-/**
- * The dashboard's whole vocabulary: green when the feed has data for this
- * protocol, grey when it has none.
- *
- * No value is shown here on purpose. One feed grades a protocol, another grades
- * the vaults inside it — printing their values side by side would invite a
- * comparison none of them supports. The values live on the protocol page.
- */
-export const DataFlag = ({ has, label }: { has: boolean; label?: string }) => {
-  const dot = <span className={`data-dot${has ? ' filled' : ''}`} />
-  return label ? (
-    <span className="data-flag" role="img" aria-label={label} title={label}>
-      {dot}
-    </span>
-  ) : (
-    <span className="data-flag" aria-hidden="true">
-      {dot}
-    </span>
-  )
-}

@@ -13,12 +13,12 @@ const QUESTIONS: [string, string][] = [
     'No. It collects what other people published and shows it side by side. There is no score, ranking or recommendation of ours anywhere on the site, and a good value from one feed removes none of the smart-contract, governance, market or operational risk.',
   ],
   [
-    'Why does the dashboard show only a dot?',
-    'Because the feeds do not measure the same thing. One grades a protocol’s decentralization, another the individual vaults inside it, each on a scale of its own — and a feed does not always say which slice of a protocol it looked at. A shared column of values would invite a comparison none of them supports, so the dashboard reports only whether data exists. What each feed assesses is stated on its card and on the feeds page.',
+    'Why does the dashboard show only whether a feed has data?',
+    'Because the feeds do not measure the same thing. One grades a protocol’s decentralization, another the individual vaults inside it, each on a scale of its own — and a feed does not always say which slice of a protocol it looked at. A shared column of values would invite a comparison none of them supports, so the dashboard’s coverage ring reports only whether data exists: one segment per feed, filled or empty. What each feed assesses is stated on the protocol page and on the feeds page.',
   ],
   [
     'Where are the actual values then?',
-    'On the protocol page. Each feed gets a card with its value exactly as published, its own words, its assessment date and a link to the original source.',
+    'On the protocol page, under Risk intelligence. Each feed gets a panel with its value exactly as published, its own words, its assessment date and a link to the original source.',
   ],
   [
     'What do the three states mean?',
@@ -63,14 +63,14 @@ export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
           you how much has been collected, not how safe anything is.
         </p>
         <Link to="/" className="text-link">
-          Open the matrix <IconArrow />
+          Open the dashboard <IconArrow />
         </Link>
       </article>
       <article>
         <span className="step-number">02</span>
         <h2>Open it and read</h2>
         <p>
-          Each card is one feed’s own value and words. Where two feeds disagree, both stay on the
+          Each feed’s panel is its own value and words. Where two feeds disagree, both stay on the
           page: reconciling them would mean picking a winner.
         </p>
         <Link to="/sources" className="text-link">
@@ -82,7 +82,7 @@ export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
         <h2>Follow the source</h2>
         <p>
           Check the scope, check the date, then open the feed’s own page. A value nobody can check
-          is not evidence, so every card carries the link we read.
+          is not evidence, so every feed’s panel carries the link we read.
         </p>
         <a href="#faq" className="text-link">
           Understand the labels <IconArrow />

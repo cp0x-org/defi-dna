@@ -119,3 +119,19 @@
   --source-4: #453529;
   --source-ink-4: #dfb894;
 }
+
+/* Coverage states: whether a feed publishes data we could collect, never what
+   it says. Data, no data, and our own read failure — nothing else gets a colour. */
+:root {
+  --data-seg: #2f9a6a;
+  --none-seg: #d5dde4;
+  --error-seg: #d39b2a;
+  --pop-shadow: 0 8px 32px #0002;
+}
+
+:root[data-theme='dark'] {
+  --data-seg: #5fc29f;
+  --none-seg: #34495a;
+  --error-seg: #d9ac55;
+  --pop-shadow: 0 10px 36px #0009;
+}

@@ -82,7 +82,7 @@ function load<T>(file: string): Promise<T> {
 export const loadIndex = (): Promise<IndexBundle> => load<IndexBundle>('index.json')
 
 /** Measured quantities for every protocol: one small file that moves every day. */
-const loadMetrics = (): Promise<MetricsFile> =>
+export const loadMetrics = (): Promise<MetricsFile> =>
   load<MetricsFile>('metrics.json').catch(() => ({}) as MetricsFile)
 
 /** Everything we collected about one protocol, loaded when its page opens. */

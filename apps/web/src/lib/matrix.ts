@@ -1,81 +1,200 @@
-import type { IndexBundle } from '@defi-dna/data'
-import { dataCount, groupRows, type Group } from './rows.ts'
-import { TVL_BANDS } from './view.ts'
+import { feeds } from './registry.ts'
+import { changedAt, dataCount, groupRows, type Group, type Row } from './rows.ts'
+import { categoryLabel } from './view.ts'
 
-export type Dir = 'asc' | 'desc'
-
-/** What the matrix is asked to show. All of it comes from the URL. */
-export interface MatrixQuery {
-  /** Free text matched against the protocol and group names. */
-  q: string
-  category: string
-  /** A key of TVL_BANDS, or empty. */
-  tvl: string
-  /** `full`, `partial`, or empty. */
-  coverage: string
-  /** `name`, `tvl`, `coverage` or `feed:<id>`. */
-  sort: string
-  dir: Dir
-}
-
-/** Names sort A–Z by default; everything else biggest first. */
-export const defaultDir = (key: string): Dir => (key === 'name' ? 'asc' : 'desc')
-
-/** The feed columns on show: one feed pinned by the URL, else everything the visitor did not hide. */
-export const selectedFeeds = (feedIds: string[], hidden: string[], pinned: string): string[] =>
-  feedIds.includes(pinned) ? [pinned] : feedIds.filter((id) => !hidden.includes(id))
-
-/** The sort the URL asks for — or TVL when it names a feed that is not on show. */
-export function resolveSort(
-  requested: string | null,
-  direction: string | null,
-  selectedIds: string[],
-): { sort: string; dir: Dir } {
-  const wanted = requested ?? 'tvl'
-  const sort = wanted.startsWith('feed:') && !selectedIds.includes(wanted.slice(5)) ? 'tvl' : wanted
-  const dir: Dir = direction === 'asc' ? 'asc' : direction === 'desc' ? 'desc' : defaultDir(sort)
-  return { sort, dir }
-}
+const DAY = 86_400_000
 
 /**
- * Filter the rows, nest them by protocol and order the groups. Pure: the same
- * index and query always give the same table. The default order is TVL, a
- * measured quantity — never anything that reads as a risk ranking.
+ * The orders a visitor can pick. The default is TVL, a measured quantity —
+ * never anything that reads as a risk ranking. Coverage and incident counts are
+ * facts too, but sorting by them is a deliberate choice, not where the table starts.
  */
-export function matrixGroups(
-  index: IndexBundle,
-  query: MatrixQuery,
-  selectedIds: string[],
-): Group[] {
-  const band = TVL_BANDS[query.tvl]
-  const needle = query.q.trim().toLowerCase()
-  const filtered = groupRows(index, (row) => {
-    const { protocol } = row
-    const name = `${protocol.group ?? ''} ${protocol.name}`.toLowerCase()
-    if (needle && !name.includes(needle)) return false
-    if (query.category && protocol.category !== query.category) return false
-    if (band && (row.tvl == null || row.tvl < band.min || row.tvl >= band.max)) return false
-    // Coverage counts only the feeds on show: a hidden feed cannot leave a gap.
-    if (query.coverage && selectedIds.length) {
-      const full = dataCount(row.feeds, selectedIds) === selectedIds.length
-      if (query.coverage === 'full' ? !full : full) return false
-    }
-    return true
-  })
+export const SORTS = {
+  'tvl-desc': 'TVL · high to low',
+  'tvl-asc': 'TVL · low to high',
+  'name-asc': 'Name · A–Z',
+  'coverage-desc': 'Feed coverage · most first',
+  'updated-desc': 'Recently changed',
+  'incidents-desc': 'Incidents · most first',
+} as const
+export type SortKey = keyof typeof SORTS
 
-  const rank = (group: Group): number | null => {
-    if (query.sort.startsWith('feed:')) return group.feeds[query.sort.slice(5)] ? 1 : 0
-    if (query.sort === 'coverage') return dataCount(group.feeds, selectedIds)
-    return group.tvl
+export const TVL_MIN: Record<string, { label: string; min: number }> = {
+  '10m': { label: '> $10M', min: 1e7 },
+  '100m': { label: '> $100M', min: 1e8 },
+  '1b': { label: '> $1B', min: 1e9 },
+}
+
+/** How recently a feed's value moved, per our run log. `old` includes versions with no move logged. */
+export const UPDATED: Record<string, { label: string; chip: string; days: number }> = {
+  '24h': { label: '24 hours', chip: 'Changed ≤ 24h', days: 1 },
+  '7d': { label: '7 days', chip: 'Changed ≤ 7d', days: 7 },
+  '30d': { label: '30 days', chip: 'Changed ≤ 30d', days: 30 },
+  old: { label: 'Not in 30 days', chip: 'No change in 30d', days: 30 },
+}
+
+/** What the dashboard is asked to show. All of it comes from the URL, so a view can be shared. */
+export interface MatrixQuery {
+  /** Free text matched against names, ids and categories. */
+  q: string
+  categories: string[]
+  /** A key of TVL_MIN, or empty. */
+  tvl: string
+  /** Minimum number of feeds with data; 0 for any. */
+  feedsMin: number
+  /** Feeds that must have data, and feeds that must have none. Never what they say. */
+  has: string[]
+  missing: string[]
+  incidents: boolean
+  /** A key of UPDATED, or empty. */
+  updated: string
+  sort: SortKey
+}
+
+export const EMPTY_QUERY: MatrixQuery = {
+  q: '',
+  categories: [],
+  tvl: '',
+  feedsMin: 0,
+  has: [],
+  missing: [],
+  incidents: false,
+  updated: '',
+  sort: 'tvl-desc',
+}
+
+const list = (value: string | null): string[] => (value ? value.split(',').filter(Boolean) : [])
+const known = (table: object, key: string): boolean => Object.hasOwn(table, key)
+
+/** Unknown or stale values in a shared link fall back to the default instead of emptying the table. */
+export function readQuery(params: URLSearchParams): MatrixQuery {
+  const feedIds = feeds.map((feed) => feed.id)
+  const sort = params.get('sort') ?? ''
+  const tvl = params.get('tvl') ?? ''
+  const updated = params.get('updated') ?? ''
+  const feedsMin = Number(params.get('feeds'))
+  return {
+    q: params.get('q') ?? '',
+    categories: list(params.get('category')),
+    tvl: known(TVL_MIN, tvl) ? tvl : '',
+    feedsMin: Number.isInteger(feedsMin) && feedsMin > 0 ? Math.min(feedsMin, feedIds.length) : 0,
+    has: list(params.get('has')).filter((id) => feedIds.includes(id)),
+    missing: list(params.get('missing')).filter((id) => feedIds.includes(id)),
+    incidents: params.get('incidents') === '1',
+    updated: known(UPDATED, updated) ? updated : '',
+    sort: known(SORTS, sort) ? (sort as SortKey) : EMPTY_QUERY.sort,
   }
-  return filtered.sort((a, b) => {
-    if (query.sort === 'name') {
-      return query.dir === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-    }
-    const [rankA, rankB] = [rank(a), rank(b)]
-    if (rankA == null || rankB == null) {
-      return rankA == null && rankB == null ? a.name.localeCompare(b.name) : rankA == null ? 1 : -1
-    }
-    return (query.dir === 'desc' ? rankB - rankA : rankA - rankB) || a.name.localeCompare(b.name)
-  })
+}
+
+/** The shortest URL for a query: defaults are left out. */
+export function writeQuery(query: MatrixQuery): URLSearchParams {
+  const params = new URLSearchParams()
+  const set = (key: string, value: string) => {
+    if (value) params.set(key, value)
+  }
+  set('q', query.q)
+  set('category', query.categories.join(','))
+  set('tvl', query.tvl)
+  set('feeds', query.feedsMin ? String(query.feedsMin) : '')
+  set('has', query.has.join(','))
+  set('missing', query.missing.join(','))
+  set('incidents', query.incidents ? '1' : '')
+  set('updated', query.updated)
+  set('sort', query.sort === EMPTY_QUERY.sort ? '' : query.sort)
+  return params
+}
+
+/** One chip per active filter, each carrying the query that is left once it is removed. */
+export function filterChips(query: MatrixQuery): { label: string; without: MatrixQuery }[] {
+  const name = (id: string) => feeds.find((feed) => feed.id === id)?.name ?? id
+  const drop = (values: string[], value: string) => values.filter((other) => other !== value)
+  return [
+    ...query.categories.map((category) => ({
+      label: `Category: ${categoryLabel(category)}`,
+      without: { ...query, categories: drop(query.categories, category) },
+    })),
+    ...(query.tvl
+      ? [{ label: `TVL ${TVL_MIN[query.tvl]?.label ?? ''}`, without: { ...query, tvl: '' } }]
+      : []),
+    ...(query.feedsMin
+      ? [{ label: `Feeds with data ≥ ${query.feedsMin}`, without: { ...query, feedsMin: 0 } }]
+      : []),
+    ...query.has.map((id) => ({
+      label: `Has data from ${name(id)}`,
+      without: { ...query, has: drop(query.has, id) },
+    })),
+    ...query.missing.map((id) => ({
+      label: `No data from ${name(id)}`,
+      without: { ...query, missing: drop(query.missing, id) },
+    })),
+    ...(query.incidents
+      ? [{ label: 'Has reported incidents', without: { ...query, incidents: false } }]
+      : []),
+    ...(query.updated
+      ? [{ label: UPDATED[query.updated]?.chip ?? '', without: { ...query, updated: '' } }]
+      : []),
+  ]
+}
+
+/** One version against the filters. Coverage filters look at whether data exists, never at a value. */
+export function rowMatches(row: Row, query: MatrixQuery, now: number): boolean {
+  const { protocol } = row
+  const needle = query.q.trim().toLowerCase()
+  const text = `${protocol.group ?? ''} ${protocol.name} ${protocol.id} ${categoryLabel(
+    protocol.category,
+  )}`.toLowerCase()
+  if (needle && !text.includes(needle)) return false
+  if (query.categories.length && !query.categories.includes(protocol.category)) return false
+  const min = TVL_MIN[query.tvl]?.min
+  if (min != null && (row.tvl == null || row.tvl <= min)) return false
+  if (
+    query.feedsMin &&
+    dataCount(
+      row.feeds,
+      feeds.map((feed) => feed.id),
+    ) < query.feedsMin
+  ) {
+    return false
+  }
+  if (query.has.some((id) => !row.feeds[id])) return false
+  if (query.missing.some((id) => row.feeds[id])) return false
+  if (query.incidents && !row.incidents?.count) return false
+  const window = UPDATED[query.updated]
+  if (window) {
+    const changed = changedAt(row)
+    const recent = changed != null && now - Date.parse(changed) <= window.days * DAY
+    if (query.updated === 'old' ? recent : !recent) return false
+  }
+  return true
+}
+
+/** Biggest first (or smallest, for `asc`); a missing figure goes last either way. */
+const byNumber = (a: number | null, b: number | null, dir: 'asc' | 'desc' = 'desc'): number =>
+  a == null || b == null
+    ? (a == null ? 1 : 0) - (b == null ? 1 : 0)
+    : dir === 'desc'
+      ? b - a
+      : a - b
+
+const time = (value: string | null): number | null => (value ? Date.parse(value) : null)
+
+/**
+ * Filter the versions, nest them by protocol and order the groups. Pure: the
+ * same rows, query and clock always give the same table.
+ */
+export function matrixGroups(rows: Row[], query: MatrixQuery, now: number): Group[] {
+  const feedIds = feeds.map((feed) => feed.id)
+  const order: Record<SortKey, (a: Group, b: Group) => number> = {
+    'tvl-desc': (a, b) => byNumber(a.tvl, b.tvl),
+    'tvl-asc': (a, b) => byNumber(a.tvl, b.tvl, 'asc'),
+    'name-asc': () => 0,
+    'coverage-desc': (a, b) =>
+      byNumber(dataCount(a.feeds, feedIds), dataCount(b.feeds, feedIds)) || byNumber(a.tvl, b.tvl),
+    'updated-desc': (a, b) =>
+      byNumber(time(a.changedAt), time(b.changedAt)) || byNumber(a.tvl, b.tvl),
+    'incidents-desc': (a, b) => byNumber(a.incidents, b.incidents) || byNumber(a.tvl, b.tvl),
+  }
+  return groupRows(rows.filter((row) => rowMatches(row, query, now))).sort(
+    (a, b) => order[query.sort](a, b) || a.name.localeCompare(b.name),
+  )
 }

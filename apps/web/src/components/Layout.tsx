@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
-import { dateInfo } from '../lib/view.ts'
-import { IconEthereum, IconMark, IconTheme } from './Icons.tsx'
+import { dateInfo, timeLabel } from '../lib/view.ts'
+import { IconMark, IconTheme } from './Icons.tsx'
 import { ExternalLink } from './UI.tsx'
 
 const REPO = 'https://github.com/cp0x-org/defi-dna'
@@ -27,6 +27,8 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
     }
   }, [dark])
 
+  // A new page starts at the top; moving between the tabs of one protocol does not.
+  const page = location.pathname.split('/').slice(0, 3).join('/')
   useEffect(() => {
     let target: HTMLElement | null = null
     try {
@@ -42,7 +44,7 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
     } else {
       window.scrollTo(0, 0)
     }
-  }, [location.pathname, location.hash])
+  }, [page, location.hash])
 
   return (
     <div className="app-shell">
@@ -66,10 +68,11 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
             <NavLink to="/changelog">What changed</NavLink>
           </nav>
           <div className="header-tools">
-            <span className="network-label">
-              <IconEthereum />
-              Ethereum
-            </span>
+            {index ? (
+              <span className="data-cut">
+                Data cut <span className="mono">{timeLabel(index.generatedAt)}</span>
+              </span>
+            ) : null}
             <button
               type="button"
               className="icon-button"
