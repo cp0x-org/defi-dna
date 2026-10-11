@@ -1,7 +1,7 @@
 import type { FeedData } from '@defi-dna/data'
 import { describe, expect, it } from 'vitest'
 import { feeds } from './registry.ts'
-import { signalCounts, toneOf, type Tone } from './status.ts'
+import { signalCounts, toneFromIndex, toneOf, type Tone } from './status.ts'
 
 const feed = (id: string) => {
   const found = feeds.find((candidate) => candidate.id === id)
@@ -10,20 +10,6 @@ const feed = (id: string) => {
 }
 const ok = (value: string): FeedData => ({ status: 'ok', value, since: '2026-10-11T00:00:00Z' })
 const read = (id: string, value: string): Tone => toneOf(feed(id), ok(value))
-
-describe('status rules in feed.json', () => {
-  it('compile, explain themselves and map only to the three readings', () => {
-    for (const { id, status } of feeds) {
-      if (!status) continue
-      expect(() => new RegExp(status.match), id).not.toThrow()
-      expect(status.rule.length, id).toBeGreaterThan(20)
-      for (const [word, reading] of Object.entries(status.values)) {
-        expect(word, id).toBe(word.toLowerCase())
-        expect(['positive', 'neutral', 'negative'], id).toContain(reading)
-      }
-    }
-  })
-})
 
 describe('toneOf', () => {
   it('reads a headline on the feed’s own published scale', () => {
@@ -50,6 +36,16 @@ describe('toneOf', () => {
     expect(toneOf(feed('pigi'))).toBe('none')
     expect(toneOf(feed('pigi'), { status: 'none', since: '2026-10-11T00:00:00Z' })).toBe('none')
     expect(toneOf(feed('pigi'), { status: 'error', since: '2026-10-11T00:00:00Z' })).toBe('error')
+  })
+})
+
+describe('toneFromIndex', () => {
+  it('reads the bundle’s copy, and treats an older index without readings as neutral', () => {
+    const row = { feeds: { pigi: true, defiscan: true }, readings: { pigi: 'negative' as const } }
+    expect(toneFromIndex(row, 'pigi')).toBe('neg')
+    expect(toneFromIndex(row, 'defiscan')).toBe('inf')
+    expect(toneFromIndex(row, 'philidor')).toBe('none')
+    expect(toneFromIndex({ feeds: { pigi: true } }, 'pigi')).toBe('inf')
   })
 })
 

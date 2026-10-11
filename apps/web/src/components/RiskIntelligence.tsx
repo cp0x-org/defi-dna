@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Feed, FeedData, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
 import { feeds } from '../lib/registry.ts'
-import { TONE_LABELS, statusWord, toneOf, type Tone } from '../lib/status.ts'
+import { TONE_LABELS, ruleWord, toneOf, type Tone } from '../lib/status.ts'
 import { ageLabel, assessesLabel, dateInfo, timeLabel } from '../lib/view.ts'
 import { CoverageBar, CoverageRing, Prov, StatusPill } from './Coverage.tsx'
 import { FeedExtras } from './extra/FeedExtras.tsx'
@@ -47,7 +47,7 @@ export const FeedSource = ({
   const [showTypes, setShowTypes] = useState(true)
   const status = data?.status ?? 'none'
   const tone = toneOf(feed, data)
-  const word = statusWord(feed, data?.value)
+  const word = ruleWord(feed, data?.value)
   const details = data?.details ?? []
   const assessed = dateInfo(data?.updatedAt)
   const source = data?.url ?? feed.homepage

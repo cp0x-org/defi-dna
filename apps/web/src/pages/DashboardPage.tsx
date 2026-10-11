@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
-import { useChangelog, useMetrics, useRecords } from '../hooks/useIndex.ts'
+import { useChangelog, useMetrics } from '../hooks/useIndex.ts'
 import {
   EMPTY_QUERY,
   SORTS,
@@ -38,6 +38,8 @@ import { IconFilters, IconSearch } from '../components/Icons.tsx'
 import { Anchored, ProtocolAvatar } from '../components/UI.tsx'
 
 const DAY = 86_400_000
+/** Time to cross from a cell to its card, or to come back, before an unpinned card closes. */
+const HIDE_DELAY = 350
 const feedIds = feeds.map((feed) => feed.id)
 
 /** The registry joined with nothing: names and categories without any collected fact. */
@@ -119,16 +121,16 @@ export const DashboardPage = ({
 
   const metrics = useMetrics()
   const changelog = useChangelog()
-  const records = useRecords()
   const [now] = useState(() => Date.now())
   const [view, setView] = useState<CoverageView>(readCoverageView)
   const [drawer, setDrawer] = useState(false)
   const [pop, setPop] = useState<Pop | null>(null)
   const search = useRef<HTMLInputElement>(null)
+  const hideTimer = useRef<number | undefined>(undefined)
 
   const rows = useMemo(
-    () => buildRows(index ?? NO_DATA, { metrics: metrics.data, changes: changelog.data, records }),
-    [index, metrics.data, changelog.data, records],
+    () => buildRows(index ?? NO_DATA, { metrics: metrics.data, changes: changelog.data }),
+    [index, metrics.data, changelog.data],
   )
   const queryKey = params.toString()
   const groups = useMemo(
@@ -174,15 +176,29 @@ export const DashboardPage = ({
     }
   }, [pop])
 
+  // An unpinned card stays while the pointer is on its cell or on the card itself, and
+  // closes a moment after it leaves both — long enough to move onto the card and read it.
+  const keepOpen = () => window.clearTimeout(hideTimer.current)
+  const hideSoon = () => {
+    keepOpen()
+    hideTimer.current = window.setTimeout(
+      () => setPop((current) => (current?.pinned ? current : null)),
+      HIDE_DELAY,
+    )
+  }
+  useEffect(() => keepOpen, [])
+
   /** Hover previews, a click pins. The same facts are on the protocol page for keyboard and touch. */
   const popTarget = (kind: PopKind, row: Row) => ({
     onMouseEnter: (event: MouseEvent<HTMLElement>) => {
+      keepOpen()
       if (!pop?.pinned) setPop({ kind, row, anchor: event.currentTarget, pinned: false })
     },
     onMouseLeave: () => {
-      if (!pop?.pinned) setPop(null)
+      if (!pop?.pinned) hideSoon()
     },
     onClick: (event: MouseEvent<HTMLElement>) => {
+      keepOpen()
       event.stopPropagation()
       const anchor = event.currentTarget
       setPop(pop?.pinned && pop.anchor === anchor ? null : { kind, row, anchor, pinned: true })
@@ -763,7 +779,14 @@ export const DashboardPage = ({
       </div>
 
       {pop ? (
-        <Anchored anchor={pop.anchor} label={POP_LABELS[pop.kind]}>
+        <Anchored
+          anchor={pop.anchor}
+          label={POP_LABELS[pop.kind]}
+          onMouseEnter={keepOpen}
+          onMouseLeave={() => {
+            if (!pop.pinned) hideSoon()
+          }}
+        >
           {popCard(pop)}
         </Anchored>
       ) : null}

@@ -116,10 +116,14 @@ export const Anchored = ({
   anchor,
   label,
   children,
+  onMouseEnter,
+  onMouseLeave,
 }: {
   anchor: HTMLElement
   label: string
   children: ReactNode
+  onMouseEnter?: () => void
+  onMouseLeave?: () => void
 }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [style, setStyle] = useState<CSSProperties>({ visibility: 'hidden' })
@@ -137,7 +141,15 @@ export const Anchored = ({
     })
   }, [anchor])
   return (
-    <div className="pop" role="dialog" aria-label={label} ref={ref} style={style}>
+    <div
+      className="pop"
+      role="dialog"
+      aria-label={label}
+      ref={ref}
+      style={style}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       {children}
     </div>
   )

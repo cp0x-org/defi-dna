@@ -1,4 +1,4 @@
-import type { Change, IndexBundle, MetricsFile, ProtocolDetail } from '@defi-dna/data'
+import type { Change, IndexBundle, MetricsFile } from '@defi-dna/data'
 import { describe, expect, it } from 'vitest'
 import {
   EMPTY_QUERY,
@@ -17,10 +17,16 @@ const FETCHED = '2026-10-11T00:00:00.000Z'
 const index: IndexBundle = {
   generatedAt: FETCHED,
   rows: [
-    { id: 'aave-v3', tvl: 10e9, feeds: { defiscan: true, pigi: true } },
-    { id: 'aave-v4', tvl: 5e9, feeds: {} },
+    // pigi's own bands as the bundle copied them; DeFiScan states no reading.
+    {
+      id: 'aave-v3',
+      tvl: 10e9,
+      feeds: { defiscan: true, pigi: true },
+      readings: { pigi: 'negative' },
+    },
+    { id: 'aave-v4', tvl: 5e9, feeds: {}, readings: {} },
     { id: 'curve', tvl: 20e9, feeds: { defiscan: true } },
-    { id: 'lido', tvl: null, feeds: { pigi: true } },
+    { id: 'lido', tvl: null, feeds: { pigi: true }, readings: { pigi: 'positive' } },
   ],
 }
 const incident = (date: string) => ({
@@ -60,22 +66,7 @@ const changes: Change[] = [
     to: 'B 83.64/100',
   },
 ]
-const record = (protocolId: string, values: Record<string, string>): ProtocolDetail => ({
-  protocolId,
-  metrics: {},
-  feeds: Object.fromEntries(
-    Object.entries(values).map(([feedId, value]) => [
-      feedId,
-      { status: 'ok' as const, value, since: FETCHED },
-    ]),
-  ),
-})
-/** pigi's own bands: B reads as positive, D as negative; DeFiScan's counts give no reading. */
-const records = new Map([
-  ['aave-v3', record('aave-v3', { pigi: 'D 50.16/100', defiscan: '33 admins · 494 contracts' })],
-  ['lido', record('lido', { pigi: 'B 83.64/100' })],
-])
-const rows = buildRows(index, { metrics, changes, records })
+const rows = buildRows(index, { metrics, changes })
 const query = (overrides: Partial<MatrixQuery> = {}): MatrixQuery => ({
   ...EMPTY_QUERY,
   ...overrides,
@@ -93,7 +84,7 @@ describe('buildRows', () => {
     ])
   })
 
-  it('reads each feed on its own scale once the record is in, and only flags before', () => {
+  it('takes each feed’s own reading from the index; data without one is neutral', () => {
     const tones = (id: string) => rows.find((row) => row.protocol.id === id)?.tones
     expect(tones('aave-v3')).toMatchObject({ pigi: 'neg', defiscan: 'inf', philidor: 'none' })
     expect(tones('lido')).toMatchObject({ pigi: 'pos' })

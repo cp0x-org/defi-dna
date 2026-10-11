@@ -1,5 +1,6 @@
 export * from './types.ts'
 export * from './format.ts'
+export * from './status.ts'
 export * from './http.ts'
 export * from './registry.ts'
 export * from './collect.ts'

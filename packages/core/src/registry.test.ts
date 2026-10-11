@@ -2,6 +2,7 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { ASSESSED_OBJECTS, type Feed, type Protocol } from './types.ts'
 import { listAdapters, normalizeMapping, paths, readJson, readMapping } from './registry.ts'
+import { checkStatusRule } from './status.ts'
 
 describe('normalizeMapping', () => {
   it('turns strings into lists and skips comment keys', () => {
@@ -52,5 +53,25 @@ describe('adapter folders', () => {
       expect(feed.id).toBe(id)
       expect(ASSESSED_OBJECTS).toContain(feed.assesses)
     }
+  })
+})
+
+describe('status rules', () => {
+  it('every feed.json rule can be applied', async () => {
+    for (const id of await listAdapters(paths.feeds)) {
+      const feed = await readJson<Feed>(path.join(paths.feeds, id, 'feed.json'))
+      if (feed.status) expect(() => checkStatusRule(id, feed.status!)).not.toThrow()
+    }
+  })
+
+  it('rejects a rule with no sentence, a broken pattern or a reading of our own', () => {
+    const rule = { rule: 'X grades A to C.', match: '^([A-C])', values: { a: 'positive' } } as const
+    expect(() => checkStatusRule('x', { ...rule, rule: ' ' })).toThrow('rule')
+    expect(() => checkStatusRule('x', { ...rule, match: '([' })).toThrow('regular expression')
+    expect(() => checkStatusRule('x', { ...rule, values: {} })).toThrow('empty')
+    expect(() => checkStatusRule('x', { ...rule, values: { A: 'positive' } })).toThrow('lower-case')
+    expect(() => checkStatusRule('x', { ...rule, values: { a: 'safe' as 'positive' } })).toThrow(
+      'must read as',
+    )
   })
 })

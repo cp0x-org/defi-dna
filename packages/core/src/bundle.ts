@@ -2,7 +2,15 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { readRecord } from './collect.ts'
 import { dataPaths, loadRegistry, paths, readJson, type Registry } from './registry.ts'
-import type { IndexBundle, IndexRow, MetricsFile, ProtocolRecord, RunStatus } from './types.ts'
+import { readStatus } from './status.ts'
+import type {
+  IndexBundle,
+  IndexRow,
+  MetricsFile,
+  ProtocolRecord,
+  Reading,
+  RunStatus,
+} from './types.ts'
 
 export interface BundleOptions {
   /** Where the generated files live. Default: the repository's data/. */
@@ -17,9 +25,10 @@ export interface BundleOptions {
  * frontend reads at runtime into apps/web/public/data.
  *
  * This is the only place data from different protocols meets, and all it does
- * is copy two facts per row: the TVL figure, and whether a feed has data.
- * Nothing is combined into a score, and nothing hand-maintained is copied in —
- * names and grouping stay in registry/protocols.json.
+ * is copy per row the TVL figure and, per feed, whether it has data and how the
+ * feed itself reads its value (the rule in its feed.json). Values are not
+ * copied, nothing is combined into a score, and nothing hand-maintained is
+ * copied in — names and grouping stay in registry/protocols.json.
  */
 export async function bundle(
   options: BundleOptions = {},
@@ -27,7 +36,7 @@ export async function bundle(
   const registry = options.registry ?? (await loadRegistry())
   const data = dataPaths(options.dataDir)
   const webDir = options.webDir ?? paths.webData
-  const feedIds = registry.feeds.map(({ feed }) => feed.id)
+  const feeds = registry.feeds.map(({ feed }) => feed)
   const metrics = await readJson<MetricsFile>(data.metricsData).catch(() => ({}) as MetricsFile)
   const status = await readJson<RunStatus>(data.status).catch(() => null)
 
@@ -36,10 +45,16 @@ export async function bundle(
   for (const protocol of registry.protocols) {
     const record = await readRecord(protocol.id, data.records)
     if (record) records.push(record)
+    const readings: Record<string, Reading> = {}
+    for (const feed of feeds) {
+      const reading = readStatus(feed, record?.feeds[feed.id])
+      if (reading) readings[feed.id] = reading
+    }
     rows.push({
       id: protocol.id,
       tvl: metrics[protocol.id]?.['tvl']?.value ?? null,
-      feeds: Object.fromEntries(feedIds.map((id) => [id, record?.feeds[id]?.status === 'ok'])),
+      feeds: Object.fromEntries(feeds.map(({ id }) => [id, record?.feeds[id]?.status === 'ok'])),
+      readings,
     })
   }
 

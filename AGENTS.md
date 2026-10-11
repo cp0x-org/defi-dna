@@ -86,8 +86,10 @@ CI runs the last line. The pre-commit hook runs lint-staged and typecheck.
   (one sentence that quotes or cites it), `match` (a regular expression over the
   headline `value`; its first group is the feed's own word or band) and `values`
   (that word, lower-case → `positive`, `neutral` or `negative`). Anything that
-  does not match stays neutral. `apps/web/src/lib/status.test.ts` checks every
-  rule; add the feed's real headlines to it.
+  does not match stays neutral. The registry rejects a rule it cannot apply;
+  `readStatus` (`packages/core/src/status.ts`) applies it, and `bundle` copies
+  the reading — never the value — into `index.json` as `readings`. Add the
+  feed's real headlines to `apps/web/src/lib/status.test.ts`.
 - Shape of what `collect()` returns: `adapters/feeds/feed-output.schema.json`.
   The runner validates every result against the schema before storing it.
   `extra` holds only the shapes in `ExtraData` (`packages/core/src/types.ts`):
