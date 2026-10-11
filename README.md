@@ -7,9 +7,11 @@ its own score, rating or ranking. See the [project charter](CHARTER.md) for the
 rules behind this approach.
 
 The dashboard tracks protocol versions separately, one row per version: its
-TVL, a coverage ring with one segment per feed (filled when the feed has data,
-empty when it does not), when a feed's value last changed, and the incidents
-DefiLlama records. No feed's value appears there. Opening a protocol shows each
+TVL, a ring with one segment per feed, when a feed's value last changed, and
+the incidents DefiLlama records. A segment is coloured by the feed's own
+characterization, read from the scale the feed publishes (`status` in its
+`feed.json`); data whose scale gives no reading is neutral, and no data is
+grey. No feed's value appears there. Opening a protocol shows each
 feed's value, words, source link and assessment date. Feeds measure different
 things, so their values are not merged.
 

@@ -1,5 +1,6 @@
 import { feeds } from './registry.ts'
 import { changedAt, dataCount, groupRows, type Group, type Row } from './rows.ts'
+import { SIGNAL_LABELS, signalCounts, type Signal } from './status.ts'
 import { categoryLabel } from './view.ts'
 
 const DAY = 86_400_000
@@ -16,6 +17,7 @@ export const SORTS = {
   'coverage-desc': 'Feed coverage · most first',
   'updated-desc': 'Recently changed',
   'incidents-desc': 'Incidents · most first',
+  'signals-desc': 'Negative feed signals · most first',
 } as const
 export type SortKey = keyof typeof SORTS
 
@@ -46,6 +48,8 @@ export interface MatrixQuery {
   has: string[]
   missing: string[]
   incidents: boolean
+  /** Signal groups a version must have at least one feed in. */
+  signals: Signal[]
   /** A key of UPDATED, or empty. */
   updated: string
   sort: SortKey
@@ -59,6 +63,7 @@ export const EMPTY_QUERY: MatrixQuery = {
   has: [],
   missing: [],
   incidents: false,
+  signals: [],
   updated: '',
   sort: 'tvl-desc',
 }
@@ -81,6 +86,9 @@ export function readQuery(params: URLSearchParams): MatrixQuery {
     has: list(params.get('has')).filter((id) => feedIds.includes(id)),
     missing: list(params.get('missing')).filter((id) => feedIds.includes(id)),
     incidents: params.get('incidents') === '1',
+    signals: list(params.get('signals')).filter((signal): signal is Signal =>
+      known(SIGNAL_LABELS, signal),
+    ),
     updated: known(UPDATED, updated) ? updated : '',
     sort: known(SORTS, sort) ? (sort as SortKey) : EMPTY_QUERY.sort,
   }
@@ -99,6 +107,7 @@ export function writeQuery(query: MatrixQuery): URLSearchParams {
   set('has', query.has.join(','))
   set('missing', query.missing.join(','))
   set('incidents', query.incidents ? '1' : '')
+  set('signals', query.signals.join(','))
   set('updated', query.updated)
   set('sort', query.sort === EMPTY_QUERY.sort ? '' : query.sort)
   return params
@@ -130,6 +139,10 @@ export function filterChips(query: MatrixQuery): { label: string; without: Matri
     ...(query.incidents
       ? [{ label: 'Has reported incidents', without: { ...query, incidents: false } }]
       : []),
+    ...query.signals.map((signal) => ({
+      label: `Has ${SIGNAL_LABELS[signal].toLowerCase()} signals`,
+      without: { ...query, signals: query.signals.filter((other) => other !== signal) },
+    })),
     ...(query.updated
       ? [{ label: UPDATED[query.updated]?.chip ?? '', without: { ...query, updated: '' } }]
       : []),
@@ -159,6 +172,10 @@ export function rowMatches(row: Row, query: MatrixQuery, now: number): boolean {
   if (query.has.some((id) => !row.feeds[id])) return false
   if (query.missing.some((id) => row.feeds[id])) return false
   if (query.incidents && !row.incidents?.count) return false
+  if (query.signals.length) {
+    const counts = signalCounts(Object.values(row.tones))
+    if (query.signals.some((signal) => counts[signal] === 0)) return false
+  }
   const window = UPDATED[query.updated]
   if (window) {
     const changed = changedAt(row)
@@ -178,6 +195,10 @@ const byNumber = (a: number | null, b: number | null, dir: 'asc' | 'desc' = 'des
 
 const time = (value: string | null): number | null => (value ? Date.parse(value) : null)
 
+/** The most negative readings any one version of the group has; versions are never added up. */
+const negatives = (group: Group): number =>
+  Math.max(...group.rows.map((row) => signalCounts(Object.values(row.tones)).neg))
+
 /**
  * Filter the versions, nest them by protocol and order the groups. Pure: the
  * same rows, query and clock always give the same table.
@@ -193,6 +214,7 @@ export function matrixGroups(rows: Row[], query: MatrixQuery, now: number): Grou
     'updated-desc': (a, b) =>
       byNumber(time(a.changedAt), time(b.changedAt)) || byNumber(a.tvl, b.tvl),
     'incidents-desc': (a, b) => byNumber(a.incidents, b.incidents) || byNumber(a.tvl, b.tvl),
+    'signals-desc': (a, b) => byNumber(negatives(a), negatives(b)) || byNumber(a.tvl, b.tvl),
   }
   return groupRows(rows.filter((row) => rowMatches(row, query, now))).sort(
     (a, b) => order[query.sort](a, b) || a.name.localeCompare(b.name),

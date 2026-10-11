@@ -14,10 +14,18 @@ agreement from the Ethereum Foundation.
 ## Non-negotiables
 
 - No arithmetic across feeds. No composite score, average, ranking, "reconciled"
-  column, or default sort order that reads as a risk ranking.
+  column, or default sort order that reads as a risk ranking. Counting feeds by
+  status (the dashboard's Signals column) is a number computed from several
+  feeds' values: it needs the Ethereum Foundation's written agreement under
+  CHARTER §1 before it ships.
 - A feed's value is stored as the feed published it, as a string, with `url`
-  and the feed's `updatedAt`. Never convert one feed's scale into another's,
-  never map a value to a colour or band the feed did not publish.
+  and the feed's `updatedAt`. Never convert one feed's scale into another's.
+- Colour a value only by the feed's own characterization. Where the feed's
+  methodology says how its values read — its own colour band, a risk-level word,
+  bands it describes — `feed.json` declares that reading in `status` and the page
+  prints its `rule` next to the colour. Where it does not — a count, a vault
+  list, a figure with no stated direction — the value is neutral. No data is
+  grey. Never set a threshold or a cut of our own.
 - `none` (the feed has nothing for this protocol) and `error` (we could not read
   the feed) are different states. An adapter returns `null` for the first and
   throws for the second. A failed refresh keeps the previous value.
@@ -74,6 +82,12 @@ CI runs the last line. The pre-commit hook runs lint-staged and typecheck.
 - A feed that needs a key declares it in `secrets` and reads it inside
   `prepare()`; `feed.json` declares `assesses` (protocol, deployment, vault,
   pool, asset, research).
+- `status` in `feed.json`, only when the methodology states the reading: `rule`
+  (one sentence that quotes or cites it), `match` (a regular expression over the
+  headline `value`; its first group is the feed's own word or band) and `values`
+  (that word, lower-case → `positive`, `neutral` or `negative`). Anything that
+  does not match stays neutral. `apps/web/src/lib/status.test.ts` checks every
+  rule; add the feed's real headlines to it.
 - Shape of what `collect()` returns: `adapters/feeds/feed-output.schema.json`.
   The runner validates every result against the schema before storing it.
   `extra` holds only the shapes in `ExtraData` (`packages/core/src/types.ts`):

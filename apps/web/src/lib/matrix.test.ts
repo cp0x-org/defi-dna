@@ -1,4 +1,4 @@
-import type { Change, IndexBundle, MetricsFile } from '@defi-dna/data'
+import type { Change, IndexBundle, MetricsFile, ProtocolDetail } from '@defi-dna/data'
 import { describe, expect, it } from 'vitest'
 import {
   EMPTY_QUERY,
@@ -60,7 +60,22 @@ const changes: Change[] = [
     to: 'B 83.64/100',
   },
 ]
-const rows = buildRows(index, { metrics, changes })
+const record = (protocolId: string, values: Record<string, string>): ProtocolDetail => ({
+  protocolId,
+  metrics: {},
+  feeds: Object.fromEntries(
+    Object.entries(values).map(([feedId, value]) => [
+      feedId,
+      { status: 'ok' as const, value, since: FETCHED },
+    ]),
+  ),
+})
+/** pigi's own bands: B reads as positive, D as negative; DeFiScan's counts give no reading. */
+const records = new Map([
+  ['aave-v3', record('aave-v3', { pigi: 'D 50.16/100', defiscan: '33 admins · 494 contracts' })],
+  ['lido', record('lido', { pigi: 'B 83.64/100' })],
+])
+const rows = buildRows(index, { metrics, changes, records })
 const query = (overrides: Partial<MatrixQuery> = {}): MatrixQuery => ({
   ...EMPTY_QUERY,
   ...overrides,
@@ -77,6 +92,13 @@ describe('buildRows', () => {
       'B 83.64/100',
     ])
   })
+
+  it('reads each feed on its own scale once the record is in, and only flags before', () => {
+    const tones = (id: string) => rows.find((row) => row.protocol.id === id)?.tones
+    expect(tones('aave-v3')).toMatchObject({ pigi: 'neg', defiscan: 'inf', philidor: 'none' })
+    expect(tones('lido')).toMatchObject({ pigi: 'pos' })
+    expect(tones('curve')).toMatchObject({ defiscan: 'inf', pigi: 'none' })
+  })
 })
 
 describe('readQuery and writeQuery', () => {
@@ -89,6 +111,7 @@ describe('readQuery and writeQuery', () => {
       has: ['pigi'],
       missing: ['defiscan'],
       incidents: true,
+      signals: ['neg', 'pos'],
       updated: '7d',
       sort: 'name-asc',
     })
@@ -132,6 +155,12 @@ describe('matrixGroups', () => {
     expect(ids(matrixGroups(rows, query({ feedsMin: 2 }), NOW))).toEqual(['aave-v3'])
     const pigiOnly = matrixGroups(rows, query({ has: ['pigi'], missing: ['defiscan'] }), NOW)
     expect(ids(pigiOnly)).toEqual(['lido'])
+  })
+
+  it('filters and sorts on the feeds’ own readings', () => {
+    expect(ids(matrixGroups(rows, query({ signals: ['neg'] }), NOW))).toEqual(['aave-v3'])
+    expect(ids(matrixGroups(rows, query({ signals: ['pos'] }), NOW))).toEqual(['lido'])
+    expect(names(matrixGroups(rows, query({ sort: 'signals-desc' }), NOW))[0]).toBe('Aave')
   })
 
   it('filters on DefiLlama incidents and on when a value last moved', () => {

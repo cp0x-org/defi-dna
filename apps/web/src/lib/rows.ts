@@ -1,5 +1,13 @@
-import type { Change, ExtraIncident, IndexBundle, MetricsFile, Protocol } from '@defi-dna/data'
+import type {
+  Change,
+  ExtraIncident,
+  IndexBundle,
+  MetricsFile,
+  Protocol,
+  ProtocolDetail,
+} from '@defi-dna/data'
 import { feeds, protocols } from './registry.ts'
+import { toneFromFlag, toneOf, type Tone } from './status.ts'
 
 /** What DefiLlama records against one version: its own count, and the latest entry. */
 export interface Incidents {
@@ -13,6 +21,8 @@ export interface Row {
   tvl: number | null
   /** feed id -> that feed has data for this version */
   feeds: Record<string, boolean>
+  /** feed id -> the feed's own reading of its value, once the record is loaded; neutral or grey before. */
+  tones: Record<string, Tone>
   /** null when DefiLlama's incident list was not collected for this version. */
   incidents: Incidents | null
   /** Moves in a feed's published value, as our run log recorded them; newest first. */
@@ -41,6 +51,7 @@ export interface Group {
 export interface RowSources {
   metrics?: MetricsFile | null
   changes?: Change[] | null
+  records?: Map<string, ProtocolDetail> | null
 }
 
 export const dataCount = (flags: Record<string, boolean>, feedIds: string[]): number =>
@@ -58,10 +69,17 @@ export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {
     const list = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
       b.date.localeCompare(a.date),
     )
+    const record = sources.records?.get(protocol.id)
     return {
       protocol,
       tvl: generated?.tvl ?? null,
       feeds: generated?.feeds ?? {},
+      tones: Object.fromEntries(
+        feeds.map((feed) => [
+          feed.id,
+          record ? toneOf(feed, record.feeds[feed.id]) : toneFromFlag(generated?.feeds[feed.id]),
+        ]),
+      ),
       incidents:
         incidents?.value == null ? null : { count: incidents.value, latest: list[0] ?? null },
       changes: log.filter((change) => change.protocolId === protocol.id),

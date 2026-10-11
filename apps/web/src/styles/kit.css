@@ -53,7 +53,8 @@
   background: var(--ink);
 }
 
-/* ------------------------------------------------------------------ coverage states */
+/* ------------------------------------------------------------------ feed status */
+/* Our own read failure is grey too, struck through: it says nothing about the feed. */
 .dot {
   display: inline-block;
   width: 8px;
@@ -62,15 +63,23 @@
   flex-shrink: 0;
   background: var(--none-seg);
 }
-.dot.st-ok {
-  background: var(--data-seg);
+.dot.st-pos {
+  background: var(--pos-seg);
 }
-.dot.st-error {
-  background: var(--error-seg);
+.dot.st-neu,
+.dot.st-inf {
+  background: var(--neu-seg);
+}
+.dot.st-neg {
+  background: var(--neg-seg);
 }
 .dot.st-none {
   background: transparent;
   box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.dot.st-error {
+  background: repeating-linear-gradient(135deg, var(--none-seg) 0 2px, transparent 2px 4px);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 .pill {
   display: inline-flex;
@@ -83,15 +92,21 @@
   white-space: nowrap;
   line-height: 1.4;
 }
-.pill.st-ok {
-  color: var(--tone-low);
-  background: var(--tone-low-tint);
+.pill.st-pos {
+  color: var(--pos);
+  background: var(--pos-tint);
 }
-.pill.st-error {
-  color: var(--tone-medium);
-  background: var(--tone-medium-tint);
+.pill.st-neu,
+.pill.st-inf {
+  color: var(--neu);
+  background: var(--neu-tint);
+}
+.pill.st-neg {
+  color: var(--neg);
+  background: var(--neg-tint);
 }
 .pill.st-none,
+.pill.st-error,
 .pill.plain {
   color: var(--muted);
   background: var(--subtle);
@@ -103,11 +118,18 @@
   stroke-width: 5;
   stroke: var(--none-seg);
 }
-.ring .st-ok {
-  stroke: var(--data-seg);
+.ring .st-pos {
+  stroke: var(--pos-seg);
+}
+.ring .st-neu,
+.ring .st-inf {
+  stroke: var(--neu-seg);
+}
+.ring .st-neg {
+  stroke: var(--neg-seg);
 }
 .ring .st-error {
-  stroke: var(--error-seg);
+  stroke-dasharray: 1.5 1.5;
 }
 .ring text {
   font: 700 11px var(--mono);
@@ -123,11 +145,18 @@
   border-radius: 1.5px;
   background: var(--none-seg);
 }
-.sbar i.st-ok {
-  background: var(--data-seg);
+.sbar i.st-pos {
+  background: var(--pos-seg);
+}
+.sbar i.st-neu,
+.sbar i.st-inf {
+  background: var(--neu-seg);
+}
+.sbar i.st-neg {
+  background: var(--neg-seg);
 }
 .sbar i.st-error {
-  background: var(--error-seg);
+  background: repeating-linear-gradient(135deg, var(--none-seg) 0 2px, transparent 2px 4px);
 }
 
 /* Source marks and avatars at the density of these pages. */
