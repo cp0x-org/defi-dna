@@ -103,8 +103,9 @@ Rules for the returned object:
   function of `getJson` so a cached or `--offline` read never needs it. An
   online run without the key skips the feed with one line. See
   `adapters/feeds/pigi/index.ts`.
-- The protocol page shows the stored JSON behind every card ("Raw record"),
-  so whatever you put in `extra` is visible even before it has a component.
+- The protocol page renders `extra` through its components only. There is no
+  raw-record view and none may be added: the stored JSON is public in git. A
+  new shape stays invisible until it has a component.
 
 Metric adapters (`adapters/metrics/<id>/`): same shape, `metric.json` instead of
 `feed.json`, `collect()` returns `{ value: number | null, url?, note?, extra? }`.
