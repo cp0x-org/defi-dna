@@ -31,6 +31,7 @@ export type {
   StatusRule,
 } from '@defi-dna/core/types'
 export { formatUsd } from '@defi-dna/core/format'
+export { readStatus, statusWord } from '@defi-dna/core/status'
 
 /**
  * The read side of the data layer: the generated files, fetched at runtime.

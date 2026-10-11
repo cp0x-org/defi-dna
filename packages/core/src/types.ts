@@ -63,7 +63,8 @@ export interface Feed {
 }
 
 /** The feed's own characterization of a value, never ours. */
-export type Reading = 'positive' | 'neutral' | 'negative'
+export const READINGS = ['positive', 'neutral', 'negative'] as const
+export type Reading = (typeof READINGS)[number]
 
 /**
  * How to read a feed's headline as the feed itself characterizes it — its own
@@ -248,16 +249,22 @@ export interface RunStatus {
 /**
  * One dashboard row, as generated.
  *
- * It carries facts only — the TVL figure and, per feed, whether data exists.
- * Names and grouping come from the hand-maintained registry, and the values
- * themselves stay on the protocol page: feeds assess different things, so the
- * only thing they can be compared on across a row is whether data exists.
+ * It carries the TVL figure and, per feed, whether data exists and how the feed
+ * itself reads its value. Names and grouping come from the hand-maintained
+ * registry, and the values themselves stay on the protocol page: feeds assess
+ * different things on different scales, so a row never puts them side by side.
  */
 export interface IndexRow {
   id: string
   tvl: number | null
   /** feed id -> true when that feed has data for this protocol. */
   feeds: Record<string, boolean>
+  /**
+   * feed id -> the feed's own reading of its headline, where its feed.json
+   * states how its scale reads. Absent for a feed with no data or no reading.
+   * Older bundles have no field at all; read that as "no reading".
+   */
+  readings?: Record<string, Reading>
 }
 
 /** data/index.json — one request, everything the dashboard needs at runtime. */

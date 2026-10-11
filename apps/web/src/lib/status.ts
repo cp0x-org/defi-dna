@@ -1,4 +1,11 @@
-import type { Feed, FeedData, Reading } from '@defi-dna/data'
+import {
+  readStatus,
+  statusWord,
+  type Feed,
+  type FeedData,
+  type IndexRow,
+  type Reading,
+} from '@defi-dna/data'
 
 /**
  * What a segment, dot or pill says about one feed's cell.
@@ -22,25 +29,22 @@ export const TONE_LABELS: Record<Tone, string> = {
 const FROM_READING: Record<Reading, Tone> = { positive: 'pos', neutral: 'neu', negative: 'neg' }
 
 /** The feed's own word or band in a headline, when its rule finds one there. */
-export const statusWord = (feed: Feed, value?: string): string | null => {
-  if (!feed.status || !value) return null
-  try {
-    return new RegExp(feed.status.match, 'i').exec(value)?.[1]?.toLowerCase() ?? null
-  } catch {
-    return null
-  }
-}
+export const ruleWord = (feed: Feed, value?: string): string | null =>
+  statusWord(feed.status, value)
 
 export function toneOf(feed: Feed, data?: FeedData): Tone {
   if (!data || data.status === 'none') return 'none'
   if (data.status === 'error') return 'error'
-  const word = statusWord(feed, data.value)
-  const values = feed.status?.values
-  return word && values && Object.hasOwn(values, word) ? FROM_READING[values[word]!] : 'inf'
+  const reading = readStatus(feed, data)
+  return reading ? FROM_READING[reading] : 'inf'
 }
 
-/** Before a record is loaded the index only says whether data exists: neutral or grey. */
-export const toneFromFlag = (has: boolean | undefined): Tone => (has ? 'inf' : 'none')
+/** A dashboard row: the bundle copied each feed's own reading into the index. */
+export const toneFromIndex = (row: Pick<IndexRow, 'feeds' | 'readings'>, feedId: string): Tone => {
+  if (!row.feeds[feedId]) return 'none'
+  const reading = row.readings?.[feedId]
+  return reading ? FROM_READING[reading] : 'inf'
+}
 
 export type Signal = 'neg' | 'neu' | 'pos'
 

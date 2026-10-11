@@ -11,6 +11,7 @@ import {
   type MetricAdapter,
   type Protocol,
 } from './types.ts'
+import { checkStatusRule } from './status.ts'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
 
@@ -81,6 +82,7 @@ export async function loadRegistry(): Promise<Registry> {
         `adapters/feeds/${id}/feed.json: "assesses" must be one of ${ASSESSED_OBJECTS.join(', ')}`,
       )
     }
+    if (feed.status) checkStatusRule(id, feed.status)
     if (!feed.enabled) {
       disabledFeeds.push(id)
       continue
