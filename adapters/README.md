@@ -30,10 +30,10 @@ What the feed is. Shown on the Feeds page, nothing more.
   "id": "defiscan",
   "name": "DeFiScan",
   "topic": "Decentralization",
-  "focus": "Decentralization maturity: who controls the keys and the upgrades.",
+  "focus": "On-chain admin rights and dependencies: who can change contracts and how much capital those powers reach.",
   "assesses": "deployment",
   "homepage": "https://www.defiscan.info",
-  "methodologyUrl": "https://www.defiscan.info/framework",
+  "methodologyUrl": "https://docs.defiscan.info/researchers/methodology",
   "enabled": true
 }
 ```
@@ -71,7 +71,7 @@ A protocol the feed does not cover is simply left out: the adapter returns
 things under one of our rows, the value may be a list:
 
 ```json
-{ "aave-v3": ["aave/ethereum.md", "aave/prime.md"] }
+{ "aave-v3": ["aave-v3", "aave-v3-prime"] }
 ```
 
 The pipeline reads this file itself and hands it to the adapter as
