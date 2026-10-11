@@ -1,71 +1,128 @@
 import { fakeContext } from '@defi-dna/core/testing'
 import { describe, expect, it } from 'vitest'
-import reviews from './fixtures/reviews.json' with { type: 'json' }
-import adapter, { parseReview } from './index.ts'
+import adapter, { assess, assessReview, headlineOf } from './index.ts'
 
-const review = `---
-protocol: "Aave"
-chain: "ethereum"
-stage: "1"
-risks: ["L", "M", "L", "H", "L"]
-publish_date: "2024-11-05"
-update_date: "1970-01-01"
----
+const sample = {
+  project: 'lido',
+  publishedAt: '2025-06-19T00:00:00.000Z',
+  lastModified: '2025-06-19T12:00:00.000Z',
+  compiledAt: '2026-09-30T13:36:34.000Z',
+  metadata: {
+    protocolName: 'Lido',
+    protocolSlug: 'lido',
+    chain: 'Ethereum',
+    description: 'Lido is a liquid-staking protocol.\n\nMore detail follows.',
+  },
+  totals: {
+    contractCount: 256,
+    permissionedFunctionCount: 498,
+    adminCount: 20,
+    dependencyCount: 1,
+    totalCapitalAtRisk: 115_541_322.47,
+    totalTokenValueAtRisk: 26_662_225_806.76,
+    coverage: 100,
+  },
+  admins: [
+    {
+      name: 'Small Admin',
+      adminType: 'EOA',
+      isGovernance: false,
+      totalReachableCapital: 1_000,
+      description: 'A small admin.',
+    },
+    {
+      name: 'Lido DAO Agent',
+      adminType: 'Contract',
+      isGovernance: true,
+      totalReachableCapital: 115_541_322.47,
+      description: 'The execution endpoint of Lido DAO governance.',
+    },
+  ],
+}
 
-# Summary
-
-Aave is a lending protocol.
-
-More text.
-`
-
-describe('parseReview', () => {
-  it('reads the stage, the risk levels and the published date', () => {
-    expect(parseReview(review)).toMatchObject({
-      stage: '1',
-      risks: ['L', 'M', 'L', 'H', 'L'],
-      date: '2024-11-05',
-      summary: 'Aave is a lending protocol.',
-    })
+describe('headlineOf', () => {
+  it('uses admin count and capital at risk, not a Stage', () => {
+    expect(headlineOf(sample.totals)).toBe('20 admins · $115.5M capital at risk')
   })
 
-  it('survives a head that was cut off mid-file', () => {
-    expect(parseReview('---\nstage: "2"\nrisks: ["L"')).toMatchObject({ stage: '2', risks: [] })
+  it('falls back to contracts when capital at risk is zero', () => {
+    expect(headlineOf({ adminCount: 0, totalCapitalAtRisk: 0, contractCount: 18 })).toBe(
+      '0 admins · 18 contracts',
+    )
   })
 })
 
-/** Trimmed heads of real review files, keyed by the path DeFiScan publishes them under. */
-const RAW = 'https://raw.githubusercontent.com/deficollective/defiscan/main/src/content/protocols'
-const responses = Object.fromEntries(
-  Object.entries(reviews).map(([file, text]) => [`${RAW}/${file}`, text]),
-)
+describe('assessReview', () => {
+  it('quotes DeFiScan totals, description and top admins', () => {
+    const assessed = assessReview('lido', sample)
+    expect(assessed).toMatchObject({
+      slug: 'lido',
+      headline: '20 admins · $115.5M capital at risk',
+      summary: 'Lido is a liquid-staking protocol. More detail follows.',
+      updatedAt: '2025-06-19',
+      compiledAt: '2026-09-30',
+      chain: 'Ethereum',
+      url: 'https://www.defiscan.info/protocol/lido',
+    })
+    expect(assessed?.details.slice(0, 3)).toEqual([
+      { name: 'Admins', value: '20' },
+      { name: 'Contracts', value: '256' },
+      { name: 'Permissioned functions', value: '498' },
+    ])
+    expect(assessed?.details.find((detail) => detail.name === 'Lido DAO Agent')).toMatchObject({
+      name: 'Lido DAO Agent',
+      value: '$115.5M reachable',
+    })
+  })
+
+  it('returns null when the review has no usable totals', () => {
+    expect(assessReview('empty', { project: 'empty' })).toBeNull()
+  })
+})
+
+describe('assess', () => {
+  it('keeps the review date distinct from the compile date in the note', () => {
+    const assessed = assessReview('lido', sample)
+    expect(assessed).not.toBeNull()
+    const result = assess([assessed!])
+    expect(result.value).toBe('20 admins · $115.5M capital at risk')
+    expect(result.updatedAt).toBe('2025-06-19')
+    expect(result.note).toContain('Review covers Ethereum.')
+    expect(result.note).toContain('compiled JSON was rebuilt on 2026-09-30')
+    expect(result.extra).toBeUndefined()
+  })
+})
+
+const DATA = 'https://www.defiscan.info/data'
+const lido = { id: 'lido', name: 'Lido', category: 'liquid-staking' }
 
 describe('collect', () => {
-  it('reads every review a row maps to and joins the stages they publish', async () => {
+  it('reads every slug a row maps to and names them all in the note', async () => {
     const ctx = fakeContext(
-      { ...responses, [`${RAW}/aave/etherfi.md`]: null },
-      { mapping: { 'aave-v3': ['aave/ethereum.md', 'aave/prime.md', 'aave/etherfi.md'] } },
+      {
+        [`${DATA}/lido/compiled-review.json`]: sample,
+        [`${DATA}/lido-csm/compiled-review.json`]: {
+          project: 'lido-csm',
+          publishedAt: '2025-08-01T00:00:00.000Z',
+          totals: { adminCount: 3, contractCount: 18 },
+        },
+        [`${DATA}/lido-v3/compiled-review.json`]: null,
+      },
+      { mapping: { lido: ['lido', 'lido-csm', 'lido-v3'] } },
     )
-    const result = await adapter.collect({
-      protocol: { id: 'aave-v3', name: 'Aave v3', category: 'lending' },
-      ctx,
-      prepared: undefined,
-    })
+    const result = await adapter.collect({ protocol: lido, ctx, prepared: undefined })
     expect(result).toMatchObject({
-      value: 'Stage 0',
-      updatedAt: '2025-05-07',
-      url: 'https://www.defiscan.info/protocols/aave/ethereum',
+      value: '20 admins · $115.5M capital at risk · 3 admins · 18 contracts',
+      updatedAt: '2025-08-01',
+      url: 'https://www.defiscan.info/protocol/lido',
     })
-    expect(result?.details?.map((detail) => detail.value)).toEqual(['L', 'H', 'H', 'H', 'L'])
-    expect(result?.extra?.reviews?.map((entry) => entry.file)).toEqual([
-      'aave/ethereum.md',
-      'aave/prime.md',
-    ])
-    expect(result?.note).toContain('2 reviews')
+    expect(result?.note).toContain('2 reviews: lido, lido-csm')
+    expect(result?.extra?.text).toHaveLength(2)
+    expect(ctx.requests).toHaveLength(3)
   })
 
   it('answers null for a protocol the mapping leaves out', async () => {
-    const ctx = fakeContext(responses, { mapping: { 'morpho-blue': ['morpho/ethereum.md'] } })
+    const ctx = fakeContext({}, { mapping: { lido: ['lido'] } })
     await expect(
       adapter.collect({
         protocol: { id: 'curve', name: 'Curve', category: 'dex' },
