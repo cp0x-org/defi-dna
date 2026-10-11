@@ -1,6 +1,6 @@
 import type { Feed, FeedData } from '@defi-dna/data'
 import { assessesLabel, coverageLabel } from '../lib/view.ts'
-import { IconChevron } from './Icons.tsx'
+import { IconChevron, IconHelp } from './Icons.tsx'
 import { AssessmentDate, DataAgeHelp, ExternalLink, Info, SourceMark } from './UI.tsx'
 import { FeedExtras, hasFeedExtras } from './extra/FeedExtras.tsx'
 
@@ -53,7 +53,14 @@ export const FeedAssessment = ({ feed, data }: { feed: Feed; data: FeedData }) =
             <dl className="dimension-preview">
               {details.slice(0, 3).map((detail) => (
                 <div key={detail.name}>
-                  <dt>{detail.name}</dt>
+                  <dt>
+                    {detail.name}
+                    {detail.description ? (
+                      <Info label={detail.name} icon={<IconHelp />}>
+                        {detail.description}
+                      </Info>
+                    ) : null}
+                  </dt>
                   <dd>{detail.value}</dd>
                 </div>
               ))}

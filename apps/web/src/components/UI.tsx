@@ -23,7 +23,15 @@ export const ExternalLink = ({
   )
 }
 
-export const Info = ({ label, children }: { label: string; children: ReactNode }) => {
+export const Info = ({
+  label,
+  children,
+  icon = <IconInfo />,
+}: {
+  label: string
+  children: ReactNode
+  icon?: ReactNode
+}) => {
   const [open, setOpen] = useState(false)
   const [position, setPosition] = useState({ left: 16, top: 16 })
   const ref = useRef<HTMLSpanElement>(null)
@@ -81,7 +89,7 @@ export const Info = ({ label, children }: { label: string; children: ReactNode }
         aria-controls={id}
         onClick={() => setOpen(!open)}
       >
-        <IconInfo />
+        {icon}
       </button>
       {open && (
         <span className="info-popover" id={id} role="note" style={position}>
