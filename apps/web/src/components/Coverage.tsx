@@ -1,15 +1,11 @@
 import type { ReactNode } from 'react'
-import type { FeedData } from '@defi-dna/data'
-import { coverageLabel } from '../lib/view.ts'
+import { TONE_LABELS, type Tone } from '../lib/status.ts'
 
-/**
- * The whole colour vocabulary of coverage: a feed has data we could collect,
- * has none, or we failed to read it. None of the three says anything about
- * what the feed concluded, and nothing else on these pages gets a status colour.
+/*
+ * The colour vocabulary of these pages. A colour other than neutral or grey is
+ * the feed's own characterization, read from its own published scale (see
+ * lib/status.ts) — never a judgement of ours.
  */
-export type Status = FeedData['status']
-
-export const statusOf = (has: boolean | undefined): Status => (has ? 'ok' : 'none')
 
 /** Where a piece of information comes from — the four kinds on every page. */
 const PROV_LABELS = { meta: 'Meta', cov: 'Coverage', src: 'Source', cp: 'CP0X' } as const
@@ -28,14 +24,14 @@ export const Prov = ({
   </span>
 )
 
-export const StatusDot = ({ status }: { status: Status }) => (
-  <i className={`dot st-${status}`} aria-hidden="true" />
+export const StatusDot = ({ tone }: { tone: Tone }) => (
+  <i className={`dot st-${tone}`} aria-hidden="true" />
 )
 
-export const StatusPill = ({ status, dot = false }: { status: Status; dot?: boolean }) => (
-  <span className={`pill st-${status}`}>
-    {dot ? <StatusDot status={status} /> : null}
-    {coverageLabel(status)}
+export const StatusPill = ({ tone, dot = false }: { tone: Tone; dot?: boolean }) => (
+  <span className={`pill st-${tone}`}>
+    {dot ? <StatusDot tone={tone} /> : null}
+    {TONE_LABELS[tone]}
   </span>
 )
 
@@ -48,7 +44,7 @@ export const CoverageRing = ({
   size = 30,
   label,
 }: {
-  states: Status[]
+  states: Tone[]
   size?: number
   label?: string
 }) => {
@@ -89,7 +85,7 @@ export const CoverageRing = ({
   )
 }
 
-export const CoverageBar = ({ states }: { states: Status[] }) => (
+export const CoverageBar = ({ states }: { states: Tone[] }) => (
   <span className="sbar" aria-hidden="true">
     {states.map((status, k) => (
       <i key={k} className={`st-${status}`} />

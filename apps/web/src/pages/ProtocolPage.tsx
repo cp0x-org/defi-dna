@@ -3,15 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import type { Change, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
 import { useChangelog, useProtocol } from '../hooks/useIndex.ts'
 import { feeds, protocolById, protocols } from '../lib/registry.ts'
-import {
-  ageLabel,
-  categoryLabel,
-  coverageLabel,
-  dateInfo,
-  formatUsd,
-  safeUrl,
-} from '../lib/view.ts'
-import { CoverageRing, Prov, StatusDot, StatusPill, type Status } from '../components/Coverage.tsx'
+import { ageLabel, categoryLabel, dateInfo, formatUsd, safeUrl } from '../lib/view.ts'
+import { SIGNAL_LABELS, TONE_LABELS, signalCounts, toneOf, type Signal } from '../lib/status.ts'
+import { CoverageRing, Prov, StatusDot, StatusPill } from '../components/Coverage.tsx'
 import { IncidentsExtra, TvlComponentsExtra } from '../components/extra/MetricExtras.tsx'
 import { TextExtra } from '../components/extra/TextExtra.tsx'
 import { IconArrow } from '../components/Icons.tsx'
@@ -108,10 +102,11 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const versions = protocol.group
     ? protocols.filter((other) => other.group === protocol.group)
     : [protocol]
-  const statusOf = (feedId: string): Status | null =>
-    record ? (record.feeds[feedId]?.status ?? 'none') : null
+  const statusOf = (feedId: string) => (record ? (record.feeds[feedId]?.status ?? 'none') : null)
   const withData = feeds.filter((feed) => statusOf(feed.id) === 'ok')
   const errors = feeds.filter((feed) => statusOf(feed.id) === 'error')
+  const tones = record ? feeds.map((feed) => toneOf(feed, record.feeds[feed.id])) : []
+  const signals = signalCounts(tones)
   const tvl = record?.metrics['tvl']
   const incidents = record?.metrics['incidents']
   const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
@@ -280,45 +275,46 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
               feeds with data
             </span>
             <span className="cov-legend">
+              {(['pos', 'neu', 'neg'] as Signal[]).map((signal) => (
+                <span key={signal}>
+                  <StatusDot tone={signal} />
+                  {signals[signal]} {SIGNAL_LABELS[signal].toLowerCase()}
+                </span>
+              ))}
               <span>
-                <StatusDot status="ok" />
-                {withData.length} data available
-              </span>
-              <span>
-                <StatusDot status="none" />
+                <StatusDot tone="none" />
                 {feeds.length - withData.length - errors.length} no data
               </span>
               {errors.length > 0 ? (
                 <span>
-                  <StatusDot status="error" />
+                  <StatusDot tone="error" />
                   {errors.length} collection error
                 </span>
               ) : null}
             </span>
             <span className="note">
-              Colour = whether a feed publishes data we could collect, never what it says. Click a
-              feed to read it.
+              Colour = the feed’s own characterization, on its own scale. Click a feed to read it.
             </span>
           </div>
           <div
             className="covsegs"
             style={{ gridTemplateColumns: `repeat(${feeds.length}, minmax(0, 1fr))` }}
           >
-            {feeds.map((feed) => {
-              const status = statusOf(feed.id) ?? 'none'
+            {feeds.map((feed, k) => {
+              const tone = tones[k] ?? 'none'
               const updated = record.feeds[feed.id]?.updatedAt
               return (
                 <Link
                   key={feed.id}
-                  className={`cseg st-${status}`}
+                  className={`cseg st-${tone}`}
                   to={`${base}/risk/${feed.id}`}
-                  title={`${feed.name} — ${coverageLabel(status)}`}
+                  title={`${feed.name} — ${TONE_LABELS[tone]}`}
                 >
                   <i />
                   <span>{feed.name}</span>
                   <small>
-                    {coverageLabel(status)}
-                    {status === 'ok' && updated ? ` · ${dateInfo(updated).label}` : ''}
+                    {TONE_LABELS[tone]}
+                    {statusOf(feed.id) === 'ok' && updated ? ` · ${dateInfo(updated).label}` : ''}
                   </small>
                 </Link>
               )
@@ -435,8 +431,8 @@ const OverviewTab = ({
   changelogLoading: boolean
 }) => {
   const base = `/protocol/${protocol.id}`
-  const states = feeds.map((feed) => record.feeds[feed.id]?.status ?? 'none')
-  const withData = states.filter((status) => status === 'ok').length
+  const states = feeds.map((feed) => toneOf(feed, record.feeds[feed.id]))
+  const withData = feeds.filter((feed) => record.feeds[feed.id]?.status === 'ok').length
   const tvl = record.metrics['tvl']
   const incidents = record.metrics['incidents']
   const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
@@ -478,16 +474,13 @@ const OverviewTab = ({
               {feeds.map((feed) => {
                 const data = record.feeds[feed.id]
                 const status = data?.status ?? 'none'
+                const tone = toneOf(feed, data)
                 return (
-                  <Link
-                    key={feed.id}
-                    className={`ftile st-${status}`}
-                    to={`${base}/risk/${feed.id}`}
-                  >
+                  <Link key={feed.id} className={`ftile st-${tone}`} to={`${base}/risk/${feed.id}`}>
                     <span className="ft-top">
                       <SourceMark id={feed.id} />
                       <b>{feed.name}</b>
-                      <StatusPill status={status} />
+                      <StatusPill tone={tone} />
                     </span>
                     <span className="ft-head">
                       {status === 'ok' && data?.value ? (
@@ -509,8 +502,8 @@ const OverviewTab = ({
           </div>
           <div className="card-f">
             <span>
-              Quoted text is each feed’s own headline, as published. Check what a feed assesses
-              before comparing two.
+              Quoted text is each feed’s own headline. Status colour is positioned on that feed’s
+              own scale; neutral where the scale gives no reading.
             </span>
             <span>No data ≠ no risk</span>
           </div>
@@ -649,8 +642,8 @@ const OverviewTab = ({
             <div>
               <Prov kind="cp" />
               <span>
-                Written by defi-dna about <i>our data</i> — scope, gaps, failures. Never a verdict
-                on the protocol.
+                Written by defi-dna about <i>our data</i> — scope, gaps, failures, and the reading a
+                feed’s own scale gives. Never a verdict of ours on the protocol.
               </span>
             </div>
           </div>

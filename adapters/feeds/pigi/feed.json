@@ -6,5 +6,16 @@
   "assesses": "protocol",
   "homepage": "https://pigi.finance",
   "methodologyUrl": "https://app.pigi.finance/risk",
-  "enabled": true
+  "enabled": true,
+  "status": {
+    "rule": "pigi grades A to F and describes each band: A “strongest structural safety”, B “sound design with limited, identified weaknesses”, C “meaningful structural or operational concerns”, D “serious weaknesses or an active red flag”, F “failing”. A–B read as positive, C as neutral, D–F as negative.",
+    "match": "^\\s*([A-F])\\b",
+    "values": {
+      "a": "positive",
+      "b": "positive",
+      "c": "neutral",
+      "d": "negative",
+      "f": "negative"
+    }
+  }
 }

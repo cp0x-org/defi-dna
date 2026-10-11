@@ -13,8 +13,12 @@ const QUESTIONS: [string, string][] = [
     'No. It collects what other people published and shows it side by side. There is no score, ranking or recommendation of ours anywhere on the site, and a good value from one feed removes none of the smart-contract, governance, market or operational risk.',
   ],
   [
-    'Why does the dashboard show only whether a feed has data?',
-    'Because the feeds do not measure the same thing. One grades a protocol’s decentralization, another the individual vaults inside it, each on a scale of its own — and a feed does not always say which slice of a protocol it looked at. A shared column of values would invite a comparison none of them supports, so the dashboard’s coverage ring reports only whether data exists: one segment per feed, filled or empty. What each feed assesses is stated on the protocol page and on the feeds page.',
+    'Why does the dashboard show no values?',
+    'Because the feeds do not measure the same thing. One grades a protocol’s decentralization, another the individual vaults inside it, each on a scale of its own — and a feed does not always say which slice of a protocol it looked at. A shared column of values would invite a comparison none of them supports, so the dashboard’s ring has one segment per feed, coloured only by that feed’s own characterization. What each feed assesses is stated on the protocol page and on the feeds page.',
+  ],
+  [
+    'What do the colours mean?',
+    'A colour is the feed’s own characterization of its value, read from the scale the feed itself publishes — its own colour band, a risk level it names, bands it describes. Each feed’s panel prints the rule it follows. Where a feed’s scale gives no reading, such as a count of admins or of rated vaults, the value is shown as neutral: we set no threshold of our own. Grey means the feed has no data.',
   ],
   [
     'Where are the actual values then?',

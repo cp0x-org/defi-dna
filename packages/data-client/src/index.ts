@@ -26,7 +26,9 @@ export type {
   Protocol,
   ProtocolDetail,
   ProtocolRecord,
+  Reading,
   SourceStatus,
+  StatusRule,
 } from '@defi-dna/core/types'
 export { formatUsd } from '@defi-dna/core/format'
 

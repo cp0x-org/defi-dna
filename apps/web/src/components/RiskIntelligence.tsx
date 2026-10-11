@@ -2,15 +2,18 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Feed, FeedData, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
 import { feeds } from '../lib/registry.ts'
-import { ageLabel, assessesLabel, coverageLabel, dateInfo, timeLabel } from '../lib/view.ts'
-import { CoverageBar, CoverageRing, Prov, StatusPill, type Status } from './Coverage.tsx'
+import { TONE_LABELS, statusWord, toneOf, type Tone } from '../lib/status.ts'
+import { ageLabel, assessesLabel, dateInfo, timeLabel } from '../lib/view.ts'
+import { CoverageBar, CoverageRing, Prov, StatusPill } from './Coverage.tsx'
 import { FeedExtras } from './extra/FeedExtras.tsx'
 import { Block, DataAgeHelp, ExternalLink, SourceMark } from './UI.tsx'
 
-const GROUPS: [Status, string][] = [
-  ['ok', 'With data'],
-  ['none', 'No data'],
-  ['error', 'Collection error'],
+/** Sidebar groups: feeds with a reading of their own first, then data without one, then gaps. */
+const GROUPS: [Tone[], string][] = [
+  [['neg', 'neu', 'pos'], 'Reporting · own reading'],
+  [['inf'], 'Reporting · no reading on its scale'],
+  [['none'], 'No data'],
+  [['error'], 'Collection error'],
 ]
 
 const hostOf = (url?: string): string | null => {
@@ -42,7 +45,9 @@ export const FeedSource = ({
   covered?: string
 }) => {
   const [showTypes, setShowTypes] = useState(true)
-  const status: Status = data?.status ?? 'none'
+  const status = data?.status ?? 'none'
+  const tone = toneOf(feed, data)
+  const word = statusWord(feed, data?.value)
   const details = data?.details ?? []
   const assessed = dateInfo(data?.updatedAt)
   const source = data?.url ?? feed.homepage
@@ -53,7 +58,7 @@ export const FeedSource = ({
       <div>
         <div className="src-title">
           <h2>{feed.name}</h2>
-          <StatusPill status={status} dot />
+          <StatusPill tone={tone} dot />
         </div>
         <div className="src-meta">
           <span>{feed.topic}</span>
@@ -141,13 +146,27 @@ export const FeedSource = ({
       {head}
       <div className="mapping">
         <Prov kind="cp" />
+        {feed.status && tone !== 'inf' ? (
+          <span>
+            Status colour: {feed.status.rule} “{data.value}” reads as <b>{TONE_LABELS[tone]}</b>
+            {word ? ` (“${word}”)` : ''}.
+          </span>
+        ) : (
+          <span>
+            No status colour: {feed.name}’s own scale gives no reading of this value, so it is shown
+            as neutral data. We set no threshold of our own.
+          </span>
+        )}
+        <Link className="text-link" to="/methodology">
+          How to read
+        </Link>
+      </div>
+      <div className="mapping">
+        <Prov kind="cp" />
         <span>
           {feed.name} assesses {assessesLabel(feed.assesses)}. Its values appear exactly as
           published and are not converted into any other feed’s scale.
         </span>
-        <Link className="text-link" to="/methodology">
-          How to read
-        </Link>
       </div>
       <div className="attrib">
         <Prov kind="src">Source content</Prov>
@@ -231,13 +250,13 @@ export const RiskIntelligence = ({
 }) => {
   const navigate = useNavigate()
   const base = `/protocol/${protocol.id}/risk`
-  const statusOf = (id: string): Status => record.feeds[id]?.status ?? 'none'
-  const states = feeds.map((feed) => statusOf(feed.id))
-  const withData = states.filter((status) => status === 'ok').length
+  const toneFor = (feed: Feed): Tone => toneOf(feed, record.feeds[feed.id])
+  const states = feeds.map(toneFor)
+  const withData = feeds.filter((feed) => record.feeds[feed.id]?.status === 'ok').length
   const selected = feeds.find((feed) => feed.id === feedId)
 
   const item = (feed: Feed) => {
-    const status = statusOf(feed.id)
+    const tone = toneFor(feed)
     const lastRead = index?.sources?.[feed.id]?.lastOkAt
     return (
       <Link
@@ -251,10 +270,10 @@ export const RiskIntelligence = ({
           <b>{feed.name}</b>
           <small>{feed.topic}</small>
         </span>
-        <span className={`rs-st st-${status}`}>
-          {coverageLabel(status)}
+        <span className={`rs-st st-${tone}`}>
+          {TONE_LABELS[tone]}
           <small>
-            {status === 'ok'
+            {record.feeds[feed.id]?.status === 'ok'
               ? dateInfo(record.feeds[feed.id]?.updatedAt).label
               : lastRead
                 ? `read ${ageLabel(lastRead)} ago`
@@ -284,10 +303,10 @@ export const RiskIntelligence = ({
             </span>
           </span>
         </Link>
-        {GROUPS.map(([status, label]) => {
-          const members = feeds.filter((feed) => statusOf(feed.id) === status)
+        {GROUPS.map(([tones, label]) => {
+          const members = feeds.filter((feed) => tones.includes(toneFor(feed)))
           return members.length > 0 ? (
-            <div key={status}>
+            <div key={label}>
               <div className="rs-group">
                 <span>{label}</span>
                 <span className="mono">{members.length}</span>
@@ -297,8 +316,8 @@ export const RiskIntelligence = ({
           ) : null
         })}
         <div className="rs-foot">
-          The status says whether a feed publishes data we could collect — never what it concluded.
-          Dates are each feed’s own.
+          A colour is the feed’s own characterization, read from its own published scale. Data whose
+          scale gives no reading is neutral; no data is grey. Dates are each feed’s own.
         </div>
       </aside>
 
@@ -340,8 +359,9 @@ export const RiskIntelligence = ({
             <div className="mapping">
               <Prov kind="cp" />
               <span>
-                Headlines are not added up and there is no overall score — each sits on its own
-                feed’s scale and may cover a different slice of {protocol.name}.
+                Status colours place each headline on the publishing feed’s own scale. They are not
+                added up — there is no overall score — and each feed may cover a different slice of{' '}
+                {protocol.name}.
               </span>
             </div>
             <div className="card-b">
@@ -360,7 +380,7 @@ export const RiskIntelligence = ({
                   <tbody>
                     {feeds.map((feed) => {
                       const data = record.feeds[feed.id]
-                      const status = statusOf(feed.id)
+                      const status = data?.status ?? 'none'
                       return (
                         <tr key={feed.id} onClick={() => navigate(`${base}/${feed.id}`)}>
                           <td>
@@ -371,7 +391,7 @@ export const RiskIntelligence = ({
                           </td>
                           <td>{feed.topic}</td>
                           <td>
-                            <StatusPill status={status} />
+                            <StatusPill tone={toneFor(feed)} />
                           </td>
                           <td className="wrap">
                             {status === 'ok' && data?.value ? (

@@ -9,6 +9,7 @@ import {
   type MetricsFile,
   type ProtocolDetail,
 } from '@defi-dna/data'
+import { protocols } from '../lib/registry.ts'
 
 export interface Async<T> {
   data: T | null
@@ -42,3 +43,27 @@ export const useProtocol = (id: string): Async<ProtocolDetail> =>
 export const useChangelog = (): Async<Change[]> => useLoad('changelog', loadChangelog)
 
 export const useMetrics = (): Async<MetricsFile> => useLoad('metrics', loadMetrics)
+
+/**
+ * Every protocol's record, for the dashboard's colours. A record that fails to
+ * load leaves its row on the index's facts: neutral where data exists, grey where not.
+ */
+export const useRecords = (): Map<string, ProtocolDetail> | null => {
+  const [records, setRecords] = useState<Map<string, ProtocolDetail> | null>(null)
+  useEffect(() => {
+    let live = true
+    Promise.allSettled(protocols.map((protocol) => loadProtocol(protocol.id))).then((results) => {
+      if (!live) return
+      const loaded = new Map<string, ProtocolDetail>()
+      results.forEach((result, k) => {
+        const id = protocols[k]?.id
+        if (id && result.status === 'fulfilled') loaded.set(id, result.value)
+      })
+      setRecords(loaded)
+    })
+    return () => {
+      live = false
+    }
+  }, [])
+  return records
+}

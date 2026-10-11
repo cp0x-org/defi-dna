@@ -2,8 +2,9 @@ import { useEffect, useRef } from 'react'
 import { EMPTY_QUERY, TVL_MIN, UPDATED, type MatrixQuery } from '../lib/matrix.ts'
 import { feeds } from '../lib/registry.ts'
 import type { Row } from '../lib/rows.ts'
+import { SIGNAL_LABELS, type Signal } from '../lib/status.ts'
 import { categoryLabel } from '../lib/view.ts'
-import { Prov } from './Coverage.tsx'
+import { Prov, StatusDot } from './Coverage.tsx'
 import { IconClose } from './Icons.tsx'
 
 /** A row of mutually exclusive buttons. */
@@ -206,6 +207,32 @@ export const FilterDrawer = ({
                 )
               })}
             </div>
+          </section>
+
+          <section className="fs">
+            <h3>
+              Signals <Prov kind="src" />
+            </h3>
+            <p className="fs-note">
+              Each feed’s own characterization, read from its own published scale.
+            </p>
+            {(['neg', 'neu', 'pos'] as Signal[]).map((signal) => (
+              <label className="cb" key={signal}>
+                <input
+                  type="checkbox"
+                  checked={query.signals.includes(signal)}
+                  onChange={(event) =>
+                    set({
+                      signals: event.target.checked
+                        ? [...query.signals, signal]
+                        : query.signals.filter((other) => other !== signal),
+                    })
+                  }
+                />
+                <StatusDot tone={signal} />
+                Has {SIGNAL_LABELS[signal].toLowerCase()} signals
+              </label>
+            ))}
           </section>
 
           <section className="fs">

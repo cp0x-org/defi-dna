@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
-import { useChangelog, useMetrics } from '../hooks/useIndex.ts'
+import { useChangelog, useMetrics, useRecords } from '../hooks/useIndex.ts'
 import {
   EMPTY_QUERY,
   SORTS,
@@ -24,14 +24,15 @@ import { readCoverageView, writeCoverageView, type CoverageView } from '../lib/p
 import { feeds } from '../lib/registry.ts'
 import { buildRows, changedAt, dataCount, type Group, type Row } from '../lib/rows.ts'
 import {
-  ageLabel,
-  categoryLabel,
-  coverageLabel,
-  dateInfo,
-  formatUsd,
-  timeLabel,
-} from '../lib/view.ts'
-import { CoverageBar, CoverageRing, Prov, StatusDot, statusOf } from '../components/Coverage.tsx'
+  SIGNAL_LABELS,
+  TONE_LABELS,
+  signalCounts,
+  signalOf,
+  type Signal,
+  type Tone,
+} from '../lib/status.ts'
+import { ageLabel, categoryLabel, dateInfo, formatUsd, timeLabel } from '../lib/view.ts'
+import { CoverageBar, CoverageRing, Prov, StatusDot } from '../components/Coverage.tsx'
 import { FilterDrawer } from '../components/FilterDrawer.tsx'
 import { IconFilters, IconSearch } from '../components/Icons.tsx'
 import { Anchored, ProtocolAvatar } from '../components/UI.tsx'
@@ -79,8 +80,12 @@ const DatasetState = ({ error }: { error: string | null }) =>
     </div>
   )
 
+const SIGNALS: Signal[] = ['neg', 'neu', 'pos']
+const tonesOf = (row: Row): Tone[] => feeds.map((feed) => row.tones[feed.id] ?? 'none')
+
 const POP_LABELS = {
   coverage: 'Feed coverage',
+  signals: 'Feed signals',
   incidents: 'Incidents',
   changes: 'Recent changes',
 } as const
@@ -93,11 +98,12 @@ interface Pop {
 }
 
 /**
- * The dashboard: one row per protocol version, and per row only facts — its
- * size, which feeds publish data about it, when a feed's value last moved, and
- * what DefiLlama records as incidents. No feed's value appears here: one feed
- * grades a protocol, another the vaults inside it, so their values stay on the
- * protocol page, each in the feed's own words.
+ * The dashboard: one row per protocol version — its size, which feeds publish
+ * data about it and how each characterizes it on its own scale, when a feed's
+ * value last moved, and what DefiLlama records as incidents. A segment is
+ * coloured only where the feed's own scale says how to read its value (see
+ * lib/status.ts); data without such a reading is neutral, no data is grey.
+ * The values themselves stay on the protocol page, in each feed's own words.
  */
 export const DashboardPage = ({
   index,
@@ -113,6 +119,7 @@ export const DashboardPage = ({
 
   const metrics = useMetrics()
   const changelog = useChangelog()
+  const records = useRecords()
   const [now] = useState(() => Date.now())
   const [view, setView] = useState<CoverageView>(readCoverageView)
   const [drawer, setDrawer] = useState(false)
@@ -120,8 +127,8 @@ export const DashboardPage = ({
   const search = useRef<HTMLInputElement>(null)
 
   const rows = useMemo(
-    () => buildRows(index ?? NO_DATA, { metrics: metrics.data, changes: changelog.data }),
-    [index, metrics.data, changelog.data],
+    () => buildRows(index ?? NO_DATA, { metrics: metrics.data, changes: changelog.data, records }),
+    [index, metrics.data, changelog.data, records],
   )
   const queryKey = params.toString()
   const groups = useMemo(
@@ -228,8 +235,9 @@ export const DashboardPage = ({
   const versionRow = (row: Row, nested: boolean) => {
     const { protocol, incidents } = row
     const href = `/protocol/${protocol.id}`
-    const states = feeds.map((feed) => statusOf(row.feeds[feed.id]))
+    const states = tonesOf(row)
     const covered = dataCount(row.feeds, feedIds)
+    const counts = signalCounts(states)
     const today = row.changes.filter((change) => now - Date.parse(change.ts) <= DAY)
     return (
       <tr
@@ -288,6 +296,21 @@ export const DashboardPage = ({
         </td>
         <td>{fresh(changedAt(row))}</td>
         <td>
+          <button
+            type="button"
+            className="hit sig"
+            aria-label={`Feed signals: ${counts.neg} negative, ${counts.neu} neutral or informational, ${counts.pos} positive`}
+            {...popTarget('signals', row)}
+          >
+            {SIGNALS.map((signal) => (
+              <span key={signal} className={`sc ${signal}${counts[signal] ? '' : ' zero'}`}>
+                <i />
+                {counts[signal]}
+              </span>
+            ))}
+          </button>
+        </td>
+        <td>
           {incidents == null ? (
             <span className="muted" title="Not collected for this version">
               —
@@ -331,20 +354,15 @@ export const DashboardPage = ({
           <small>sum of versions</small>
         </td>
         <td>
-          <span className="hit static" title="Feeds with data for at least one version">
-            <span className="v-ring">
-              <CoverageRing states={feeds.map((feed) => statusOf(group.feeds[feed.id]))} />
-            </span>
-            <span className="v-bar">
-              <CoverageBar states={feeds.map((feed) => statusOf(group.feeds[feed.id]))} />
-            </span>
-            <span className="cov-count">
-              {dataCount(group.feeds, feedIds)}
-              <span>/{feeds.length}</span>
-            </span>
+          {/* Versions can read differently in one feed; the group row shows only how many have data. */}
+          <span className="cov-count" title="Feeds with data for at least one version">
+            {dataCount(group.feeds, feedIds)}
+            <span>/{feeds.length}</span>
+            <small>any version</small>
           </span>
         </td>
         <td>{fresh(group.changedAt)}</td>
+        <td />
         <td>
           {group.incidents == null ? (
             <span className="muted">—</span>
@@ -380,20 +398,61 @@ export const DashboardPage = ({
               {dataCount(row.feeds, feedIds)} / {feeds.length} feeds
             </span>
           </div>
-          <div className="pop-sub">Whether each feed publishes data we could collect</div>
+          <div className="pop-sub">Status as each feed characterizes its own data</div>
           <ul className="pop-list">
             {feeds.map((feed) => {
-              const status = statusOf(row.feeds[feed.id])
+              const tone = row.tones[feed.id] ?? 'none'
               return (
-                <li key={feed.id} className={`st-${status}`}>
-                  <StatusDot status={status} />
+                <li key={feed.id} className={`st-${tone}`}>
+                  <StatusDot tone={tone} />
                   <span>{feed.name}</span>
-                  <em>{coverageLabel(status)}</em>
+                  <em>{TONE_LABELS[tone]}</em>
                 </li>
               )
             })}
           </ul>
           {foot('Click to pin', `/protocol/${protocol.id}/risk`, 'Risk intelligence →')}
+        </>
+      )
+    }
+    if (current.kind === 'signals') {
+      return (
+        <>
+          <div className="pop-h">
+            <strong>Feed signals · {protocol.name}</strong>
+          </div>
+          <div className="pop-sub">
+            Feeds grouped by their own characterization. Not combined into a verdict.
+          </div>
+          {SIGNALS.map((signal) => {
+            const members = feeds.filter(
+              (feed) => signalOf(row.tones[feed.id] ?? 'none') === signal,
+            )
+            return members.length > 0 ? (
+              <div key={signal}>
+                <div className="pop-group">
+                  {SIGNAL_LABELS[signal]} · {members.length}
+                </div>
+                <ul className="pop-list">
+                  {members.map((feed) => {
+                    const tone = row.tones[feed.id] ?? 'none'
+                    return (
+                      <li key={feed.id} className={`st-${tone}`}>
+                        <StatusDot tone={tone} />
+                        <span>{feed.name}</span>
+                        <em>{TONE_LABELS[tone]}</em>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            ) : null
+          })}
+          {foot(
+            `${dataCount(row.feeds, feedIds)} of ${feeds.length} feeds reporting`,
+            `/protocol/${protocol.id}/risk`,
+            'Read each feed →',
+          )}
         </>
       )
     }
@@ -453,8 +512,9 @@ export const DashboardPage = ({
           <Prov kind="cov">Data coverage</Prov>
           <span className="grp-note">facts about our collection, not the protocol</span>
         </th>
-        <th className="g-src">
+        <th colSpan={2} className="g-src">
           <Prov kind="src">Source-reported</Prov>
+          <span className="grp-note">what sources published — not verified or scored by us</span>
         </th>
         <th />
       </tr>
@@ -471,6 +531,10 @@ export const DashboardPage = ({
         <th aria-sort={ariaSort('updated-desc')}>
           {sortButton('updated-desc', 'Changed')}
           <span className="th-sub">latest move in a feed’s value</span>
+        </th>
+        <th aria-sort={ariaSort('signals-desc')}>
+          {sortButton('signals-desc', 'Signals')}
+          <span className="th-sub">negative · neutral/info · positive</span>
         </th>
         <th aria-sort={ariaSort('incidents-desc')}>
           {sortButton('incidents-desc', 'Incidents')}
@@ -490,8 +554,8 @@ export const DashboardPage = ({
           <h1>Protocols</h1>
           <p>
             What each risk feed publishes about a protocol version on Ethereum mainnet, with the
-            feed named on every value. Colours say whether a feed has data — never what it
-            concluded. <strong>defi-dna does not rate protocols.</strong>
+            feed named on every value. Colours are each feed’s own characterization, read from its
+            own published scale — <strong>defi-dna does not rate protocols.</strong>
           </p>
         </div>
         <dl className="ph-stats">
@@ -578,9 +642,9 @@ export const DashboardPage = ({
                 onClick={() => chooseView(key)}
               >
                 {key === 'ring' ? (
-                  <CoverageRing states={['ok', 'ok', 'none', 'ok', 'none']} size={14} />
+                  <CoverageRing states={['pos', 'neu', 'none', 'neg', 'none']} size={14} />
                 ) : key === 'bar' ? (
-                  <CoverageBar states={['ok', 'ok', 'none']} />
+                  <CoverageBar states={['pos', 'neu', 'none']} />
                 ) : null}
                 {label}
               </button>
@@ -616,7 +680,7 @@ export const DashboardPage = ({
           <table className="grid">
             <caption className="sr-only">
               {index
-                ? `${shown} protocol versions: size, which of ${feeds.length} risk feeds publish data about each, when a feed’s value last changed, and incidents recorded by DefiLlama.`
+                ? `${shown} protocol versions: size, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
                 : 'The table is empty: the dataset is not loaded.'}
             </caption>
             {head}
@@ -652,18 +716,27 @@ export const DashboardPage = ({
 
         <div className="table-foot">
           <div className="legend">
-            <span className="lg-title">Coverage</span>
+            <span className="lg-title">Feed status</span>
             <span>
-              <StatusDot status="ok" />
-              Data available
+              <StatusDot tone="pos" />
+              Positive
             </span>
             <span>
-              <StatusDot status="none" />
+              <StatusDot tone="neu" />
+              Neutral / informational
+            </span>
+            <span>
+              <StatusDot tone="neg" />
+              Negative
+            </span>
+            <span>
+              <StatusDot tone="none" />
               No data
             </span>
             <span>
-              — whether a feed publishes data we could collect for that version, never what it says.
-              “No data” is a gap in coverage, not a signal.
+              — position on <b>each feed’s own published scale</b>. Data whose scale gives no
+              reading is neutral. “No data” means the feed has not covered the version; it is not a
+              signal.
             </span>
           </div>
           <div className="legend">
@@ -675,7 +748,8 @@ export const DashboardPage = ({
               <Prov kind="cov" /> which feeds have data, and when it last changed
             </span>
             <span>
-              <Prov kind="src" /> published by a named source, shown as-is
+              <Prov kind="src" /> published by a named source, shown as-is — signals count feeds by
+              their own characterization
             </span>
           </div>
           <div className="legend">

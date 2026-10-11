@@ -403,6 +403,42 @@ button.hit:hover {
 .panel[data-view='bar'] .v-ring {
   display: none;
 }
+.sig {
+  gap: 10px;
+}
+.sc {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 600 12px var(--mono);
+  min-width: 24px;
+}
+.sc i {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+.sc.neg i {
+  background: var(--neg-seg);
+}
+.sc.neu i {
+  background: var(--neu-seg);
+}
+.sc.pos i {
+  background: var(--pos-seg);
+}
+.sc.zero {
+  color: var(--faint);
+  font-weight: 400;
+}
+.sc.zero i {
+  opacity: 0.35;
+}
+.group-row .cov-count small {
+  display: inline;
+  margin-left: 6px;
+  font-family: var(--font);
+}
 .evt {
   font-weight: 650;
 }
@@ -526,10 +562,25 @@ button.hit:hover {
   font-size: 11px;
   color: var(--muted);
 }
-.pop-list li.st-ok em {
-  color: var(--tone-low);
+.pop-list li.st-pos em {
+  color: var(--pos);
+}
+.pop-list li.st-neu em,
+.pop-list li.st-inf em {
+  color: var(--neu);
+}
+.pop-list li.st-neg em {
+  color: var(--neg);
 }
 .pop-list li.st-none {
+  color: var(--muted);
+}
+.pop-group {
+  padding: 8px 13px 2px;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
   color: var(--muted);
 }
 .pop-list .age {
