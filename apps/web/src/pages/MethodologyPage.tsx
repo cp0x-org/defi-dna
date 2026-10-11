@@ -14,7 +14,7 @@ const QUESTIONS: [string, string][] = [
   ],
   [
     'Why does the dashboard show only a dot?',
-    'Because the feeds do not measure the same thing. DeFiScan grades a protocol’s decentralization, Philidor and pigi.finance grade the individual vaults inside a protocol on scales of their own, Risklayer publishes a beta figure on bands it does not document — and a feed does not always say which slice of a protocol it looked at. A shared column of values would invite a comparison none of them supports, so the dashboard reports only whether data exists.',
+    'Because the feeds do not measure the same thing. One grades a protocol’s decentralization, another the individual vaults inside it, each on a scale of its own — and a feed does not always say which slice of a protocol it looked at. A shared column of values would invite a comparison none of them supports, so the dashboard reports only whether data exists. What each feed assesses is stated on its card and on the feeds page.',
   ],
   [
     'Where are the actual values then?',

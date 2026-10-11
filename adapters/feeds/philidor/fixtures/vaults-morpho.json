@@ -1,0 +1,46 @@
+{
+  "data": [
+    {
+      "address": "0xbeef047a543e45807105e51a8bbefcc5950fcfba",
+      "name": "Steakhouse USDT",
+      "protocol_version": "v1",
+      "tvl_usd": 86799393.73952861,
+      "total_score": 8.84,
+      "risk_tier": "Prime",
+      "is_shutdown": false,
+      "curator_name": "Steakhouse Financial",
+      "score_computed_at": "2026-10-01T18:07:17.876Z",
+      "last_synced_at": "2026-09-30T13:31:09.514Z"
+    },
+    {
+      "address": "0xbeef01735c132ada46aa9aa4c54623caa92a64cb",
+      "name": "Steakhouse USDC",
+      "protocol_version": "v1",
+      "tvl_usd": 63725131.057661965,
+      "total_score": 7.9,
+      "risk_tier": "Core",
+      "is_shutdown": false,
+      "curator_name": "Steakhouse Financial",
+      "score_computed_at": "2026-10-01T18:07:17.876Z",
+      "last_synced_at": "2026-09-30T13:31:09.514Z"
+    },
+    {
+      "address": "0x6dc58a0fdfc8d694e571dc59b9a52eeea780e6bf",
+      "name": "Sentora RLUSD Main",
+      "protocol_version": "v2",
+      "tvl_usd": 421154651.27286184,
+      "total_score": 7.8,
+      "risk_tier": "Core",
+      "is_shutdown": false,
+      "curator_name": "Sentora",
+      "score_computed_at": "2026-10-01T18:07:17.876Z",
+      "last_synced_at": "2026-10-01T18:12:05.356Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 100,
+    "total": 3,
+    "totalPages": 1
+  }
+}

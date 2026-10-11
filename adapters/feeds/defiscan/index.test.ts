@@ -1,5 +1,6 @@
+import { fakeContext } from '@defi-dna/core/testing'
 import { describe, expect, it } from 'vitest'
-import { assess, assessReview, headlineOf } from './index.ts'
+import adapter, { assess, assessReview, headlineOf } from './index.ts'
 
 const sample = {
   project: 'lido',
@@ -89,5 +90,46 @@ describe('assess', () => {
     expect(result.note).toContain('Review covers Ethereum.')
     expect(result.note).toContain('compiled JSON was rebuilt on 2026-09-30')
     expect(result.extra).toBeUndefined()
+  })
+})
+
+const DATA = 'https://www.defiscan.info/data'
+const lido = { id: 'lido', name: 'Lido', category: 'liquid-staking' }
+
+describe('collect', () => {
+  it('reads every slug a row maps to and names them all in the note', async () => {
+    const ctx = fakeContext(
+      {
+        [`${DATA}/lido/compiled-review.json`]: sample,
+        [`${DATA}/lido-csm/compiled-review.json`]: {
+          project: 'lido-csm',
+          publishedAt: '2025-08-01T00:00:00.000Z',
+          totals: { adminCount: 3, contractCount: 18 },
+        },
+        [`${DATA}/lido-v3/compiled-review.json`]: null,
+      },
+      { mapping: { lido: ['lido', 'lido-csm', 'lido-v3'] } },
+    )
+    const result = await adapter.collect({ protocol: lido, ctx, prepared: undefined })
+    expect(result).toMatchObject({
+      value: '20 admins · $115.5M capital at risk · 3 admins · 18 contracts',
+      updatedAt: '2025-08-01',
+      url: 'https://www.defiscan.info/protocol/lido',
+    })
+    expect(result?.note).toContain('2 reviews: lido, lido-csm')
+    expect(result?.extra?.text).toHaveLength(2)
+    expect(ctx.requests).toHaveLength(3)
+  })
+
+  it('answers null for a protocol the mapping leaves out', async () => {
+    const ctx = fakeContext({}, { mapping: { lido: ['lido'] } })
+    await expect(
+      adapter.collect({
+        protocol: { id: 'curve', name: 'Curve', category: 'dex' },
+        ctx,
+        prepared: undefined,
+      }),
+    ).resolves.toBeNull()
+    expect(ctx.requests).toEqual([])
   })
 })

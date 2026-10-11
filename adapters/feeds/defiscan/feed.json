@@ -3,6 +3,7 @@
   "name": "DeFiScan",
   "topic": "Decentralization",
   "focus": "On-chain admin rights and dependencies: who can change contracts and how much capital those powers reach.",
+  "assesses": "deployment",
   "homepage": "https://www.defiscan.info",
   "methodologyUrl": "https://docs.defiscan.info/researchers/methodology",
   "enabled": true

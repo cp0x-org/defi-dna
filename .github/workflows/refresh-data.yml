@@ -53,9 +53,11 @@ jobs:
           if [ -d data-repo/protocols ]; then
             cp -a data-repo/protocols/. data/protocols/
           fi
-          if [ -f data-repo/changelog.json ]; then
-            cp data-repo/changelog.json data/changelog.json
-          fi
+          for f in changelog.json metrics.json status.json; do
+            if [ -f "data-repo/$f" ]; then
+              cp "data-repo/$f" "data/$f"
+            fi
+          done
 
       - run: npm run refresh
         env:
@@ -67,6 +69,8 @@ jobs:
           test -s data/index.json
           mkdir -p data-repo/protocols
           cp data/index.json data-repo/index.json
+          cp data/metrics.json data-repo/metrics.json
+          cp data/status.json data-repo/status.json
           cp -a data/protocols/. data-repo/protocols/
           if [ -f data/changelog.json ]; then
             cp data/changelog.json data-repo/changelog.json
@@ -74,7 +78,7 @@ jobs:
             printf '[]\n' > data-repo/changelog.json
           fi
 
-          git -C data-repo add -A -- index.json changelog.json protocols
+          git -C data-repo add -A -- index.json metrics.json status.json changelog.json protocols
           if git -C data-repo diff --cached --quiet; then
             echo "No data changes"
             exit 0

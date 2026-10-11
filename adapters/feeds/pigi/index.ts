@@ -1,5 +1,4 @@
 import { formatUsd, type Detail, type FeedAdapter, type FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const API = 'https://pigi.finance/api/v1'
 const SITE = 'https://app.pigi.finance'
@@ -15,17 +14,8 @@ const MAX_PAGES = 5
 const ETHEREUM = 1
 /** Vaults listed individually on the protocol page, largest by TVL. */
 const TOP_VAULTS = 10
-
-/**
- * our protocol id -> the `protocol_name` pigi files the vaults under. pigi uses
- * one name per product line or version ("Morpho" and "Morpho v2", "SparkLend"
- * and "Spark"), so a row takes exactly the names it lists.
- */
-const table: Record<string, string | string[]> = mapping
-const names = (id: string): string[] => {
-  const value = table[id]
-  return value == null ? [] : typeof value === 'string' ? [value] : value
-}
+/** Vaults carried into `extra`, largest by TVL. Keeps a record of a big protocol under ~100 KB. */
+const MAX_VAULTS = 100
 
 /** The fields of pigi's Vault object this adapter reads. */
 export interface Vault {
@@ -94,6 +84,7 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
   }))
 
   const updatedAt = rated.map(ratedOn).filter(Boolean).sort().at(-1)
+  const omitted = Math.max(0, rated.length - MAX_VAULTS)
 
   return {
     value: `${rated.length} vaults rated`,
@@ -104,17 +95,23 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
     note:
       `Counted: ${rated.length} rated of the ${listed.length} Ethereum vault(s) pigi lists under ${scope}. ` +
       `Bands run A (safest) to F and scores 0–100, higher = safer. No vault stands in for the ` +
-      `protocol and nothing is averaged — pigi publishes no protocol-level rating.`,
+      `protocol and nothing is averaged — pigi publishes no protocol-level rating.` +
+      (omitted > 0
+        ? ` The ${MAX_VAULTS} largest by TVL are listed here; ${omitted} more are at the source.`
+        : ''),
     extra: {
-      vaultsListed: listed.length,
-      vaultsRated: rated.length,
-      vaults: rated.map((vault) => ({
+      facts: [
+        { name: 'Vaults listed', value: String(listed.length) },
+        { name: 'Vaults rated', value: String(rated.length) },
+      ],
+      vaults: rated.slice(0, MAX_VAULTS).map((vault) => ({
         name: vaultName(vault),
         version: vault.protocol_name,
         curator: null,
         tier: vault.risk_band,
         score: vault.risk_score,
-        tvlUsd: vault.tvl_30d_ma,
+        // Whole dollars: the cents are noise that would change the record every run.
+        tvlUsd: vault.tvl_30d_ma == null ? null : Math.round(vault.tvl_30d_ma),
         scoredAt: ratedOn(vault) || null,
         url: `${SITE}/vault/${vault.strategy_id}`,
       })),
@@ -126,6 +123,8 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
  * pigi.finance — risk ratings for individual vaults, lending reserves and pools.
  *
  * pigi rates vaults, not protocols, and files each under a `protocol_name`.
+ * `mapping.json` names the protocol_name(s) a row takes: pigi uses one name per
+ * product line or version ("Morpho" and "Morpho v2", "SparkLend" and "Spark").
  * "Aave" holds only v3 pools (Core, Lido, Horizon, plus sGHO) and "Uniswap" only
  * v3 pools (fee tiers, 20-byte pool addresses), so they fill the v3 rows.
  *
@@ -133,10 +132,12 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
  * free plan allows 1,000 requests a month, so the run reads one listing of every
  * Ethereum vault in prepare() — two pages today — and nothing per vault: the
  * listing already carries the published band and score. The token is minted
- * only when that listing is not in the HTTP cache, so --offline needs no key.
+ * only when that listing is not in the HTTP cache, so --offline needs no key;
+ * an online run without the key skips pigi and keeps the previous values.
  */
-const adapter: FeedAdapter = {
+const adapter: FeedAdapter<Map<string, Vault[]>> = {
   id: 'pigi',
+  secrets: ['PIGI_API_KEY'],
 
   async prepare(ctx): Promise<Map<string, Vault[]>> {
     const apiKey = process.env.PIGI_API_KEY
@@ -169,7 +170,7 @@ const adapter: FeedAdapter = {
       if (!body.pagination?.hasMore) break
     }
 
-    const wanted = new Set(Object.keys(table).flatMap(names))
+    const wanted = new Set(Object.values(ctx.mapping).flat())
     const byName = new Map<string, Vault[]>()
     for (const vault of rows) {
       if (vault.chain_id !== ETHEREUM || !wanted.has(vault.protocol_name)) continue
@@ -184,12 +185,9 @@ const adapter: FeedAdapter = {
     return byName
   },
 
-  async collect({ protocol, prepared }): Promise<FeedResult | null> {
-    const pigiNames = names(protocol.id)
+  async collect({ protocol, ctx, prepared: listing }): Promise<FeedResult | null> {
+    const pigiNames = ctx.mapping[protocol.id] ?? []
     if (pigiNames.length === 0) return null
-
-    const listing = prepared as Map<string, Vault[]> | undefined
-    if (!listing) throw new Error('pigi vault listing unavailable')
 
     return assess(
       pigiNames,

@@ -1,0 +1,114 @@
+:root {
+  --dna-control-bg: #f8fbfa;
+  --dna-control-text: #25434a;
+  --dna-control-border: #a9c2c6;
+  --dna-control-muted: #506b74;
+  --dna-control-hover: #e7f2f0;
+  --dna-control-active: #176f69;
+  --dna-control-active-text: #ffffff;
+  --dna-control-focus: #155f9a;
+}
+
+html[data-theme='dark'] {
+  --dna-control-bg: #18323b;
+  --dna-control-text: #e8f0ee;
+  --dna-control-border: #6b888f;
+  --dna-control-muted: #c1d3d5;
+  --dna-control-hover: #284b54;
+  --dna-control-active: #81cbb5;
+  --dna-control-active-text: #102b2d;
+  --dna-control-focus: #9ce6d1;
+}
+
+[data-dna-controls] {
+  min-width: 0;
+  max-width: 100%;
+}
+.dna-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 100%;
+  min-width: 0;
+  font-family: 'Avenir Next', Avenir, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  line-height: 1.2;
+}
+.dna-controls__modes {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  max-width: 100%;
+  min-width: 0;
+  padding: 2px;
+  border: 1px solid var(--dna-control-border);
+  border-radius: 8px;
+  background: var(--dna-control-bg);
+}
+.dna-controls__label {
+  padding: 0 6px;
+  color: var(--dna-control-muted);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.dna-controls button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 30px;
+  margin: 0;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--dna-control-text);
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.dna-controls button:hover {
+  background: var(--dna-control-hover);
+}
+.dna-controls button[aria-pressed='true'] {
+  background: var(--dna-control-active);
+  color: var(--dna-control-active-text);
+}
+.dna-controls button:focus-visible {
+  outline: 3px solid var(--dna-control-focus);
+  outline-offset: 2px;
+}
+.dna-controls .dna-controls__theme {
+  border-color: var(--dna-control-border);
+  background: var(--dna-control-bg);
+}
+.dna-controls .dna-controls__theme[aria-pressed='true'] {
+  border-color: var(--dna-control-active);
+  background: var(--dna-control-active);
+}
+.dna-controls__status {
+  color: var(--dna-control-muted);
+  font-size: 11px;
+}
+.dna-controls__status:empty {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .dna-controls {
+    justify-content: flex-start;
+    gap: 4px;
+  }
+  .dna-controls__label {
+    padding: 0 4px;
+  }
+  .dna-controls button {
+    padding: 5px 6px;
+    font-size: 11px;
+  }
+}

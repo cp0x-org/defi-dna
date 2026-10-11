@@ -1,0 +1,34 @@
+{
+  "data": [
+    {
+      "address": "0xa3931d71877c0e7a3148cb7eb4463524fec27fbd",
+      "name": "USDS Savings Vault",
+      "protocol_version": "v2",
+      "tvl_usd": 4653611022.556232,
+      "total_score": 7.9,
+      "risk_tier": "Core",
+      "is_shutdown": false,
+      "curator_name": null,
+      "score_computed_at": "2026-10-01T18:07:17.876Z",
+      "last_synced_at": "2026-10-01T18:13:30.241Z"
+    },
+    {
+      "address": "0x9985df20d7e9103ecbceb16a84956434b6f06ae8",
+      "name": "SparkLend rETH",
+      "protocol_version": "v1",
+      "tvl_usd": 11996748.736476844,
+      "total_score": 8.88,
+      "risk_tier": "Prime",
+      "is_shutdown": true,
+      "curator_name": null,
+      "score_computed_at": "2026-10-01T18:07:17.876Z",
+      "last_synced_at": "2026-10-01T18:13:30.241Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 100,
+    "total": 2,
+    "totalPages": 1
+  }
+}

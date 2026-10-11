@@ -1,5 +1,6 @@
+import { fakeContext } from '@defi-dna/core/testing'
 import { describe, expect, it } from 'vitest'
-import { assess } from './index.ts'
+import adapter, { assess } from './index.ts'
 
 const sample = {
   success: true,
@@ -36,8 +37,10 @@ describe('assess', () => {
       updatedAt: '2026-10-07',
       url: 'https://defiscoring.com/protocols/lido',
       extra: {
-        overallScore: 46,
-        riskLevel: 'red',
+        facts: [
+          { name: 'Score', value: '46' },
+          { name: 'Band', value: 'red' },
+        ],
         text: ['Not financial advice.'],
       },
     })
@@ -61,5 +64,28 @@ describe('assess', () => {
       url: 'https://defiscoring.com/protocols/missing',
       note: 'DeFi Scoring has published no score for missing.',
     })
+  })
+})
+
+describe('prepare and collect', () => {
+  const lido = { id: 'lido', name: 'Lido', category: 'liquid-staking' }
+
+  it('reads each mapped slug once in prepare and answers from that map', async () => {
+    const ctx = fakeContext(
+      { 'https://defiscoring.com/api/score/lido': sample },
+      { mapping: { lido: ['lido'] } },
+    )
+    const prepared = await adapter.prepare!(ctx)
+    const result = await adapter.collect({ protocol: lido, ctx, prepared })
+    expect(result).toMatchObject({
+      value: '46 · red',
+      url: 'https://defiscoring.com/protocols/lido',
+    })
+    expect(ctx.requests).toEqual(['https://defiscoring.com/api/score/lido'])
+  })
+
+  it('answers null for a protocol the mapping leaves out', async () => {
+    const ctx = fakeContext({}, { mapping: {} })
+    await expect(adapter.collect({ protocol: lido, ctx, prepared: new Map() })).resolves.toBeNull()
   })
 })

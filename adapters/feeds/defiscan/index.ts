@@ -1,5 +1,4 @@
 import { formatUsd, type Detail, type FeedAdapter, type FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const DATA = 'https://www.defiscan.info/data'
 const SITE = 'https://www.defiscan.info/protocol'
@@ -8,14 +7,6 @@ const DAY = 86_400
 const SUMMARY_CHARS = 700
 /** Named admins listed individually on the protocol page, largest by reachable capital. */
 const TOP_ADMINS = 5
-
-/** our protocol id -> the project slug(s) DeFiScan publishes under */
-const table: Record<string, string | string[]> = mapping
-
-const entries = (id: string): string[] => {
-  const value = table[id]
-  return value == null ? [] : typeof value === 'string' ? [value] : value
-}
 
 interface ReviewTotals {
   contractCount?: number
@@ -217,13 +208,15 @@ export const assess = (reviews: AssessedReview[]): FeedResult => {
  *
  * Reads the public compiled-review JSON the site serves. V2 publishes counts,
  * capital at risk, admins and permissioned functions — not the Stage 0/1/2
- * scale from the frozen V1 repository.
+ * scale from the frozen V1 repository. `mapping.json` names the project
+ * slug(s) a row takes; DeFiScan files each project separately, so every slug
+ * is read and none stands in for the rest.
  */
 const adapter: FeedAdapter = {
   id: 'defiscan',
 
   async collect({ protocol, ctx }): Promise<FeedResult | null> {
-    const slugs = entries(protocol.id)
+    const slugs = ctx.mapping[protocol.id] ?? []
     if (slugs.length === 0) return null
 
     const fetched = await Promise.all(

@@ -1,5 +1,4 @@
 import type { Detail, FeedAdapter, FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const API = 'https://defiscoring.com/api/score'
 const SITE = 'https://defiscoring.com/protocols'
@@ -9,9 +8,6 @@ const DAY = 86_400
  * full prepare stays under that ceiling even when the runner is otherwise busy.
  */
 const GAP_MS = 2_100
-
-/** our protocol id -> DeFi Scoring protocol slug */
-const table: Record<string, string> = mapping
 
 interface Pillar {
   weight?: number
@@ -91,8 +87,10 @@ export const assess = (slug: string, data: ScoreResponse): FeedResult => {
     url,
     ...(notes.length > 0 ? { note: notes.join(' ') } : {}),
     extra: {
-      overallScore: data.score,
-      riskLevel: band ?? null,
+      facts: [
+        { name: 'Score', value: String(data.score) },
+        ...(band ? [{ name: 'Band', value: band }] : []),
+      ],
       ...(data.disclaimer ? { text: [data.disclaimer] } : {}),
     },
   }
@@ -103,13 +101,14 @@ export const assess = (slug: string, data: ScoreResponse): FeedResult => {
  *
  * Scores are pulled once per run in prepare(), spaced to respect the anonymous
  * 30 req/min IP limit. collect() only reads that map, so the parallel protocol
- * pass never bursts the API.
+ * pass never bursts the API. `mapping.json` names the slug DeFi Scoring files
+ * each protocol under.
  */
-const adapter: FeedAdapter = {
+const adapter: FeedAdapter<Prepared> = {
   id: 'defiscoring',
 
   async prepare(ctx): Promise<Prepared> {
-    const slugs = [...new Set(Object.values(table))]
+    const slugs = [...new Set(Object.values(ctx.mapping).flat())]
     const scores: Prepared = new Map()
 
     for (let i = 0; i < slugs.length; i++) {
@@ -137,12 +136,9 @@ const adapter: FeedAdapter = {
     return scores
   },
 
-  async collect({ protocol, prepared }): Promise<FeedResult | null> {
-    const slug = table[protocol.id]
+  async collect({ protocol, ctx, prepared: scores }): Promise<FeedResult | null> {
+    const [slug] = ctx.mapping[protocol.id] ?? []
     if (!slug) return null
-
-    const scores = prepared as Prepared | undefined
-    if (!scores) throw new Error('DeFi Scoring listing unavailable')
 
     const data = scores.get(slug)
     if (data === undefined) {

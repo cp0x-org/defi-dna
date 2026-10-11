@@ -1,5 +1,5 @@
 import type { Feed, FeedData } from '@defi-dna/data'
-import { coverageLabel } from '../lib/view.ts'
+import { assessesLabel, coverageLabel } from '../lib/view.ts'
 import { IconChevron } from './Icons.tsx'
 import { AssessmentDate, DataAgeHelp, ExternalLink, Info, SourceMark } from './UI.tsx'
 import { FeedExtras, hasFeedExtras } from './extra/FeedExtras.tsx'
@@ -41,7 +41,7 @@ export const FeedAssessment = ({ feed, data }: { feed: Feed; data: FeedData }) =
             <span className="eyebrow">WHAT THIS FEED PUBLISHES</span>
             <div className="native-verdict">{data.value}</div>
             <div className="scope-line">
-              As {feed.name} publishes it
+              As {feed.name} publishes it · assesses {assessesLabel(feed.assesses)}
               <Info label={`Understanding ${feed.name}`}>
                 {feed.focus} Values are shown exactly as {feed.name} publishes them and are not
                 converted into any other feed’s scale.

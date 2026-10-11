@@ -30,8 +30,10 @@ published value is not._
 ## 2. Verbatim, with a link and a date
 
 Every value is stored as the feed published it, as a string, with the URL we
-read and the date the feed gave. The protocol page also shows the raw record
-behind each card, so nothing is hidden behind our choice of what to display.
+read and the date the feed gave. The stored record behind each card is public
+as plain JSON in the data repository, with every change in its history (section
+4), so nothing is hidden behind our choice of what to display. The interface
+renders that record; it never reprints it raw.
 
 ## 3. Gaps are data, and the dashboard says no more than it knows
 
