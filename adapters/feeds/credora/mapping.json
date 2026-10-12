@@ -1,0 +1,5 @@
+{
+  "_comment": "Our protocol id -> the value of Credora's `protocol` field, lower-case (the API spells it both `Morpho` and `morpho`). A row takes every Ethereum vault (product `vaults`) Credora files under that protocol; markets and assets are not read. Rows for other protocols are added once the API lists them, never guessed.",
+  "morpho-vaults": "morpho",
+  "spark": "spark"
+}

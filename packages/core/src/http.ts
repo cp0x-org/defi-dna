@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { paths } from './registry.ts'
-import type { FetchOptions } from './types.ts'
+import type { FetchOptions, PostOptions } from './types.ts'
 
 const USER_AGENT =
   'defi-dna-aggregator/0.1 (+https://github.com/cp0x-org/defi-dna) risk feed aggregation'
@@ -12,7 +12,9 @@ const DEFAULT_RETRIES = 2
 const MAX_WAIT_MS = 60_000
 
 interface CacheEntry {
+  /** The URL, prefixed with `POST ` and followed by `request` for a cached POST. */
   url: string
+  request?: string
   storedAt: number
   status: number
   body: string
@@ -42,10 +44,27 @@ export class Http {
   constructor(private readonly options: HttpOptions = {}) {}
 
   async getText(url: string, options: FetchOptions = {}): Promise<string> {
+    return this.request({ url, options })
+  }
+
+  /**
+   * One request through the cache. A GET is keyed by its URL (and range); a
+   * POST by its URL and body, so two queries to one endpoint stay apart.
+   */
+  private async request({
+    url,
+    body,
+    options,
+  }: {
+    url: string
+    body?: string
+    options: FetchOptions
+  }): Promise<string> {
+    const label = body === undefined ? url : `POST ${url}`
     const file = path.join(
       this.options.cacheDir ?? paths.cache,
       `${createHash('sha256')
-        .update(url + (options.rangeBytes ?? ''))
+        .update(body === undefined ? url + (options.rangeBytes ?? '') : `${label}\n${body}`)
         .digest('hex')
         .slice(0, 40)}.json`,
     )
@@ -54,7 +73,7 @@ export class Http {
     if (cached && (this.options.offline || Date.now() - cached.storedAt < ttl)) {
       return cached.body
     }
-    if (this.options.offline) throw new Error(`offline and nothing cached for ${url}`)
+    if (this.options.offline) throw new Error(`offline and nothing cached for ${label}`)
 
     const fetchImpl = this.options.fetch ?? fetch
     let lastError: unknown
@@ -64,10 +83,12 @@ export class Http {
         const headers: Record<string, string> = {
           ...(await options.headers?.()),
           'user-agent': USER_AGENT,
-          accept: '*/*',
+          accept: body === undefined ? '*/*' : 'application/json',
         }
         if (options.rangeBytes) headers.range = `bytes=${options.rangeBytes.join('-')}`
+        if (body !== undefined) headers['content-type'] = 'application/json'
         const response = await fetchImpl(url, {
+          ...(body === undefined ? {} : { method: 'POST', body }),
           headers,
           signal: AbortSignal.timeout(60_000),
         })
@@ -80,11 +101,19 @@ export class Http {
           continue
         }
         if (!response.ok && response.status !== 206) {
-          throw new Error(`HTTP ${response.status} for ${url}`)
+          // A query API names the cause in the body (`UNAUTHENTICATED`); it never echoes a key.
+          const cause = body === undefined ? '' : `: ${(await response.text()).slice(0, 200)}`
+          throw new Error(`HTTP ${response.status} for ${label}${cause}`)
         }
-        const body = await response.text()
-        await write(file, { url, storedAt: Date.now(), status: response.status, body })
-        return body
+        const text = await response.text()
+        await write(file, {
+          url: label,
+          ...(body === undefined ? {} : { request: body }),
+          storedAt: Date.now(),
+          status: response.status,
+          body: text,
+        })
+        return text
       } catch (error) {
         lastError = error
         if (this.options.verbose) console.warn(`  retry ${attempt + 1}: ${String(error)}`)
@@ -93,7 +122,7 @@ export class Http {
     // Network trouble, but we have an older copy: serving it beats emptying a
     // cell that is genuinely covered.
     if (cached) return cached.body
-    throw lastError instanceof Error ? lastError : new Error(`failed to fetch ${url}`)
+    throw lastError instanceof Error ? lastError : new Error(`failed to fetch ${label}`)
   }
 
   async getJson<T>(url: string, options: FetchOptions = {}): Promise<T> {
@@ -106,14 +135,26 @@ export class Http {
   }
 
   /**
-   * POST a JSON body. Never cached and never retried: it exists to exchange an
-   * API key for a token, and a token has no business on disk.
+   * POST a JSON body. Without `ttlSeconds` it is never cached and never
+   * retried: that form exchanges an API key for a token, and a token has no
+   * business on disk. With `ttlSeconds` it goes through the cache like a GET,
+   * for an API that answers queries only to POST (GraphQL): the response
+   * replays offline and `headers` is asked for only on the network.
    */
-  async postJson<T>(url: string, body: unknown): Promise<T> {
+  async postJson<T>(url: string, body: unknown, options: PostOptions = {}): Promise<T> {
+    if (options.ttlSeconds !== undefined) {
+      const text = await this.request({ url, body: JSON.stringify(body), options })
+      try {
+        return JSON.parse(text) as T
+      } catch {
+        throw new Error(`response from POST ${url} is not valid JSON`)
+      }
+    }
     if (this.options.offline) throw new Error(`offline: cannot POST to ${url}`)
     const response = await (this.options.fetch ?? fetch)(url, {
       method: 'POST',
       headers: {
+        ...(await options.headers?.()),
         'user-agent': USER_AGENT,
         accept: 'application/json',
         'content-type': 'application/json',

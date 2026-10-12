@@ -1,0 +1,108 @@
+{
+  "data": {
+    "ratings": {
+      "totalCount": 9,
+      "items": [
+        {
+          "id": "cd8b167e-dc4c-475b-9265-429b2c197bb9",
+          "address": "0x059Fc6723b9bF77DbF4283C8d7C90eA8Af44EF10",
+          "name": "SwissBorg tBTC",
+          "chainId": 1,
+          "protocol": "Morpho",
+          "ratingType": null,
+          "product": "Vaults",
+          "curator": { "name": "Gauntlet" },
+          "Metrics": { "rating": "A+", "psl": 0.0011200000000000001, "publishDate": "2025-19-09" }
+        },
+        {
+          "id": "f238d012-1c90-42e4-b6d1-612dbc735947",
+          "address": "0x0D05e6ec0A10f9fFE9229EAA785c11606a1d13Fb",
+          "name": "Gauntlet LBTC Core",
+          "chainId": 8453,
+          "protocol": "Morpho",
+          "ratingType": null,
+          "product": "Vaults",
+          "curator": { "name": "Gauntlet" },
+          "Metrics": { "rating": "A-", "psl": 0.00428, "publishDate": "2025-19-09" }
+        },
+        {
+          "id": "12377",
+          "address": "0x551232fdee08e272e929034a8f26f7ca34b1ebe364b275391169b28c6d7db24dbc8",
+          "name": "testMarket",
+          "chainId": 1,
+          "protocol": "morpho",
+          "ratingType": "indicative",
+          "product": "markets",
+          "curator": { "name": "testCurator" },
+          "Metrics": { "rating": "B", "psl": 0.002, "publishDate": "2025-11-30" }
+        },
+        {
+          "id": null,
+          "address": null,
+          "name": "Spark Savings ETH",
+          "chainId": 1,
+          "protocol": "Spark",
+          "ratingType": null,
+          "product": "vaults",
+          "curator": null,
+          "Metrics": { "rating": "A", "psl": 0.0039, "publishDate": "2026-06-29" }
+        },
+        {
+          "id": null,
+          "address": null,
+          "name": "Spark Savings PYUSD",
+          "chainId": 1,
+          "protocol": "Spark",
+          "ratingType": null,
+          "product": "vaults",
+          "curator": null,
+          "Metrics": { "rating": "A", "psl": 0.0015, "publishDate": "2026-06-29" }
+        },
+        {
+          "id": null,
+          "address": null,
+          "name": "Spark Savings USDC",
+          "chainId": 1,
+          "protocol": "Spark",
+          "ratingType": null,
+          "product": "vaults",
+          "curator": null,
+          "Metrics": { "rating": "A-", "psl": 0.0049, "publishDate": "2026-06-29" }
+        },
+        {
+          "id": null,
+          "address": null,
+          "name": "Spark Savings USDT",
+          "chainId": 1,
+          "protocol": "Spark",
+          "ratingType": null,
+          "product": "vaults",
+          "curator": null,
+          "Metrics": { "rating": "A-", "psl": 0.0046, "publishDate": "2026-06-29" }
+        },
+        {
+          "id": null,
+          "address": null,
+          "name": "Spark Savings USDS",
+          "chainId": 1,
+          "protocol": "Spark",
+          "ratingType": null,
+          "product": "vaults",
+          "curator": null,
+          "Metrics": { "rating": "A-", "psl": 0.0052, "publishDate": "2026-06-29" }
+        },
+        {
+          "id": null,
+          "address": null,
+          "name": "Spark Savings stUSDS",
+          "chainId": 1,
+          "protocol": "Spark",
+          "ratingType": null,
+          "product": "vaults",
+          "curator": null,
+          "Metrics": { "rating": "B+", "psl": 0.0103, "publishDate": "2026-06-29" }
+        }
+      ]
+    }
+  }
+}

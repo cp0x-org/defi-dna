@@ -155,14 +155,17 @@ coverage gap.
 
 `ctx` gives you `mapping` (this folder's `mapping.json`, normalized),
 `getJson`, `getText` (both cached on disk, so `--offline` works), `postJson`
-(never cached), `log` and `now`. Adapters never call `fetch` themselves.
+(cached only with a `ttlSeconds`, for an API that answers queries to POST
+alone), `log` and `now`. Adapters never call `fetch` themselves.
 
 A feed behind an API key declares it in `secrets`, reads it from the
 environment (`.env` locally, an Actions secret in the refresh workflow) and
 trades it for a token through `postJson`. Pass the token as a `headers`
 function to `getJson`: it runs only when the request really goes to the
 network, so a cached or `--offline` read needs no key. See
-`adapters/feeds/pigi`.
+`adapters/feeds/pigi`. A GraphQL API that takes the key as a header goes
+through `postJson` with `ttlSeconds` and the same `headers` function: the
+response is cached by URL and body. See `adapters/feeds/credora`.
 
 ## Metric adapters
 
