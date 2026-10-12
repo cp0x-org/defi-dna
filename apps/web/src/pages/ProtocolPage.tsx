@@ -1,25 +1,90 @@
+import { useEffect, useRef, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import type { Protocol, ProtocolDetail } from '@defi-dna/data'
-import { useProtocol } from '../hooks/useIndex.ts'
-import { feeds as allFeeds, metricById, protocolById, protocols } from '../lib/registry.ts'
-import { categoryLabel, dateInfo, formatUsd } from '../lib/view.ts'
-import { FeedAssessment } from '../components/FeedAssessment.tsx'
+import type { Change, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
+import { useChangelog, useProtocol } from '../hooks/useIndex.ts'
+import { feeds, protocolById, protocols } from '../lib/registry.ts'
+import { ageLabel, categoryLabel, dateInfo, formatUsd, safeUrl } from '../lib/view.ts'
+import { SIGNAL_LABELS, TONE_LABELS, signalCounts, toneOf, type Signal } from '../lib/status.ts'
+import { CoverageRing, Prov, StatusDot, StatusPill } from '../components/Coverage.tsx'
 import { IncidentsExtra, TvlComponentsExtra } from '../components/extra/MetricExtras.tsx'
 import { TextExtra } from '../components/extra/TextExtra.tsx'
 import { IconArrow } from '../components/Icons.tsx'
-import { DataAgeHelp, ExternalLink, Info, ProtocolAvatar } from '../components/UI.tsx'
+import { RiskIntelligence } from '../components/RiskIntelligence.tsx'
+import { ExternalLink, Info, ProtocolAvatar, SourceMark } from '../components/UI.tsx'
 
-const tvlLabel = metricById('tvl')?.name ?? 'DefiLlama · Ethereum TVL'
-const incidentsLabel = metricById('incidents')?.name ?? 'DefiLlama · Incident history'
+const REGISTRY_URL = 'https://github.com/cp0x-org/defi-dna/blob/main/registry/protocols.json'
+const TIMELINE_SHOWN = 8
+
+const TABS = {
+  overview: {
+    label: 'Overview',
+    hint: 'A summary for investigation — every feed is one click away',
+  },
+  data: {
+    label: 'Protocol data',
+    hint: 'What the protocol is and what DefiLlama measures — no feed opinions here',
+  },
+  risk: { label: 'Risk intelligence', hint: 'Read each feed in its own words' },
+} as const
+type Tab = keyof typeof TABS
+
+const hostOf = (url?: string): string | null => {
+  const safe = safeUrl(url)
+  return safe ? new URL(safe).host.replace(/^www\./, '') : null
+}
+
+/** `11 Oct` and `13:15 UTC`, for the change timeline. */
+const dayAndTime = (ts: string): [string, string] => {
+  const date = new Date(ts)
+  return [
+    date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }),
+    `${date.toISOString().slice(11, 16)} UTC`,
+  ]
+}
+
+/** What stands in for anything that needs the generated record. */
+const RecordState = ({ protocol, error }: { protocol: Protocol; error: string | null }) =>
+  error ? (
+    <div className="empty-state" role="alert">
+      <h3>What the feeds publish about {protocol.name} could not be loaded</h3>
+      <p>
+        Nothing is shown until it is. A missing card here means missing data, not a missing risk.
+      </p>
+      <button className="button primary" onClick={() => window.location.reload()}>
+        Try again
+      </button>
+      <details>
+        <summary>Technical details</summary>
+        <p>{error}</p>
+      </details>
+    </div>
+  ) : (
+    <div className="empty-state" role="status">
+      <h3>Loading what the feeds publish…</h3>
+      <div className="loading-track" />
+    </div>
+  )
 
 /**
- * The heading comes from the hand-maintained registry and always renders; the
- * rest comes from the generated record and waits for it.
+ * One protocol version. The heading comes from the hand-maintained registry
+ * and always renders; everything else comes from the generated record and
+ * waits for it. Three tabs: a summary, the protocol's own facts, and every
+ * feed in its own words.
  */
-export const ProtocolPage = () => {
-  const { id = '' } = useParams()
+export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
+  const { id = '', tab: tabParam = '', feed: feedParam = '' } = useParams()
   const protocol = protocolById(id)
-  const { data, error } = useProtocol(id)
+  const { data: record, error } = useProtocol(id)
+  const changelog = useChangelog()
+  const anchor = useRef<HTMLDivElement>(null)
+  const tab: Tab = Object.hasOwn(TABS, tabParam) ? (tabParam as Tab) : 'overview'
+
+  // A tab or feed picked below the fold brings the reader back up to the tabs, not the page top.
+  useEffect(() => {
+    if (tabParam && anchor.current && anchor.current.getBoundingClientRect().top < 0) {
+      anchor.current.scrollIntoView({ block: 'start' })
+    }
+  }, [tabParam, feedParam])
 
   if (!protocol) {
     return (
@@ -27,89 +92,273 @@ export const ProtocolPage = () => {
         <h1>Protocol not found</h1>
         <p>Nothing in the registry has the id “{id}”.</p>
         <Link to="/" className="button primary">
-          Back to the matrix <IconArrow />
+          Back to the protocols <IconArrow />
         </Link>
       </div>
     )
   }
-  const siblings = protocols.filter(
-    (other) => protocol.group && other.group === protocol.group && other.id !== protocol.id,
-  )
+
+  const base = `/protocol/${protocol.id}`
+  const versions = protocol.group
+    ? protocols.filter((other) => other.group === protocol.group)
+    : [protocol]
+  const statusOf = (feedId: string) => (record ? (record.feeds[feedId]?.status ?? 'none') : null)
+  const withData = feeds.filter((feed) => statusOf(feed.id) === 'ok')
+  const errors = feeds.filter((feed) => statusOf(feed.id) === 'error')
+  const tones = record ? feeds.map((feed) => toneOf(feed, record.feeds[feed.id])) : []
+  const signals = signalCounts(tones)
+  const tvl = record?.metrics['tvl']
+  const incidents = record?.metrics['incidents']
+  const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
+    b.date.localeCompare(a.date),
+  )[0]
+  const lastChange = feeds
+    .map((feed) => ({ feed, since: record?.feeds[feed.id]?.since }))
+    .filter((entry) => entry.since && statusOf(entry.feed.id) === 'ok')
+    .sort((a, b) => (b.since ?? '').localeCompare(a.since ?? ''))[0]
+  const changes = (changelog.data ?? []).filter((change) => change.protocolId === protocol.id)
+
+  const figure = (label: ReactNode, value: ReactNode, sub: ReactNode, to?: string): ReactNode => {
+    const body = (
+      <>
+        <div className="m-l">{label}</div>
+        <div className="m-v">{value}</div>
+        <div className="m-s">{sub}</div>
+      </>
+    )
+    return to ? (
+      <Link className="m" to={to}>
+        {body}
+      </Link>
+    ) : (
+      <div className="m">{body}</div>
+    )
+  }
 
   return (
-    <>
-      <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <Link to="/">Matrix</Link>
+    <div className="page protocol-page">
+      <nav className="crumbs" aria-label="Breadcrumb">
+        <Link to="/">Protocols</Link>
         <span>/</span>
+        {protocol.group ? (
+          <>
+            <span>{protocol.group}</span>
+            <span>/</span>
+          </>
+        ) : null}
         <span aria-current="page">{protocol.name}</span>
       </nav>
 
-      <section className="protocol-heading">
-        <div className="protocol-identity">
+      <section className="identity">
+        <div className="id-left">
           <ProtocolAvatar id={protocol.id} name={protocol.name} large />
           <div>
-            <span className="eyebrow">
-              {protocol.group ? `${protocol.group} · ` : ''}
-              {categoryLabel(protocol.category)} · ETHEREUM MAINNET
-            </span>
-            <h1>{protocol.name}</h1>
-            <div className="family-tags">
-              <span>{protocol.id}</span>
-              {protocol.website ? (
-                <ExternalLink href={protocol.website} className="outline-badge">
-                  Website
-                </ExternalLink>
+            <div className="id-title">
+              <h1>{protocol.name}</h1>
+              <Prov kind="meta" title="Protocol facts from the defi-dna registry" />
+            </div>
+            <div className="id-sub">
+              <b>{categoryLabel(protocol.category)}</b>
+              {protocol.description ? ` · ${protocol.description}` : ''}
+            </div>
+            <div className="id-chains">
+              <span className="lbl">Network</span>
+              <span className="tag">Ethereum mainnet</span>
+              {versions.length > 1 ? (
+                <>
+                  <span className="lbl">Versions</span>
+                  {versions.map((version) =>
+                    version.id === protocol.id ? (
+                      <span className="tag on" key={version.id} aria-current="page">
+                        {version.name}
+                      </span>
+                    ) : (
+                      <Link className="tag" key={version.id} to={`/protocol/${version.id}`}>
+                        {version.name}
+                      </Link>
+                    ),
+                  )}
+                </>
               ) : null}
             </div>
           </div>
         </div>
-        <Link to="/sources" className="button secondary">
-          About the feeds <IconArrow />
-        </Link>
+        <div className="id-links">
+          {protocol.website ? (
+            <ExternalLink className="linkbtn" href={protocol.website}>
+              Website
+            </ExternalLink>
+          ) : null}
+          {tvl?.url ? (
+            <ExternalLink className="linkbtn" href={tvl.url}>
+              DefiLlama
+            </ExternalLink>
+          ) : null}
+        </div>
       </section>
 
-      {protocol.description ? (
-        <p className="muted" style={{ maxWidth: '68ch', marginBottom: 20 }}>
-          {protocol.description}
-        </p>
-      ) : null}
+      <section className="mstrip" aria-label="Key figures">
+        {figure(
+          <>
+            TVL <Prov kind="meta" />
+          </>,
+          formatUsd(tvl?.value) ?? '—',
+          tvl ? `DefiLlama · Ethereum · ${ageLabel(tvl.fetchedAt) ?? '—'} ago` : 'DefiLlama',
+        )}
+        {figure(
+          <>
+            Category <Prov kind="meta" />
+          </>,
+          categoryLabel(protocol.category),
+          'registry',
+        )}
+        {figure(
+          <>
+            Network <Prov kind="meta" />
+          </>,
+          'Ethereum',
+          'mainnet only',
+        )}
+        {figure(
+          <>
+            Coverage <Prov kind="cov">Cov</Prov>
+          </>,
+          record ? (
+            <>
+              {withData.length} <small>/ {feeds.length}</small>
+            </>
+          ) : (
+            '—'
+          ),
+          'feeds with data',
+          `${base}/risk`,
+        )}
+        {figure(
+          <>
+            Incidents <Prov kind="src">Src</Prov>
+          </>,
+          incidents?.value != null ? (
+            <>
+              {incidents.value} <small>recorded</small>
+            </>
+          ) : (
+            '—'
+          ),
+          latestIncident
+            ? `DefiLlama · latest ${dateInfo(latestIncident.date).label}`
+            : 'DefiLlama',
+          `${base}/data`,
+        )}
+        {figure(
+          <>
+            Changed <Prov kind="cov">Cov</Prov>
+          </>,
+          lastChange ? (
+            <>
+              {ageLabel(lastChange.since)} <small>ago</small>
+            </>
+          ) : (
+            '—'
+          ),
+          lastChange ? `${lastChange.feed.name} changed` : 'latest move in a feed’s value',
+        )}
+      </section>
 
-      {data ? (
-        <ProtocolRecordView protocol={protocol} record={data} />
-      ) : error ? (
-        <div className="empty-state" role="alert">
-          <h3>What the feeds publish about {protocol.name} could not be loaded</h3>
-          <p>
-            Nothing is shown until it is. A missing card here means missing data, not a missing
-            risk.
-          </p>
-          <button className="button primary" onClick={() => window.location.reload()}>
-            Try again
-          </button>
-          <details>
-            <summary>Technical details</summary>
-            <p>{error}</p>
-          </details>
-        </div>
-      ) : (
-        <div className="empty-state" role="status">
-          <h3>Loading what the feeds publish…</h3>
-          <div className="loading-track" />
-        </div>
-      )}
-
-      {siblings.length > 0 ? (
-        <p className="sibling-line">
-          Other {protocol.group} versions:{' '}
-          {siblings.map((sibling, position) => (
-            <span key={sibling.id}>
-              {position > 0 ? ' · ' : ''}
-              <Link to={`/protocol/${sibling.id}`}>{sibling.name}</Link>
+      {record ? (
+        <section className="covblock" aria-label="Feed coverage">
+          <div className="cov-head">
+            <Prov kind="cov">Data coverage</Prov>
+            <span className="ttl">
+              <b>
+                {withData.length} / {feeds.length}
+              </b>{' '}
+              feeds with data
             </span>
-          ))}
-          . Each is collected on its own — nothing is carried across versions.
-        </p>
+            <span className="cov-legend">
+              {(['pos', 'neu', 'neg'] as Signal[]).map((signal) => (
+                <span key={signal}>
+                  <StatusDot tone={signal} />
+                  {signals[signal]} {SIGNAL_LABELS[signal].toLowerCase()}
+                </span>
+              ))}
+              <span>
+                <StatusDot tone="none" />
+                {feeds.length - withData.length - errors.length} no data
+              </span>
+              {errors.length > 0 ? (
+                <span>
+                  <StatusDot tone="error" />
+                  {errors.length} collection error
+                </span>
+              ) : null}
+            </span>
+            <span className="note">
+              Colour = the feed’s own characterization, on its own scale. Click a feed to read it.
+            </span>
+          </div>
+          <div
+            className="covsegs"
+            style={{ gridTemplateColumns: `repeat(${feeds.length}, minmax(0, 1fr))` }}
+          >
+            {feeds.map((feed, k) => {
+              const tone = tones[k] ?? 'none'
+              const updated = record.feeds[feed.id]?.updatedAt
+              return (
+                <Link
+                  key={feed.id}
+                  className={`cseg st-${tone}`}
+                  to={`${base}/risk/${feed.id}`}
+                  title={`${feed.name} — ${TONE_LABELS[tone]}`}
+                >
+                  <i />
+                  <span>{feed.name}</span>
+                  <small>
+                    {TONE_LABELS[tone]}
+                    {statusOf(feed.id) === 'ok' && updated ? ` · ${dateInfo(updated).label}` : ''}
+                  </small>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
       ) : null}
+
+      <div className="tabs-anchor" ref={anchor} />
+      <nav className="tabs" aria-label="Protocol sections">
+        {(Object.keys(TABS) as Tab[]).map((key) => (
+          <Link
+            key={key}
+            to={key === 'overview' ? base : `${base}/${key}`}
+            className={tab === key ? 'on' : undefined}
+            aria-current={tab === key ? 'page' : undefined}
+          >
+            {TABS[key].label}
+            {key === 'risk' && record ? (
+              <span className="cnt">
+                {withData.length} / {feeds.length}
+              </span>
+            ) : null}
+          </Link>
+        ))}
+        <span className="hint">{TABS[tab].hint}</span>
+      </nav>
+
+      {!record ? (
+        <RecordState protocol={protocol} error={error} />
+      ) : tab === 'risk' ? (
+        <RiskIntelligence protocol={protocol} record={record} index={index} feedId={feedParam} />
+      ) : tab === 'data' ? (
+        <DataTab protocol={protocol} record={record} versions={versions} />
+      ) : (
+        <OverviewTab
+          protocol={protocol}
+          record={record}
+          versions={versions}
+          changes={changes}
+          changelogError={changelog.error}
+          changelogLoading={!changelog.data && !changelog.error}
+        />
+      )}
 
       <div className="page-end-note">
         <span>Spotted an outdated value or a missing feed?</span>
@@ -117,153 +366,396 @@ export const ProtocolPage = () => {
           Send a correction <IconArrow />
         </Link>
       </div>
-    </>
+    </div>
   )
 }
 
-/** Everything that comes from the generated record: figures, assessments, incidents. */
-const ProtocolRecordView = ({
+const RegistryFacts = ({
+  protocol,
+  versions,
+  className = 'facts',
+}: {
+  protocol: Protocol
+  versions: Protocol[]
+  className?: string
+}) => (
+  <dl className={className}>
+    <div>
+      <dt>Name</dt>
+      <dd>{protocol.name}</dd>
+    </div>
+    <div>
+      <dt>Protocol</dt>
+      <dd>{protocol.group ?? protocol.name}</dd>
+    </div>
+    <div>
+      <dt>Category</dt>
+      <dd>{categoryLabel(protocol.category)}</dd>
+    </div>
+    <div>
+      <dt>Network</dt>
+      <dd>Ethereum mainnet</dd>
+    </div>
+    <div>
+      <dt>Versions tracked</dt>
+      <dd>{versions.length}</dd>
+    </div>
+    <div>
+      <dt>Registry id</dt>
+      <dd className="mono">{protocol.id}</dd>
+    </div>
+    {protocol.website ? (
+      <div>
+        <dt>Website</dt>
+        <dd>
+          <ExternalLink href={protocol.website}>{hostOf(protocol.website)}</ExternalLink>
+        </dd>
+      </div>
+    ) : null}
+  </dl>
+)
+
+const OverviewTab = ({
   protocol,
   record,
+  versions,
+  changes,
+  changelogError,
+  changelogLoading,
 }: {
   protocol: Protocol
   record: ProtocolDetail
+  versions: Protocol[]
+  changes: Change[]
+  changelogError: string | null
+  changelogLoading: boolean
 }) => {
-  const { metrics, feeds } = record
-  const tvl = metrics['tvl']
-  const incidents = metrics['incidents']
-
-  const withData = allFeeds.filter((feed) => feeds[feed.id]?.status === 'ok')
-  const missing = allFeeds.filter((feed) => feeds[feed.id] && feeds[feed.id]?.status !== 'ok')
+  const base = `/protocol/${protocol.id}`
+  const states = feeds.map((feed) => toneOf(feed, record.feeds[feed.id]))
+  const withData = feeds.filter((feed) => record.feeds[feed.id]?.status === 'ok').length
+  const tvl = record.metrics['tvl']
+  const incidents = record.metrics['incidents']
+  const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
+    b.date.localeCompare(a.date),
+  )[0]
+  const feedName = (id: string) => feeds.find((feed) => feed.id === id)?.name ?? id
 
   return (
-    <>
-      <div className="protocol-summary">
-        <div>
-          <span className="summary-label">
-            {tvlLabel}
-            <Info label="What this figure is">
-              A measured quantity published by DefiLlama for this protocol, not a risk rating. It is
-              never combined with what a feed says.
-            </Info>
-          </span>
-          <strong>{formatUsd(tvl?.value) ?? 'Not available'}</strong>
-          <small>Collected {dateInfo(tvl?.fetchedAt).label}</small>
-        </div>
-        <div>
-          <span className="summary-label">
-            Feeds with data
-            <Info label="About coverage">
-              A feed may assess the protocol, one of its deployments, or the vaults inside it — and
-              it does not always say which. More data does not imply a safer protocol.
-            </Info>
-          </span>
-          <strong>
-            {withData.length}
-            <span className="summary-total"> / {allFeeds.length}</span>
-          </strong>
-          <small>
-            {missing.length
-              ? `${missing.length} feed${missing.length === 1 ? '' : 's'} without data here`
-              : 'Check the scope of each assessment'}
-          </small>
-        </div>
-        <div className="summary-guidance">
-          <span className="eyebrow">WHERE TO START</span>
-          <p>
-            {withData.length
-              ? 'Read the cards below. Where two feeds disagree, both are shown — we do not resolve it.'
-              : 'No feed we track publishes data here yet. That is a gap in coverage, not a verdict.'}
-          </p>
-          <a href="#assessments" className="text-link">
-            {withData.length ? 'Go to the assessments' : 'See the gaps'} <IconArrow />
-          </a>
-        </div>
-      </div>
-
-      <nav className="section-nav" aria-label="On this page">
-        <a href="#assessments">
-          Assessments <span>{withData.length}</span>
-        </a>
-        <a href="#incidents">Incidents</a>
-        <Link to="/methodology">Reading guide</Link>
-      </nav>
-
-      <section id="assessments" className="assessment-section">
-        <div className="section-heading">
-          <div>
-            <h2>What the feeds publish</h2>
-            <p>Their words, their scales, their scopes.</p>
+    <div className="two">
+      <div className="stack">
+        <section className="card">
+          <div className="card-h">
+            <h2>Protocol overview</h2>
+            <Prov kind="meta" />
+            <span className="aside">defi-dna registry</span>
           </div>
-          <span className="section-aside">
-            Feed assessment dates
-            <DataAgeHelp />
-          </span>
-        </div>
+          <div className="card-b">
+            {protocol.description ? <p className="desc">{protocol.description}</p> : null}
+            <RegistryFacts protocol={protocol} versions={versions} />
+          </div>
+        </section>
 
-        {withData.length === 0 && (
-          <div className="coverage-notice">
-            <strong>No data collected yet</strong>
-            <span>
-              We track {protocol.name}, but no feed in the registry publishes something we could map
-              to it. This establishes nothing about whether it is safe.
+        <section className="card">
+          <div className="card-h">
+            <h2>Data coverage</h2>
+            <Prov kind="cov" />
+            <span className="aside">
+              <CoverageRing states={states} size={26} />
+              <span>
+                {withData} of {feeds.length} connected feeds publish data about {protocol.name}
+              </span>
+              <Link className="text-link" to={`${base}/risk`}>
+                Open risk intelligence →
+              </Link>
             </span>
           </div>
-        )}
-
-        <div className="assessment-grid">
-          {withData.map((feed) => {
-            const observation = feeds[feed.id]
-            return observation ? (
-              <FeedAssessment key={feed.id} feed={feed} data={observation} />
-            ) : null
-          })}
-        </div>
-
-        {missing.length > 0 && (
-          <div className="coverage-gaps">
-            <h3>
-              Coverage gaps <span className="count-badge">{missing.length}</span>
-              <Info label="Why a feed may be missing">
-                A gap can mean the feed does not cover this protocol, covers it under a scope we
-                have not mapped, or that our pipeline failed. Those are different things and the
-                card says which.
-              </Info>
-            </h3>
-            <div className="gap-grid">
-              {missing.map((feed) => {
-                const observation = feeds[feed.id]
-                return observation ? (
-                  <FeedAssessment key={feed.id} feed={feed} data={observation} />
-                ) : null
+          <div className="card-b">
+            <div className="ftiles">
+              {feeds.map((feed) => {
+                const data = record.feeds[feed.id]
+                const status = data?.status ?? 'none'
+                const tone = toneOf(feed, data)
+                return (
+                  <Link key={feed.id} className={`ftile st-${tone}`} to={`${base}/risk/${feed.id}`}>
+                    <span className="ft-top">
+                      <SourceMark id={feed.id} />
+                      <b>{feed.name}</b>
+                      <StatusPill tone={tone} />
+                    </span>
+                    <span className="ft-head">
+                      {status === 'ok' && data?.value ? (
+                        <q>{data.value}</q>
+                      ) : status === 'error' ? (
+                        'We could not read this feed'
+                      ) : (
+                        `No data published about ${protocol.name}`
+                      )}
+                    </span>
+                    <span className="ft-meta">
+                      {feed.topic}
+                      {status === 'ok' ? ` · assessed ${dateInfo(data?.updatedAt).label}` : ''}
+                    </span>
+                  </Link>
+                )
               })}
             </div>
           </div>
-        )}
-      </section>
-
-      {tvl?.extra?.components?.length || tvl?.extra?.text?.length ? (
-        <section className="context-section" aria-label="Additional DefiLlama TVL data">
-          <TvlComponentsExtra components={tvl.extra.components} />
-          <TextExtra text={tvl.extra.text} />
-        </section>
-      ) : null}
-
-      <section id="incidents" className="context-section">
-        <div className="section-heading">
-          <div>
-            <h2>{incidentsLabel}</h2>
-            <p>Reported incidents — separate from the assessments above.</p>
+          <div className="card-f">
+            <span>
+              Quoted text is each feed’s own headline. Status colour is positioned on that feed’s
+              own scale; neutral where the scale gives no reading.
+            </span>
+            <span>No data ≠ no risk</span>
           </div>
-          <Info label="About this section">
-            Incident history is what DefiLlama attributes to this protocol id. Absence from their
-            registry is not proof that nothing happened.
-          </Info>
-        </div>
+        </section>
 
-        <IncidentsExtra incidents={incidents?.extra?.incidents} note={incidents?.note} />
-        <TextExtra text={incidents?.extra?.text} />
-      </section>
+        <section className="card">
+          <div className="card-h">
+            <h2>Latest changes</h2>
+            <Prov kind="cov" />
+            <span className="aside">from our run log</span>
+          </div>
+          <div className="card-b tl-body">
+            {changelogError ? (
+              <p className="muted">The run log could not be loaded.</p>
+            ) : changelogLoading ? (
+              <div className="loading-track" />
+            ) : changes.length === 0 ? (
+              <p className="muted">No change recorded for {protocol.name} since the log began.</p>
+            ) : (
+              <ul className="tl">
+                {changes.slice(0, TIMELINE_SHOWN).map((change, k) => {
+                  const [day, time] = dayAndTime(change.ts)
+                  return (
+                    <li key={`${change.ts}-${change.feedId}-${k}`}>
+                      <span className="d">
+                        {day}
+                        <small>{time}</small>
+                      </span>
+                      <span className="who">
+                        <SourceMark id={change.feedId} />
+                      </span>
+                      <div>
+                        <div className="what">
+                          <b>{feedName(change.feedId)}</b>{' '}
+                          {change.from === null ? 'published a first value' : 'changed its value'}
+                        </div>
+                        <div className="det">
+                          {change.from === null ? null : (
+                            <>
+                              <q>{change.from}</q> →{' '}
+                            </>
+                          )}
+                          {change.to === null ? 'no value' : <q>{change.to}</q>}, as published.
+                        </div>
+                      </div>
+                      <Link className="go" to={`${base}/risk/${change.feedId}`}>
+                        View feed →
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+          <div className="card-f">
+            <span>
+              A change is logged when a feed’s published value moves between two runs. Values are
+              quoted from the feed.
+            </span>
+            <Link className="text-link" to="/changelog">
+              Full log →
+            </Link>
+          </div>
+        </section>
+      </div>
+
+      <aside className="stack">
+        <section className="card">
+          <div className="card-h">
+            <h2>Key figures</h2>
+            <Prov kind="meta">Meta · DefiLlama</Prov>
+          </div>
+          <div className="card-b kv-body">
+            <dl className="kv">
+              <div>
+                <dt>
+                  TVL
+                  <Info label="What this figure is">
+                    The Ethereum-mainnet figure DefiLlama publishes for this version. A measured
+                    quantity, not a risk rating, and never combined with what a feed says.
+                  </Info>
+                </dt>
+                <dd>
+                  {formatUsd(tvl?.value) ?? '—'}
+                  <small>Ethereum mainnet</small>
+                </dd>
+              </div>
+              <div>
+                <dt>TVL components</dt>
+                <dd>
+                  {tvl?.extra?.components?.length ?? '—'}
+                  <small>DefiLlama ids summed</small>
+                </dd>
+              </div>
+              <div>
+                <dt>Incidents recorded</dt>
+                <dd>
+                  {incidents?.value ?? '—'}
+                  <small>by DefiLlama</small>
+                </dd>
+              </div>
+              <div>
+                <dt>Latest incident</dt>
+                <dd>
+                  {latestIncident ? dateInfo(latestIncident.date).label : '—'}
+                  {latestIncident ? <small>{latestIncident.classification}</small> : null}
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div className="card-f">
+            <span>DefiLlama · collected {dateInfo(tvl?.fetchedAt).label}</span>
+            <Link className="text-link" to={`${base}/data`}>
+              All figures →
+            </Link>
+          </div>
+        </section>
+
+        <section className="card">
+          <div className="card-h">
+            <h2>How to read this page</h2>
+          </div>
+          <div className="card-b legend-list">
+            <div>
+              <Prov kind="meta" />
+              <span>Facts about the protocol: our registry, and what DefiLlama measures.</span>
+            </div>
+            <div>
+              <Prov kind="cov" />
+              <span>Which feeds have published anything about {protocol.name}, and when.</span>
+            </div>
+            <div>
+              <Prov kind="src" />
+              <span>Published by a named source. Shown as-is, with its date and a link.</span>
+            </div>
+            <div>
+              <Prov kind="cp" />
+              <span>
+                Written by defi-dna about <i>our data</i> — scope, gaps, failures, and the reading a
+                feed’s own scale gives. Never a verdict of ours on the protocol.
+              </span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  )
+}
+
+const DataTab = ({
+  protocol,
+  record,
+  versions,
+}: {
+  protocol: Protocol
+  record: ProtocolDetail
+  versions: Protocol[]
+}) => {
+  const tvl = record.metrics['tvl']
+  const incidents = record.metrics['incidents']
+  const feedLinks = feeds.filter(
+    (feed) => record.feeds[feed.id]?.status === 'ok' && record.feeds[feed.id]?.url,
+  )
+
+  return (
+    <>
+      <div className="row2">
+        <section className="card">
+          <div className="card-h">
+            <h2>Protocol metadata</h2>
+            <Prov kind="meta" />
+            <span className="aside">
+              registry · <ExternalLink href={REGISTRY_URL}>Suggest an edit</ExternalLink>
+            </span>
+          </div>
+          <div className="card-b">
+            {protocol.description ? <p className="desc">{protocol.description}</p> : null}
+            <RegistryFacts protocol={protocol} versions={versions} className="facts three" />
+          </div>
+        </section>
+        <section className="card">
+          <div className="card-h">
+            <h2>TVL</h2>
+            <Prov kind="meta" />
+            <span className="aside">via DefiLlama · {dateInfo(tvl?.fetchedAt).label}</span>
+          </div>
+          <div className="card-b">
+            <div className="tvl-big">{formatUsd(tvl?.value) ?? 'Not available'}</div>
+            <p className="tvl-note">
+              The Ethereum-mainnet figure, as DefiLlama publishes it. A measured quantity — never
+              combined with what a feed says.
+            </p>
+            <TvlComponentsExtra components={tvl?.extra?.components} />
+            <TextExtra text={tvl?.extra?.text} />
+          </div>
+        </section>
+      </div>
+
+      <div className="row2">
+        <section className="card" id="incidents">
+          <div className="card-h">
+            <h2>Incidents</h2>
+            <Prov kind="src" />
+            <span className="aside">recorded by DefiLlama</span>
+          </div>
+          <div className="card-b">
+            {incidents ? (
+              <>
+                <IncidentsExtra incidents={incidents.extra?.incidents ?? []} />
+                <TextExtra text={incidents.extra?.text} />
+              </>
+            ) : (
+              <p className="muted">DefiLlama’s incident list was not collected for this version.</p>
+            )}
+          </div>
+          <div className="card-f">
+            <span>
+              {incidents?.note ??
+                'Attributing an incident to a protocol is DefiLlama’s call. defi-dna does not verify, classify or score incidents.'}
+            </span>
+            {incidents?.url ? (
+              <ExternalLink href={incidents.url}>DefiLlama hacks</ExternalLink>
+            ) : null}
+          </div>
+        </section>
+        <section className="card">
+          <div className="card-h">
+            <h2>Links</h2>
+            <Prov kind="meta" />
+          </div>
+          <div className="card-b links-list">
+            {protocol.website ? (
+              <ExternalLink className="link-row" href={protocol.website}>
+                <b>Website</b>
+                <span>{hostOf(protocol.website)}</span>
+              </ExternalLink>
+            ) : null}
+            {tvl?.url ? (
+              <ExternalLink className="link-row" href={tvl.url}>
+                <b>DefiLlama</b>
+                <span>{hostOf(tvl.url)}</span>
+              </ExternalLink>
+            ) : null}
+            {feedLinks.map((feed) => (
+              <ExternalLink className="link-row" key={feed.id} href={record.feeds[feed.id]?.url}>
+                <b>{feed.name}</b>
+                <span>{hostOf(record.feeds[feed.id]?.url)}</span>
+              </ExternalLink>
+            ))}
+          </div>
+        </section>
+      </div>
     </>
   )
 }

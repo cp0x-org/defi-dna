@@ -186,14 +186,26 @@ describe('bundle', () => {
         collect: async ({ protocol }) => ({ value: protocol.id === 'p1' ? 5 : null }),
       },
     }
-    const reg = registry([answering('f1', { p1: A })], [tvl])
+    // f2 states how its scale reads; f1 does not, so it never gets a reading.
+    const graded = answering('f2', {
+      p1: { ...A, value: 'Band C · 12' },
+      p2: { ...A, value: 'Band X' },
+    })
+    graded.feed.status = {
+      rule: 'F2 grades A to C, as its methodology describes.',
+      match: '^Band ([A-C])',
+      values: { a: 'positive', b: 'neutral', c: 'negative' },
+    }
+    const reg = registry([answering('f1', { p1: A }), graded], [tvl])
     await run(reg)
     const web = path.join(dir, 'web')
     const { bundle: index } = await bundle({ dataDir: dir, webDir: web, registry: reg })
     expect(index.rows).toEqual([
-      { id: 'p1', tvl: 5, feeds: { f1: true } },
-      { id: 'p2', tvl: null, feeds: { f1: false } },
+      { id: 'p1', tvl: 5, feeds: { f1: true, f2: true }, readings: { f2: 'negative' } },
+      { id: 'p2', tvl: null, feeds: { f1: false, f2: true }, readings: {} },
     ])
+    // The reading is copied, never the value.
+    expect(JSON.stringify(index)).not.toContain('Band C')
     expect(index.sources?.['f1']?.lastOkAt).toBe(index.generatedAt)
     expect((await fs.readdir(web)).sort()).toEqual([
       'changelog.json',
