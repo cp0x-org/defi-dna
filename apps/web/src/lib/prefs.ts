@@ -1,26 +1,23 @@
 /** Small view preferences that survive a reload — stored in a cookie, never sent anywhere. */
-const COOKIE = 'defi-dna_hidden_feeds'
+const COOKIE = 'defi-dna_coverage_view'
 const MAX_AGE = 60 * 60 * 24 * 365
 
-/**
- * Feeds the visitor switched off. We store the hidden set, not the visible one,
- * so "everything" stays the default — including feeds added after this visit.
- */
-export const readHiddenFeeds = (): string[] => {
+/** How the dashboard draws coverage: a ring, a bar of segments, or both side by side. */
+export type CoverageView = 'ring' | 'bar' | 'both'
+
+export const readCoverageView = (): CoverageView => {
   try {
-    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${COOKIE}=([^;]*)`))
-    return match?.[1] ? decodeURIComponent(match[1]).split(',').filter(Boolean) : []
+    const value = document.cookie.match(new RegExp(`(?:^|;\\s*)${COOKIE}=([^;]*)`))?.[1]
+    return value === 'bar' || value === 'both' ? value : 'ring'
   } catch {
-    return []
+    return 'ring'
   }
 }
 
-export const writeHiddenFeeds = (ids: string[]): void => {
+export const writeCoverageView = (view: CoverageView): void => {
   try {
-    document.cookie = `${COOKIE}=${encodeURIComponent(ids.join(','))}; path=${
-      import.meta.env.BASE_URL
-    }; max-age=${MAX_AGE}; samesite=lax`
+    document.cookie = `${COOKIE}=${view}; path=${import.meta.env.BASE_URL}; max-age=${MAX_AGE}; samesite=lax`
   } catch {
-    /* cookies unavailable (private mode, file://) — the selection resets next visit */
+    /* cookies unavailable (private mode, file://) — the choice resets next visit */
   }
 }

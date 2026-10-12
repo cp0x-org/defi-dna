@@ -58,6 +58,26 @@ export interface Feed {
   methodologyUrl?: string
   /** false: the feed is not collected and does not appear. */
   enabled: boolean
+  /** How the feed's own published scale reads, when it says. Absent: no colour beyond neutral. */
+  status?: StatusRule
+}
+
+/** The feed's own characterization of a value, never ours. */
+export const READINGS = ['positive', 'neutral', 'negative'] as const
+export type Reading = (typeof READINGS)[number]
+
+/**
+ * How to read a feed's headline as the feed itself characterizes it — its own
+ * colour band, risk level word or graded band, each of which the feed defines.
+ * Declared only where the feed publishes that meaning; we set no threshold.
+ */
+export interface StatusRule {
+  /** One sentence for readers: what the feed publishes and how it reads. Shown next to the colour. */
+  rule: string
+  /** A regular expression over the headline `value`; its first group is the feed's own word or band. */
+  match: string
+  /** That word or band, lower-case, to the feed's own characterization. Anything else stays neutral. */
+  values: Record<string, Reading>
 }
 
 /**
@@ -229,16 +249,22 @@ export interface RunStatus {
 /**
  * One dashboard row, as generated.
  *
- * It carries facts only — the TVL figure and, per feed, whether data exists.
- * Names and grouping come from the hand-maintained registry, and the values
- * themselves stay on the protocol page: feeds assess different things, so the
- * only thing they can be compared on across a row is whether data exists.
+ * It carries the TVL figure and, per feed, whether data exists and how the feed
+ * itself reads its value. Names and grouping come from the hand-maintained
+ * registry, and the values themselves stay on the protocol page: feeds assess
+ * different things on different scales, so a row never puts them side by side.
  */
 export interface IndexRow {
   id: string
   tvl: number | null
   /** feed id -> true when that feed has data for this protocol. */
   feeds: Record<string, boolean>
+  /**
+   * feed id -> the feed's own reading of its headline, where its feed.json
+   * states how its scale reads. Absent for a feed with no data or no reading.
+   * Older bundles have no field at all; read that as "no reading".
+   */
+  readings?: Record<string, Reading>
 }
 
 /** data/index.json — one request, everything the dashboard needs at runtime. */

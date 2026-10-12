@@ -47,34 +47,6 @@ export const IconInfo = () => (
     <path d="M12 11v5m0-9h.01" />
   </Svg>
 )
-export const IconHelp = () => (
-  <Svg size={16}>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.4m0 3.2h.01" />
-  </Svg>
-)
-export const IconSort = ({ dir }: { dir: 'asc' | 'desc' | null }) => (
-  <Svg size={14}>
-    {dir === null ? (
-      <path d="M8.5 10 12 6.2l3.5 3.8M8.5 14l3.5 3.8 3.5-3.8" />
-    ) : dir === 'asc' ? (
-      <path d="M12 19V5.5m-5.5 5.5L12 5.5l5.5 5.5" />
-    ) : (
-      <path d="M12 5v13.5m5.5-5.5L12 18.5 6.5 13" />
-    )}
-  </Svg>
-)
-export const IconClock = () => (
-  <Svg size={14}>
-    <circle cx="12" cy="12" r="9" />
-    <path d="M12 7v5l3 2" />
-  </Svg>
-)
-export const IconEthereum = () => (
-  <Svg size={15}>
-    <path d="m12 2 6 10-6 4-6-4 6-10Zm-6 13 6 7 6-7-6 4-6-4Z" />
-  </Svg>
-)
 export const IconTheme = ({ dark }: { dark: boolean }) =>
   dark ? (
     <Svg>
@@ -86,8 +58,16 @@ export const IconTheme = ({ dark }: { dark: boolean }) =>
       <path d="M20 14a8.5 8.5 0 0 1-10-10 8.5 8.5 0 1 0 10 10Z" />
     </Svg>
   )
-export const IconBook = () => (
+export const IconFilters = () => (
+  <Svg size={15}>
+    <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0" />
+    <circle cx="16" cy="6" r="2" />
+    <circle cx="10" cy="12" r="2" />
+    <circle cx="18" cy="18" r="2" />
+  </Svg>
+)
+export const IconClose = () => (
   <Svg>
-    <path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1Zm0 0v15" />
+    <path d="M6 6l12 12M18 6 6 18" />
   </Svg>
 )

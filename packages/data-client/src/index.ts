@@ -26,9 +26,12 @@ export type {
   Protocol,
   ProtocolDetail,
   ProtocolRecord,
+  Reading,
   SourceStatus,
+  StatusRule,
 } from '@defi-dna/core/types'
 export { formatUsd } from '@defi-dna/core/format'
+export { readStatus, statusWord } from '@defi-dna/core/status'
 
 /**
  * The read side of the data layer: the generated files, fetched at runtime.
@@ -82,7 +85,7 @@ function load<T>(file: string): Promise<T> {
 export const loadIndex = (): Promise<IndexBundle> => load<IndexBundle>('index.json')
 
 /** Measured quantities for every protocol: one small file that moves every day. */
-const loadMetrics = (): Promise<MetricsFile> =>
+export const loadMetrics = (): Promise<MetricsFile> =>
   load<MetricsFile>('metrics.json').catch(() => ({}) as MetricsFile)
 
 /** Everything we collected about one protocol, loaded when its page opens. */
