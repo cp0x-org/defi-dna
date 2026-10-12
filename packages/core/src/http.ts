@@ -103,7 +103,9 @@ export class Http {
         if (!response.ok && response.status !== 206) {
           // A query API names the cause in the body (`UNAUTHENTICATED`); it never echoes a key.
           const cause = body === undefined ? '' : `: ${(await response.text()).slice(0, 200)}`
-          throw new Error(`HTTP ${response.status} for ${label}${cause}`)
+          lastError = new Error(`HTTP ${response.status} for ${label}${cause}`)
+          if (this.options.verbose) console.warn(`  retry ${attempt + 1}: ${String(lastError)}`)
+          continue
         }
         const text = await response.text()
         await write(file, {

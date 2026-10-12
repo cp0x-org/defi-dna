@@ -5,8 +5,12 @@ const API = 'https://api.credora.io/graphql'
 const SITE = 'https://app.credora.network'
 /** The public list of rated vaults; Credora documents no page per vault. */
 const VAULTS = `${SITE}/vaults`
-/** Credora updates a rating "within 24h to 48h of material changes"; vault refreshes are weekly, moving to daily. */
-const DAY = 86_400
+/**
+ * Every online run asks the API afresh: there is no published quota, the run
+ * makes one request, and the schedule is at most twice a day. The copy on disk
+ * serves --offline, fixtures and a run whose network failed.
+ */
+const TTL = 0
 /** The documented maximum of `limit`. */
 const PAGE = 1000
 const MAX_PAGES = 5
@@ -81,8 +85,8 @@ const ratingType = (vault: Rating): string => vault.ratingType?.toLowerCase() ??
  * The API is GraphQL behind a whitelisted key (CREDORA_API_KEY, header
  * `ClientSecret`). One query per run, in prepare(), filtered to Ethereum
  * server-side; the product filter is applied here because the documentation
- * spells `vaults` in either case. The response is cached for a day, so
- * --offline needs no key; an online run without the key skips the feed.
+ * spells `vaults` in either case. The response is kept on disk for --offline,
+ * which needs no key; an online run without the key skips the feed.
  */
 const adapter: FeedAdapter<VaultsByProtocol> = {
   id: 'credora',
@@ -100,7 +104,7 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
       const body = await ctx.postJson<RatingsResponse>(
         API,
         { query: query(page) },
-        { ttlSeconds: DAY, headers },
+        { ttlSeconds: TTL, headers },
       )
       // GraphQL reports a refused query with HTTP 200; the message names the cause, never the key.
       if (body.errors?.length) {

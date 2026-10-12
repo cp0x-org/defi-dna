@@ -103,8 +103,7 @@ quota.
 The Credora feed needs an API key too: `CREDORA_API_KEY`, as an Actions
 secret and in the local `.env`. Credora whitelists API access on request
 (the form is linked from its API documentation). One request per run reads
-every Ethereum rating; the response is cached for a day, so offline runs
-need no key.
+every Ethereum rating; offline runs replay the last response and need no key.
 
 ## Docker
 
