@@ -1,0 +1,130 @@
+{
+  "data": [
+    {
+      "node_id": "aave-v3-arbitrum",
+      "label": "Aave v3 — Arbitrum One instance (pool rev 11)",
+      "score": 58,
+      "band": "C",
+      "date": "2026-09-14",
+      "applied": {
+        "k1": 1,
+        "k2": 0,
+        "vault_aggregation": "none"
+      },
+      "protocol": {
+        "rating": 58,
+        "date": "2026-09-14"
+      },
+      "vaults": {
+        "rated_count": 0,
+        "tvl_usd": 0,
+        "score_tvl_weighted": null,
+        "score_mean": null
+      }
+    },
+    {
+      "node_id": "aave-v3-ethereum",
+      "label": "Aave V3 — Ethereum",
+      "score": 67.88,
+      "band": "C",
+      "date": "2026-10-11",
+      "applied": {
+        "k1": 0.6,
+        "k2": 0.4,
+        "vault_aggregation": "tvl_weighted_mean"
+      },
+      "protocol": {
+        "rating": 62,
+        "date": "2026-09-14"
+      },
+      "vaults": {
+        "rated_count": 23,
+        "tvl_usd": 22404979568.53,
+        "score_tvl_weighted": 76.69,
+        "score_mean": 74.79
+      }
+    },
+    {
+      "node_id": "aave-v3-ethereum-horizon",
+      "label": "Aave Horizon — Ethereum RWA instance (Aave v3.3 fork, pool rev 7)",
+      "score": 61.38,
+      "band": "C",
+      "date": "2026-10-11",
+      "applied": {
+        "k1": 0.6,
+        "k2": 0.4,
+        "vault_aggregation": "tvl_weighted_mean"
+      },
+      "protocol": {
+        "rating": 57,
+        "date": "2026-10-07"
+      },
+      "vaults": {
+        "rated_count": 3,
+        "tvl_usd": 226126201.24,
+        "score_tvl_weighted": 67.94,
+        "score_mean": 65.13
+      }
+    },
+    {
+      "node_id": "aave-v3-ethereum-lido",
+      "label": "Aave v3 — Ethereum Prime (Lido) instance (pool rev 11)",
+      "score": 69.96,
+      "band": "C",
+      "date": "2026-10-11",
+      "applied": {
+        "k1": 0.6,
+        "k2": 0.4,
+        "vault_aggregation": "tvl_weighted_mean"
+      },
+      "protocol": {
+        "rating": 66,
+        "date": "2026-10-07"
+      },
+      "vaults": {
+        "rated_count": 4,
+        "tvl_usd": 257048656.57,
+        "score_tvl_weighted": 75.91,
+        "score_mean": 74.8
+      }
+    },
+    {
+      "node_id": "sparklend",
+      "label": "SparkLend — Aave v3.0.2 fork under Sky governance (Ethereum)",
+      "score": 82.23,
+      "band": "B",
+      "date": "2026-10-11",
+      "applied": {
+        "k1": 0.6,
+        "k2": 0.4,
+        "vault_aggregation": "tvl_weighted_mean"
+      },
+      "protocol": {
+        "rating": 80,
+        "date": "2026-09-22"
+      },
+      "vaults": {
+        "rated_count": 9,
+        "tvl_usd": 3873386439.15,
+        "score_tvl_weighted": 85.57,
+        "score_mean": 77
+      }
+    }
+  ],
+  "count": 38,
+  "chain_id": 1,
+  "formula": {
+    "k1": 0.6,
+    "k2": 0.4,
+    "vault_aggregation": "tvl_weighted_mean",
+    "vault_max_age_days": 7,
+    "bands": [
+      ["A", 85],
+      ["B", 70],
+      ["C", 55],
+      ["D", 40],
+      ["F", 0]
+    ],
+    "note": "score = 0.6 × the protocol node's own rating + 0.4 × the TVL-weighted mean (weight = tvl_30d_ma share) of the latest published score of every rated vault that deposits into it; with no rated vault the node rating stands alone (applied.k1 = 1). The band is read straight off the thresholds, without the dwell rule that smooths vault bands, so it can move on any day. A vault that deposits into more than one protocol node (every Morpho vault: the framework and the Blue instance) counts toward each. Vault scores are the published ones — their caps were computed against the node rating as of their own date, so after a node re-rate the two terms agree again at the next nightly. chain_id narrows the vault set only."
+  }
+}

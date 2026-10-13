@@ -1,146 +1,204 @@
 import { formatUsd, type Detail, type FeedAdapter, type FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const API = 'https://pigi.finance/api/v1'
 const SITE = 'https://app.pigi.finance'
 /** pigi recomputes ratings nightly, and the free plan allows 1,000 requests a month. */
 const TTL = 12 * 3600
 /**
- * The largest page the API serves. A page takes ~10 s whatever its size, so the
- * largest page means the fewest requests; the occasional 504 is retried by the
- * HTTP layer and does not count against the quota.
+ * Only Ethereum vaults enter the vault term. pigi documents `chain_id` as
+ * narrowing the vault set only: the node's own rating is the same on every chain.
  */
-const PAGE = 1000
-const MAX_PAGES = 5
 const ETHEREUM = 1
-/** Vaults listed individually on the protocol page, largest by TVL. */
-const TOP_VAULTS = 10
-
+const LISTING = `${API}/protocols?chain_id=${ETHEREUM}`
+const nodeUrl = (nodeId: string) => `${API}/protocols/${nodeId}?chain_id=${ETHEREUM}`
 /**
- * our protocol id -> the `protocol_name` pigi files the vaults under. pigi uses
- * one name per product line or version ("Morpho" and "Morpho v2", "SparkLend"
- * and "Spark"), so a row takes exactly the names it lists.
+ * pigi has no public page per protocol; the API answers only with a key. The
+ * card links the public documentation of the rating we read instead.
  */
-const table: Record<string, string | string[]> = mapping
-const names = (id: string): string[] => {
-  const value = table[id]
-  return value == null ? [] : typeof value === 'string' ? [value] : value
-}
+const DOCS = `${SITE}/defi-api-docs#api-v1-protocols-node-id`
+/** Vaults carried into `extra`, largest by TVL. Keeps a record of a big protocol under ~100 KB. */
+const MAX_VAULTS = 100
 
-/** The fields of pigi's Vault object this adapter reads. */
-export interface Vault {
+/** A vault that counted toward a node, as `/protocols/:node_id` lists it. */
+export interface NodeVault {
   strategy_id: number
+  name: string
   protocol_name: string
-  chain_id: number
-  pool_name: string
-  display_name: string | null
-  type: string | null
-  tvl_30d_ma: number | null
-  updated_at: string | null
-  risk_band: string | null
-  risk_score: number | null
+  score: number
+  band: string
+  date: string
+  tvl_usd: number | null
 }
 
-interface Listing {
-  data?: Vault[]
-  pagination?: { hasMore?: boolean }
+/** The fields of pigi's ProtocolRating (`/protocols/:node_id`) this adapter reads. */
+export interface Node {
+  node_id: string
+  label: string | null
+  score: number
+  band: string
+  /** The last date the number could have changed: the node's rating date or the newest vault row. */
+  date: string
+  applied: { k1: number; k2: number; vault_aggregation: string }
+  protocol: { rating: number; date: string; methodology_version?: string }
+  vaults: {
+    rated_count: number
+    stale_excluded?: number
+    tvl_usd: number
+    score_tvl_weighted: number | null
+    bands?: Record<string, number>
+    items?: NodeVault[]
+  }
+  formula?: { note?: string }
+  /** pigi's own remark, present only when no rated vault counted. */
+  note?: string
 }
 
-/** `display_name` is unique across pigi's catalogue; it is null for a vault added since the last nightly. */
-const vaultName = (vault: Vault): string => vault.display_name ?? vault.pool_name
+/** A row of `/protocols`: enough to list a node beside the row's headline. */
+export interface ListedNode {
+  node_id: string
+  label: string | null
+  score: number
+  band: string
+  date: string
+}
+
+export interface Prepared {
+  /** The nodes `/protocols` lists, by id; a mapped id outside it is not fetched. */
+  listed: Map<string, ListedNode>
+  headers: () => Promise<Record<string, string>>
+}
+
+/** `B 82.23/100` — the band and the score, exactly as published. */
+const verdict = (node: ListedNode): string => `${node.band} ${node.score}/100`
+
+/** The two terms pigi publishes behind the score and the weights it applied, each explained. */
+const breakdown = ({ node_id, protocol: own, vaults, applied, note }: Node): Detail[] => [
+  {
+    name: 'Node rating',
+    value: `${own.rating}/100`,
+    description:
+      `pigi’s own rating of ${node_id} itself, 0–100, higher = safer. Its rubric covers audits ` +
+      `and bounty, admin and pause authority, operational history and scale. Rated ${own.date}` +
+      (own.methodology_version ? `, methodology ${own.methodology_version}.` : '.') +
+      ` Weight in the score: ${applied.k1}.`,
+  },
+  ...(vaults.score_tvl_weighted == null
+    ? []
+    : [
+        {
+          name: 'Vault score, TVL-weighted',
+          value: String(vaults.score_tvl_weighted),
+          description: [
+            `The mean of pigi’s latest scores of the ${vaults.rated_count} rated Ethereum vault(s) ` +
+              `that deposit into ${node_id}, weighted by their 30-day average TVL` +
+              (formatUsd(vaults.tvl_usd) ? ` (${formatUsd(vaults.tvl_usd)} in all).` : '.') +
+              ` Weight in the score: ${applied.k2}.`,
+            vaults.bands
+              ? `Vaults by band: ${Object.entries(vaults.bands)
+                  .map(([band, count]) => `${band} ${count}`)
+                  .join(', ')}.`
+              : null,
+            vaults.stale_excluded
+              ? `${vaults.stale_excluded} vault(s) left out as stale (no rating for over a week).`
+              : null,
+          ]
+            .filter(Boolean)
+            .join(' '),
+        },
+      ]),
+  {
+    name: 'Weights',
+    value: `node ${applied.k1} · vaults ${applied.k2}`,
+    description:
+      `pigi’s fixed formula: score = ${applied.k1} × node rating + ${applied.k2} × vault score. ` +
+      `With no rated vault the node rating stands alone.${note ? ` ${note}` : ''}`,
+  },
+]
 
 /**
- * pigi publishes a rating row together with the day's data, so the date of the
- * newest data point is the rating date — checked against `/vaults/:id/risk`.
+ * What pigi publishes about the nodes filed under `nodeIds`. `node` is the
+ * headline, read in full; `others` are the row's other rated nodes, listed
+ * beside it with their own score and never combined with it.
  */
-const ratedOn = (vault: Vault): string => (vault.updated_at ?? '').slice(0, 10)
+export function assess(
+  nodeIds: string[],
+  node: Node | null,
+  others: ListedNode[] = [],
+): FeedResult {
+  if (!node) return { note: `pigi publishes no protocol rating for ${nodeIds.join(', ')}.` }
 
-/** `B · 77/100` — the band and the score, exactly as published. */
-const verdict = (vault: Vault): string =>
-  [vault.risk_band, vault.risk_score == null ? null : `${vault.risk_score}/100`]
-    .filter(Boolean)
-    .join(' · ')
-
-/** What pigi publishes about the vaults filed under `pigiNames`. */
-export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
-  const scope = pigiNames.join(', ')
-  // pigi has no page per protocol; each vault in `extra` links its own.
-  const url = `${SITE}/vaults`
-
-  if (listed.length === 0) {
-    return { url, note: `pigi lists no Ethereum vault under ${scope}.` }
-  }
-  const rated = listed
-    .filter((vault) => vault.risk_band)
-    .sort((a, b) => (b.tvl_30d_ma ?? 0) - (a.tvl_30d_ma ?? 0))
-  if (rated.length === 0) {
-    return {
-      url,
-      note: `pigi lists ${listed.length} Ethereum vault(s) under ${scope} and has published a rating for none of them.`,
-    }
-  }
-
-  const details: Detail[] = rated.slice(0, TOP_VAULTS).map((vault) => ({
-    name: vaultName(vault),
-    value: verdict(vault),
-    description: [
-      `Filed under ${vault.protocol_name}`,
-      vault.type,
-      formatUsd(vault.tvl_30d_ma) ? `TVL ${formatUsd(vault.tvl_30d_ma)} (30-day average)` : null,
-      ratedOn(vault) ? `Rated ${ratedOn(vault)}` : null,
-    ]
-      .filter(Boolean)
-      .join(' · '),
-  }))
-
-  const updatedAt = rated.map(ratedOn).filter(Boolean).sort().at(-1)
+  const shown = [node, ...others].map((listed) => listed.node_id)
+  const unlisted = nodeIds.filter((id) => !shown.includes(id))
+  const vaults = [...(node.vaults.items ?? [])].sort((a, b) => (b.tvl_usd ?? 0) - (a.tvl_usd ?? 0))
+  const omitted = Math.max(0, vaults.length - MAX_VAULTS)
 
   return {
-    value: `${rated.length} vaults rated`,
-    summary: `pigi.finance rates individual vaults rather than protocols. It rates ${rated.length} of the ${listed.length} Ethereum vault(s) it files under ${scope}.`,
-    details,
-    ...(updatedAt ? { updatedAt } : {}),
-    url,
+    value: verdict(node),
+    ...(node.label ? { summary: node.label } : {}),
+    details: breakdown(node),
+    updatedAt: node.date,
+    url: DOCS,
     note:
-      `Counted: ${rated.length} rated of the ${listed.length} Ethereum vault(s) pigi lists under ${scope}. ` +
-      `Bands run A (safest) to F and scores 0–100, higher = safer. No vault stands in for the ` +
-      `protocol and nothing is averaged — pigi publishes no protocol-level rating.`,
+      `Headline: ${node.node_id}.` +
+      (others.length > 0
+        ? ` Also rated, shown separately: ${others.map((other) => other.node_id).join(', ')}.`
+        : '') +
+      (unlisted.length > 0 ? ` Not rated by pigi: ${unlisted.join(', ')}.` : '') +
+      ' Vault score counts Ethereum vaults only.' +
+      (omitted > 0 ? ` Top ${MAX_VAULTS} vaults by TVL shown, ${omitted} more at pigi.` : ''),
     extra: {
-      vaultsListed: listed.length,
-      vaultsRated: rated.length,
-      vaults: rated.map((vault) => ({
-        name: vaultName(vault),
+      // No link: pigi has no public page for these nodes either.
+      ...(others.length > 0
+        ? {
+            facts: others.map((other) => ({
+              name: other.label ?? other.node_id,
+              value: `${verdict(other)} · ${other.date}`,
+            })),
+          }
+        : {}),
+      vaults: vaults.slice(0, MAX_VAULTS).map((vault) => ({
+        name: vault.name,
         version: vault.protocol_name,
         curator: null,
-        tier: vault.risk_band,
-        score: vault.risk_score,
-        tvlUsd: vault.tvl_30d_ma,
-        scoredAt: ratedOn(vault) || null,
+        tier: vault.band,
+        score: vault.score,
+        // Whole dollars: the cents are noise that would change the record every run.
+        tvlUsd: vault.tvl_usd == null ? null : Math.round(vault.tvl_usd),
+        scoredAt: vault.date,
         url: `${SITE}/vault/${vault.strategy_id}`,
       })),
+      // pigi asks for the formula to be quoted wherever the number is republished.
+      ...(node.formula?.note ? { text: [node.formula.note] } : {}),
     },
   }
 }
 
 /**
- * pigi.finance — risk ratings for individual vaults, lending reserves and pools.
+ * pigi.finance — cumulative protocol ratings.
  *
- * pigi rates vaults, not protocols, and files each under a `protocol_name`.
- * "Aave" holds only v3 pools (Core, Lido, Horizon, plus sGHO) and "Uniswap" only
- * v3 pools (fee tiers, 20-byte pool addresses), so they fill the v3 rows; the
- * v4 generations are filed apart — "Aave v4" (hub-and-spoke reserves) and
- * "Uniswap v4" (PoolManager pools, identified by pool id) — and fill the v4 rows.
+ * pigi rates vaults, and rates protocols as the dependency nodes the vaults
+ * deposit into. `/protocols` publishes one score per node: 0.6 × the node's own
+ * rating + 0.4 × the TVL-weighted mean of the latest scores of the rated vaults
+ * that deposit into it. The weights are pigi's, fixed and echoed in `formula`,
+ * so the number is carried as pigi's own.
+ *
+ * `mapping.json` names the nodes a row takes, the headline first: Aave v3 is
+ * Core, then Prime and Horizon; Morpho Vaults is Vaults V2, then MetaMorpho V1
+ * and V1.1. The headline is read in full from `/protocols/:node_id`; the
+ * others come from the listing and are shown separately, never combined.
  *
  * The data API needs a key (PIGI_API_KEY), traded for an hour-long token. The
- * free plan allows 1,000 requests a month, so the run reads one listing of every
- * Ethereum vault in prepare() — two pages today — and nothing per vault: the
- * listing already carries the published band and score. The token is minted
- * only when that listing is not in the HTTP cache, so --offline needs no key.
+ * run reads the node listing in prepare() and one `/protocols/:node_id` per
+ * covered row in collect() — fourteen requests today (thirteen rows mapped),
+ * about 850 a month at two runs a day against the free plan's 1,000. The token
+ * is minted only when a request misses the HTTP cache, so --offline needs no
+ * key; an online run without the key skips pigi and keeps the previous values.
  */
-const adapter: FeedAdapter = {
+const adapter: FeedAdapter<Prepared> = {
   id: 'pigi',
+  secrets: ['PIGI_API_KEY'],
 
-  async prepare(ctx): Promise<Map<string, Vault[]>> {
+  async prepare(ctx): Promise<Prepared> {
     const apiKey = process.env.PIGI_API_KEY
     let token: Promise<string> | undefined
     const headers = async () => {
@@ -155,48 +213,31 @@ const adapter: FeedAdapter = {
       return { authorization: `Bearer ${await token}` }
     }
 
-    const rows: Vault[] = []
-    for (let page = 0; page < MAX_PAGES; page++) {
-      const query = new URLSearchParams({
-        chain_id: String(ETHEREUM),
-        sort: 'id_asc',
-        limit: String(PAGE),
-        offset: String(page * PAGE),
-      })
-      const body = await ctx.getJson<Listing>(`${API}/vaults?${query}`, {
-        ttlSeconds: TTL,
-        headers,
-      })
-      rows.push(...(body.data ?? []))
-      if (!body.pagination?.hasMore) break
-    }
-
-    const wanted = new Set(Object.keys(table).flatMap(names))
-    const byName = new Map<string, Vault[]>()
-    for (const vault of rows) {
-      if (vault.chain_id !== ETHEREUM || !wanted.has(vault.protocol_name)) continue
-      byName.set(vault.protocol_name, [...(byName.get(vault.protocol_name) ?? []), vault])
-    }
-    ctx.log(
-      `${rows.length} Ethereum vaults listed, ${rows.filter((v) => v.risk_band).length} rated`,
-    )
-    const missing = [...wanted].filter((name) => !byName.has(name))
-    // A renamed protocol would otherwise look like a coverage gap.
+    const body = await ctx.getJson<{ data?: ListedNode[] }>(LISTING, { ttlSeconds: TTL, headers })
+    const listed = new Map((body.data ?? []).map((node) => [node.node_id, node]))
+    ctx.log(`${listed.size} protocol nodes rated`)
+    // A renamed node would otherwise look like a coverage gap.
+    const missing = Object.values(ctx.mapping)
+      .flat()
+      .filter((id) => !listed.has(id))
     if (missing.length > 0) ctx.log(`mapped but not listed: ${missing.join(', ')}`)
-    return byName
+    return { listed, headers }
   },
 
-  async collect({ protocol, prepared }): Promise<FeedResult | null> {
-    const pigiNames = names(protocol.id)
-    if (pigiNames.length === 0) return null
+  async collect({ protocol, ctx, prepared }): Promise<FeedResult | null> {
+    const nodeIds = ctx.mapping[protocol.id] ?? []
+    if (nodeIds.length === 0) return null
 
-    const listing = prepared as Map<string, Vault[]> | undefined
-    if (!listing) throw new Error('pigi vault listing unavailable')
-
-    return assess(
-      pigiNames,
-      pigiNames.flatMap((name) => listing.get(name) ?? []),
-    )
+    // The first rated node in mapping order is the headline. An unlisted node is
+    // never asked for: its 404 would still count against the quota.
+    const [headline, ...others] = nodeIds.flatMap((id) => prepared.listed.get(id) ?? [])
+    const node = headline
+      ? await ctx.getJson<Node>(nodeUrl(headline.node_id), {
+          ttlSeconds: TTL,
+          headers: prepared.headers,
+        })
+      : null
+    return assess(nodeIds, node, others)
   },
 }
 
