@@ -1,5 +1,4 @@
 import { formatUsd, type Detail, type FeedAdapter, type FeedResult } from '@defi-dna/core'
-import mapping from './mapping.json' with { type: 'json' }
 
 const API = 'https://api.philidor.io/v1'
 const SITE = 'https://analytics.philidor.io'
@@ -9,17 +8,8 @@ const PAGE = 100
 const MAX_PAGES = 5
 /** Vaults listed individually on the protocol page, largest by TVL. */
 const TOP_VAULTS = 10
-
-/**
- * our protocol id -> the Philidor vaults that belong to it, as
- * `<philidor protocol>` or `<philidor protocol>:<protocol_version>`.
- * Without a version the entry takes every version Philidor files.
- */
-const table: Record<string, string | string[]> = mapping
-const entries = (id: string): string[] => {
-  const value = table[id]
-  return value == null ? [] : typeof value === 'string' ? [value] : value
-}
+/** Vaults carried into `extra`, largest by TVL. Keeps a record of a big protocol under ~100 KB. */
+const MAX_VAULTS = 100
 
 interface Vault {
   address: string
@@ -39,6 +29,11 @@ type VaultsByProtocol = Map<string, Vault[]>
 const number = (value: unknown): number | null => {
   const parsed = Number(value)
   return Number.isFinite(parsed) ? parsed : null
+}
+/** Whole dollars: the cents of a vault's TVL are noise that would change the record every run. */
+const dollars = (value: unknown): number | null => {
+  const parsed = number(value)
+  return parsed == null ? null : Math.round(parsed)
 }
 
 const scoredAt = (vault: Vault): string =>
@@ -64,13 +59,19 @@ const verdict = (vault: Vault): string => {
  *
  * Anonymous access is rate-limited, so the vault list is pulled once per run in
  * prepare() and the per-protocol pass touches no network.
+ *
+ * `mapping.json` names the vaults that belong to a row as `<philidor protocol>`
+ * or `<philidor protocol>:<protocol_version>`; without a version the entry
+ * takes every version Philidor files.
  */
-const adapter: FeedAdapter = {
+const adapter: FeedAdapter<VaultsByProtocol> = {
   id: 'philidor',
 
   async prepare(ctx): Promise<VaultsByProtocol> {
     const wanted = new Set(
-      Object.keys(table).flatMap((id) => entries(id).map((entry) => entry.split(':')[0] as string)),
+      Object.values(ctx.mapping)
+        .flat()
+        .map((entry) => entry.split(':')[0] as string),
     )
     const vaults: VaultsByProtocol = new Map()
     for (const philidorId of wanted) {
@@ -97,12 +98,9 @@ const adapter: FeedAdapter = {
     return vaults
   },
 
-  async collect({ protocol, prepared }): Promise<FeedResult | null> {
-    const mapped = entries(protocol.id)
+  async collect({ protocol, ctx, prepared: listing }): Promise<FeedResult | null> {
+    const mapped = ctx.mapping[protocol.id] ?? []
     if (mapped.length === 0) return null
-
-    const listing = prepared as VaultsByProtocol | undefined
-    if (!listing) throw new Error('Philidor vault listing unavailable')
 
     const philidorId = mapped[0]?.split(':')[0] as string
     const versions = mapped
@@ -141,6 +139,7 @@ const adapter: FeedAdapter = {
     }))
 
     const shutdown = listed.length - live.length
+    const omitted = Math.max(0, rated.length - MAX_VAULTS)
     const updatedAt = rated.map(scoredAt).filter(Boolean).sort().at(-1)
     const scope = versions.length ? `version ${versions.join(', ')}` : 'every version it files'
 
@@ -154,21 +153,26 @@ const adapter: FeedAdapter = {
         `Counted: ${rated.length} of the ${live.length} live vault(s) Philidor lists for ` +
         `${philidorId} under ${scope}` +
         (shutdown > 0 ? `, with ${shutdown} shut-down vault(s) left out` : '') +
-        `. No vault stands in for the protocol and nothing is averaged — Philidor publishes no protocol-level score.`,
+        `. No vault stands in for the protocol and nothing is averaged — Philidor publishes no protocol-level score.` +
+        (omitted > 0
+          ? ` The ${MAX_VAULTS} largest by TVL are listed here; ${omitted} more are at the source.`
+          : ''),
       extra: {
-        philidorId,
-        versions,
-        vaultsListed: listed.length,
-        vaultsLive: live.length,
-        vaultsShutdown: shutdown,
-        vaultsRated: rated.length,
-        vaults: rated.map((vault) => ({
+        facts: [
+          { name: 'Philidor protocol', value: philidorId },
+          { name: 'Versions', value: versions.length ? versions.join(', ') : 'All' },
+          { name: 'Vaults listed', value: String(listed.length) },
+          { name: 'Vaults live', value: String(live.length) },
+          { name: 'Vaults shut down', value: String(shutdown) },
+          { name: 'Vaults rated', value: String(rated.length) },
+        ],
+        vaults: rated.slice(0, MAX_VAULTS).map((vault) => ({
           name: vault.name,
           version: vault.protocol_version,
           curator: vault.curator_name ?? null,
           tier: vault.risk_tier,
           score: number(vault.total_score),
-          tvlUsd: number(vault.tvl_usd),
+          tvlUsd: dollars(vault.tvl_usd),
           scoredAt: scoredAt(vault) || null,
           url: `${SITE}/vault/ethereum/${vault.address}`,
         })),

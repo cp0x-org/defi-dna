@@ -1,0 +1,12 @@
+[
+  {
+    "date": 1773273600,
+    "name": "Aave V3",
+    "classification": "Oracle Manipulation",
+    "technique": "Oracle Misconfiguration",
+    "amount": 862000,
+    "defillamaId": "1599",
+    "returnedFunds": 862000,
+    "source": ""
+  }
+]

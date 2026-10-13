@@ -1,0 +1,21 @@
+{
+  "aave-v3": "aave-v3",
+  "aave-v4": "aave-v4",
+  "balancer-v2": "balancer-v2",
+  "balancer-v3": "balancer-v3",
+  "compound-v2": "compound-v2",
+  "cowswap": "cowswap",
+  "euler": "euler",
+  "fluid": "fluid",
+  "gearbox": "gearbox",
+  "lido": "lido",
+  "liquity-v1": "liquity-v1",
+  "liquity-v2": "liquity-v2",
+  "mellow": "mellow",
+  "morpho-blue": "morpho-blue",
+  "pendle": "pendle",
+  "spark": "spark",
+  "uniswap-v2": "uniswap-v2",
+  "uniswap-v3": "uniswap-v3",
+  "uniswap-v4": "uniswap-v4"
+}

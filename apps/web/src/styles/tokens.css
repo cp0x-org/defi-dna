@@ -119,3 +119,34 @@
   --source-4: #453529;
   --source-ink-4: #dfb894;
 }
+
+/* Feed status: the feed's own characterization, read from its own published
+   scale (the `status` rule in its feed.json) — never a judgement of ours.
+   Neutral also marks data whose scale gives no reading; grey is no data. */
+:root {
+  --pos: #1c7a52;
+  --pos-seg: #2f9a6a;
+  --pos-tint: #e8f4ee;
+  --neu: #906012;
+  --neu-seg: #d39b2a;
+  --neu-tint: #fbf5e8;
+  --neg: #b0403a;
+  --neg-seg: #c9534b;
+  --neg-tint: #fbeeed;
+  --none-seg: #d5dde4;
+  --pop-shadow: 0 8px 32px #0002;
+}
+
+:root[data-theme='dark'] {
+  --pos: #7bd1b7;
+  --pos-seg: #5fc29f;
+  --pos-tint: #203c36;
+  --neu: #e0bb74;
+  --neu-seg: #d9ac55;
+  --neu-tint: #3a3425;
+  --neg: #e99a94;
+  --neg-seg: #e0776f;
+  --neg-tint: #3a2725;
+  --none-seg: #34495a;
+  --pop-shadow: 0 10px 36px #0009;
+}

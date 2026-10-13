@@ -1,4 +1,4 @@
-import type { FeedData } from '@defi-dna/data'
+import type { AssessedObject, FeedData } from '@defi-dna/data'
 
 export { formatUsd } from '@defi-dna/data'
 
@@ -12,6 +12,21 @@ const CATEGORY_LABELS: Record<string, string> = {
 }
 
 export const categoryLabel = (category: string): string => CATEGORY_LABELS[category] ?? category
+
+/**
+ * What a feed's values are about, in words. Printed next to every value so a
+ * vault tier is never read as a statement about the protocol.
+ */
+const ASSESSES_LABELS: Record<AssessedObject, string> = {
+  protocol: 'the protocol',
+  deployment: 'each deployment separately',
+  vault: 'individual vaults, not the protocol',
+  pool: 'individual pools, not the protocol',
+  asset: 'individual assets, not the protocol',
+  research: 'in published research, without a rating scale',
+}
+
+export const assessesLabel = (assesses: AssessedObject): string => ASSESSES_LABELS[assesses]
 
 /** The three states a cell can be in. None of them is a safety judgement. */
 export const coverageLabel = (status: FeedData['status']): string =>
@@ -53,9 +68,25 @@ export const dateInfo = (value?: string | null, now = Date.now()) => {
   return { label, age, older: age > 90 }
 }
 
-export const TVL_BANDS: Record<string, { label: string; min: number; max: number }> = {
-  '1b': { label: '$1B and above', min: 1e9, max: Infinity },
-  '100m': { label: '$100M – $1B', min: 1e8, max: 1e9 },
-  '10m': { label: '$10M – $100M', min: 1e7, max: 1e8 },
-  sub10m: { label: 'Under $10M', min: 0, max: 1e7 },
+/** How long ago, in the units a reader scans fastest: `40m`, `5h`, `12d`. */
+export const ageLabel = (value?: string | null, now = Date.now()): string | null => {
+  const time = value ? Date.parse(value) : NaN
+  if (!Number.isFinite(time)) return null
+  const minutes = Math.max(0, Math.floor((now - time) / 60000))
+  if (minutes < 60) return `${minutes}m`
+  if (minutes < 1440) return `${Math.floor(minutes / 60)}h`
+  return `${Math.floor(minutes / 1440)}d`
+}
+
+/** A timestamp with its UTC time, for when the minute matters: `11 Oct 2026 · 13:36 UTC`. */
+export const timeLabel = (value?: string | null): string | null => {
+  const date = new Date(value ?? '')
+  if (!value || !Number.isFinite(date.getTime())) return null
+  const day = date.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+  return `${day} · ${date.toISOString().slice(11, 16)} UTC`
 }

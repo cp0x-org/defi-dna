@@ -4,15 +4,15 @@ import { ExternalLink } from '../UI.tsx'
 
 export const TvlComponentsExtra = ({ components }: { components?: ExtraTvlComponent[] }) =>
   Array.isArray(components) && components.length > 0 ? (
-    <section className="extra-section">
-      <h3>DefiLlama TVL components</h3>
-      <div className="extra-table-scroll">
-        <table className="extra-table">
+    <section className="tvl-components">
+      <h4 className="b-title">DefiLlama TVL components</h4>
+      <div className="tscroll">
+        <table className="tbl">
           <thead>
             <tr>
               <th>Protocol</th>
               <th>DefiLlama ID</th>
-              <th>Ethereum TVL</th>
+              <th className="num">Ethereum TVL</th>
             </tr>
           </thead>
           <tbody>
@@ -20,7 +20,7 @@ export const TvlComponentsExtra = ({ components }: { components?: ExtraTvlCompon
               <tr key={component.id}>
                 <td>{component.name}</td>
                 <td className="mono">{component.id}</td>
-                <td className="mono">{formatUsd(component.tvl) ?? '—'}</td>
+                <td className="num mono">{formatUsd(component.tvl) ?? '—'}</td>
               </tr>
             ))}
           </tbody>
@@ -37,49 +37,51 @@ export const IncidentsExtra = ({
   note?: string
 }) =>
   Array.isArray(incidents) ? (
-    <div className="table-card">
-      <div className="matrix-scroll">
-        <table className="registry-table">
-          <caption className="sr-only">Incident history recorded by DefiLlama</caption>
-          <thead>
-            <tr>
-              <th scope="col">Date</th>
-              <th scope="col">Event</th>
-              <th scope="col">Amount</th>
-              <th scope="col">Classification</th>
-              <th scope="col">Technique</th>
-              <th scope="col">Returned</th>
-              <th scope="col">Source</th>
-            </tr>
-          </thead>
-          <tbody>
-            {incidents.length > 0 ? (
-              incidents.map((incident) => (
-                <tr key={`${incident.date}-${incident.name}`}>
-                  <td>{incident.date}</td>
-                  <td>{incident.name}</td>
-                  <td className="mono">{formatUsd(incident.amountUsd) ?? '—'}</td>
-                  <td>{incident.classification}</td>
-                  <td className="muted">{incident.technique}</td>
-                  <td className="mono">{formatUsd(incident.returnedFunds) ?? '—'}</td>
-                  <td>
-                    {incident.source ? (
-                      <ExternalLink href={incident.source}>Report</ExternalLink>
-                    ) : (
-                      '—'
-                    )}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={7} className="muted">
-                  {note ?? 'DefiLlama records no incident against this protocol id.'}
+    <div className="tscroll">
+      <table className="tbl">
+        <caption className="sr-only">Incident history recorded by DefiLlama</caption>
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Event</th>
+            <th scope="col" className="num">
+              Amount
+            </th>
+            <th scope="col">Classification</th>
+            <th scope="col">Technique</th>
+            <th scope="col" className="num">
+              Returned
+            </th>
+            <th scope="col">Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {incidents.length > 0 ? (
+            incidents.map((incident) => (
+              <tr key={`${incident.date}-${incident.name}`}>
+                <td className="mono">{incident.date}</td>
+                <td>{incident.name}</td>
+                <td className="num mono">{formatUsd(incident.amountUsd) ?? '—'}</td>
+                <td>{incident.classification}</td>
+                <td className="muted">{incident.technique}</td>
+                <td className="num mono">{formatUsd(incident.returnedFunds) ?? '—'}</td>
+                <td>
+                  {incident.source ? (
+                    <ExternalLink href={incident.source}>Report</ExternalLink>
+                  ) : (
+                    '—'
+                  )}
                 </td>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={7} className="muted wrap">
+                {note ?? 'DefiLlama records no incident against this protocol id.'}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   ) : null

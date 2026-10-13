@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { paths, readJson } from './registry.ts'
+import { dataPaths, paths, readJson } from './registry.ts'
 import type { Protocol } from './types.ts'
 
 /**
@@ -14,7 +14,10 @@ import type { Protocol } from './types.ts'
  * local site — and a local `collect`, which carries previous values forward —
  * start from what is published. Local generated files are replaced.
  */
-export async function pull(): Promise<{ source: string; records: number }> {
+export async function pull(
+  options: { dataDir?: string } = {},
+): Promise<{ source: string; records: number }> {
+  const data = dataPaths(options.dataDir)
   const { dataUrl } = await readJson<{ dataUrl?: string }>(paths.config)
   if (!dataUrl) throw new Error(`${paths.config} names no dataUrl`)
   const source = dataUrl.replace(/\/+$/, '')
@@ -22,6 +25,8 @@ export async function pull(): Promise<{ source: string; records: number }> {
 
   // Read everything first: a failed download leaves the local copy untouched.
   const changelog = await download(`${source}/changelog.json`)
+  const metrics = await download(`${source}/metrics.json`)
+  const status = await download(`${source}/status.json`)
   const records = await Promise.all(
     protocols.map(async ({ id }) => ({
       id,
@@ -29,17 +34,20 @@ export async function pull(): Promise<{ source: string; records: number }> {
     })),
   )
 
-  await fs.rm(paths.records, { recursive: true, force: true })
+  await fs.rm(data.records, { recursive: true, force: true })
   await fs.rm(paths.webData, { recursive: true, force: true })
-  await fs.mkdir(paths.records, { recursive: true })
+  await fs.mkdir(data.records, { recursive: true })
   let written = 0
   for (const { id, body } of records) {
     // A protocol the published data has no record for yet is simply absent.
     if (body == null) continue
-    await fs.writeFile(path.join(paths.records, `${id}.json`), body, 'utf8')
+    await fs.writeFile(path.join(data.records, `${id}.json`), body, 'utf8')
     written++
   }
-  await fs.writeFile(paths.changelog, changelog ?? '[]\n', 'utf8')
+  await fs.writeFile(data.changelog, changelog ?? '[]\n', 'utf8')
+  await fs.writeFile(data.metricsData, metrics ?? '{}\n', 'utf8')
+  if (status) await fs.writeFile(data.status, status, 'utf8')
+  else await fs.rm(data.status, { force: true })
   return { source, records: written }
 }
 

@@ -1,6 +1,13 @@
-import type { Change, IndexBundle, ProtocolRecord } from '@defi-dna/core/types'
+import type {
+  Change,
+  IndexBundle,
+  MetricsFile,
+  ProtocolDetail,
+  ProtocolRecord,
+} from '@defi-dna/core/types'
 
 export type {
+  AssessedObject,
   Change,
   Detail,
   ExtraData,
@@ -15,10 +22,16 @@ export type {
   IndexRow,
   Metric,
   MetricData,
+  MetricsFile,
   Protocol,
+  ProtocolDetail,
   ProtocolRecord,
+  Reading,
+  SourceStatus,
+  StatusRule,
 } from '@defi-dna/core/types'
 export { formatUsd } from '@defi-dna/core/format'
+export { readStatus, statusWord } from '@defi-dna/core/status'
 
 /**
  * The read side of the data layer: the generated files, fetched at runtime.
@@ -71,9 +84,15 @@ function load<T>(file: string): Promise<T> {
 /** Coverage for every protocol: one request, no values in it. */
 export const loadIndex = (): Promise<IndexBundle> => load<IndexBundle>('index.json')
 
+/** Measured quantities for every protocol: one small file that moves every day. */
+export const loadMetrics = (): Promise<MetricsFile> =>
+  load<MetricsFile>('metrics.json').catch(() => ({}) as MetricsFile)
+
 /** Everything we collected about one protocol, loaded when its page opens. */
-export const loadProtocol = (id: string): Promise<ProtocolRecord> =>
-  load<ProtocolRecord>(`protocols/${id}.json`)
+export const loadProtocol = (id: string): Promise<ProtocolDetail> =>
+  Promise.all([load<ProtocolRecord>(`protocols/${id}.json`), loadMetrics()]).then(
+    ([record, metrics]) => ({ ...record, metrics: metrics[id] ?? {} }),
+  )
 
 /** A log we could not read is reported as such — never as an empty log. */
 export const loadChangelog = (): Promise<Change[]> => load<Change[]>('changelog.json')

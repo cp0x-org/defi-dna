@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/schemas/metrics.schema.json",
+  "title": "defi-dna metrics",
+  "description": "Generated data/metrics.json: measured quantities for every protocol, keyed by protocol id, then metric id. Rewritten on every run because the figures move daily.",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "additionalProperties": {
+      "$ref": "protocol-record.schema.json#/definitions/metricData"
+    }
+  }
+}

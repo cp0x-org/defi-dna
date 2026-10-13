@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import {
   loadChangelog,
   loadIndex,
+  loadMetrics,
   loadProtocol,
   type Change,
   type IndexBundle,
-  type ProtocolRecord,
+  type MetricsFile,
+  type ProtocolDetail,
 } from '@defi-dna/data'
 
 export interface Async<T> {
@@ -34,7 +36,9 @@ function useLoad<T>(key: string, load: () => Promise<T>): Async<T> {
 
 export const useIndex = (): Async<IndexBundle> => useLoad('index', loadIndex)
 
-export const useProtocol = (id: string): Async<ProtocolRecord> =>
+export const useProtocol = (id: string): Async<ProtocolDetail> =>
   useLoad(id, () => loadProtocol(id))
 
 export const useChangelog = (): Async<Change[]> => useLoad('changelog', loadChangelog)
+
+export const useMetrics = (): Async<MetricsFile> => useLoad('metrics', loadMetrics)
