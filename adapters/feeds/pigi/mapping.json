@@ -1,5 +1,6 @@
 {
   "aave-v3": "Aave",
+  "aave-v4": "Aave v4",
   "curve": "Curve",
   "euler": "Euler",
   "fluid": ["Fluid (InstaDapp)", "Fluid Lite"],
@@ -11,5 +12,6 @@
   "morpho-vaults": ["Morpho", "Morpho v2"],
   "spark": ["SparkLend", "Spark"],
   "uniswap-v3": "Uniswap",
+  "uniswap-v4": "Uniswap v4",
   "yearn": ["Yearn", "Yearn v3"]
 }
