@@ -127,7 +127,9 @@ export function assess(pigiNames: string[], listed: Vault[]): FeedResult {
  *
  * pigi rates vaults, not protocols, and files each under a `protocol_name`.
  * "Aave" holds only v3 pools (Core, Lido, Horizon, plus sGHO) and "Uniswap" only
- * v3 pools (fee tiers, 20-byte pool addresses), so they fill the v3 rows.
+ * v3 pools (fee tiers, 20-byte pool addresses), so they fill the v3 rows; the
+ * v4 generations are filed apart — "Aave v4" (hub-and-spoke reserves) and
+ * "Uniswap v4" (PoolManager pools, identified by pool id) — and fill the v4 rows.
  *
  * The data API needs a key (PIGI_API_KEY), traded for an hour-long token. The
  * free plan allows 1,000 requests a month, so the run reads one listing of every
