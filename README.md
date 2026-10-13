@@ -6,11 +6,14 @@ source and date, side by side. The dashboard shows coverage; it does not compute
 its own score, rating or ranking. See the [project charter](CHARTER.md) for the
 rules behind this approach.
 
-The dashboard tracks protocol versions separately. Its coverage matrix has one
-row per version and one column per feed. A green dot means the feed has data; a
-grey dot means it does not. Opening a protocol shows each feed's value, words,
-source link and assessment date. Feeds measure different things, so their
-values are not merged.
+The dashboard tracks protocol versions separately, one row per version: its
+TVL, a ring with one segment per feed, when a feed's value last changed, and
+the incidents DefiLlama records. A segment is coloured by the feed's own
+characterization, read from the scale the feed publishes (`status` in its
+`feed.json`); data whose scale gives no reading is neutral, and no data is
+grey. No feed's value appears there. Opening a protocol shows each
+feed's value, words, source link and assessment date. Feeds measure different
+things, so their values are not merged.
 
 ## Repository layout
 
@@ -54,19 +57,19 @@ feeds instead, run `npm run refresh`; this makes network requests and replaces
 the local copy. Running `pull` first lets a local collection carry previous
 values forward, as the scheduled workflow does.
 
-| Command                                   | Purpose                                                        |
-| ----------------------------------------- | -------------------------------------------------------------- |
-| `npm run collect`                         | Collect feed and metric data into `data/protocols/*.json`      |
-| `npm run bundle`                          | Build `data/index.json` and copy generated data to the web app |
-| `npm run refresh`                         | Collect, then bundle                                           |
-| `npm run pull`                            | Download the published data into `data/` and the web app       |
-| `npm run dev`                             | Start the dashboard                                            |
-| `npm run build`                           | Build the dashboard; it reads data at runtime                  |
-| `npm run preview`                         | Preview the built dashboard                                    |
-| `npm run lint` / `npm run lint:fix`       | Check or fix lint issues                                       |
-| `npm run format:check` / `npm run format` | Check or apply formatting                                      |
-| `npm run typecheck`                       | Type-check the pipeline, adapters and frontend                 |
-| `npm test`                                | Run the adapter unit tests                                     |
+| Command                                   | Purpose                                                                      |
+| ----------------------------------------- | ---------------------------------------------------------------------------- |
+| `npm run collect`                         | Collect feeds into `data/protocols/*.json`, metrics into `data/metrics.json` |
+| `npm run bundle`                          | Build `data/index.json` and copy generated data to the web app               |
+| `npm run refresh`                         | Collect, then bundle                                                         |
+| `npm run pull`                            | Download the published data into `data/` and the web app                     |
+| `npm run dev`                             | Start the dashboard                                                          |
+| `npm run build`                           | Build the dashboard; it reads data at runtime                                |
+| `npm run preview`                         | Preview the built dashboard                                                  |
+| `npm run lint` / `npm run lint:fix`       | Check or fix lint issues                                                     |
+| `npm run format:check` / `npm run format` | Check or apply formatting                                                    |
+| `npm run typecheck`                       | Type-check the pipeline, adapters and frontend                               |
+| `npm test`                                | Run the adapter unit tests                                                   |
 
 The collection commands accept `--protocol`, `--source`, `--offline` and
 `--verbose`. For example:
@@ -82,15 +85,20 @@ checking on commits. CI also runs tests and a build.
 
 The scheduled [refresh workflow](.github/workflows/refresh-data.yml) runs twice a
 day and can also be started manually. It restores the previous snapshot before
-collecting, then commits `index.json`, `changelog.json` and `protocols/*.json`
+collecting, then commits `index.json`, `protocols/*.json`, `metrics.json`,
+`changelog.json` and `status.json`
 to `main` in the separate `cp0x-org/defi-dna-data` repository. To enable the
 cross-repository push, add a `DEFI_DNA_DATA_TOKEN` Actions secret to this
 repository. It must grant Contents read and write access to `defi-dna-data`.
 
 The pigi.finance feed needs an API key. Add it as a `PIGI_API_KEY` Actions
 secret for the workflow, and as `PIGI_API_KEY` in a local `.env` (see
-`.env.example`) for local collection. Without it the pigi column keeps its
-previous values and the run reports the failure.
+`.env.example`) for local collection. Without it the run skips pigi: the
+column keeps its previous values and the run reports it once. Offline runs
+need no key. An online run makes about twelve pigi requests (the node listing
+and one per mapped protocol), so two scheduled runs a day use about 730 of the
+free plan's 1,000 requests a month; manual and local runs draw on the same
+quota.
 
 ## Docker
 
@@ -114,8 +122,9 @@ address in the project's `.env` file (copy `.env.example`; for example,
 
 Risk feeds currently include [DeFiScan](https://www.defiscan.info),
 [Risklayer](https://risklayer.online),
-[Philidor](https://analytics.philidor.io) and
-[pigi.finance](https://pigi.finance). Independent measurements come from
+[Philidor](https://analytics.philidor.io),
+[pigi.finance](https://pigi.finance) and
+[DeFi Scoring](https://defiscoring.com). Independent measurements come from
 DefiLlama's Ethereum TVL and incident history. A feed with no data for a
 protocol is distinct from a collection error; a failed refresh retains the
 previous value.

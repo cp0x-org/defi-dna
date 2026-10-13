@@ -3,6 +3,16 @@
   "name": "Risklayer",
   "topic": "Protocol risk · Beta",
   "focus": "Beta protocol analysis: dependency, governance, tokenomics, audit coverage and smart-contract risk.",
+  "assesses": "protocol",
   "homepage": "https://risklayer.online",
-  "enabled": true
+  "enabled": true,
+  "status": {
+    "rule": "Risklayer publishes a risk level with every score: low, medium or high (a higher score means more risk). Low reads as positive, medium as neutral, high as negative.",
+    "match": "·\\s*([a-z]+)\\s*$",
+    "values": {
+      "low": "positive",
+      "medium": "neutral",
+      "high": "negative"
+    }
+  }
 }

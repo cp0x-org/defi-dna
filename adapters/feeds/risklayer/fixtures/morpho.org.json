@@ -1,0 +1,83 @@
+{
+  "name": "morpho.org",
+  "lastAnalyzedAt": "2026-06-09T11:39:20.128Z",
+  "overallScore": 4.8,
+  "riskLevel": "medium",
+  "dimensions": [
+    {
+      "name": "Dependency Risk",
+      "score": 4.8,
+      "weight": 0.25
+    },
+    {
+      "name": "Governance Risk",
+      "score": 4.8,
+      "weight": 0.25
+    },
+    {
+      "name": "Tokenomics Risk",
+      "score": 5.8,
+      "weight": 0.25
+    },
+    {
+      "name": "Audit Coverage Risk",
+      "score": 3,
+      "weight": 0.25
+    },
+    {
+      "name": "Smart Contract Risk",
+      "score": 4.8,
+      "weight": 0.25
+    }
+  ],
+  "latestAnalysis": {
+    "status": "completed",
+    "createdAt": "2026-06-09T11:26:41.271Z",
+    "summary": "Morpho is a modular lending protocol with ~$6.5B TVL across 37+ EVM chains, built around immutable Morpho Blue core markets and curator-managed vaults. The lending logic itself has never been directly exploited and carries tier-1 audit coverage plus Certora formal verification, but governance is concentrated in a 5-of-9 multisig with no protocol-wide timelock, permissionless oracle selection has p",
+    "keyFindings": [
+      {
+        "title": "Unverified Morpho Blue on Base",
+        "category": "verification",
+        "severity": "high",
+        "description": "Morpho Blue at 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb on Base is marked unverified in pipeline discovery. On-chain bytecode length (15,623 bytes) matches Ethereum deployment; owner() resolves to 5"
+      },
+      {
+        "title": "Unverified Morpho ChainlinkOracleV2 Factory on Arbitrum",
+        "category": "verification",
+        "severity": "high",
+        "description": "Oracle factory 0x3585E3fD72F8d1b02250E1F6496b706c6e092884 on Arbitrum has no deployed bytecode (eth_getCode returns empty). Listed in discovery but cannot be source-audited; if used for oracle deploym"
+      }
+    ],
+    "primitives": {
+      "score": {
+        "dimensions": [
+          {
+            "name": "Smart Contract Risk",
+            "score": 4.8,
+            "rationale": "Morpho Blue core is immutable and extensively audited, but seven cross-chain deployments lack block-explorer verification, the MORPHO token uses UUPS upgradeabl"
+          },
+          {
+            "name": "Governance Risk",
+            "score": 4.8,
+            "rationale": "5/9 Gnosis Safe execution with no protocol-wide timelock, off-chain Snapshot voting without on-chain enforcement, and multisig control over token upgrades and L"
+          },
+          {
+            "name": "Dependency Risk",
+            "score": 4.8,
+            "rationale": "Permissionless oracle selection with Chainlink feeds lacking staleness checks, no fallback oracles, and a paused LayerZero MORPHO bridge with multisig-controlle"
+          },
+          {
+            "name": "Audit Coverage Risk",
+            "score": 3,
+            "rationale": "Industry-leading multi-firm audit program with Certora formal verification on core contracts; residual gaps are unverified cross-chain bytecode, one risk-accept"
+          },
+          {
+            "name": "Tokenomics Risk",
+            "score": 5.8,
+            "rationale": "Fixed 1B supply with ~88% allocated to treasury, investors, and insiders; significant vesting unlocks through 2028, no fee-switch value capture, and discretiona"
+          }
+        ]
+      }
+    }
+  }
+}

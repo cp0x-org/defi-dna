@@ -26,6 +26,20 @@ export interface Protocol {
 }
 
 /**
+ * What a feed's values are about. A feed that grades vaults says nothing about
+ * the protocol as a whole, and the dashboard says so next to every value.
+ */
+export const ASSESSED_OBJECTS = [
+  'protocol',
+  'deployment',
+  'vault',
+  'pool',
+  'asset',
+  'research',
+] as const
+export type AssessedObject = (typeof ASSESSED_OBJECTS)[number]
+
+/**
  * A risk feed: one column on the dashboard.
  *
  * Hand-maintained in adapters/feeds/<id>/feed.json, next to the adapter that
@@ -38,10 +52,32 @@ export interface Feed {
   topic: string
   /** One line: what this feed looks at. */
   focus: string
+  /** The object the feed assesses: the protocol, each deployment, individual vaults, ... */
+  assesses: AssessedObject
   homepage: string
   methodologyUrl?: string
   /** false: the feed is not collected and does not appear. */
   enabled: boolean
+  /** How the feed's own published scale reads, when it says. Absent: no colour beyond neutral. */
+  status?: StatusRule
+}
+
+/** The feed's own characterization of a value, never ours. */
+export const READINGS = ['positive', 'neutral', 'negative'] as const
+export type Reading = (typeof READINGS)[number]
+
+/**
+ * How to read a feed's headline as the feed itself characterizes it — its own
+ * colour band, risk level word or graded band, each of which the feed defines.
+ * Declared only where the feed publishes that meaning; we set no threshold.
+ */
+export interface StatusRule {
+  /** One sentence for readers: what the feed publishes and how it reads. Shown next to the colour. */
+  rule: string
+  /** A regular expression over the headline `value`; its first group is the feed's own word or band. */
+  match: string
+  /** That word or band, lower-case, to the feed's own characterization. Anything else stays neutral. */
+  values: Record<string, Reading>
 }
 
 /**
@@ -103,20 +139,20 @@ export interface ExtraTvlComponent {
   tvl: number | null
 }
 
-/** Recognized extra fields. Each optional type has its own frontend component. */
+/**
+ * Structured data beyond the headline, in the shapes the protocol page can
+ * render. The shapes are generic — a list of facts, a table of vaults — so a
+ * new feed picks from them; only a genuinely new shape needs a new type here,
+ * a schema entry and a component.
+ */
 export interface ExtraData {
+  /** Facts about the record in the source's own terms: "Vaults listed: 197", "Risk level: medium". */
+  facts?: Detail[]
+  /** Reviews the source files separately under this row, one deployment each. */
   reviews?: ExtraReview[]
-  keyFindings?: ExtraFinding[]
-  domain?: string
-  riskLevel?: string | null
-  overallScore?: number | null
-  analysisStatus?: string | null
-  philidorId?: string
-  versions?: string[]
-  vaultsListed?: number
-  vaultsLive?: number
-  vaultsShutdown?: number
-  vaultsRated?: number
+  /** Findings the source reports, with its own severity and category. */
+  findings?: ExtraFinding[]
+  /** Individually rated vaults, largest first. */
   vaults?: ExtraVault[]
   incidents?: ExtraIncident[]
   components?: ExtraTvlComponent[]
@@ -129,7 +165,7 @@ export interface ExtraData {
  * because every feed publishes something different.
  */
 export interface FeedResult {
-  /** The feed's headline value, verbatim: "Stage 1", "4.8/10 · medium", "7 vaults rated". */
+  /** The feed's headline value, verbatim: "20 admins · $116M capital at risk", "4.8/10 · medium". */
   value?: string
   /** The feed's own text about the protocol. */
   summary?: string
@@ -149,7 +185,12 @@ export interface FeedResult {
 export interface FeedData extends FeedResult {
   /** `ok` — the feed has data; `none` — it has none; `error` — we failed to read it. */
   status: 'ok' | 'none' | 'error'
-  fetchedAt: string
+  /**
+   * The run that last changed this cell. Content that stayed the same keeps
+   * its earlier time, so a record changes only when a feed's content does and
+   * the git history of the data is the history of what the feeds published.
+   */
+  since: string
 }
 
 /** An independent measurement (TVL, incidents) — a quantity, never a verdict. */
@@ -162,42 +203,76 @@ export interface MetricResult {
 }
 
 export interface MetricData extends MetricResult {
+  /** When we read it. Metrics move daily, so this is refreshed on every run. */
   fetchedAt: string
 }
 
 /**
- * data/protocols/<id>.json — everything we collected about one protocol.
+ * data/protocols/<id>.json — what every feed published about one protocol.
  *
  * Generated, and generated only: the protocol's name, group and description are
- * hand-maintained in registry/protocols.json and never copied in here.
+ * hand-maintained in registry/protocols.json and never copied in here. The
+ * file changes only when a feed's content does; measured quantities, which
+ * move every day, live in data/metrics.json.
  */
 export interface ProtocolRecord {
-  generatedAt: string
   protocolId: string
-  /** Keyed by metric id: `tvl`, `incidents`. */
-  metrics: Record<string, MetricData>
   /** Keyed by feed id. */
   feeds: Record<string, FeedData>
+}
+
+/** data/metrics.json — measured quantities for every protocol, by protocol id then metric id. */
+export type MetricsFile = Record<string, Record<string, MetricData>>
+
+/** What the protocol page renders: the record joined with the protocol's metrics. */
+export interface ProtocolDetail extends ProtocolRecord {
+  /** Keyed by metric id: `tvl`, `incidents`. */
+  metrics: Record<string, MetricData>
+}
+
+/** When we last read a source. Facts about this pipeline, never about a protocol. */
+export interface SourceStatus {
+  /** The last run that tried the source. */
+  lastRunAt?: string
+  /** The last run that read it without a failure. */
+  lastOkAt?: string
+  /** Why the last run fell short, when it did. */
+  note?: string
+}
+
+/** data/status.json — the last run, and when each source was last read. */
+export interface RunStatus {
+  generatedAt: string
+  sources: Record<string, SourceStatus>
 }
 
 /**
  * One dashboard row, as generated.
  *
- * It carries facts only — the TVL figure and, per feed, whether data exists.
- * Names and grouping come from the hand-maintained registry, and the values
- * themselves stay on the protocol page: feeds assess different things, so the
- * only thing they can be compared on across a row is whether data exists.
+ * It carries the TVL figure and, per feed, whether data exists and how the feed
+ * itself reads its value. Names and grouping come from the hand-maintained
+ * registry, and the values themselves stay on the protocol page: feeds assess
+ * different things on different scales, so a row never puts them side by side.
  */
 export interface IndexRow {
   id: string
   tvl: number | null
   /** feed id -> true when that feed has data for this protocol. */
   feeds: Record<string, boolean>
+  /**
+   * feed id -> the feed's own reading of its headline, where its feed.json
+   * states how its scale reads. Absent for a feed with no data or no reading.
+   * Older bundles have no field at all; read that as "no reading".
+   */
+  readings?: Record<string, Reading>
 }
 
 /** data/index.json — one request, everything the dashboard needs at runtime. */
 export interface IndexBundle {
+  /** When the data was collected. */
   generatedAt: string
+  /** When each feed and metric was last read; absent when the run status is not available. */
+  sources?: Record<string, SourceStatus>
   rows: IndexRow[]
 }
 
@@ -212,6 +287,13 @@ export interface Change {
 }
 
 /* ------------------------------------------------------- adapter contract */
+
+/**
+ * adapters/<kind>/<id>/mapping.json, normalized: our protocol id -> the
+ * source's own id(s) for it. Every value is a list, and every key was checked
+ * against registry/protocols.json when the registry loaded.
+ */
+export type Mapping = Record<string, string[]>
 
 export interface FetchOptions {
   /** How long a cached response stays usable. Default: one hour. */
@@ -238,6 +320,8 @@ export interface AdapterContext {
   getText(url: string, options?: FetchOptions): Promise<string>
   /** POST a JSON body and read JSON back. Never cached: it is for exchanging credentials. */
   postJson<T>(url: string, body: unknown): Promise<T>
+  /** This adapter's mapping.json. Empty when the folder has none. */
+  mapping: Mapping
   log(message: string): void
   now: Date
 }
@@ -245,11 +329,24 @@ export interface AdapterContext {
 /**
  * One source of data. The folder it lives in names it:
  * `adapters/feeds/<id>` for a column, `adapters/metrics/<id>` for a measurement.
+ *
+ * `Prepared` is whatever `prepare()` returns; declare it (`FeedAdapter<Map<…>>`)
+ * and `collect()` receives it typed.
  */
-export interface Adapter<Result> {
+export interface Adapter<Result, Prepared = unknown> {
   id: string
-  /** Runs once per run. Fetch a listing here instead of once per protocol. */
-  prepare?(ctx: AdapterContext): Promise<unknown>
+  /**
+   * Environment variables the source needs, such as an API key. When one is
+   * missing the adapter is skipped for the run — its column keeps the previous
+   * values and the run reports it once. `--offline` reads need no secret.
+   */
+  secrets?: string[]
+  /**
+   * Runs once per run. Fetch a listing here instead of once per protocol. If
+   * it throws, collect() is not called: the whole column keeps the previous
+   * run's values and the failure is reported once.
+   */
+  prepare?(ctx: AdapterContext): Promise<Prepared>
   /**
    * Read one protocol. Return null when the source has nothing for it — that is
    * a normal answer, not a failure. Throw when the source could not be read.
@@ -257,9 +354,9 @@ export interface Adapter<Result> {
   collect(args: {
     protocol: Protocol
     ctx: AdapterContext
-    prepared: unknown
+    prepared: Prepared
   }): Promise<Result | null>
 }
 
-export type FeedAdapter = Adapter<FeedResult>
-export type MetricAdapter = Adapter<MetricResult>
+export type FeedAdapter<Prepared = unknown> = Adapter<FeedResult, Prepared>
+export type MetricAdapter<Prepared = unknown> = Adapter<MetricResult, Prepared>

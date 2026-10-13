@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/adapters/feeds/feed-output.schema.json",
   "title": "defi-dna feed output",
-  "description": "What one feed adapter produces for one protocol. collect() returns the fields below, or null when the feed has nothing for that protocol; the runner adds `status` and `fetchedAt` and stores the result under data/protocols/<protocol>.json in `feeds.<feed id>`.",
+  "description": "What one feed adapter produces for one protocol. collect() returns the fields below, or null when the feed has nothing for that protocol; the runner adds `status` and `since` and stores the result under data/protocols/<protocol>.json in `feeds.<feed id>`.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -11,7 +11,7 @@
       "enum": ["ok", "none", "error"]
     },
     "value": {
-      "description": "The feed's headline value, verbatim and as a string: \"Stage 1\", \"4.8/10 · medium\", \"82 vaults rated\". Never converted into another feed's units. Its absence is what makes a cell grey.",
+      "description": "The feed's headline value, verbatim and as a string: \"20 admins · $116M capital at risk\", \"4.8/10 · medium\", \"82 vaults rated\". Never converted into another feed's units. Its absence is what makes a cell grey.",
       "type": "string",
       "minLength": 1
     },
@@ -34,7 +34,7 @@
       }
     },
     "updatedAt": {
-      "description": "When the feed itself last updated this assessment (ISO date or date-time). The fetch time is recorded separately as fetchedAt.",
+      "description": "When the feed itself last updated this assessment (ISO date or date-time). The run that last changed the cell is recorded separately as `since`.",
       "type": "string"
     },
     "url": {
@@ -50,8 +50,8 @@
       "description": "Optional structured data, each recognized type rendered by its own frontend component.",
       "$ref": "../../schemas/protocol-record.schema.json#/definitions/extra"
     },
-    "fetchedAt": {
-      "description": "Added by the runner: when we read the source.",
+    "since": {
+      "description": "Added by the runner: the run that last changed this cell. Unchanged content keeps its earlier time.",
       "type": "string"
     }
   },
@@ -64,25 +64,20 @@
   "examples": [
     {
       "status": "ok",
-      "value": "Stage 1",
-      "summary": "Morpho Blue is an immutable lending primitive…",
+      "value": "20 admins · $115.5M capital at risk",
+      "summary": "Lido is a liquid-staking protocol…",
       "details": [
-        { "name": "Upgradeability", "value": "L" },
-        {
-          "name": "Exit Window",
-          "value": "H",
-          "description": "Centralized operators control the permissioned functions."
-        }
+        { "name": "Admins", "value": "20" },
+        { "name": "Capital at risk", "value": "$115.5M" }
       ],
-      "updatedAt": "2025-05-07",
-      "url": "https://www.defiscan.info/protocols/morpho/ethereum",
-      "extra": { "reviews": [] },
-      "fetchedAt": "2026-09-20T21:01:09.359Z"
+      "updatedAt": "2025-06-19",
+      "url": "https://www.defiscan.info/protocol/lido",
+      "since": "2026-09-20T21:01:09.359Z"
     },
     {
       "status": "none",
       "note": "Risklayer lists balancer.fi but has published no completed analysis.",
-      "fetchedAt": "2026-09-20T21:01:09.359Z"
+      "since": "2026-09-20T21:01:09.359Z"
     }
   ]
 }
