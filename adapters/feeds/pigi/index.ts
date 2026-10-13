@@ -189,10 +189,10 @@ export function assess(
  *
  * The data API needs a key (PIGI_API_KEY), traded for an hour-long token. The
  * run reads the node listing in prepare() and one `/protocols/:node_id` per
- * covered row in collect() — twelve requests today, about 730 a month at two
- * runs a day against the free plan's 1,000. The token is minted only when a
- * request misses the HTTP cache, so --offline needs no key; an online run
- * without the key skips pigi and keeps the previous values.
+ * covered row in collect() — fourteen requests today (thirteen rows mapped),
+ * about 850 a month at two runs a day against the free plan's 1,000. The token
+ * is minted only when a request misses the HTTP cache, so --offline needs no
+ * key; an online run without the key skips pigi and keeps the previous values.
  */
 const adapter: FeedAdapter<Prepared> = {
   id: 'pigi',

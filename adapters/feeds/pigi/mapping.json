@@ -1,5 +1,6 @@
 {
   "aave-v3": ["aave-v3-ethereum", "aave-v3-ethereum-lido", "aave-v3-ethereum-horizon"],
+  "aave-v4": "aave-v4-ethereum",
   "euler": "euler-v2",
   "fluid": "fluid",
   "lido": "lido-protocol",
@@ -9,5 +10,6 @@
   "morpho-vaults": ["morpho-v2", "metamorpho-v1", "metamorpho-v1-1"],
   "spark": "sparklend",
   "uniswap-v3": "uniswap-v3",
+  "uniswap-v4": "uniswap-v4",
   "yearn": "yearn-v3"
 }
