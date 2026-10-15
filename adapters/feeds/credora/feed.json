@@ -6,5 +6,5 @@
   "assesses": "vault",
   "homepage": "https://www.credora.network",
   "methodologyUrl": "https://www.credora.network/docs/methodologies/defi-rating-scale/",
-  "enabled": false
+  "enabled": true
 }

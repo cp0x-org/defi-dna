@@ -3,7 +3,7 @@ import type { Detail, FeedAdapter, FeedResult } from '@defi-dna/core'
 /** Documented: POST only, authenticated with a `ClientSecret` header. */
 const API = 'https://api.credora.io/graphql'
 const SITE = 'https://app.credora.network'
-/** The public list of rated vaults; Credora documents no page per vault. */
+/** The public list of rated vaults; a vault's own page is `/vaults/<address>`. */
 const VAULTS = `${SITE}/vaults`
 /**
  * Every online run asks the API afresh: there is no published quota, the run
@@ -15,6 +15,13 @@ const TTL = 0
 const PAGE = 1000
 const MAX_PAGES = 5
 const ETHEREUM = 1
+/**
+ * Credora's own names for the products that are vaults, as the API returned
+ * them on 2026-10-15: `vault` (Morpho v1), `vaults_v2` (Morpho Vault V2),
+ * `savings` (Spark Savings), and `vaults`, the spelling of its documentation.
+ * It rates markets and assets too; those are not read.
+ */
+const VAULT_PRODUCTS = new Set(['vault', 'vaults', 'vaults_v2', 'savings'])
 /** Vaults listed individually on the protocol page. */
 const TOP_VAULTS = 10
 /** Vaults carried into `extra`. Keeps a record of a big protocol well under ~200 KB. */
@@ -29,7 +36,7 @@ export interface Rating {
   protocol: string
   /** "indicative" or "commissioned", in Credora's own terms. */
   ratingType: string | null
-  /** "vaults", "markets", ... — the API spells it in either case. */
+  /** Credora's product name: "vault", "vaults_v2", "savings", "markets", "assets", ... */
   product: string | null
   curator: { name: string | null } | null
   Metrics: {
@@ -73,6 +80,18 @@ const verdict = (vault: Rating): string =>
 
 const ratingType = (vault: Rating): string => vault.ratingType?.toLowerCase() ?? 'unstated'
 
+/** A name or, for Morpho v1 vaults, the curator's address; the API writes an absent one as "null". */
+const curatorOf = (vault: Rating): string | null => {
+  const name = vault.curator?.name
+  return name && name !== 'null' ? name : null
+}
+
+const countBy = (vaults: Rating[], key: (vault: Rating) => string): [string, number][] => {
+  const counts = new Map<string, number>()
+  for (const vault of vaults) counts.set(key(vault), (counts.get(key(vault)) ?? 0) + 1)
+  return [...counts]
+}
+
 /**
  * Credora — DeFi credit ratings for individual vaults.
  *
@@ -84,8 +103,8 @@ const ratingType = (vault: Rating): string => vault.ratingType?.toLowerCase() ??
  *
  * The API is GraphQL behind a whitelisted key (CREDORA_API_KEY, header
  * `ClientSecret`). One query per run, in prepare(), filtered to Ethereum
- * server-side; the product filter is applied here because the documentation
- * spells `vaults` in either case. The response is kept on disk for --offline,
+ * server-side; the product filter is applied here because Credora files vaults
+ * under several product names. The response is kept on disk for --offline,
  * which needs no key; an online run without the key skips the feed.
  */
 const adapter: FeedAdapter<VaultsByProtocol> = {
@@ -116,8 +135,13 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
     }
 
     const vaults: VaultsByProtocol = new Map()
+    const skipped: Rating[] = []
     for (const item of listed) {
-      if (item.chainId !== ETHEREUM || item.product?.toLowerCase() !== 'vaults') continue
+      if (item.chainId !== ETHEREUM) continue
+      if (!VAULT_PRODUCTS.has(item.product?.toLowerCase() ?? '')) {
+        skipped.push(item)
+        continue
+      }
       const key = item.protocol.toLowerCase()
       vaults.set(key, [...(vaults.get(key) ?? []), item])
     }
@@ -125,6 +149,11 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
     ctx.log(
       `${listed.length} ratings listed, ${counted} Ethereum vault(s) under ${vaults.size} protocol(s)`,
     )
+    // A product name Credora starts using for vaults would otherwise drop out unnoticed.
+    if (skipped.length > 0) {
+      const products = countBy(skipped, (item) => item.product ?? 'unstated')
+      ctx.log(`not read: ${products.map(([product, count]) => `${count} ${product}`).join(', ')}`)
+    }
     // A renamed protocol would otherwise look like a coverage gap.
     const missing = Object.values(ctx.mapping)
       .flat()
@@ -155,7 +184,7 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
       name: vault.name,
       value: verdict(vault),
       description: [
-        vault.curator?.name ? `Curated by ${vault.curator.name}` : null,
+        curatorOf(vault) ? `Curated by ${curatorOf(vault)}` : null,
         `${ratingType(vault)} rating`,
         publishedOn(vault) ? `Published ${publishedOn(vault)}` : null,
       ]
@@ -163,10 +192,10 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
         .join(' · '),
     }))
 
-    const byType = new Map<string, number>()
-    for (const vault of vaults)
-      byType.set(ratingType(vault), (byType.get(ratingType(vault)) ?? 0) + 1)
-    const types = [...byType].map(([type, count]) => `${count} ${type}`).join(', ')
+    const byType = countBy(vaults, ratingType)
+    const byProduct = countBy(vaults, (vault) => vault.product ?? 'unstated')
+    const products = byProduct.map(([product, count]) => `"${product}" (${count})`).join(', ')
+    const types = byType.map(([type, count]) => `${type} (${count})`).join(', ')
     const updatedAt = vaults.map(publishedOn).filter(Boolean).sort().at(-1)
     const omitted = Math.max(0, vaults.length - MAX_VAULTS)
 
@@ -176,9 +205,10 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
       ...(updatedAt ? { updatedAt } : {}),
       url: VAULTS,
       note:
-        `Counted: ${vaults.length} Ethereum vault(s) Credora files under ${filed} with product ` +
-        `"vaults": ${types}. No vault stands in for the protocol and nothing is averaged — ` +
-        'Credora publishes no protocol-level rating. Markets and assets it also rates are not shown.' +
+        `Counted: ${vaults.length} Ethereum vault(s) Credora files under ${filed}, product ` +
+        `${products}; rating type ${types}. No vault stands in for the protocol and nothing ` +
+        'is averaged — Credora publishes no protocol-level rating. Markets and assets it also ' +
+        'rates are not shown.' +
         (omitted > 0
           ? ` The first ${MAX_VAULTS} by name are listed here; ${omitted} more are at the source.`
           : ''),
@@ -186,7 +216,8 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
         facts: [
           { name: 'Credora protocol', value: mapped.join(', ') },
           { name: 'Vaults rated', value: String(vaults.length) },
-          ...[...byType].map(([type, count]) => ({
+          { name: 'Credora product', value: products },
+          ...byType.map(([type, count]) => ({
             name: `${type[0]?.toUpperCase()}${type.slice(1)} ratings`,
             value: String(count),
           })),
@@ -198,14 +229,18 @@ const adapter: FeedAdapter<VaultsByProtocol> = {
         ],
         vaults: vaults.slice(0, MAX_VAULTS).map((vault) => ({
           name: vault.name,
-          version: null,
-          curator: vault.curator?.name ?? null,
+          // Credora's product name tells a Morpho v1 vault from a Vault V2.
+          version: vault.product,
+          curator: curatorOf(vault),
           tier: vault.Metrics.rating,
           score: vault.Metrics.psl,
           tvlUsd: null,
           scoredAt: publishedOn(vault),
-          // Credora documents no page per vault; the fragment keeps each row's link distinct.
-          url: `${VAULTS}#${encodeURIComponent(vault.address ?? vault.name)}`,
+          // The page is keyed by the address: the API's `id` of a Vault V2 (`1-0x…`) finds nothing.
+          // Without one, the list page; the fragment keeps each row's link distinct.
+          url: vault.address
+            ? `${VAULTS}/${vault.address}`
+            : `${VAULTS}#${encodeURIComponent(vault.name)}`,
         })),
       },
     }

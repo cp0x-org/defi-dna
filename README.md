@@ -130,11 +130,10 @@ Risk feeds currently include [DeFiScan](https://www.defiscan.info),
 [Philidor](https://analytics.philidor.io),
 [pigi.finance](https://pigi.finance),
 [DeFi Scoring](https://defiscoring.com) and
-[Credora](https://www.credora.network) (vault ratings; disabled until its
-API key is accepted). Independent measurements come from
-DefiLlama's Ethereum TVL and incident history. A feed with no data for a
-protocol is distinct from a collection error; a failed refresh retains the
-previous value.
+[Credora](https://www.credora.network) (vault ratings). Independent
+measurements come from DefiLlama's Ethereum TVL and incident history. A feed
+with no data for a protocol is distinct from a collection error; a failed
+refresh retains the previous value.
 
 To add a feed, copy `adapters/feeds/_template/`, provide its metadata and
 protocol mapping, then implement `collect()` in `index.ts`. See the
