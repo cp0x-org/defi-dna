@@ -311,6 +311,13 @@ export interface FetchOptions {
 }
 
 /**
+ * Options of a POST. With `ttlSeconds` the response is cached on disk under the
+ * URL and the body, like a GET, so a query API (GraphQL) replays offline and
+ * serves fixtures; without it the response never touches the disk.
+ */
+export type PostOptions = Pick<FetchOptions, 'ttlSeconds' | 'headers'>
+
+/**
  * Everything an adapter is allowed to touch. Adapters never call `fetch`
  * themselves — going through the context is what gives us the HTTP cache and
  * offline runs.
@@ -318,8 +325,12 @@ export interface FetchOptions {
 export interface AdapterContext {
   getJson<T>(url: string, options?: FetchOptions): Promise<T>
   getText(url: string, options?: FetchOptions): Promise<string>
-  /** POST a JSON body and read JSON back. Never cached: it is for exchanging credentials. */
-  postJson<T>(url: string, body: unknown): Promise<T>
+  /**
+   * POST a JSON body and read JSON back. Without `ttlSeconds` it is never
+   * cached: that form exchanges credentials. With it, the response is cached
+   * like a GET, for an API that answers queries only to POST.
+   */
+  postJson<T>(url: string, body: unknown, options?: PostOptions): Promise<T>
   /** This adapter's mapping.json. Empty when the folder has none. */
   mapping: Mapping
   log(message: string): void

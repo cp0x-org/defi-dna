@@ -63,6 +63,7 @@ jobs:
         env:
           # Without it the pigi column keeps its previous values and the run logs the failure.
           PIGI_API_KEY: ${{ secrets.PIGI_API_KEY }}
+          CREDORA_API_KEY: ${{ secrets.CREDORA_API_KEY }}
 
       - name: Commit and push data to cp0x-org/defi-dna-data
         run: |

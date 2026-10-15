@@ -1,0 +1,10 @@
+{
+  "id": "credora",
+  "name": "Credora",
+  "topic": "Vault ratings",
+  "focus": "DeFi credit ratings (A+ to D) and the annualized Probability of Significant Loss for individual vaults, published per vault with the curator and the rating type (commissioned or indicative).",
+  "assesses": "vault",
+  "homepage": "https://www.credora.network",
+  "methodologyUrl": "https://www.credora.network/docs/methodologies/defi-rating-scale/",
+  "enabled": true
+}

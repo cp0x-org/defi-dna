@@ -1,0 +1,139 @@
+{
+  "data": {
+    "ratings": {
+      "totalCount": 126,
+      "items": [
+        {
+          "id": "0x68Aea7b82Df6CcdF76235D46445Ed83f85F845A3",
+          "address": "0x68Aea7b82Df6CcdF76235D46445Ed83f85F845A3",
+          "name": "Yearn USDC",
+          "chainId": 1,
+          "protocol": "Morpho",
+          "ratingType": "indicative",
+          "product": "vault",
+          "curator": {
+            "name": "0x90D0f26025571295D18a6c041E47450B81886B51"
+          },
+          "Metrics": {
+            "rating": "A",
+            "psl": 0.003204732543,
+            "publishDate": "2026-10-15"
+          }
+        },
+        {
+          "id": "0xdd0f28e19C1780eb6396170735D45153D261490d",
+          "address": "0xdd0f28e19C1780eb6396170735D45153D261490d",
+          "name": "Gauntlet USDC Prime",
+          "chainId": 1,
+          "protocol": "Morpho",
+          "ratingType": "indicative",
+          "product": "vault",
+          "curator": {
+            "name": "0x9E33faAE38ff641094fa68c65c2cE600b3410585"
+          },
+          "Metrics": {
+            "rating": "A",
+            "psl": 0.002589947307,
+            "publishDate": "2026-10-15"
+          }
+        },
+        {
+          "id": "1-0xa877D5bb0274dcCbA8556154A30E1Ca4021a275f",
+          "address": "0xa877D5bb0274dcCbA8556154A30E1Ca4021a275f",
+          "name": "KPK EURC Yield",
+          "chainId": 1,
+          "protocol": "Morpho",
+          "ratingType": "indicative",
+          "product": "vaults_v2",
+          "curator": {
+            "name": "KPK"
+          },
+          "Metrics": {
+            "rating": "A",
+            "psl": 0.002000000000000004,
+            "publishDate": "2026-10-14"
+          }
+        },
+        {
+          "id": "1-0xbEEF00A59B577423653A1526c7009bdE103F542B",
+          "address": "0xbEEF00A59B577423653A1526c7009bdE103F542B",
+          "name": "Steakhouse Confidential Prime USDC",
+          "chainId": 1,
+          "protocol": "Morpho",
+          "ratingType": "indicative",
+          "product": "vaults_v2",
+          "curator": {
+            "name": "Steakhouse Financial"
+          },
+          "Metrics": {
+            "rating": "A",
+            "psl": 0.00321518900145001,
+            "publishDate": "2026-10-14"
+          }
+        },
+        {
+          "id": "0x28b3a8fb53b741a8fd78c0fb9a6b2393d896a43d",
+          "address": "0x28B3a8fb53B741A8Fd78c0fb9A6B2393d896a43d",
+          "name": "Savings USDC",
+          "chainId": 1,
+          "protocol": "spark",
+          "ratingType": "commissioned",
+          "product": "savings",
+          "curator": null,
+          "Metrics": {
+            "rating": "A-",
+            "psl": 0.0066,
+            "publishDate": "2026-10-12"
+          }
+        },
+        {
+          "id": "0x99cd4ec3f88a45940936f469e4bb72a2a701eeb9",
+          "address": "0x99CD4Ec3f88A45940936F469E4bB72A2A701EEB9",
+          "name": "Staked USDS",
+          "chainId": 1,
+          "protocol": "spark",
+          "ratingType": "commissioned",
+          "product": "savings",
+          "curator": null,
+          "Metrics": {
+            "rating": "B+",
+            "psl": 0.0091,
+            "publishDate": "2026-10-12"
+          }
+        },
+        {
+          "id": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+          "address": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+          "name": "stETH",
+          "chainId": 1,
+          "protocol": "null",
+          "ratingType": "Derivative - Liquid Staking",
+          "product": "assets",
+          "curator": {
+            "name": "null"
+          },
+          "Metrics": {
+            "rating": "A+",
+            "psl": 0.00088,
+            "publishDate": "2026-10-08"
+          }
+        },
+        {
+          "id": "0x138eec0e4a1937eb92ebc70043ed539661dd7ed5a89fb92a720b341650288a40",
+          "address": "0x138eec0e4a1937eb92ebc70043ed539661dd7ed5a89fb92a720b341650288a40",
+          "name": "WBTC/WETH",
+          "chainId": 1,
+          "protocol": "Morpho",
+          "ratingType": "indicative",
+          "product": "markets",
+          "curator": null,
+          "Metrics": {
+            "rating": "A",
+            "psl": 0.003,
+            "publishDate": "2026-03-18"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -100,6 +100,11 @@ and one per mapped protocol), so two scheduled runs a day use about 730 of the
 free plan's 1,000 requests a month; manual and local runs draw on the same
 quota.
 
+The Credora feed needs an API key too: `CREDORA_API_KEY`, as an Actions
+secret and in the local `.env`. Credora whitelists API access on request
+(the form is linked from its API documentation). One request per run reads
+every Ethereum rating; offline runs replay the last response and need no key.
+
 ## Docker
 
 ```bash
@@ -123,11 +128,12 @@ address in the project's `.env` file (copy `.env.example`; for example,
 Risk feeds currently include [DeFiScan](https://www.defiscan.info),
 [Risklayer](https://risklayer.online),
 [Philidor](https://analytics.philidor.io),
-[pigi.finance](https://pigi.finance) and
-[DeFi Scoring](https://defiscoring.com). Independent measurements come from
-DefiLlama's Ethereum TVL and incident history. A feed with no data for a
-protocol is distinct from a collection error; a failed refresh retains the
-previous value.
+[pigi.finance](https://pigi.finance),
+[DeFi Scoring](https://defiscoring.com) and
+[Credora](https://www.credora.network) (vault ratings). Independent
+measurements come from DefiLlama's Ethereum TVL and incident history. A feed
+with no data for a protocol is distinct from a collection error; a failed
+refresh retains the previous value.
 
 To add a feed, copy `adapters/feeds/_template/`, provide its metadata and
 protocol mapping, then implement `collect()` in `index.ts`. See the

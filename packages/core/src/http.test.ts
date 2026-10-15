@@ -83,4 +83,25 @@ describe('Http', () => {
     expect(await http.postJson('https://example.com/token', { key: 'k' })).toEqual({ token: 'b' })
     expect(calls).toHaveLength(4)
   })
+
+  it('caches a POST only when asked, keyed by its body, and replays it offline', async () => {
+    const { calls, fetch } = scripted([ok('{"q":1}'), ok('{"q":2}')])
+    const http = new Http({ cacheDir, fetch })
+    let minted = 0
+    const headers = async () => {
+      minted++
+      return { clientsecret: 'k' }
+    }
+    const query = 'https://example.com/graphql'
+    const post = (body: unknown) => http.postJson(query, body, { ttlSeconds: 60, headers })
+    expect(await post({ page: 0 })).toEqual({ q: 1 })
+    expect(await post({ page: 0 })).toEqual({ q: 1 }) // served from the cache
+    expect(await post({ page: 1 })).toEqual({ q: 2 }) // another body, another entry
+    expect(calls).toHaveLength(2)
+    expect(minted).toBe(2)
+    const offline = new Http({ cacheDir, fetch, offline: true })
+    expect(await offline.postJson(query, { page: 1 }, { ttlSeconds: 0, headers })).toEqual({ q: 2 })
+    await expect(offline.postJson(query, { page: 2 }, { ttlSeconds: 0 })).rejects.toThrow('offline')
+    expect(minted).toBe(2)
+  })
 })

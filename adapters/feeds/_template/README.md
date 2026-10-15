@@ -106,14 +106,14 @@ What a result holds (`../feed-output.schema.json` has every field):
 
 `ctx` is everything the adapter may touch:
 
-| Member                  | What it does                                                                                          |
-| ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| `mapping`               | this folder's `mapping.json`, every value a list                                                      |
-| `getJson(url, options)` | GET and parse; cached on disk for `ttlSeconds`, replayed by `--offline`                               |
-| `getText(url, options)` | the same for text; `rangeBytes` reads the head of a large file, `allowNotFound` turns a 404 into `''` |
-| `postJson(url, body)`   | POST; never cached, never retried — for trading a key for a token                                     |
-| `log(message)`          | printed with `--verbose`                                                                              |
-| `now`                   | the run's time                                                                                        |
+| Member                                           | What it does                                                                                                          |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `mapping`                                        | this folder's `mapping.json`, every value a list                                                                      |
+| `getJson(url, options)`                          | GET and parse; cached on disk for `ttlSeconds`, replayed by `--offline`                                               |
+| `getText(url, options)`                          | the same for text; `rangeBytes` reads the head of a large file, `allowNotFound` turns a 404 into `''`                 |
+| `postJson(url, body, { ttlSeconds?, headers? })` | POST; never cached without `ttlSeconds` (trading a key for a token), cached by URL and body with it (a GraphQL query) |
+| `log(message)`                                   | printed with `--verbose`                                                                                              |
+| `now`                                            | the run's time                                                                                                        |
 
 Adapters never call `fetch` themselves. A feed behind a key declares it in
 `secrets`, reads it from `process.env` inside `prepare()`, and passes the token

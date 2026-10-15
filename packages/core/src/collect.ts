@@ -70,7 +70,7 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
   const context = (id: string, mapping: Mapping): AdapterContext => ({
     getJson: (url, opts) => http.getJson(url, opts),
     getText: (url, opts) => http.getText(url, opts),
-    postJson: (url, body) => http.postJson(url, body),
+    postJson: (url, body, opts) => http.postJson(url, body, opts),
     mapping,
     log: (message) => options.verbose && console.log(`  ${id}: ${message}`),
     now,

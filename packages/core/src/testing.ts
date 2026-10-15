@@ -1,4 +1,4 @@
-import type { AdapterContext, FetchOptions, Mapping } from './types.ts'
+import type { AdapterContext, FetchOptions, Mapping, PostOptions } from './types.ts'
 
 export interface FakeContextOptions {
   /** What `ctx.mapping` holds; the adapter's real mapping.json is not read. */
@@ -39,10 +39,11 @@ export function fakeContext(
     getText: (url, fetch = {}) => serve(url, fetch),
     getJson: async <T>(url: string, fetch: FetchOptions = {}): Promise<T> =>
       JSON.parse(await serve(url, fetch)) as T,
-    postJson: async <T>(url: string): Promise<T> => {
+    postJson: async <T>(url: string, _body: unknown, post: PostOptions = {}): Promise<T> => {
       const key = `POST ${url}`
       requests.push(key)
       if (!(key in responses)) throw new Error(`no fixture for ${key}`)
+      await post.headers?.()
       return responses[key] as T
     },
   }
