@@ -60,6 +60,11 @@ export interface Feed {
   enabled: boolean
   /** How the feed's own published scale reads, when it says. Absent: no colour beyond neutral. */
   status?: StatusRule
+  /**
+   * The same, applied to each entry of `details` — for a feed that grades parts
+   * of its assessment on its own scale and publishes no grade for the whole.
+   */
+  detailStatus?: StatusRule
 }
 
 /** The feed's own characterization of a value, never ours. */
@@ -226,8 +231,8 @@ export type MetricsFile = Record<string, Record<string, MetricData>>
 
 /** What the protocol page renders: the record joined with the protocol's metrics. */
 export interface ProtocolDetail extends ProtocolRecord {
-  /** Keyed by metric id: `tvl`, `incidents`. */
-  metrics: Record<string, MetricData>
+  /** Keyed by metric id: `tvl`, `incidents`. null when metrics.json could not be read. */
+  metrics: Record<string, MetricData> | null
 }
 
 /** When we last read a source. Facts about this pipeline, never about a protocol. */

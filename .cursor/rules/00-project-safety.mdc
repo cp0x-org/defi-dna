@@ -1,0 +1,26 @@
+
+---
+description: "Safety constraints for all changes in the existing application"
+alwaysApply: true
+---
+
+# Architecture and refactoring policy
+
+- The existing architecture is not automatically the desired architecture.
+- Identify and explain architectural problems before proposing a refactor.
+- Recommend architectural changes when they materially improve maintainability,
+  separation of concerns, testability, or reliability.
+- Do not preserve a bad design merely to minimize the number of changed files.
+- Prefer a clear target architecture over accumulating local workarounds.
+- For substantial architectural changes, first explain the current problem,
+  proposed target structure, benefits, risks, migration steps, and verification plan.
+- Obtain approval for the migration plan before making broad architectural changes.
+- Once the plan is approved, implement it in coherent, verifiable stages.
+- Do not confuse an architectural refactor with a complete rewrite.
+- Remove obsolete code and files when their lack of use has been verified.
+- Do not leave compatibility layers, duplicate implementations, or temporary
+  abstractions behind after migration unless they are genuinely required.
+- Update imports, tests, documentation, and related configuration as needed.
+- Verify that the resulting architecture is simpler and more consistent,
+  not merely different.
+

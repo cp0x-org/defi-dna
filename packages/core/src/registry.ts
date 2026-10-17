@@ -83,6 +83,7 @@ export async function loadRegistry(): Promise<Registry> {
       )
     }
     if (feed.status) checkStatusRule(id, feed.status)
+    if (feed.detailStatus) checkStatusRule(id, feed.detailStatus, 'detailStatus')
     if (!feed.enabled) {
       disabledFeeds.push(id)
       continue
