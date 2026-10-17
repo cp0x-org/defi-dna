@@ -231,8 +231,8 @@ export type MetricsFile = Record<string, Record<string, MetricData>>
 
 /** What the protocol page renders: the record joined with the protocol's metrics. */
 export interface ProtocolDetail extends ProtocolRecord {
-  /** Keyed by metric id: `tvl`, `incidents`. */
-  metrics: Record<string, MetricData>
+  /** Keyed by metric id: `tvl`, `incidents`. null when metrics.json could not be read. */
+  metrics: Record<string, MetricData> | null
 }
 
 /** When we last read a source. Facts about this pipeline, never about a protocol. */

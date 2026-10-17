@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { EMPTY_QUERY, TVL_MIN, UPDATED, type MatrixQuery } from '../lib/matrix.ts'
+import { TVL_MIN, UPDATED, withoutFilters, type MatrixQuery } from '../lib/matrix.ts'
 import { feeds } from '../lib/registry.ts'
 import type { Row } from '../lib/rows.ts'
 import { SIGNAL_LABELS, type Signal } from '../lib/status.ts'
@@ -273,7 +273,7 @@ export const FilterDrawer = ({
           <button
             className="btn ghost"
             type="button"
-            onClick={() => onChange({ ...EMPTY_QUERY, q: query.q, sort: query.sort })}
+            onClick={() => onChange(withoutFilters(query))}
           >
             Reset all
           </button>

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import type { Change, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
 import { useChangelog, useProtocol } from '../hooks/useIndex.ts'
 import { feeds, protocolById, protocols } from '../lib/registry.ts'
+import { changesFor } from '../lib/rows.ts'
 import { ageLabel, categoryLabel, dateInfo, formatUsd, safeUrl } from '../lib/view.ts'
 import { SIGNAL_LABELS, TONE_LABELS, signalCounts, toneOf, type Signal } from '../lib/status.ts'
 import { CoverageRing, Prov, StatusDot, StatusPill } from '../components/Coverage.tsx'
@@ -43,14 +44,22 @@ const dayAndTime = (ts: string): [string, string] => {
 }
 
 /** What stands in for anything that needs the generated record. */
-const RecordState = ({ protocol, error }: { protocol: Protocol; error: string | null }) =>
+const RecordState = ({
+  protocol,
+  error,
+  onRetry,
+}: {
+  protocol: Protocol
+  error: string | null
+  onRetry: () => void
+}) =>
   error ? (
     <div className="empty-state" role="alert">
       <h3>What the feeds publish about {protocol.name} could not be loaded</h3>
       <p>
         Nothing is shown until it is. A missing card here means missing data, not a missing risk.
       </p>
-      <button className="button primary" onClick={() => window.location.reload()}>
+      <button className="button primary" type="button" onClick={onRetry}>
         Try again
       </button>
       <details>
@@ -74,7 +83,7 @@ const RecordState = ({ protocol, error }: { protocol: Protocol; error: string | 
 export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const { id = '', tab: tabParam = '', feed: feedParam = '' } = useParams()
   const protocol = protocolById(id)
-  const { data: record, error } = useProtocol(id)
+  const { data: record, error, retry } = useProtocol(id)
   const changelog = useChangelog()
   const anchor = useRef<HTMLDivElement>(null)
   const tab: Tab = Object.hasOwn(TABS, tabParam) ? (tabParam as Tab) : 'overview'
@@ -107,16 +116,18 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const errors = feeds.filter((feed) => statusOf(feed.id) === 'error')
   const tones = record ? feeds.map((feed) => toneOf(feed, record.feeds[feed.id])) : []
   const signals = signalCounts(tones)
-  const tvl = record?.metrics['tvl']
-  const incidents = record?.metrics['incidents']
+  const metricsMissing = record != null && record.metrics === null
+  const tvl = record?.metrics?.['tvl']
+  const incidents = record?.metrics?.['incidents']
+  const tvlAge = ageLabel(tvl?.fetchedAt)
   const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
     b.date.localeCompare(a.date),
   )[0]
-  const lastChange = feeds
-    .map((feed) => ({ feed, since: record?.feeds[feed.id]?.since }))
-    .filter((entry) => entry.since && statusOf(entry.feed.id) === 'ok')
-    .sort((a, b) => (b.since ?? '').localeCompare(a.since ?? ''))[0]
-  const changes = (changelog.data ?? []).filter((change) => change.protocolId === protocol.id)
+  const changes = changesFor(changelog.data ?? [], protocol.id)
+  const lastChange = changes[0]
+  const lastChangeFeed = lastChange
+    ? (feeds.find((feed) => feed.id === lastChange.feedId)?.name ?? lastChange.feedId)
+    : null
 
   const figure = (label: ReactNode, value: ReactNode, sub: ReactNode, to?: string): ReactNode => {
     const body = (
@@ -203,7 +214,9 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
             TVL <Prov kind="meta" />
           </>,
           formatUsd(tvl?.value) ?? '—',
-          tvl ? `DefiLlama · Ethereum · ${ageLabel(tvl.fetchedAt) ?? '—'} ago` : 'DefiLlama',
+          metricsMissing
+            ? 'DefiLlama · could not be loaded'
+            : `DefiLlama · Ethereum${tvlAge ? ` · ${tvlAge} ago` : ''}`,
         )}
         {figure(
           <>
@@ -244,9 +257,11 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           ) : (
             '—'
           ),
-          latestIncident
-            ? `DefiLlama · latest ${dateInfo(latestIncident.date).label}`
-            : 'DefiLlama',
+          metricsMissing
+            ? 'DefiLlama · could not be loaded'
+            : latestIncident
+              ? `DefiLlama · latest ${dateInfo(latestIncident.date).label}`
+              : 'DefiLlama',
           `${base}/data`,
         )}
         {figure(
@@ -255,12 +270,16 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           </>,
           lastChange ? (
             <>
-              {ageLabel(lastChange.since)} <small>ago</small>
+              {ageLabel(lastChange.ts)} <small>ago</small>
             </>
           ) : (
             '—'
           ),
-          lastChange ? `${lastChange.feed.name} changed` : 'latest move in a feed’s value',
+          changelog.error
+            ? 'run log could not be loaded'
+            : lastChange
+              ? `${lastChangeFeed} changed`
+              : 'latest move in a feed’s value',
         )}
       </section>
 
@@ -344,7 +363,7 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
       </nav>
 
       {!record ? (
-        <RecordState protocol={protocol} error={error} />
+        <RecordState protocol={protocol} error={error} onRetry={retry} />
       ) : tab === 'risk' ? (
         <RiskIntelligence protocol={protocol} record={record} index={index} feedId={feedParam} />
       ) : tab === 'data' ? (
@@ -433,8 +452,8 @@ const OverviewTab = ({
   const base = `/protocol/${protocol.id}`
   const states = feeds.map((feed) => toneOf(feed, record.feeds[feed.id]))
   const withData = feeds.filter((feed) => record.feeds[feed.id]?.status === 'ok').length
-  const tvl = record.metrics['tvl']
-  const incidents = record.metrics['incidents']
+  const tvl = record.metrics?.['tvl']
+  const incidents = record.metrics?.['incidents']
   const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
     b.date.localeCompare(a.date),
   )[0]
@@ -615,7 +634,11 @@ const OverviewTab = ({
             </dl>
           </div>
           <div className="card-f">
-            <span>DefiLlama · collected {dateInfo(tvl?.fetchedAt).label}</span>
+            <span>
+              {record.metrics
+                ? `DefiLlama · collected ${dateInfo(tvl?.fetchedAt).label}`
+                : 'DefiLlama’s figures could not be loaded'}
+            </span>
             <Link className="text-link" to={`${base}/data`}>
               All figures →
             </Link>
@@ -662,8 +685,8 @@ const DataTab = ({
   record: ProtocolDetail
   versions: Protocol[]
 }) => {
-  const tvl = record.metrics['tvl']
-  const incidents = record.metrics['incidents']
+  const tvl = record.metrics?.['tvl']
+  const incidents = record.metrics?.['incidents']
   const feedLinks = feeds.filter(
     (feed) => record.feeds[feed.id]?.status === 'ok' && record.feeds[feed.id]?.url,
   )
@@ -691,7 +714,9 @@ const DataTab = ({
             <span className="aside">via DefiLlama · {dateInfo(tvl?.fetchedAt).label}</span>
           </div>
           <div className="card-b">
-            <div className="tvl-big">{formatUsd(tvl?.value) ?? 'Not available'}</div>
+            <div className="tvl-big">
+              {formatUsd(tvl?.value) ?? (record.metrics ? 'Not available' : 'Could not be loaded')}
+            </div>
             <p className="tvl-note">
               The Ethereum-mainnet figure, as DefiLlama publishes it. A measured quantity — never
               combined with what a feed says.
@@ -715,8 +740,13 @@ const DataTab = ({
                 <IncidentsExtra incidents={incidents.extra?.incidents ?? []} />
                 <TextExtra text={incidents.extra?.text} />
               </>
-            ) : (
+            ) : record.metrics ? (
               <p className="muted">DefiLlama’s incident list was not collected for this version.</p>
+            ) : (
+              <p className="muted">
+                DefiLlama’s incident list could not be loaded. This is our failure, not an empty
+                list.
+              </p>
             )}
           </div>
           <div className="card-f">

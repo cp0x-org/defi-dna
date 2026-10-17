@@ -13,11 +13,14 @@ import {
 export interface Async<T> {
   data: T | null
   error: string | null
+  /** Ask again after a failure; the data client has forgotten the failed request. */
+  retry: () => void
 }
 
 /** Load once per key; the data is a static snapshot, so there is nothing to refetch. */
 function useLoad<T>(key: string, load: () => Promise<T>): Async<T> {
-  const [state, setState] = useState<Async<T>>({ data: null, error: null })
+  const [state, setState] = useState<Pick<Async<T>, 'data' | 'error'>>({ data: null, error: null })
+  const [attempt, setAttempt] = useState(0)
   useEffect(() => {
     let live = true
     setState({ data: null, error: null })
@@ -30,8 +33,8 @@ function useLoad<T>(key: string, load: () => Promise<T>): Async<T> {
     return () => {
       live = false
     }
-  }, [key])
-  return state
+  }, [key, attempt])
+  return { ...state, retry: () => setAttempt((count) => count + 1) }
 }
 
 export const useIndex = (): Async<IndexBundle> => useLoad('index', loadIndex)

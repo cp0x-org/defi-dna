@@ -5,10 +5,11 @@ import {
   filterChips,
   matrixGroups,
   readQuery,
+  withoutFilters,
   writeQuery,
   type MatrixQuery,
 } from './matrix.ts'
-import { buildRows, type Group } from './rows.ts'
+import { buildRows, changesFor, type Group } from './rows.ts'
 
 const NOW = Date.parse('2026-10-11T12:00:00.000Z')
 const FETCHED = '2026-10-11T00:00:00.000Z'
@@ -79,9 +80,15 @@ describe('buildRows', () => {
     const curve = rows.find((row) => row.protocol.id === 'curve')
     expect(curve?.incidents).toEqual({ count: 2, latest: incident('2024-02-01') })
     expect(rows.find((row) => row.protocol.id === 'aave-v4')?.incidents).toBeNull()
-    expect(rows.find((row) => row.protocol.id === 'lido')?.changes.map((c) => c.to)).toEqual([
+    expect(rows.find((row) => row.protocol.id === 'lido')?.changes?.map((c) => c.to)).toEqual([
       'B 83.64/100',
     ])
+    expect(rows.find((row) => row.protocol.id === 'curve')?.changes).toEqual([])
+  })
+
+  it('keeps a run log it does not have apart from a log with no entries', () => {
+    const withoutLog = buildRows(index, { metrics })
+    expect(withoutLog.every((row) => row.changes === null)).toBe(true)
   })
 
   it('takes each feed’s own reading from the index; data without one is neutral', () => {
@@ -89,6 +96,17 @@ describe('buildRows', () => {
     expect(tones('aave-v3')).toMatchObject({ pigi: 'neg', defiscan: 'inf', philidor: 'none' })
     expect(tones('lido')).toMatchObject({ pigi: 'pos' })
     expect(tones('curve')).toMatchObject({ defiscan: 'inf', pigi: 'none' })
+  })
+})
+
+describe('changesFor', () => {
+  it('picks one protocol’s entries, newest first, whatever order the log is in', () => {
+    const later = { ...changes[0], ts: '2026-10-10T08:00:00.000Z', to: 'C 62/100' } as Change
+    expect(changesFor([...changes, later], 'aave-v3').map((change) => change.to)).toEqual([
+      'C 62/100',
+      'C 61/100',
+    ])
+    expect(changesFor(changes, 'curve')).toEqual([])
   })
 })
 
@@ -113,6 +131,24 @@ describe('readQuery and writeQuery', () => {
   it('falls back to the defaults for unknown values in a shared link', () => {
     const stale = new URLSearchParams('sort=constructor&tvl=5m&updated=1y&has=nope&feeds=-1')
     expect(readQuery(stale)).toEqual(query())
+  })
+})
+
+describe('withoutFilters', () => {
+  it('drops every filter and keeps the search and the order', () => {
+    const busy = query({
+      q: 'aave',
+      categories: ['dex'],
+      tvl: '1b',
+      feedsMin: 2,
+      has: ['pigi'],
+      missing: ['defiscan'],
+      incidents: true,
+      signals: ['neg'],
+      updated: '7d',
+      sort: 'name-asc',
+    })
+    expect(withoutFilters(busy)).toEqual(query({ q: 'aave', sort: 'name-asc' }))
   })
 })
 
@@ -161,6 +197,13 @@ describe('matrixGroups', () => {
     expect(quiet).toContain('aave-v3')
     expect(quiet).toContain('aave-v4')
     expect(quiet).not.toContain('lido')
+  })
+
+  it('lets nothing through a freshness filter when the run log is missing', () => {
+    const withoutLog = buildRows(index, { metrics })
+    expect(matrixGroups(withoutLog, query({ updated: 'old' }), NOW)).toEqual([])
+    expect(matrixGroups(withoutLog, query({ updated: '24h' }), NOW)).toEqual([])
+    expect(matrixGroups(withoutLog, query(), NOW).length).toBeGreaterThan(0)
   })
 
   it('sorts by name, coverage, last change and incidents', () => {

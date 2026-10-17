@@ -16,10 +16,13 @@ export interface Row {
   feeds: Record<string, boolean>
   /** feed id -> the feed's own reading of its value, as the bundle copied it; neutral when none. */
   tones: Record<string, Tone>
-  /** null when DefiLlama's incident list was not collected for this version. */
+  /** null when DefiLlama's incident list was not collected for this version, or not loaded. */
   incidents: Incidents | null
-  /** Moves in a feed's published value, as our run log recorded them; newest first. */
-  changes: Change[]
+  /**
+   * Moves in a feed's published value, as our run log recorded them; newest first.
+   * null while the log is loading or when it could not be read — not "no change".
+   */
+  changes: Change[] | null
 }
 
 /**
@@ -49,12 +52,19 @@ export interface RowSources {
 export const dataCount = (flags: Record<string, boolean>, feedIds: string[]): number =>
   feedIds.filter((id) => flags[id]).length
 
-export const changedAt = (row: Row): string | null => row.changes[0]?.ts ?? null
+/**
+ * One protocol's entries in the run log, newest first. "Changed" everywhere
+ * means the newest of these: a move in a feed's published value.
+ */
+export const changesFor = (log: Change[], protocolId: string): Change[] =>
+  log.filter((change) => change.protocolId === protocolId).sort((a, b) => b.ts.localeCompare(a.ts))
+
+export const changedAt = (row: Row): string | null => row.changes?.[0]?.ts ?? null
 
 /** Every registry entry, in registry order, joined with what was collected about it. */
 export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {
   const collected = new Map(index.rows.map((row) => [row.id, row]))
-  const log = [...(sources.changes ?? [])].sort((a, b) => b.ts.localeCompare(a.ts))
+  const log = sources.changes
   return protocols.map((protocol) => {
     const generated = collected.get(protocol.id)
     const incidents = sources.metrics?.[protocol.id]?.['incidents']
@@ -70,7 +80,7 @@ export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {
       ),
       incidents:
         incidents?.value == null ? null : { count: incidents.value, latest: list[0] ?? null },
-      changes: log.filter((change) => change.protocolId === protocol.id),
+      changes: log ? changesFor(log, protocol.id) : null,
     }
   })
 }

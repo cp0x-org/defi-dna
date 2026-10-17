@@ -204,6 +204,34 @@
 }
 
 /* ------------------------------------------------------------------ table */
+/* A file read beside the index failed: our failure, so amber, never a feed colour. */
+.data-gaps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 14px 12px;
+  padding: 9px 12px;
+  border: 1px solid var(--amber-line);
+  border-radius: 8px;
+  background: var(--amber-tint);
+  color: var(--ink);
+  font-size: 12px;
+}
+.data-gaps ul {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.data-gaps b {
+  color: var(--amber);
+}
+.data-gaps .text-btn {
+  flex-shrink: 0;
+}
+
 .table-scroll {
   overflow-x: auto;
   scrollbar-width: thin;

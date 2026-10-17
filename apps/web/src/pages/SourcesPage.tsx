@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
+import { EMPTY_QUERY, writeQuery } from '../lib/matrix.ts'
 import { feeds, metrics } from '../lib/registry.ts'
 import { assessesLabel, dateInfo } from '../lib/view.ts'
 import { IconArrow, IconChevron } from '../components/Icons.tsx'
@@ -81,7 +82,10 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
               </ExternalLink>
             </details>
             <div className="directory-actions">
-              <Link className="text-link" to={`/?feed=${encodeURIComponent(feed.id)}`}>
+              <Link
+                className="text-link"
+                to={`/?${writeQuery({ ...EMPTY_QUERY, has: [feed.id] }).toString()}`}
+              >
                 See this column <IconArrow />
               </Link>
               <ExternalLink href={feed.homepage}>Website</ExternalLink>

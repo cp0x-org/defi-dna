@@ -72,12 +72,18 @@ function dataBase(): Promise<string> {
 
 const cache = new Map<string, Promise<unknown>>()
 
-/** Cached for the lifetime of the page: the data is a static snapshot. */
+/**
+ * Cached for the lifetime of the page: the data is a static snapshot. A failed
+ * request is forgotten, so asking again retries it.
+ */
 function load<T>(file: string): Promise<T> {
   const existing = cache.get(file) as Promise<T> | undefined
   if (existing) return existing
   const promise = dataBase().then((url) => getJson<T>(`${url}${file}`))
   cache.set(file, promise)
+  promise.catch(() => {
+    if (cache.get(file) === promise) cache.delete(file)
+  })
   return promise
 }
 
@@ -85,13 +91,16 @@ function load<T>(file: string): Promise<T> {
 export const loadIndex = (): Promise<IndexBundle> => load<IndexBundle>('index.json')
 
 /** Measured quantities for every protocol: one small file that moves every day. */
-export const loadMetrics = (): Promise<MetricsFile> =>
-  load<MetricsFile>('metrics.json').catch(() => ({}) as MetricsFile)
+export const loadMetrics = (): Promise<MetricsFile> => load<MetricsFile>('metrics.json')
 
-/** Everything we collected about one protocol, loaded when its page opens. */
+/**
+ * Everything we collected about one protocol, loaded when its page opens.
+ * Metrics we could not read leave `metrics` null — never an empty set, which
+ * would read as "nothing measured".
+ */
 export const loadProtocol = (id: string): Promise<ProtocolDetail> =>
-  Promise.all([load<ProtocolRecord>(`protocols/${id}.json`), loadMetrics()]).then(
-    ([record, metrics]) => ({ ...record, metrics: metrics[id] ?? {} }),
+  Promise.all([load<ProtocolRecord>(`protocols/${id}.json`), loadMetrics().catch(() => null)]).then(
+    ([record, metrics]) => ({ ...record, metrics: metrics ? (metrics[id] ?? {}) : null }),
   )
 
 /** A log we could not read is reported as such — never as an empty log. */

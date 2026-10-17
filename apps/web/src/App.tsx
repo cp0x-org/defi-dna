@@ -21,7 +21,7 @@ const TITLES: Record<string, string> = {
  * and says so instead of looking empty.
  */
 export function App() {
-  const { data: index, error } = useIndex()
+  const { data: index, error, retry } = useIndex()
   const location = useLocation()
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export function App() {
   return (
     <Routes>
       <Route element={<Layout index={index} />}>
-        <Route index element={<DashboardPage index={index} error={error} />} />
+        <Route index element={<DashboardPage index={index} error={error} onRetry={retry} />} />
         <Route path="protocol/:id/:tab?/:feed?" element={<ProtocolPage index={index} />} />
         <Route path="sources" element={<SourcesPage index={index} />} />
         <Route path="methodology" element={<MethodologyPage index={index} />} />

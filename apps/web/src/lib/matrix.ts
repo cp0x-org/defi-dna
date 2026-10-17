@@ -94,6 +94,13 @@ export function readQuery(params: URLSearchParams): MatrixQuery {
   }
 }
 
+/** Every filter dropped; the search and the order stay, since neither is a filter chip. */
+export const withoutFilters = (query: MatrixQuery): MatrixQuery => ({
+  ...EMPTY_QUERY,
+  q: query.q,
+  sort: query.sort,
+})
+
 /** The shortest URL for a query: defaults are left out. */
 export function writeQuery(query: MatrixQuery): URLSearchParams {
   const params = new URLSearchParams()
@@ -178,6 +185,8 @@ export function rowMatches(row: Row, query: MatrixQuery, now: number): boolean {
   }
   const window = UPDATED[query.updated]
   if (window) {
+    // Without the run log there is no answer either way, so nothing passes.
+    if (row.changes === null) return false
     const changed = changedAt(row)
     const recent = changed != null && now - Date.parse(changed) <= window.days * DAY
     if (query.updated === 'old' ? recent : !recent) return false

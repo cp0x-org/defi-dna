@@ -11,11 +11,11 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { useChangelog, useMetrics } from '../hooks/useIndex.ts'
 import {
-  EMPTY_QUERY,
   SORTS,
   filterChips,
   matrixGroups,
   readQuery,
+  withoutFilters,
   writeQuery,
   type MatrixQuery,
   type SortKey,
@@ -55,7 +55,7 @@ const VIEWS: [CoverageView, string][] = [
  * What stands in for the rows while the dataset is missing. The table stays
  * empty and says why: an empty table must never read as "no risk found".
  */
-const DatasetState = ({ error }: { error: string | null }) =>
+const DatasetState = ({ error, onRetry }: { error: string | null; onRetry: () => void }) =>
   error ? (
     <div className="empty-state" role="alert">
       <h3>The dataset could not be loaded</h3>
@@ -63,7 +63,7 @@ const DatasetState = ({ error }: { error: string | null }) =>
         The table stays empty until it is. An empty table here means no data, not &ldquo;no risk
         found&rdquo;.
       </p>
-      <button className="button primary" onClick={() => window.location.reload()}>
+      <button className="button primary" type="button" onClick={onRetry}>
         Try again
       </button>
       <details>
@@ -81,6 +81,41 @@ const DatasetState = ({ error }: { error: string | null }) =>
       <div className="loading-track" />
     </div>
   )
+
+/**
+ * Files read beside the index that did not arrive. Their columns stay empty
+ * because of our failure, and the table says so instead of reading as "none".
+ */
+export const DataGaps = ({
+  metricsError,
+  changelogError,
+  onRetry,
+}: {
+  metricsError: string | null
+  changelogError: string | null
+  onRetry: () => void
+}) =>
+  metricsError || changelogError ? (
+    <div className="data-gaps" role="alert">
+      <ul>
+        {metricsError ? (
+          <li>
+            <b>DefiLlama’s incident figures could not be loaded.</b> The Incidents column is empty
+            because of our failure, not because DefiLlama records none.
+          </li>
+        ) : null}
+        {changelogError ? (
+          <li>
+            <b>The run log could not be loaded.</b> The Changed column and the freshness filter have
+            nothing to show until it is.
+          </li>
+        ) : null}
+      </ul>
+      <button className="text-btn" type="button" onClick={onRetry}>
+        Try again
+      </button>
+    </div>
+  ) : null
 
 const SIGNALS: Signal[] = ['neg', 'neu', 'pos']
 const tonesOf = (row: Row): Tone[] => feeds.map((feed) => row.tones[feed.id] ?? 'none')
@@ -110,9 +145,11 @@ interface Pop {
 export const DashboardPage = ({
   index,
   error,
+  onRetry,
 }: {
   index: IndexBundle | null
   error: string | null
+  onRetry: () => void
 }) => {
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
@@ -139,7 +176,19 @@ export const DashboardPage = ({
   )
   const shown = groups.reduce((total, group) => total + group.rows.length, 0)
   const chips = filterChips(query)
-  const changedToday = rows.filter((row) => row.changes.some((c) => now - Date.parse(c.ts) <= DAY))
+  const changesToday = (row: Row) =>
+    (row.changes ?? []).filter((change) => now - Date.parse(change.ts) <= DAY)
+  const changedToday = rows.filter((row) => changesToday(row).length > 0)
+  const noChangeTitle = changelog.error
+    ? 'The run log could not be loaded'
+    : changelog.data
+      ? 'No change in our run log'
+      : 'Loading the run log…'
+  const noIncidentsTitle = metrics.error
+    ? 'DefiLlama’s incident list could not be loaded'
+    : metrics.data
+      ? 'Not collected for this version'
+      : 'Loading DefiLlama’s incident list…'
 
   // Esc closes whatever is open; "/" jumps to the search, as on most data tables.
   useEffect(() => {
@@ -241,7 +290,7 @@ export const DashboardPage = ({
         className={`fresh${age != null && age <= DAY ? ' recent' : ''}${
           age != null && age > 30 * DAY ? ' stale' : ''
         }`}
-        title={changed ? `Last change ${timeLabel(changed)}` : 'No change in our run log'}
+        title={changed ? `Last change ${timeLabel(changed)}` : noChangeTitle}
       >
         {ageLabel(changed, now) ?? '—'}
       </span>
@@ -254,7 +303,7 @@ export const DashboardPage = ({
     const states = tonesOf(row)
     const covered = dataCount(row.feeds, feedIds)
     const counts = signalCounts(states)
-    const today = row.changes.filter((change) => now - Date.parse(change.ts) <= DAY)
+    const today = changesToday(row)
     return (
       <tr
         key={protocol.id}
@@ -328,7 +377,7 @@ export const DashboardPage = ({
         </td>
         <td>
           {incidents == null ? (
-            <span className="muted" title="Not collected for this version">
+            <span className="muted" title={noIncidentsTitle}>
               —
             </span>
           ) : incidents.count === 0 ? (
@@ -381,7 +430,9 @@ export const DashboardPage = ({
         <td />
         <td>
           {group.incidents == null ? (
-            <span className="muted">—</span>
+            <span className="muted" title={noIncidentsTitle}>
+              —
+            </span>
           ) : (
             <span className={`evt${group.incidents ? '' : ' zero'}`}>
               {group.incidents} recorded
@@ -493,7 +544,7 @@ export const DashboardPage = ({
         </>
       )
     }
-    const today = row.changes.filter((change) => now - Date.parse(change.ts) <= DAY)
+    const today = changesToday(row)
     return (
       <>
         <div className="pop-h">
@@ -685,11 +736,22 @@ export const DashboardPage = ({
             <button
               className="text-btn"
               type="button"
-              onClick={() => setQuery({ ...EMPTY_QUERY, q: query.q, sort: query.sort })}
+              onClick={() => setQuery(withoutFilters(query))}
             >
               Clear all
             </button>
           </div>
+        ) : null}
+
+        {index ? (
+          <DataGaps
+            metricsError={metrics.error}
+            changelogError={changelog.error}
+            onRetry={() => {
+              if (metrics.error) metrics.retry()
+              if (changelog.error) changelog.retry()
+            }}
+          />
         ) : null}
 
         <div className="table-scroll" role="region" aria-label="Protocol versions" tabIndex={0}>
@@ -716,15 +778,20 @@ export const DashboardPage = ({
         </div>
 
         {!index ? (
-          <DatasetState error={error} />
+          <DatasetState error={error} onRetry={onRetry} />
         ) : groups.length === 0 ? (
           <div className="empty">
             <strong>No protocol versions match these filters.</strong>
             An empty result means nothing in our registry matches — not that a protocol is safe or
             unsafe.
             <div>
-              <button className="text-btn" type="button" onClick={() => setParams({})}>
-                Clear all filters
+              {/* The search alone can empty the table, so this one clears it too. */}
+              <button
+                className="text-btn"
+                type="button"
+                onClick={() => setQuery({ ...withoutFilters(query), q: '' })}
+              >
+                {query.q ? 'Clear the search and all filters' : 'Clear all filters'}
               </button>
             </div>
           </div>

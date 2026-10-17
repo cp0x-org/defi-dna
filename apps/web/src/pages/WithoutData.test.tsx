@@ -1,17 +1,21 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
+import { readQuery } from '../lib/matrix.ts'
 import { feeds } from '../lib/registry.ts'
-import { DashboardPage } from './DashboardPage.tsx'
+import { DashboardPage, DataGaps } from './DashboardPage.tsx'
 import { MethodologyPage } from './MethodologyPage.tsx'
 import { ProtocolPage } from './ProtocolPage.tsx'
 import { SourcesPage } from './SourcesPage.tsx'
 
 const render = (page: React.ReactNode) => renderToStaticMarkup(<MemoryRouter>{page}</MemoryRouter>)
+const retry = () => {}
 
 describe('pages without the dataset', () => {
   it('keeps the dashboard structure and says why its body is empty', () => {
-    const html = render(<DashboardPage index={null} error="404 while loading index.json" />)
+    const html = render(
+      <DashboardPage index={null} error="404 while loading index.json" onRetry={retry} />,
+    )
     expect(html).toContain('The dataset could not be loaded')
     expect(html).toContain('no risk found')
     for (const feed of feeds) expect(html).toContain(feed.name)
@@ -20,7 +24,7 @@ describe('pages without the dataset', () => {
   })
 
   it('shows a loading state while the dataset is on its way', () => {
-    const html = render(<DashboardPage index={null} error={null} />)
+    const html = render(<DashboardPage index={null} error={null} onRetry={retry} />)
     expect(html).toContain('Loading the latest collected data')
     expect(html).not.toContain('could not be loaded')
   })
@@ -48,6 +52,16 @@ describe('pages without the dataset', () => {
   })
 })
 
+describe('the feeds page', () => {
+  it('links each feed to the dashboard filtered to versions it has data for', () => {
+    const html = render(<SourcesPage index={null} />)
+    const links = [...html.matchAll(/href="\/\?([^"]*)"[^>]*>See this column/g)].map(([, search]) =>
+      readQuery(new URLSearchParams(search?.replaceAll('&amp;', '&'))),
+    )
+    expect(links.map((query) => query.has)).toEqual(feeds.map((feed) => [feed.id]))
+  })
+})
+
 describe('the dashboard with the dataset', () => {
   it('shows whether feeds have data and never a feed’s value', () => {
     const html = render(
@@ -57,10 +71,25 @@ describe('the dashboard with the dataset', () => {
           rows: [{ id: 'curve', tvl: 2e9, feeds: { [feeds[0]?.id ?? '']: true } }],
         }}
         error={null}
+        onRetry={retry}
       />,
     )
     expect(html).toContain('Curve')
     expect(html).toContain(`aria-label="1 of ${feeds.length} feeds have data`)
     expect(html).not.toContain('Loading the latest collected data')
+  })
+
+  it('says which side files failed, and stays silent when none did', () => {
+    const both = render(<DataGaps metricsError="500" changelogError="404" onRetry={retry} />)
+    expect(both).toContain('incident figures could not be loaded')
+    expect(both).toContain('The run log could not be loaded')
+    expect(both).toContain('Try again')
+
+    const metricsOnly = render(
+      <DataGaps metricsError="500" changelogError={null} onRetry={retry} />,
+    )
+    expect(metricsOnly).not.toContain('run log')
+
+    expect(render(<DataGaps metricsError={null} changelogError={null} onRetry={retry} />)).toBe('')
   })
 })

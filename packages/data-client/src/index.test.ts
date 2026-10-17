@@ -109,3 +109,39 @@ describe('loading', () => {
     })
   })
 })
+
+describe('failures', () => {
+  it('forgets a failed request, so asking again retries it', async () => {
+    const routes: Routes = {
+      '/app/config.json': {},
+      'https://site.test/app/data/changelog.json': failed(503),
+    }
+    const { loadChangelog, fetch } = await client(routes)
+    await expect(loadChangelog()).rejects.toThrow('503')
+    routes['https://site.test/app/data/changelog.json'] = []
+    await expect(loadChangelog()).resolves.toEqual([])
+    await loadChangelog()
+    expect(requested(fetch).filter((url) => url.endsWith('changelog.json'))).toHaveLength(2)
+  })
+
+  it('reports metrics it could not read instead of an empty set', async () => {
+    const { loadMetrics } = await client({
+      '/app/config.json': {},
+      'https://site.test/app/data/metrics.json': failed(500),
+    })
+    await expect(loadMetrics()).rejects.toThrow('500')
+  })
+
+  it('still opens a protocol whose metrics failed, with metrics marked missing', async () => {
+    const { loadProtocol } = await client({
+      '/app/config.json': {},
+      'https://site.test/app/data/protocols/lido.json': { protocolId: 'lido', feeds: {} },
+      'https://site.test/app/data/metrics.json': failed(500),
+    })
+    await expect(loadProtocol('lido')).resolves.toEqual({
+      protocolId: 'lido',
+      feeds: {},
+      metrics: null,
+    })
+  })
+})

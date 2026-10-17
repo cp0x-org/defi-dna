@@ -10,7 +10,7 @@ const MAX_SHOWN = 300
 
 /** Append-only log of what moved between runs. We add nothing to it. */
 export const ChangelogPage = ({ index }: { index: IndexBundle | null }) => {
-  const { data, error } = useChangelog()
+  const { data, error, retry } = useChangelog()
   const events = data ?? []
   const feedName = (id: string) => feeds.find((feed) => feed.id === id)?.name ?? id
 
@@ -50,7 +50,7 @@ export const ChangelogPage = ({ index }: { index: IndexBundle | null }) => {
         <div className="empty-state" role="alert">
           <h3>The change log could not be loaded</h3>
           <p>{error}</p>
-          <button className="button primary" onClick={() => window.location.reload()}>
+          <button className="button primary" type="button" onClick={retry}>
             Try again
           </button>
         </div>
