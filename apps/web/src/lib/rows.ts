@@ -8,6 +8,7 @@ import type {
 } from '@defi-dna/data'
 import { INCIDENTS_METRIC, feeds, protocols } from './registry.ts'
 import { toneFromIndex, type Tone } from './status.ts'
+import { DAY } from './view.ts'
 
 /** What DefiLlama records against one version: its own count, and the latest entry. */
 export interface Incidents {
@@ -75,6 +76,10 @@ export const changesFor = (log: Change[], protocolId: string): Change[] =>
   log.filter((change) => change.protocolId === protocolId).sort((a, b) => b.ts.localeCompare(a.ts))
 
 export const changedAt = (row: Row): string | null => row.changes?.[0]?.ts ?? null
+
+/** Moves in a feed's value during the last 24 hours. An unreadable log counts as none here. */
+export const changedWithinDay = (row: Row, now: number): Change[] =>
+  (row.changes ?? []).filter((change) => now - Date.parse(change.ts) <= DAY)
 
 /** Every registry entry, in registry order, joined with what was collected about it. */
 export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {

@@ -10,7 +10,14 @@ import {
   type MatrixQuery,
 } from './matrix.ts'
 import { feedName, feeds } from './registry.ts'
-import { buildRows, changesFor, coverageCount, incidentsByDate, type Group } from './rows.ts'
+import {
+  buildRows,
+  changedWithinDay,
+  changesFor,
+  coverageCount,
+  incidentsByDate,
+  type Group,
+} from './rows.ts'
 
 const NOW = Date.parse('2026-10-11T12:00:00.000Z')
 const FETCHED = '2026-10-11T00:00:00.000Z'
@@ -108,6 +115,15 @@ describe('changesFor', () => {
       'C 61/100',
     ])
     expect(changesFor(changes, 'curve')).toEqual([])
+  })
+})
+
+describe('changedWithinDay', () => {
+  it('keeps the moves from the last 24 hours and drops the older ones', () => {
+    const lido = rows.find((row) => row.protocol.id === 'lido')
+    const aave = rows.find((row) => row.protocol.id === 'aave-v3')
+    expect(lido && changedWithinDay(lido, NOW).map((change) => change.to)).toEqual(['B 83.64/100'])
+    expect(aave && changedWithinDay(aave, NOW)).toEqual([])
   })
 })
 

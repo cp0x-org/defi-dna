@@ -6,6 +6,7 @@ import {
   useState,
   type CSSProperties,
   type ReactNode,
+  type MutableRefObject,
 } from 'react'
 import { colourSlot, safeUrl } from '../lib/view.ts'
 import { IconExternal, IconInfo } from './Icons.tsx'
@@ -118,15 +119,22 @@ export const Anchored = ({
   children,
   onMouseEnter,
   onMouseLeave,
+  cardRef,
 }: {
   anchor: HTMLElement
   label: string
   children: ReactNode
   onMouseEnter?: () => void
   onMouseLeave?: () => void
+  /** So the owner can tell a click on the card from a click outside it. */
+  cardRef?: MutableRefObject<HTMLDivElement | null>
 }) => {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement | null>(null)
   const [style, setStyle] = useState<CSSProperties>({ visibility: 'hidden' })
+  const setRef = (node: HTMLDivElement | null) => {
+    ref.current = node
+    if (cardRef) cardRef.current = node
+  }
   useLayoutEffect(() => {
     const card = ref.current
     if (!card) return
@@ -145,7 +153,7 @@ export const Anchored = ({
       className="pop"
       role="dialog"
       aria-label={label}
-      ref={ref}
+      ref={setRef}
       style={style}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

@@ -1,13 +1,5 @@
-import {
-  Fragment,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type MouseEvent,
-  type ReactNode,
-} from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { useChangelog, useMetrics } from '../hooks/useIndex.ts'
 import {
@@ -21,28 +13,19 @@ import {
   type SortKey,
 } from '../lib/matrix.ts'
 import { readCoverageView, writeCoverageView, type CoverageView } from '../lib/prefs.ts'
-import { feedName, feeds } from '../lib/registry.ts'
-import { buildRows, changedAt, dataCount, type Group, type Row } from '../lib/rows.ts'
-import {
-  LEGEND_SIGNALS,
-  SIGNALS,
-  SIGNAL_LABELS,
-  SIGNAL_TONES,
-  TONE_LABELS,
-  signalCounts,
-  signalOf,
-  type Tone,
-} from '../lib/status.ts'
-import { DAY, ageLabel, categoryLabel, dateInfo, formatUsd, timeLabel } from '../lib/view.ts'
+import { feeds } from '../lib/registry.ts'
+import { buildRows, changedWithinDay } from '../lib/rows.ts'
+import { LEGEND_SIGNALS, SIGNAL_LABELS, SIGNAL_TONES, TONE_LABELS } from '../lib/status.ts'
 import { CoverageBar, CoverageRing, Prov, StatusDot } from '../components/Coverage.tsx'
 import { FilterDrawer } from '../components/FilterDrawer.tsx'
+import { GroupRow } from '../components/dashboard/GroupRow.tsx'
+import { MatrixHead } from '../components/dashboard/MatrixHead.tsx'
+import { PopCard } from '../components/dashboard/PopCard.tsx'
+import { POP_LABELS, usePopover } from '../components/dashboard/usePopover.ts'
+import { VersionRow } from '../components/dashboard/VersionRow.tsx'
 import { IconFilters, IconSearch } from '../components/Icons.tsx'
 import { LoadState } from '../components/LoadState.tsx'
-import { Anchored, ProtocolAvatar } from '../components/UI.tsx'
-
-/** Time to cross from a cell to its card, or to come back, before an unpinned card closes. */
-const HIDE_DELAY = 350
-const feedIds = feeds.map((feed) => feed.id)
+import { Anchored } from '../components/UI.tsx'
 
 /** The registry joined with nothing: names and categories without any collected fact. */
 const NO_DATA: IndexBundle = { generatedAt: '', rows: [] }
@@ -88,22 +71,6 @@ export const DataGaps = ({
     </div>
   ) : null
 
-const tonesOf = (row: Row): Tone[] => feeds.map((feed) => row.tones[feed.id] ?? 'none')
-
-const POP_LABELS = {
-  coverage: 'Feed coverage',
-  signals: 'Feed signals',
-  incidents: 'Incidents',
-  changes: 'Recent changes',
-} as const
-type PopKind = keyof typeof POP_LABELS
-interface Pop {
-  kind: PopKind
-  row: Row
-  anchor: HTMLElement
-  pinned: boolean
-}
-
 /**
  * The dashboard: one row per protocol version — its size, which feeds publish
  * data about it and how each characterizes it on its own scale, when a feed's
@@ -121,9 +88,9 @@ export const DashboardPage = ({
   error: string | null
   onRetry: () => void
 }) => {
-  const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
-  const query = readQuery(params)
+  const queryKey = params.toString()
+  const query = useMemo(() => readQuery(new URLSearchParams(queryKey)), [queryKey])
   const setQuery = (next: MatrixQuery) => setParams(writeQuery(next), { replace: true })
 
   const metrics = useMetrics()
@@ -131,24 +98,21 @@ export const DashboardPage = ({
   const [now] = useState(() => Date.now())
   const [view, setView] = useState<CoverageView>(readCoverageView)
   const [drawer, setDrawer] = useState(false)
-  const [pop, setPop] = useState<Pop | null>(null)
   const search = useRef<HTMLInputElement>(null)
-  const hideTimer = useRef<number | undefined>(undefined)
+  const { pop, cardRef, target, keepOpen, hideSoon, close } = usePopover(() => setDrawer(false))
 
   const rows = useMemo(
     () => buildRows(index ?? NO_DATA, { metrics: metrics.data, changes: changelog.data }),
     [index, metrics.data, changelog.data],
   )
-  const queryKey = params.toString()
   const groups = useMemo(
-    () => (index ? matrixGroups(rows, readQuery(new URLSearchParams(queryKey)), now) : []),
-    [index, rows, queryKey, now],
+    () => (index ? matrixGroups(rows, query, now) : []),
+    [index, rows, query, now],
   )
   const shown = groups.reduce((total, group) => total + group.rows.length, 0)
   const chips = filterChips(query)
-  const changesToday = (row: Row) =>
-    (row.changes ?? []).filter((change) => now - Date.parse(change.ts) <= DAY)
-  const changedToday = rows.filter((row) => changesToday(row).length > 0)
+  const changedToday = rows.filter((row) => changedWithinDay(row, now).length > 0)
+  const popRow = pop ? rows.find((row) => row.protocol.id === pop.protocolId) : undefined
   const noChangeTitle = changelog.error
     ? 'The run log could not be loaded'
     : changelog.data
@@ -160,13 +124,9 @@ export const DashboardPage = ({
       ? 'Not collected for this version'
       : 'Loading DefiLlama’s incident list…'
 
-  // Esc closes whatever is open; "/" jumps to the search, as on most data tables.
+  // "/" jumps to the search, as on most data tables. Esc belongs to the popover.
   useEffect(() => {
     const keys = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setPop(null)
-        setDrawer(false)
-      }
       const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName ?? '')
       if (event.key === '/' && !typing) {
         event.preventDefault()
@@ -177,412 +137,12 @@ export const DashboardPage = ({
     return () => document.removeEventListener('keydown', keys)
   }, [])
 
-  // A pinned card stays until a click elsewhere; any card goes away on scroll.
-  useEffect(() => {
-    if (!pop) return
-    const outside = (event: PointerEvent) => {
-      const target = event.target as Node
-      if (!pop.anchor.contains(target) && !document.querySelector('.pop')?.contains(target)) {
-        setPop(null)
-      }
-    }
-    const scroll = () => setPop(null)
-    if (pop.pinned) document.addEventListener('pointerdown', outside)
-    window.addEventListener('scroll', scroll, true)
-    return () => {
-      document.removeEventListener('pointerdown', outside)
-      window.removeEventListener('scroll', scroll, true)
-    }
-  }, [pop])
-
-  // An unpinned card stays while the pointer is on its cell or on the card itself, and
-  // closes a moment after it leaves both — long enough to move onto the card and read it.
-  const keepOpen = () => window.clearTimeout(hideTimer.current)
-  const hideSoon = () => {
-    keepOpen()
-    hideTimer.current = window.setTimeout(
-      () => setPop((current) => (current?.pinned ? current : null)),
-      HIDE_DELAY,
-    )
-  }
-  useEffect(() => keepOpen, [])
-
-  /** Hover previews, a click pins. The same facts are on the protocol page for keyboard and touch. */
-  const popTarget = (kind: PopKind, row: Row) => ({
-    onMouseEnter: (event: MouseEvent<HTMLElement>) => {
-      keepOpen()
-      if (!pop?.pinned) setPop({ kind, row, anchor: event.currentTarget, pinned: false })
-    },
-    onMouseLeave: () => {
-      if (!pop?.pinned) hideSoon()
-    },
-    onClick: (event: MouseEvent<HTMLElement>) => {
-      keepOpen()
-      event.stopPropagation()
-      const anchor = event.currentTarget
-      setPop(pop?.pinned && pop.anchor === anchor ? null : { kind, row, anchor, pinned: true })
-    },
-  })
-
   const chooseView = (next: CoverageView) => {
     setView(next)
     writeCoverageView(next)
   }
 
-  const sortButton = (key: SortKey, label: string, alternate?: SortKey) => {
-    const active = query.sort === key || query.sort === alternate
-    return (
-      <button
-        type="button"
-        className={`th-sort${active ? ' sorted' : ''}`}
-        onClick={() =>
-          setQuery({ ...query, sort: query.sort === key && alternate ? alternate : key })
-        }
-      >
-        {label}{' '}
-        <span className="arr" aria-hidden="true">
-          {query.sort === alternate ? '↑' : active ? '↓' : '↕'}
-        </span>
-      </button>
-    )
-  }
-  const ariaSort = (...keys: SortKey[]) =>
-    keys.includes(query.sort)
-      ? query.sort.endsWith('asc')
-        ? ('ascending' as const)
-        : ('descending' as const)
-      : undefined
-
-  const fresh = (changed: string | null) => {
-    const age = changed ? now - Date.parse(changed) : null
-    return (
-      <span
-        className={`fresh${age != null && age <= DAY ? ' recent' : ''}${
-          age != null && age > 30 * DAY ? ' stale' : ''
-        }`}
-        title={changed ? `Last change ${timeLabel(changed)}` : noChangeTitle}
-      >
-        {ageLabel(changed, now) ?? '—'}
-      </span>
-    )
-  }
-
-  const versionRow = (row: Row, nested: boolean) => {
-    const { protocol, incidents } = row
-    const href = `/protocol/${protocol.id}`
-    const states = tonesOf(row)
-    const covered = dataCount(row.feeds, feedIds)
-    const counts = signalCounts(states)
-    const today = changesToday(row)
-    return (
-      <tr
-        key={protocol.id}
-        className={nested ? 'version-row' : undefined}
-        onClick={() => navigate(href)}
-      >
-        <td>
-          <div className="pcell">
-            {nested ? (
-              <span className="vtick" aria-hidden="true" />
-            ) : (
-              <ProtocolAvatar id={protocol.id} name={protocol.name} />
-            )}
-            <span>
-              <Link className="pname" to={href} onClick={(event) => event.stopPropagation()}>
-                <strong>{protocol.name}</strong>
-              </Link>
-              {today.length > 0 ? (
-                <button
-                  type="button"
-                  className="new"
-                  aria-label={`${today.length} changes in the last 24 hours`}
-                  {...popTarget('changes', row)}
-                >
-                  NEW · {today.length}
-                </button>
-              ) : null}
-              <small className="mono">{protocol.id}</small>
-            </span>
-          </div>
-        </td>
-        <td>{categoryLabel(protocol.category)}</td>
-        <td className="num">
-          <span className="mono">{formatUsd(row.tvl) ?? '—'}</span>
-          <small>Ethereum</small>
-        </td>
-        <td>
-          <button
-            type="button"
-            className="hit"
-            aria-label={`${covered} of ${feeds.length} feeds have data — show the list`}
-            {...popTarget('coverage', row)}
-          >
-            <span className="v-ring">
-              <CoverageRing states={states} />
-            </span>
-            <span className="v-bar">
-              <CoverageBar states={states} />
-            </span>
-            <span className="cov-count">
-              {covered}
-              <span>/{feeds.length}</span>
-            </span>
-          </button>
-        </td>
-        <td>{fresh(changedAt(row))}</td>
-        <td>
-          <button
-            type="button"
-            className="hit sig"
-            aria-label={`Feed signals: ${counts.neg} negative, ${counts.neu} neutral or informational, ${counts.pos} positive`}
-            {...popTarget('signals', row)}
-          >
-            {SIGNALS.map((signal) => (
-              <span key={signal} className={`sc ${signal}${counts[signal] ? '' : ' zero'}`}>
-                <i />
-                {counts[signal]}
-              </span>
-            ))}
-          </button>
-        </td>
-        <td>
-          {incidents == null ? (
-            <span className="muted" title={noIncidentsTitle}>
-              —
-            </span>
-          ) : incidents.count === 0 ? (
-            <span className="evt zero">0 recorded</span>
-          ) : (
-            <button type="button" className="hit" {...popTarget('incidents', row)}>
-              <span>
-                <span className="evt">{incidents.count} recorded</span>
-                {incidents.latest ? (
-                  <small>latest {dateInfo(incidents.latest.date).label}</small>
-                ) : null}
-              </span>
-            </button>
-          )}
-        </td>
-        <td className="go" aria-hidden="true">
-          →
-        </td>
-      </tr>
-    )
-  }
-
-  const groupRow = (group: Group) => {
-    const categories = [...new Set(group.rows.map((row) => row.protocol.category))]
-    return (
-      <tr className="group-row" key={`group-${group.key}`}>
-        <td>
-          <div className="pcell">
-            <ProtocolAvatar id={group.key} name={group.name} />
-            <span>
-              <strong>{group.name}</strong>
-              <small>{group.rows.length} versions tracked</small>
-            </span>
-          </div>
-        </td>
-        <td>{categories.length === 1 ? categoryLabel(categories[0] ?? '') : 'Mixed'}</td>
-        <td className="num">
-          <span className="mono">{formatUsd(group.tvl) ?? '—'}</span>
-          <small>sum of versions</small>
-        </td>
-        <td>
-          {/* Versions can read differently in one feed; the group row shows only how many have data. */}
-          <span className="cov-count" title="Feeds with data for at least one version">
-            {dataCount(group.feeds, feedIds)}
-            <span>/{feeds.length}</span>
-            <small>any version</small>
-          </span>
-        </td>
-        <td>{fresh(group.changedAt)}</td>
-        <td />
-        <td>
-          {group.incidents == null ? (
-            <span className="muted" title={noIncidentsTitle}>
-              —
-            </span>
-          ) : (
-            <span className={`evt${group.incidents ? '' : ' zero'}`}>
-              {group.incidents} recorded
-              <small>across versions</small>
-            </span>
-          )}
-        </td>
-        <td />
-      </tr>
-    )
-  }
-
-  const popCard = (current: Pop): ReactNode => {
-    const { row } = current
-    const { protocol } = row
-    const foot = (text: string, to: string, link: string) => (
-      <div className="pop-f">
-        <span>{current.pinned ? 'Esc to close' : text}</span>
-        <Link to={to} onClick={() => setPop(null)}>
-          {link}
-        </Link>
-      </div>
-    )
-    if (current.kind === 'coverage') {
-      return (
-        <>
-          <div className="pop-h">
-            <strong>{protocol.name}</strong>
-            <span className="mono">
-              {dataCount(row.feeds, feedIds)} / {feeds.length} feeds
-            </span>
-          </div>
-          <div className="pop-sub">Status as each feed characterizes its own data</div>
-          <ul className="pop-list">
-            {feeds.map((feed) => {
-              const tone = row.tones[feed.id] ?? 'none'
-              return (
-                <li key={feed.id} className={`st-${tone}`}>
-                  <StatusDot tone={tone} />
-                  <span>{feed.name}</span>
-                  <em>{TONE_LABELS[tone]}</em>
-                </li>
-              )
-            })}
-          </ul>
-          {foot('Click to pin', `/protocol/${protocol.id}/risk`, 'Risk intelligence →')}
-        </>
-      )
-    }
-    if (current.kind === 'signals') {
-      return (
-        <>
-          <div className="pop-h">
-            <strong>Feed signals · {protocol.name}</strong>
-          </div>
-          <div className="pop-sub">
-            Feeds grouped by their own characterization. Not combined into a verdict.
-          </div>
-          {SIGNALS.map((signal) => {
-            const members = feeds.filter(
-              (feed) => signalOf(row.tones[feed.id] ?? 'none') === signal,
-            )
-            return members.length > 0 ? (
-              <div key={signal}>
-                <div className="pop-group">
-                  {SIGNAL_LABELS[signal]} · {members.length}
-                </div>
-                <ul className="pop-list">
-                  {members.map((feed) => {
-                    const tone = row.tones[feed.id] ?? 'none'
-                    return (
-                      <li key={feed.id} className={`st-${tone}`}>
-                        <StatusDot tone={tone} />
-                        <span>{feed.name}</span>
-                        <em>{TONE_LABELS[tone]}</em>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </div>
-            ) : null
-          })}
-          {foot(
-            `${dataCount(row.feeds, feedIds)} of ${feeds.length} feeds reporting`,
-            `/protocol/${protocol.id}/risk`,
-            'Read each feed →',
-          )}
-        </>
-      )
-    }
-    if (current.kind === 'incidents') {
-      const latest = row.incidents?.latest
-      return (
-        <>
-          <div className="pop-h">
-            <strong>Incidents · {protocol.name}</strong>
-          </div>
-          <div className="pop-body">
-            <b>
-              {row.incidents?.count} incident{row.incidents?.count === 1 ? '' : 's'}
-            </b>{' '}
-            recorded by <b>DefiLlama</b>.
-            {latest ? ` Latest: ${dateInfo(latest.date).label}, “${latest.name}”.` : ''}
-            <br />
-            Listed as DefiLlama published them. defi-dna does not verify, classify or score
-            incidents.
-          </div>
-          {foot('Source: DefiLlama', `/protocol/${protocol.id}/data`, 'Open incidents →')}
-        </>
-      )
-    }
-    const today = changesToday(row)
-    return (
-      <>
-        <div className="pop-h">
-          <strong>
-            {today.length} change{today.length === 1 ? '' : 's'} in the last 24h
-          </strong>
-        </div>
-        <ul className="pop-list">
-          {today.map((change, k) => (
-            <li key={`${change.ts}-${change.feedId}-${k}`}>
-              <span className="mono muted age">{ageLabel(change.ts, now)}</span>
-              <span>
-                <b>{feedName(change.feedId)}</b>{' '}
-                {change.from === null ? 'published a first value' : 'changed its value'}
-              </span>
-            </li>
-          ))}
-        </ul>
-        {foot('Moves in published values', `/protocol/${protocol.id}`, 'Latest changes →')}
-      </>
-    )
-  }
-
-  const head = (
-    <thead>
-      <tr className="grp">
-        <th colSpan={3} className="g-meta">
-          <Prov kind="meta">Protocol metadata</Prov>
-          <span className="grp-note">registry · TVL via DefiLlama</span>
-        </th>
-        <th colSpan={2} className="g-cov">
-          <Prov kind="cov">Data coverage</Prov>
-          <span className="grp-note">facts about our collection, not the protocol</span>
-        </th>
-        <th colSpan={2} className="g-src">
-          <Prov kind="src">Source-reported</Prov>
-          <span className="grp-note">what sources published — not verified or scored by us</span>
-        </th>
-        <th />
-      </tr>
-      <tr className="cols">
-        <th aria-sort={ariaSort('name-asc')}>{sortButton('name-asc', 'Protocol')}</th>
-        <th>Category</th>
-        <th className="num" aria-sort={ariaSort('tvl-desc', 'tvl-asc')}>
-          {sortButton('tvl-desc', 'TVL', 'tvl-asc')}
-        </th>
-        <th aria-sort={ariaSort('coverage-desc')}>
-          {sortButton('coverage-desc', 'Coverage')}
-          <span className="th-sub">feeds with data · hover for the list</span>
-        </th>
-        <th aria-sort={ariaSort('updated-desc')}>
-          {sortButton('updated-desc', 'Changed')}
-          <span className="th-sub">latest move in a feed’s value</span>
-        </th>
-        <th aria-sort={ariaSort('signals-desc')}>
-          {sortButton('signals-desc', 'Signals')}
-          <span className="th-sub">negative · neutral/info · positive</span>
-        </th>
-        <th aria-sort={ariaSort('incidents-desc')}>
-          {sortButton('incidents-desc', 'Incidents')}
-          <span className="th-sub">recorded by DefiLlama</span>
-        </th>
-        <th>
-          <span className="sr-only">Open</span>
-        </th>
-      </tr>
-    </thead>
-  )
+  const rowProps = { now, noChangeTitle, noIncidentsTitle, popTarget: target }
 
   return (
     <div className="page">
@@ -632,7 +192,7 @@ export const DashboardPage = ({
             aria-expanded={drawer}
             aria-controls="filters"
             onClick={() => {
-              setPop(null)
+              close()
               setDrawer(true)
             }}
           >
@@ -731,15 +291,27 @@ export const DashboardPage = ({
                 ? `${shown} protocol versions: size, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
                 : 'The table is empty: the dataset is not loaded.'}
             </caption>
-            {head}
+            <MatrixHead query={query} onSort={(sort) => setQuery({ ...query, sort })} />
             <tbody>
               {groups.map((group) =>
                 group.rows.length === 1 && group.rows[0] ? (
-                  versionRow(group.rows[0], false)
+                  <VersionRow
+                    key={group.rows[0].protocol.id}
+                    row={group.rows[0]}
+                    nested={false}
+                    {...rowProps}
+                  />
                 ) : (
                   <Fragment key={group.key}>
-                    {groupRow(group)}
-                    {group.rows.map((row) => versionRow(row, true))}
+                    <GroupRow
+                      group={group}
+                      now={now}
+                      noChangeTitle={noChangeTitle}
+                      noIncidentsTitle={noIncidentsTitle}
+                    />
+                    {group.rows.map((row) => (
+                      <VersionRow key={row.protocol.id} row={row} nested {...rowProps} />
+                    ))}
                   </Fragment>
                 ),
               )}
@@ -824,16 +396,17 @@ export const DashboardPage = ({
         </div>
       </div>
 
-      {pop ? (
+      {pop && popRow ? (
         <Anchored
           anchor={pop.anchor}
+          cardRef={cardRef}
           label={POP_LABELS[pop.kind]}
           onMouseEnter={keepOpen}
           onMouseLeave={() => {
             if (!pop.pinned) hideSoon()
           }}
         >
-          {popCard(pop)}
+          <PopCard kind={pop.kind} row={popRow} pinned={pop.pinned} now={now} onClose={close} />
         </Anchored>
       ) : null}
 

@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Feed, FeedData, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
-import { feedById, feeds } from '../lib/registry.ts'
-import { coverageCount } from '../lib/rows.ts'
-import { TONE_LABELS, detailToneOf, ruleWord, toneOf, type Tone } from '../lib/status.ts'
-import { ageLabel, assessesLabel, dateInfo, hostOf, timeLabel } from '../lib/view.ts'
-import { CoverageBar, CoverageRing, Prov, StatusPill } from './Coverage.tsx'
-import { FeedExtras } from './extra/FeedExtras.tsx'
-import { Block, DataAgeHelp, ExternalLink, SourceMark } from './UI.tsx'
+import { feedById, feeds } from '../../lib/registry.ts'
+import type { RecordSummary } from '../../lib/record.ts'
+import { coverageCount } from '../../lib/rows.ts'
+import { TONE_LABELS, detailToneOf, ruleWord, toneOf, type Tone } from '../../lib/status.ts'
+import { ageLabel, assessesLabel, dateInfo, hostOf, timeLabel } from '../../lib/view.ts'
+import { CoverageBar, CoverageRing, Prov, StatusPill } from '../../components/Coverage.tsx'
+import { FeedExtras } from '../../components/extra/FeedExtras.tsx'
+import { Block, DataAgeHelp, ExternalLink, SourceMark } from '../../components/UI.tsx'
 
 /** Sidebar groups: feeds with a reading of their own first, then data without one, then gaps. */
 const GROUPS: [Tone[], string][] = [
@@ -250,19 +251,21 @@ export const FeedSource = ({
 export const RiskIntelligence = ({
   protocol,
   record,
+  summary,
   index,
   feedId,
 }: {
   protocol: Protocol
   record: ProtocolDetail
+  summary: RecordSummary
   index: IndexBundle | null
   feedId: string
 }) => {
   const navigate = useNavigate()
   const base = `/protocol/${protocol.id}/risk`
-  const toneFor = (feed: Feed): Tone => toneOf(feed, record.feeds[feed.id])
-  const states = feeds.map(toneFor)
-  const withData = feeds.filter((feed) => record.feeds[feed.id]?.status === 'ok').length
+  const toneFor = (feed: Feed): Tone => summary.tones[feeds.indexOf(feed)] ?? 'none'
+  const states = summary.tones
+  const withData = summary.withData.length
   const selected = feedById(feedId)
 
   const item = (feed: Feed) => {
