@@ -1,5 +1,5 @@
 import type { Feed, Metric, Protocol } from '@defi-dna/data'
-import protocolsFile from '../../../../../registry/protocols.json'
+import protocolsFile from '../../../../../registry/protocols.json' with { type: 'json' }
 
 /**
  * The hand-maintained half of the data, compiled into the app at build time.

@@ -75,7 +75,7 @@ const known = <T extends object>(table: T, key: string): key is Extract<keyof T,
   Object.hasOwn(table, key)
 
 /** Unknown or stale values in a shared link fall back to the default instead of emptying the table. */
-export function readQuery(params: URLSearchParams): MatrixQuery {
+export const readQuery = (params: URLSearchParams): MatrixQuery => {
   const feedIds = feeds.map((feed) => feed.id)
   const sort = params.get('sort') ?? ''
   const tvl = params.get('tvl') ?? ''
@@ -103,7 +103,7 @@ export const withoutFilters = (query: MatrixQuery): MatrixQuery => ({
 })
 
 /** The shortest URL for a query: defaults are left out. */
-export function writeQuery(query: MatrixQuery): URLSearchParams {
+export const writeQuery = (query: MatrixQuery): URLSearchParams => {
   const params = new URLSearchParams()
   const set = (key: string, value: string) => {
     if (value) params.set(key, value)
@@ -122,7 +122,7 @@ export function writeQuery(query: MatrixQuery): URLSearchParams {
 }
 
 /** One chip per active filter, each carrying the query that is left once it is removed. */
-export function filterChips(query: MatrixQuery): { label: string; without: MatrixQuery }[] {
+export const filterChips = (query: MatrixQuery): { label: string; without: MatrixQuery }[] => {
   const drop = (values: string[], value: string) => values.filter((other) => other !== value)
   return [
     ...query.categories.map((category) => ({
@@ -162,7 +162,7 @@ export function filterChips(query: MatrixQuery): { label: string; without: Matri
 }
 
 /** One version against the filters. Coverage filters look at whether data exists, never at a value. */
-export function rowMatches(row: Row, query: MatrixQuery, now: number): boolean {
+export const rowMatches = (row: Row, query: MatrixQuery, now: number): boolean => {
   const { protocol } = row
   const needle = query.q.trim().toLowerCase()
   const text = `${protocol.group ?? ''} ${protocol.name} ${protocol.id} ${categoryLabel(
@@ -218,7 +218,7 @@ const negatives = (group: Group): number =>
  * Filter the versions, nest them by protocol and order the groups. Pure: the
  * same rows, query and clock always give the same table.
  */
-export function matrixGroups(rows: Row[], query: MatrixQuery, now: number): Group[] {
+export const matrixGroups = (rows: Row[], query: MatrixQuery, now: number): Group[] => {
   const feedIds = feeds.map((feed) => feed.id)
   const order: Record<SortKey, (a: Group, b: Group) => number> = {
     'tvl-desc': (a, b) => byNumber(a.tvl, b.tvl),

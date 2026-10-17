@@ -1,26 +1,21 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { useIndex } from '../data/useIndex.ts'
+import { useIndex } from '../data/useData.ts'
 import { protocolById } from '../shared/lib/registry.ts'
 import { Layout } from './Layout.tsx'
+import { pageTitle } from './routes.ts'
 import { DashboardPage } from '../features/dashboard/DashboardPage.tsx'
 import { ProtocolPage } from '../features/protocol/ProtocolPage.tsx'
 import { SourcesPage } from '../features/reading/SourcesPage.tsx'
 import { MethodologyPage } from '../features/reading/MethodologyPage.tsx'
 import { ChangelogPage } from '../features/reading/ChangelogPage.tsx'
 
-const TITLES: Record<string, string> = {
-  '/sources': 'Risk feeds',
-  '/methodology': 'How to read',
-  '/changelog': 'What changed',
-}
-
 /**
  * The dataset is not a gate. Everything hand-maintained — the registry, the
  * feeds, the methodology — renders without it; only the dashboard waits for it,
  * and says so instead of looking empty.
  */
-export function App() {
+export const App = () => {
   const { data: index, error, retry } = useIndex()
   const location = useLocation()
 
@@ -28,7 +23,7 @@ export function App() {
     const [, section, id = ''] = location.pathname.split('/')
     const page =
       (section === 'protocol' ? protocolById(id)?.name : undefined) ??
-      TITLES[location.pathname] ??
+      pageTitle(location.pathname) ??
       'What every risk feed says about a DeFi protocol'
     document.title = `${page} · defi-dna`
   }, [location.pathname])

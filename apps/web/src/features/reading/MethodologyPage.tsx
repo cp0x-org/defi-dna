@@ -113,7 +113,7 @@ export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
       </p>
     </section>
 
-    <section style={{ marginTop: 44 }}>
+    <section className="reading-section loose">
       <div className="section-heading">
         <div>
           <h2>How a cell is produced</h2>
@@ -144,7 +144,7 @@ export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
       </div>
     </section>
 
-    <section style={{ marginTop: 40 }}>
+    <section className="reading-section">
       <div className="section-heading">
         <div>
           <h2>The three states</h2>
@@ -171,7 +171,7 @@ export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
       </div>
     </section>
 
-    <section style={{ marginTop: 44 }}>
+    <section className="reading-section loose">
       <div className="section-heading">
         <div>
           <h2>Feed registry</h2>

@@ -4,6 +4,7 @@ import type { IndexBundle } from '@defi-dna/data'
 import { dateInfo, timeLabel } from '../shared/lib/view.ts'
 import { IconMark, IconTheme } from '../shared/ui/Icons.tsx'
 import { ExternalLink } from '../shared/ui/UI.tsx'
+import { NAV } from './routes.ts'
 
 const REPO = 'https://github.com/cp0x-org/defi-dna'
 const DATA_REPO = 'https://github.com/cp0x-org/defi-dna-data'
@@ -60,12 +61,11 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
             </span>
           </Link>
           <nav className="primary-nav" aria-label="Main navigation">
-            <NavLink to="/" end>
-              Protocols
-            </NavLink>
-            <NavLink to="/sources">Risk feeds</NavLink>
-            <NavLink to="/methodology">How to read</NavLink>
-            <NavLink to="/changelog">What changed</NavLink>
+            {NAV.map((item) => (
+              <NavLink key={item.to} to={item.to} end={'end' in item}>
+                {item.label}
+              </NavLink>
+            ))}
           </nav>
           <div className="header-tools">
             {index ? (

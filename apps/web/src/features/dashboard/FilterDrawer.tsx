@@ -55,9 +55,54 @@ export const FilterDrawer = ({
   onChange: (query: MatrixQuery) => void
   onClose: () => void
 }) => {
+  const panel = useRef<HTMLElement>(null)
   const close = useRef<HTMLButtonElement>(null)
+
+  // A modal dialog: Tab stays inside while it is open, and focus returns to the
+  // control that opened it. The closed panel is inert so it is not in the tab order.
   useEffect(() => {
-    if (open) close.current?.focus()
+    const node = panel.current
+    if (!node) return
+    // React 18's types don't know `inert`. Set it on the node: a closed dialog
+    // must leave the tab order, and `inert={false}` can still leave the attribute on.
+    if (!open) {
+      node.setAttribute('inert', '')
+      return
+    }
+    node.removeAttribute('inert')
+    const returnTo = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    close.current?.focus()
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return
+      const root = panel.current
+      if (!root) return
+      const items = [
+        ...root.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ].filter((item) => item.tabIndex >= 0)
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (!first || !last) {
+        event.preventDefault()
+        return
+      }
+      const active = document.activeElement
+      const inside = active instanceof Node && root.contains(active)
+      if (event.shiftKey && (active === first || !inside)) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && (active === last || !inside)) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      node.setAttribute('inert', '')
+      if (returnTo && document.contains(returnTo)) returnTo.focus()
+    }
   }, [open])
 
   const set = (patch: Partial<MatrixQuery>) => onChange({ ...query, ...patch })
@@ -69,6 +114,7 @@ export const FilterDrawer = ({
     <>
       {open ? <div className="scrim" onClick={onClose} /> : null}
       <aside
+        ref={panel}
         className={`drawer${open ? ' open' : ''}`}
         id="filters"
         role="dialog"

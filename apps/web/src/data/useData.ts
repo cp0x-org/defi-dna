@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   loadChangelog,
   loadIndex,
@@ -18,13 +18,16 @@ export interface Async<T> {
 }
 
 /** Load once per key; the data is a static snapshot, so there is nothing to refetch. */
-function useLoad<T>(key: string, load: () => Promise<T>): Async<T> {
+const useLoad = <T>(key: string, load: () => Promise<T>): Async<T> => {
   const [state, setState] = useState<Pick<Async<T>, 'data' | 'error'>>({ data: null, error: null })
   const [attempt, setAttempt] = useState(0)
+  // The key identifies the request. A new function on each render must not start another one.
+  const loadRef = useRef(load)
+  loadRef.current = load
   useEffect(() => {
     let live = true
     setState({ data: null, error: null })
-    load().then(
+    loadRef.current().then(
       (data) => live && setState({ data, error: null }),
       (error: unknown) =>
         live &&

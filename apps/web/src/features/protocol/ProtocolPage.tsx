@@ -1,7 +1,7 @@
 import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
-import { useChangelog, useProtocol } from '../../data/useIndex.ts'
+import { useChangelog, useProtocol } from '../../data/useData.ts'
 import {
   INCIDENTS_METRIC,
   TVL_METRIC,

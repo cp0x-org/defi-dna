@@ -96,7 +96,7 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
       })}
     </div>
 
-    <section className="reading-strip" style={{ marginTop: 40 }}>
+    <section className="reading-strip reading-section">
       <div>
         <h2>Independent does not mean interchangeable.</h2>
         <p>
@@ -110,7 +110,7 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
       </Link>
     </section>
 
-    <section style={{ marginTop: 40 }}>
+    <section className="reading-section">
       <div className="section-heading">
         <div>
           <h2>Independent measurements</h2>

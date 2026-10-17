@@ -573,3 +573,14 @@
   border-color: var(--accent-line);
   background: var(--accent-tint);
 }
+/* After the narrow-viewport rules. The strip's own margin is 30px there, and an
+   inline margin used to win; the compound selector keeps that 40px. */
+.reading-section {
+  margin-top: 40px;
+}
+.reading-strip.reading-section {
+  margin-top: 40px;
+}
+.reading-section.loose {
+  margin-top: 44px;
+}

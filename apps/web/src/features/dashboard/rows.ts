@@ -82,7 +82,7 @@ export const changedWithinDay = (row: Row, now: number): Change[] =>
   (row.changes ?? []).filter((change) => now - Date.parse(change.ts) <= DAY)
 
 /** Every registry entry, in registry order, joined with what was collected about it. */
-export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {
+export const buildRows = (index: IndexBundle, sources: RowSources = {}): Row[] => {
   const collected = new Map(index.rows.map((row) => [row.id, row]))
   const log = sources.changes
   return protocols.map((protocol) => {
@@ -104,7 +104,7 @@ export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {
 }
 
 /** Nest versions under their protocol name, keeping the order the rows came in. */
-export function groupRows(rows: Row[]): Group[] {
+export const groupRows = (rows: Row[]): Group[] => {
   const groups = new Map<string, Group>()
   for (const row of rows) {
     const { protocol } = row

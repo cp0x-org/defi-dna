@@ -29,13 +29,7 @@ export const TvlComponentsExtra = ({ components }: { components?: ExtraTvlCompon
     </section>
   ) : null
 
-export const IncidentsExtra = ({
-  incidents,
-  note,
-}: {
-  incidents?: ExtraIncident[]
-  note?: string
-}) =>
+export const IncidentsExtra = ({ incidents }: { incidents?: ExtraIncident[] }) =>
   Array.isArray(incidents) ? (
     <div className="tscroll">
       <table className="tbl">
@@ -77,7 +71,7 @@ export const IncidentsExtra = ({
           ) : (
             <tr>
               <td colSpan={7} className="muted wrap">
-                {note ?? 'DefiLlama records no incident against this protocol id.'}
+                DefiLlama records no incident against this protocol id.
               </td>
             </tr>
           )}

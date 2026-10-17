@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
-import { useChangelog, useMetrics } from '../../data/useIndex.ts'
+import { useChangelog, useMetrics } from '../../data/useData.ts'
 import {
   SORTS,
   filterChips,

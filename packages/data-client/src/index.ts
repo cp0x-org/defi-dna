@@ -47,19 +47,19 @@ export { readStatus, readValue, statusWord } from '@defi-dna/core/status'
 let configUrl = '/config.json'
 let base: Promise<string> | null = null
 
-export function configureDataClient(options: { configUrl: string }): void {
+export const configureDataClient = (options: { configUrl: string }): void => {
   configUrl = options.configUrl
   base = null
 }
 
-async function getJson<T>(url: string): Promise<T> {
+const getJson = async <T>(url: string): Promise<T> => {
   const response = await fetch(url, { headers: { accept: 'application/json' } })
   if (!response.ok) throw new Error(`${response.status} while loading ${url}`)
   return (await response.json()) as T
 }
 
 /** The configured data location, resolved once per page load. */
-function dataBase(): Promise<string> {
+const dataBase = (): Promise<string> => {
   base ??= getJson<{ dataUrl?: string }>(configUrl)
     .catch(() => ({}) as { dataUrl?: string })
     .then(({ dataUrl }) => {
@@ -76,7 +76,7 @@ const cache = new Map<string, Promise<unknown>>()
  * Cached for the lifetime of the page: the data is a static snapshot. A failed
  * request is forgotten, so asking again retries it.
  */
-function load<T>(file: string): Promise<T> {
+const load = <T>(file: string): Promise<T> => {
   const existing = cache.get(file) as Promise<T> | undefined
   if (existing) return existing
   const promise = dataBase().then((url) => getJson<T>(`${url}${file}`))

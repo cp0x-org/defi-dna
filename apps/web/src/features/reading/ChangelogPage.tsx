@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { feedName } from '../../shared/lib/registry.ts'
-import { useChangelog } from '../../data/useIndex.ts'
+import { useChangelog } from '../../data/useData.ts'
 import { dateInfo } from '../../shared/lib/view.ts'
 import { IconArrow } from '../../shared/ui/Icons.tsx'
 import { LoadState } from '../../shared/ui/LoadState.tsx'
-import { Info, SourceMark } from '../../shared/ui/UI.tsx'
+import { ExternalLink, Info, SourceMark } from '../../shared/ui/UI.tsx'
 
 const MAX_SHOWN = 300
 
@@ -89,14 +89,9 @@ export const ChangelogPage = ({ index }: { index: IndexBundle | null }) => {
 
       <div className="page-end-note">
         <span>Looking for the full history of a single cell?</span>
-        <a
-          className="text-link"
-          href="https://github.com/cp0x-org/defi-dna-data/commits/main"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          Browse the git log <IconArrow />
-        </a>
+        <ExternalLink href="https://github.com/cp0x-org/defi-dna-data/commits/main">
+          Browse the git log
+        </ExternalLink>
       </div>
     </>
   )

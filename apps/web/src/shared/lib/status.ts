@@ -33,7 +33,7 @@ const FROM_READING: Record<Reading, Tone> = { positive: 'pos', neutral: 'neu', n
 export const ruleWord = (feed: Feed, value?: string): string | null =>
   statusWord(feed.status, value)
 
-export function toneOf(feed: Feed, data?: FeedData): Tone {
+export const toneOf = (feed: Feed, data?: FeedData): Tone => {
   if (!data || data.status === 'none') return 'none'
   if (data.status === 'error') return 'error'
   const reading = readStatus(feed, data)
