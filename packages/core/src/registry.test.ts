@@ -61,6 +61,9 @@ describe('status rules', () => {
     for (const id of await listAdapters(paths.feeds)) {
       const feed = await readJson<Feed>(path.join(paths.feeds, id, 'feed.json'))
       if (feed.status) expect(() => checkStatusRule(id, feed.status!)).not.toThrow()
+      if (feed.detailStatus) {
+        expect(() => checkStatusRule(id, feed.detailStatus!, 'detailStatus')).not.toThrow()
+      }
     }
   })
 

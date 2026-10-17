@@ -1,0 +1,219 @@
+{
+  "protocols": {
+    "aave-v3": {
+      "name": "Aave V3",
+      "category": "Lending",
+      "tvl": 17989405940.537483,
+      "tier": "silver",
+      "slices": [
+        {
+          "id": "control",
+          "label": "Control",
+          "grade": "orange",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "ability-to-exit",
+          "label": "Ability to exit",
+          "grade": "red",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "autonomy",
+          "label": "Autonomy",
+          "grade": "orange",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "open-access",
+          "label": "Open Access",
+          "grade": "orange",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "verifiability",
+          "label": "Verifiability",
+          "grade": "green",
+          "tentative": true,
+          "partial": false
+        }
+      ]
+    },
+    "curve-dex": {
+      "name": "Curve DEX",
+      "category": "Dexs",
+      "tvl": 1294577111.4155025,
+      "tier": "silver",
+      "slices": [
+        {
+          "id": "control",
+          "label": "Control",
+          "grade": "green",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "ability-to-exit",
+          "label": "Ability to exit",
+          "grade": "green",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "autonomy",
+          "label": "Autonomy",
+          "grade": "green",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "open-access",
+          "label": "Open Access",
+          "grade": "green",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "verifiability",
+          "label": "Verifiability",
+          "grade": "green",
+          "tentative": true,
+          "partial": false
+        }
+      ]
+    },
+    "crvusd": {
+      "name": "crvUSD",
+      "category": "CDP",
+      "tvl": 161027219.2499282,
+      "tier": "wood",
+      "slices": [
+        {
+          "id": "control",
+          "label": "Control",
+          "grade": "orange",
+          "tentative": false,
+          "partial": true
+        },
+        {
+          "id": "ability-to-exit",
+          "label": "Ability to exit",
+          "grade": "gray",
+          "tentative": false,
+          "partial": true
+        },
+        {
+          "id": "autonomy",
+          "label": "Autonomy",
+          "grade": "orange",
+          "tentative": true,
+          "partial": false
+        },
+        {
+          "id": "open-access",
+          "label": "Open Access",
+          "grade": "gray",
+          "tentative": false,
+          "partial": true
+        },
+        {
+          "id": "verifiability",
+          "label": "Verifiability",
+          "grade": "green",
+          "tentative": true,
+          "partial": false
+        }
+      ]
+    },
+    "rocket-pool": {
+      "name": "Rocket Pool",
+      "category": "Liquid Staking",
+      "tvl": 1387900539.748031,
+      "tier": "gold",
+      "slices": [
+        {
+          "id": "control",
+          "label": "Control",
+          "grade": "orange",
+          "tentative": false,
+          "partial": false
+        },
+        {
+          "id": "ability-to-exit",
+          "label": "Ability to exit",
+          "grade": "green",
+          "tentative": false,
+          "partial": false
+        },
+        {
+          "id": "autonomy",
+          "label": "Autonomy",
+          "grade": "orange",
+          "tentative": false,
+          "partial": false
+        },
+        {
+          "id": "open-access",
+          "label": "Open Access",
+          "grade": "green",
+          "tentative": false,
+          "partial": false
+        },
+        {
+          "id": "verifiability",
+          "label": "Verifiability",
+          "grade": "green",
+          "tentative": false,
+          "partial": false
+        }
+      ]
+    },
+    "fluid-dex": {
+      "name": "Fluid DEX",
+      "category": "Dexs",
+      "tvl": 329782969.3534976,
+      "tier": "none",
+      "slices": [
+        {
+          "id": "control",
+          "label": "Control",
+          "grade": "gray",
+          "tentative": false,
+          "partial": false
+        },
+        {
+          "id": "ability-to-exit",
+          "label": "Ability to exit",
+          "grade": "gray",
+          "tentative": false,
+          "partial": false
+        },
+        {
+          "id": "autonomy",
+          "label": "Autonomy",
+          "grade": "gray",
+          "tentative": false,
+          "partial": false
+        },
+        {
+          "id": "open-access",
+          "label": "Open Access",
+          "grade": "gray",
+          "tentative": false,
+          "partial": false
+        },
+        {
+          "id": "verifiability",
+          "label": "Verifiability",
+          "grade": "green",
+          "tentative": true,
+          "partial": false
+        }
+      ]
+    }
+  }
+}

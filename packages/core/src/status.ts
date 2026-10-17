@@ -19,16 +19,28 @@ export function statusWord(rule: StatusRule | undefined, value: string | undefin
   }
 }
 
-export function readStatus(feed: Feed, data: FeedData | undefined): Reading | null {
-  if (data?.status !== 'ok') return null
-  const word = statusWord(feed.status, data.value)
-  const values = feed.status?.values
+/** The reading a rule gives one value: only a word the rule lists, never a guess. */
+export const readValue = (
+  rule: StatusRule | undefined,
+  value: string | undefined,
+): Reading | null => {
+  const word = statusWord(rule, value)
+  const values = rule?.values
   return word && values && Object.hasOwn(values, word) ? (values[word] ?? null) : null
 }
 
+export function readStatus(feed: Feed, data: FeedData | undefined): Reading | null {
+  if (data?.status !== 'ok') return null
+  return readValue(feed.status, data.value)
+}
+
 /** A rule that cannot be applied fails when the registry loads, not as a silent neutral later. */
-export function checkStatusRule(id: string, rule: StatusRule): void {
-  const where = `adapters/feeds/${id}/feed.json: "status"`
+export function checkStatusRule(
+  id: string,
+  rule: StatusRule,
+  field: 'status' | 'detailStatus' = 'status',
+): void {
+  const where = `adapters/feeds/${id}/feed.json: "${field}"`
   if (!rule.rule?.trim()) throw new Error(`${where} needs a "rule" sentence for readers`)
   try {
     new RegExp(rule.match, 'i')

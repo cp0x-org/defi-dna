@@ -1,0 +1,65 @@
+{
+  "name": "Curve DEX",
+  "category": "Dexs",
+  "tvl": 1294577111.4155025,
+  "tier": "silver",
+  "about": "Curve DEX is an automated market maker (AMM) for stablecoin and pegged-asset swaps on Ethereum and 28 other chains, where users swap tokens or provide liquidity to earn trading fees and CRV emissions. Stableswap pools (3pool, FRAX/USDC, etc.) use a hybrid constant-sum/constant-product invariant for low-slippage stablecoin trades; Cryptoswap and Tricrypto pools use a dynamic-peg invariant with internal EMA price tracking for volatile-asset pairs; Stableswap-NG adds optional per-pool rate oracles for rate-bearing tokens (wstETH, sDAI, cbETH) and dynamic fees. Pools are immutable and deployed permissionlessly via blueprint factories. Note: the Curve Finance umbrella also includes crvUSD (the LLAMMA-based stablecoin) and Curve Llamalend (lending markets) — these are separate DeFiLlama protocols with their own external-oracle dependencies and are not in scope for this curve-dex assessment.",
+  "pills": {
+    "upgradeability": "mixed",
+    "bugBountyUrl": "https://immunefi.com/bug-bounty/curve/",
+    "governanceForum": "https://gov.curve.finance/",
+    "docsUrl": "https://docs.curve.finance/"
+  },
+  "slices": [
+    {
+      "id": "control",
+      "label": "Control",
+      "grade": "green",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "Immutable pools, DAO-gated via 7-day vote",
+      "verdict": "Choosing green because T1 fund-critical powers are unreachable via the immutable pool architecture, and the highest reachable tier (T2 parameter adjustments) requires clearing a 7-day token-weighted governance vote, providing sufficient exit notice for users."
+    },
+    {
+      "id": "ability-to-exit",
+      "label": "Ability to exit",
+      "grade": "green",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "Permissionless exits, no admin pause possible",
+      "verdict": "Choosing green because Curve's architecture treats liquidity withdrawal as a fundamental, non-pauseable primitive, and users have direct, permissionless access to execute these functions on-chain without any frontend or admin intervention requirement."
+    },
+    {
+      "id": "autonomy",
+      "label": "Autonomy",
+      "grade": "green",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "Immutable core pools minimal external dependencies",
+      "verdict": "Choosing green because the steel-man case for green is supported by Curve's own resource docs (Stableswap and Cryptoswap explicitly disclaim external price oracles), confirmed pool immutability from the MixBytes Stableswap-NG audit ('pools' contracts do not allow upgrades'), and per-pool isolation that matches the autonomy-slice guardrail carving out underlying-asset risk in opt-in isolated markets. The orange and red steel-mans rely on the rate-oracle pattern in Stableswap-NG and legacy lending pools, but both are precisely the per-market opt-in risk the rubric guardrail says does NOT make autonomy red on its own — a wstETH rate-oracle failure impacts only LPs of pools containing wstETH, not 3pool or Tricrypto LPs, and these pools collectively are a minority of TVS. No system-wide external dependency was identified across A1–A9: no oracle aggregator, no off-chain reporter committee feeding the AMMs, no bridge carrying material DEX TVL as a load-bearing dependency, no keeper liveness requirement for AMM solvency, and immutable pools that prevent governance from silently swapping a dependency in. Worst-case impacted TVS from any single external-dependency failure is <5% of total Curve DEX TVL, capped at the affected pool's individual TVL."
+    },
+    {
+      "id": "open-access",
+      "label": "Open Access",
+      "grade": "green",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "No on-chain gate, multiple execution paths",
+      "verdict": "Choosing green because Curve's user-facing contracts admit and exit users unconditionally on immutable Vyper code (A1: no whitelist / KYC / role gate; verified by source-grep across curve-contract, curve-stablecoin, factory deployments). No operator approval is required to admit a user action (A2: empty). The official curve.finance frontend has only A3-passive ToS clauses (jurisdictional self-certification, VPN prohibition, sanctions attestation) — the rubric explicitly states A3-passive boilerplate is compatible with green; no A3-active enforcement (geo-block, wallet screening, KYC wall, jurisdictional rendering banner) was verified per the evidentiary floor (a)-(d). Multiple independent A3b-ii paths exist (Etherscan write tab on every contract, curve-js SDK, third-party aggregators 1inch / Paraswap / CowSwap operating under separate legal entities, DAO Aragon Voting UI), reinforcing the green grade. No on-chain sanctions blocklist on CRV / crvUSD / pool / market contracts (A4 negative). The protocol meets the green criteria as defined: 'no contract-level whitelist/KYC on user entry/exit; no operator approval required to admit a user action; AND no A3-active restrictions on the official frontend' — all three conditions satisfied."
+    },
+    {
+      "id": "verifiability",
+      "label": "Verifiability",
+      "grade": "green",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "Verified Vyper bytecode, multi-firm audits",
+      "verdict": "Choosing green because the deployed fund-holding contracts are verified Vyper sources on Etherscan (V1/V6 satisfied, no proxy/implementation gap on cores), the public curvefi/* monorepos contain matching source code at pinned head SHAs (V2 satisfied modulo per-deployment commit pinning), and recognized firms (Trail of Bits, ChainSecurity, MixBytes, Quantstamp, Statemind) audited each major component including the most recent crvUSD/Lending lines — published at docs.curve.finance/user/security/audits (V3/V4 satisfied). Post-audit drift on immutable cores is structurally close to zero (V5 satisfied). The empty protocol.audit_links in the snapshot input is a metadata-pinning gap (audits are discoverable from the official docs and the curvefi GitHub org), not a verifiability gap on the protocol side."
+    }
+  ]
+}

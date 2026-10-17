@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Feed, FeedData, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
 import { feeds } from '../lib/registry.ts'
-import { TONE_LABELS, ruleWord, toneOf, type Tone } from '../lib/status.ts'
+import { TONE_LABELS, detailToneOf, ruleWord, toneOf, type Tone } from '../lib/status.ts'
 import { ageLabel, assessesLabel, dateInfo, timeLabel } from '../lib/view.ts'
 import { CoverageBar, CoverageRing, Prov, StatusPill } from './Coverage.tsx'
 import { FeedExtras } from './extra/FeedExtras.tsx'
@@ -211,16 +211,33 @@ export const FeedSource = ({
         {details.length > 0 ? (
           <Block type="details" count={details.length}>
             <h4 className="b-title">{feed.name}’s breakdown</h4>
+            {feed.detailStatus ? (
+              <p className="b-note">Chip colours: {feed.detailStatus.rule}</p>
+            ) : null}
             <dl className="b-dims">
-              {details.map((detail) => (
-                <div key={detail.name}>
-                  <dt>{detail.name}</dt>
-                  <dd>
-                    <span className="pill plain">{detail.value}</span>
-                    {detail.description ? <p>{detail.description}</p> : null}
-                  </dd>
-                </div>
-              ))}
+              {details.map((detail) => {
+                const detailTone = detailToneOf(feed, detail.value)
+                return (
+                  <div key={detail.name}>
+                    <dt>
+                      {detailTone ? (
+                        <span
+                          className={`pill st-${detailTone}`}
+                          title={`${TONE_LABELS[detailTone]} on ${feed.name}’s own scale`}
+                        >
+                          {detail.name}
+                        </span>
+                      ) : (
+                        detail.name
+                      )}
+                    </dt>
+                    <dd>
+                      <span className="pill plain">{detail.value}</span>
+                      {detail.description ? <p>{detail.description}</p> : null}
+                    </dd>
+                  </div>
+                )
+              })}
             </dl>
           </Block>
         ) : null}

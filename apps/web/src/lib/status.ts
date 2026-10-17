@@ -1,5 +1,6 @@
 import {
   readStatus,
+  readValue,
   statusWord,
   type Feed,
   type FeedData,
@@ -37,6 +38,12 @@ export function toneOf(feed: Feed, data?: FeedData): Tone {
   if (data.status === 'error') return 'error'
   const reading = readStatus(feed, data)
   return reading ? FROM_READING[reading] : 'inf'
+}
+
+/** One entry of a feed's breakdown, read with its `detailStatus`; null where the rule says nothing. */
+export const detailToneOf = (feed: Feed, value: string): Tone | null => {
+  const reading = readValue(feed.detailStatus, value)
+  return reading ? FROM_READING[reading] : null
 }
 
 /** A dashboard row: the bundle copied each feed's own reading into the index. */

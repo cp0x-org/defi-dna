@@ -129,7 +129,8 @@ Risk feeds currently include [DeFiScan](https://www.defiscan.info),
 [Risklayer](https://risklayer.online),
 [Philidor](https://analytics.philidor.io),
 [pigi.finance](https://pigi.finance),
-[DeFi Scoring](https://defiscoring.com) and
+[DeFi Scoring](https://defiscoring.com),
+[DeFiPunk'd](https://defipunkd.com) (five risk slices per deployment) and
 [Credora](https://www.credora.network) (vault ratings). Independent
 measurements come from DefiLlama's Ethereum TVL and incident history. A feed
 with no data for a protocol is distinct from a collection error; a failed
