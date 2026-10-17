@@ -31,7 +31,8 @@ cp -R adapters/feeds/_template adapters/feeds/<id>
 
 - `feed.json`: `id` = folder name, `name`, `topic` (two or three words for the
   column header), `focus` (one line in the feed's own terms), `assesses` (one of
-  `protocol`, `deployment`, `vault`, `pool`, `asset`, `research`), `homepage`,
+  `protocol`, `deployment`, `vault`, `vault-protocol`, `pool`, `asset`,
+  `research`), `homepage`,
   `methodologyUrl`, `enabled: true`.
 - `index.ts`: `id: '<id>'`. The registry refuses a mismatch.
 
