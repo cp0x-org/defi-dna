@@ -33,6 +33,7 @@ export const ASSESSED_OBJECTS = [
   'protocol',
   'deployment',
   'vault',
+  'vault-protocol',
   'pool',
   'asset',
   'research',

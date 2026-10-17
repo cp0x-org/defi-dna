@@ -40,7 +40,7 @@ What the feed is. Shown on the Feeds page, nothing more.
 
 `topic` is the two or three words printed under the feed's name in the column
 header. `assesses` names the object the feed's values are about — `protocol`,
-`deployment`, `vault`, `pool`, `asset` or `research` — and is printed next to
+`deployment`, `vault`, `vault-protocol`, `pool`, `asset` or `research` — and is printed next to
 every value, so a vault tier is never read as a verdict on the protocol. The
 frontend imports this file at build time.
 

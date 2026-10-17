@@ -81,7 +81,7 @@ CI runs the last line. The pre-commit hook runs lint-staged and typecheck.
   its keys are checked against the registry by the pipeline and by `npm test`.
 - A feed that needs a key declares it in `secrets` and reads it inside
   `prepare()`; `feed.json` declares `assesses` (protocol, deployment, vault,
-  pool, asset, research).
+  vault-protocol, pool, asset, research).
 - `status` in `feed.json`, only when the methodology states the reading: `rule`
   (one sentence that quotes or cites it), `match` (a regular expression over the
   headline `value`; its first group is the feed's own word or band) and `values`
