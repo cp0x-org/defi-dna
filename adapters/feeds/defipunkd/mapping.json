@@ -1,0 +1,14 @@
+{
+  "_comment": "Our protocol id -> DeFiPunk’d slug (the key of `protocols` in its index.json). Child slugs only: a family slug (`aave`, `uniswap`, `spark`, `fluid`) carries the grades of whichever child DeFiPunk’d ranks best, so it never stands in for a version. Curve takes the DEX and the crvUSD CDP; `curve-llamalend` is left out until we decide whether LlamaLend belongs to our Curve row. Fluid and Spark take the one child DeFiPunk’d assesses (Fluid DEX, SparkLend); the note on each cell names it.",
+  "aave-v3": "aave-v3",
+  "balancer-v3": "balancer-v3",
+  "curve": ["curve-dex", "crvusd"],
+  "fluid": "fluid-dex",
+  "lido": "lido",
+  "liquity-v1": "liquity-v1",
+  "morpho-blue": "morpho-blue",
+  "pendle": "pendle",
+  "rocketpool": "rocket-pool",
+  "spark": "sparklend",
+  "uniswap-v4": "uniswap-v4"
+}

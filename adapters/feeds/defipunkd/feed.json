@@ -1,0 +1,19 @@
+{
+  "id": "defipunkd",
+  "name": "DeFiPunk’d",
+  "topic": "Five risk slices",
+  "focus": "Five risk dimensions adapted from DeFiScan v2 — Control, Ability to exit, Autonomy, Open Access and Verifiability — each graded green, orange or red by a quorum of independent LLM runs (DEFI@home) or a deterministic heuristic, gray where no grade has been earned yet; plus a tier (wood to gold) for review depth, which DeFiPunk’d states is not a safety signal.",
+  "assesses": "deployment",
+  "homepage": "https://defipunkd.com",
+  "methodologyUrl": "https://defipunkd.com/methodology",
+  "enabled": true,
+  "detailStatus": {
+    "rule": "DeFiPunk’d grades each slice green, orange or red, and its methodology (“What each slice checks”) describes green and red as the two ends of every slice’s scale. Green reads as positive, orange as neutral, red as negative; a gray slice (“unknown”, no grade earned yet) is not coloured. “Tentative” stays in the value next to the colour.",
+    "match": "^(?:tentative\\s+)?(green|orange|red)\\b",
+    "values": {
+      "green": "positive",
+      "orange": "neutral",
+      "red": "negative"
+    }
+  }
+}

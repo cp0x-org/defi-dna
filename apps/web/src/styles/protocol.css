@@ -798,6 +798,10 @@ a.m:hover .m-v {
   font-weight: 700;
   overflow-wrap: anywhere;
 }
+.b-dims dt .pill {
+  font-size: 11px;
+  white-space: normal;
+}
 .b-dims dd .pill {
   font-family: var(--mono);
   font-size: 11px;

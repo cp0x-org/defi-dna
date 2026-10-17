@@ -60,6 +60,11 @@ export interface Feed {
   enabled: boolean
   /** How the feed's own published scale reads, when it says. Absent: no colour beyond neutral. */
   status?: StatusRule
+  /**
+   * The same, applied to each entry of `details` — for a feed that grades parts
+   * of its assessment on its own scale and publishes no grade for the whole.
+   */
+  detailStatus?: StatusRule
 }
 
 /** The feed's own characterization of a value, never ours. */

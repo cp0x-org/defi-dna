@@ -1,0 +1,65 @@
+{
+  "name": "Aave V3",
+  "category": "Lending",
+  "tvl": 17989405940.537483,
+  "tier": "silver",
+  "about": "Aave V3 is a decentralized non-custodial lending protocol where users supply assets to earn interest and borrow assets by providing overcollateralized deposits. It operates across 20+ chains with isolated markets and risk parameters managed through on-chain AAVE token governance. The protocol uses a cross-chain governance system (Governance V3) with voting via storage proofs on multiple networks while token balances remain on Ethereum mainnet.",
+  "pills": {
+    "upgradeability": "upgradeable",
+    "bugBountyUrl": "https://audits.sherlock.xyz/bug-bounties/300",
+    "governanceForum": "https://governance.aave.com",
+    "docsUrl": "https://aave.com/docs"
+  },
+  "slices": [
+    {
+      "id": "control",
+      "label": "Control",
+      "grade": "orange",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 4,
+      "shortHeadline": "T1 upgrades reachable via ~5-day fast path",
+      "verdict": "Choosing orange because T1 fund-critical actions (Pool implementation upgrades via PoolAddressesProvider.setPoolImpl, oracle source changes) are reachable through the Short Executor path with only a 1-day (86400s) timelock delay, which is >0 but <7 days. While governance is broad and token-weighted with AAVE/stkAAVE/aAAVE, the 1-day timelock on the Short Executor is insufficient for the 7-day exit-window standard required for green on a T1 path. The guardian (5-of-9 multisig) has instant T1-scoped emergency pause power, but this is limited to pause/cancel and does not compound the timelock concern since it cannot execute upgrades. The Long Executor's 7-day timelock only covers T3 governance-internal changes, not the primary T1 upgrade path."
+    },
+    {
+      "id": "ability-to-exit",
+      "label": "Ability to exit",
+      "grade": "red",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "Exits pausable indefinitely by 5-of-9 multisig",
+      "verdict": "Choosing red because withdraw/repay/repayWithATokens/repayWithPermit/liquidationCall all delegate to library validators that revert with Errors.ReservePaused() when the reserve's paused bit is set. The pause bit is set/cleared by PoolConfigurator.setReservePause/setPoolPause, gated by onlyEmergencyOrPoolAdmin, callable by either the EMERGENCY_ADMIN_ROLE holder (Aave Protocol Guardian Safe 0x2CFe3ec4d5a6811f4B8067F0DE7e47DfA938Aa30, verified 5-of-9 Gnosis Safe) or POOL_ADMIN_ROLE holder (Aave Governance v3 Executor Lvl1, 0x5300A1a15135EA4dc7aD5a167152C01EFc9b192A, timelocked governance). Critically, neither setPoolPause nor setReservePause take a maximum-duration parameter that bounds the paused state: MAX_GRACE_PERIOD = 4 hours caps only the post-unpause liquidation grace window, not the pause itself. There is no auto-expiry, no escape-hatch / forced-exit mechanism, and no separate already-finalized-claim path that bypasses the pause guard - withdrawal IS the exit, and it is pause-gated. The 5-of-9 emergency-admin multisig can therefore freeze user withdrawals indefinitely without a governance vote, matching the slice's red criterion 'ANY actor (including governance) can pause CLAIMS of finalized exits indefinitely'. Functions are directly callable on-chain via Etherscan Write-as-Proxy and any wallet (no frontend dependency)."
+    },
+    {
+      "id": "autonomy",
+      "label": "Autonomy",
+      "grade": "orange",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "Oracle dependency with governance fast-paths",
+      "verdict": "Choosing orange because Aave V3 Core Lending (Ethereum + L2s, ~99% of $13.6B TVS) holds the dominant share; GHO module (~$200M GHO outstanding, <2% of TVS) and Umbrella Safety Module are smaller. The core architecture is verifiable on-chain: AaveOracle (0x54586bE62E3c3580375aE3723C145253060Ca0C2) reads per-asset Chainlink/CAPO sources with a configurable fallback, gated by POOL_ADMIN/ASSET_LISTING_ADMIN roles held by Executor Lvl1 (1-day timelock via PayloadsController) and bypassable for narrow params by Risk Stewards (1-of-1 / 2-of-2 multisig with on-chain constraints). PriceOracleSentinel and CAPO caps are LIVE on-chain mitigations against external oracle anomalies. Two real 2026 incidents bound the grade: (a) March-2026 CAPO snapshot/timestamp misconfiguration caused ~$27M unfair wstETH liquidations (DAO reimbursed via treasury), (b) April-2026 Kelp DAO LayerZero bridge exploit minted unbacked rsETH that an attacker deposited as Aave V3 collateral on Ethereum + Arbitrum, leaving ~$200M of bad debt that the DAO is socializing. Aave's smart contracts functioned as designed in (b) - the loss came from an opt-in third-party LRT - but rsETH was not isolation-mode-only and the bad debt cross-cuts the WETH reserve via shortfall. Together with the 1-day-only timelock on most oracle-relevant actions (Level 1) and the Risk Steward fast-path, this fits Stage 1 / orange: external dependency failures can degrade performance and create bounded principal loss but cannot trivially drain the protocol; mitigations are partial and have been observed to fail."
+    },
+    {
+      "id": "open-access",
+      "label": "Open Access",
+      "grade": "orange",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "Contracts open; official UI screens wallets",
+      "verdict": "Choosing orange because Aave V3 smart contracts are admission-permissionless (Pool.supply/withdraw/borrow/repay/liquidationCall/flashLoan are public virtual override with no whitelist/KYC modifier per Pool.sol @ commit 1e3d70c4151a94166ebc59e2eaa4aff6e6ba6978), but the official frontend app.aave.com applies A3-active enforcement via TRM Labs API integration which screens connected wallets and rejects flagged ones (publicly confirmed by Aave Labs in the 2022 dusted-wallets incident: 'We integrated TRM's API on the Aave IPFS frontend'), and the ToS at aave.com/legal/app/terms-of-service explicitly reserves the right to restrict access on the basis of Restricted Jurisdictions (Belarus, Cuba, Iran, North Korea, Russia, Syria, Venezuela, etc.) and to act when users attempt circumvention through VPNs or proxies. Independent A3b-ii paths exist (cp0x pi-aave-interface live at aave.cp0x.com under MIT license, direct contract calls via Etherscan, CLI/SDK), but they are operated by third parties or require technical capability and are not officially documented by Aave on its public landing pages. Per the rubric, A3-active screening on the official frontend without clearly-documented non-technical alternatives places this slice at orange, not green. Red is not appropriate because there is no contract-level whitelist, no on-chain blocklist updated by a single party, and no operator approval gating admission."
+    },
+    {
+      "id": "verifiability",
+      "label": "Verifiability",
+      "grade": "green",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 3,
+      "shortHeadline": "Verified source + 5 auditors pre-deployment",
+      "verdict": "All three core Aave V3 contracts on Ethereum mainnet (Pool proxy 0x87870Bca..., PoolConfigurator proxy 0x64b761D8..., PoolAddressesProvider 0x2f39d218...) show 'Source Code Verified - Exact Match' on Etherscan. Both proxy AND current implementation contracts are independently verified: Pool implementation 0x8147b99d... ('PoolInstance', Solidity 0.8.27) and PoolConfigurator implementation 0x6fDdde45... ('PoolConfiguratorInstance', Solidity 0.8.27). The deployed implementations correspond to the public aave-dao/aave-v3-origin repo at tag v3.6.0 (commit 5a230ec82fcb10afc7fe7cffa8978752fb17aa2b): contract names match exactly, the v3.6.0 PoolInstance.sol declares POOL_REVISION=10 and PoolConfiguratorInstance.sol declares CONFIGURATOR_REVISION=7. The current v3.6 release was audited by five recognized firms (Certora, MixBytes, Pashov, Blackthorn, Savant) in Nov 2025, ~2 months before the on-chain upgrade (Jan 16, 2026), well within the 6-month freshness window. Earlier versions (V3 genesis, V3.0.1, V3.0.2, V3.1, V3.2, V3.3, V3.4, V3.5) were each independently re-audited by recognized firms (OpenZeppelin, Trail of Bits, ABDK, Sigma Prime, Peckshield, Certora, MixBytes, ChainSecurity, Sherlock), so post-audit drift is continuously addressed. Choosing green because all V1-V6 conditions hold with direct on-chain and repo evidence."
+    }
+  ]
+}

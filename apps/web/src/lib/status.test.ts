@@ -1,7 +1,7 @@
 import type { FeedData } from '@defi-dna/data'
 import { describe, expect, it } from 'vitest'
 import { feeds } from './registry.ts'
-import { signalCounts, toneFromIndex, toneOf, type Tone } from './status.ts'
+import { detailToneOf, signalCounts, toneFromIndex, toneOf, type Tone } from './status.ts'
 
 const feed = (id: string) => {
   const found = feeds.find((candidate) => candidate.id === id)
@@ -36,6 +36,23 @@ describe('toneOf', () => {
     expect(toneOf(feed('pigi'))).toBe('none')
     expect(toneOf(feed('pigi'), { status: 'none', since: '2026-10-11T00:00:00Z' })).toBe('none')
     expect(toneOf(feed('pigi'), { status: 'error', since: '2026-10-11T00:00:00Z' })).toBe('error')
+  })
+})
+
+describe('detailToneOf', () => {
+  it('reads a slice grade on DeFiPunk’d’s own scale, tentative or not', () => {
+    const punkd = feed('defipunkd')
+    expect(detailToneOf(punkd, 'green')).toBe('pos')
+    expect(detailToneOf(punkd, 'tentative green')).toBe('pos')
+    expect(detailToneOf(punkd, 'tentative orange')).toBe('neu')
+    expect(detailToneOf(punkd, 'tentative orange (3/3 models submitted)')).toBe('neu')
+    expect(detailToneOf(punkd, 'tentative red')).toBe('neg')
+  })
+
+  it('leaves an ungraded slice and a feed without a rule uncoloured', () => {
+    expect(detailToneOf(feed('defipunkd'), 'unknown')).toBeNull()
+    expect(detailToneOf(feed('defipunkd'), 'tentative unknown (2/3 models submitted)')).toBeNull()
+    expect(detailToneOf(feed('pigi'), 'green')).toBeNull()
   })
 })
 

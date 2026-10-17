@@ -90,6 +90,10 @@ CI runs the last line. The pre-commit hook runs lint-staged and typecheck.
   `readStatus` (`packages/core/src/status.ts`) applies it, and `bundle` copies
   the reading — never the value — into `index.json` as `readings`. Add the
   feed's real headlines to `apps/web/src/lib/status.test.ts`.
+- `detailStatus` in `feed.json`: the same shape, applied to the `value` of each
+  `details` entry on the protocol page, for a feed that grades parts of its
+  assessment on its own scale (DeFiPunk’d's slices). It colours that entry's
+  name only; it never feeds the headline, the dashboard or `readings`.
 - Shape of what `collect()` returns: `adapters/feeds/feed-output.schema.json`.
   The runner validates every result against the schema before storing it.
   `extra` holds only the shapes in `ExtraData` (`packages/core/src/types.ts`):

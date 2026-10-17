@@ -1,0 +1,65 @@
+{
+  "name": "crvUSD",
+  "category": "CDP",
+  "tvl": 161027219.2499282,
+  "tier": "wood",
+  "about": "crvUSD is an overcollateralized stablecoin using Curve's LLAMMA (Lending-Liquidating AMM Algorithm) mechanism for soft liquidations. Users deposit whitelisted collateral into Controller contracts to mint crvUSD against their deposits. The system features automated liquidation bands that convert collateral to crvUSD gradually during price declines, and users can repay debt to retrieve collateral or self-liquidate positions.",
+  "pills": {
+    "upgradeability": "mixed",
+    "bugBountyUrl": "https://docs.curve.finance/security/security/",
+    "governanceForum": "https://gov.curve.fi",
+    "docsUrl": "https://docs.curve.finance/crvUSD/"
+  },
+  "slices": [
+    {
+      "id": "control",
+      "label": "Control",
+      "grade": "orange",
+      "tentative": false,
+      "partial": true,
+      "modelsCount": 3,
+      "shortHeadline": "7-day DAO vote; pause-only multisig",
+      "verdict": "crvUSD is governed by Curve DAO (veCRV Aragon voting) with a 7-day vote period before execution; Emergency DAO 5-of-9 multisig is limited to pause-only (set_killed)."
+    },
+    {
+      "id": "ability-to-exit",
+      "label": "Ability to exit",
+      "grade": "gray",
+      "tentative": false,
+      "partial": true,
+      "modelsCount": 3,
+      "shortHeadline": "Pause scope undetermined",
+      "verdict": "Exit functions exist but pause scope and duration limits cannot be determined from available evidence"
+    },
+    {
+      "id": "autonomy",
+      "label": "Autonomy",
+      "grade": "orange",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 2,
+      "shortHeadline": "Single-source Curve EMA oracles, no fallback",
+      "verdict": "Choosing orange because the protocol's oracle architecture cross-cuts multiple mint markets via shared Curve TriCrypto-NG EMA reads with no Chainlink or other second-opinion feed (A1/A6 unmitigated by anything beyond EMA smoothing), which is meaningfully more dependency surface than a green Stage-2-equivalent protocol, but per-market oracle immutability (A9), absence of bridge/committee dependencies (A2/A3), continuous permissionless soft-liquidation (A8), and per-market opt-in isolation for LST/Ethena exposure (A4) bound the blast radius and prevent the protocol-wide silent-rug pattern that would justify red; both modules (crvUSD mint ~50% TVS and Curve Lending ~50% TVS — share-figures qualitative, see unknowns) reuse the same architecture and grade equivalently, so the weighted overall is orange."
+    },
+    {
+      "id": "open-access",
+      "label": "Open Access",
+      "grade": "gray",
+      "tentative": false,
+      "partial": true,
+      "modelsCount": 2,
+      "shortHeadline": "Frontend rules unverified",
+      "verdict": "On-chain entry appears permissionless; frontend ToS/enforcement unverified"
+    },
+    {
+      "id": "verifiability",
+      "label": "Verifiability",
+      "grade": "green",
+      "tentative": true,
+      "partial": false,
+      "modelsCount": 0,
+      "shortHeadline": "Open source + 14 audits",
+      "verdict": "Protocol publishes a GitHub repository and has at least one audit on record. This is a coarse Phase-0 signal only: auditor reputation, scope, and post-audit review coverage are not yet weighted."
+    }
+  ]
+}

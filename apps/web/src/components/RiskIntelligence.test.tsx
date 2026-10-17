@@ -77,6 +77,39 @@ describe('FeedSource', () => {
     expect(plain).toContain('No status colour')
   })
 
+  it('colours a breakdown entry’s name by the feed’s own detail rule, and prints the rule', () => {
+    const sliced: Feed = {
+      ...feed,
+      detailStatus: {
+        rule: 'Example grades each part green, orange or red.',
+        match: '^(?:tentative\\s+)?(green|orange|red)\\b',
+        values: { green: 'positive', orange: 'neutral', red: 'negative' },
+      },
+    }
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <FeedSource
+          feed={sliced}
+          protocol={protocol}
+          data={{
+            status: 'ok',
+            value: 'Control: tentative red · Autonomy: unknown',
+            details: [
+              { name: 'Control', value: 'tentative red' },
+              { name: 'Autonomy', value: 'unknown' },
+            ],
+            since: '2026-10-01T00:00:00Z',
+          }}
+        />
+      </MemoryRouter>,
+    )
+    expect(html).toContain('Chip colours: Example grades each part green, orange or red.')
+    expect(html).toMatch(/<dt><span class="pill st-neg"[^>]*>Control<\/span><\/dt>/)
+    expect(html).toContain('<dt>Autonomy</dt>')
+    // The headline has no rule of its own, so it stays neutral data.
+    expect(html).toContain('No status colour')
+  })
+
   it('explains an empty feed as a gap, and a failed read as ours', () => {
     const none = render({ status: 'none', note: 'Nothing mapped.', since: '2026-10-01T00:00:00Z' })
     expect(none).toContain('has not published anything we could map to Example v1')
