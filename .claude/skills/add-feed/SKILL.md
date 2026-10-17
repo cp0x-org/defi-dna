@@ -97,7 +97,7 @@ Rules for the returned object:
   record), `reviews`, `findings`, `vaults`, `incidents`, `components`, `text`.
   Pick from these; a new feed needs no frontend work. Cap arrays (100 vaults).
   If nothing fits, use `extra.text`; only a genuinely new shape needs a type,
-  a schema entry and a component in `apps/web/src/components/extra/`.
+  a schema entry and a component in `apps/web/src/features/protocol/extra/`.
 - Network only through `ctx`. Declare a key in `secrets`, read it from
   `process.env.<NAME>` inside `prepare()`, and pass tokens via the `headers`
   function of `getJson` so a cached or `--offline` read never needs it. An

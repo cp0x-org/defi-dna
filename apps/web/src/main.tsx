@@ -2,8 +2,15 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import { configureDataClient } from '@defi-dna/data'
-import { App } from './App.tsx'
-import './styles/app.css'
+import { App } from './app/App.tsx'
+// Load order is the cascade: tokens, kit, the page sheets, the shared
+// rules, then the reading pages.
+import './styles/tokens.css'
+import './styles/kit.css'
+import './features/dashboard/dashboard.css'
+import './features/protocol/protocol.css'
+import './styles/base.css'
+import './features/reading/reading.css'
 
 /**
  * Hash routing on purpose: the app is a static bundle that must work from a
