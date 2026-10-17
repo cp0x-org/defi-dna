@@ -61,6 +61,14 @@ export const SIGNAL_LABELS: Record<Signal, string> = {
   pos: 'Positive',
 }
 
+/** Negative first, as in the dashboard's Signals column. */
+export const SIGNALS: Signal[] = ['neg', 'neu', 'pos']
+/** Legends read from positive to negative. */
+export const LEGEND_SIGNALS: Signal[] = ['pos', 'neu', 'neg']
+
+/** The colour a signal group is drawn in. `neu` also holds `inf`, which shares its colour. */
+export const SIGNAL_TONES: Record<Signal, Tone> = { neg: 'neg', neu: 'neu', pos: 'pos' }
+
 /** Which signal group a tone falls in; neutral and data-without-a-reading share one. */
 export const signalOf = (tone: Tone): Signal | null =>
   tone === 'neg' ? 'neg' : tone === 'pos' ? 'pos' : tone === 'neu' || tone === 'inf' ? 'neu' : null

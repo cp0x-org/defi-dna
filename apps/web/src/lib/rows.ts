@@ -1,5 +1,12 @@
-import type { Change, ExtraIncident, IndexBundle, MetricsFile, Protocol } from '@defi-dna/data'
-import { feeds, protocols } from './registry.ts'
+import type {
+  Change,
+  ExtraIncident,
+  IndexBundle,
+  MetricData,
+  MetricsFile,
+  Protocol,
+} from '@defi-dna/data'
+import { INCIDENTS_METRIC, feeds, protocols } from './registry.ts'
 import { toneFromIndex, type Tone } from './status.ts'
 
 /** What DefiLlama records against one version: its own count, and the latest entry. */
@@ -52,6 +59,14 @@ export interface RowSources {
 export const dataCount = (flags: Record<string, boolean>, feedIds: string[]): number =>
   feedIds.filter((id) => flags[id]).length
 
+/** How many of these versions one feed has data for: a count of our collection, not of risk. */
+export const coverageCount = (rows: { feeds: Record<string, boolean> }[], feedId: string): number =>
+  rows.filter((row) => row.feeds[feedId]).length
+
+/** DefiLlama's entries for one version, newest first. */
+export const incidentsByDate = (metric?: MetricData): ExtraIncident[] =>
+  [...(metric?.extra?.incidents ?? [])].sort((a, b) => b.date.localeCompare(a.date))
+
 /**
  * One protocol's entries in the run log, newest first. "Changed" everywhere
  * means the newest of these: a move in a feed's published value.
@@ -67,10 +82,8 @@ export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {
   const log = sources.changes
   return protocols.map((protocol) => {
     const generated = collected.get(protocol.id)
-    const incidents = sources.metrics?.[protocol.id]?.['incidents']
-    const list = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
-      b.date.localeCompare(a.date),
-    )
+    const incidents = sources.metrics?.[protocol.id]?.[INCIDENTS_METRIC]
+    const list = incidentsByDate(incidents)
     return {
       protocol,
       tvl: generated?.tvl ?? null,

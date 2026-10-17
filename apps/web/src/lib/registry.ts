@@ -11,8 +11,8 @@ import protocolsFile from '../../../../registry/protocols.json'
  */
 export const protocols: Protocol[] = protocolsFile.protocols
 
-const byId = new Map(protocols.map((protocol) => [protocol.id, protocol]))
-export const protocolById = (id: string): Protocol | undefined => byId.get(id)
+const protocolsById = new Map(protocols.map((protocol) => [protocol.id, protocol]))
+export const protocolById = (id: string): Protocol | undefined => protocolsById.get(id)
 
 /** `_template` and anything else underscored is a template, not a live source. */
 const collect = <T extends { id: string }>(modules: Record<string, { default: T }>): T[] =>
@@ -21,13 +21,26 @@ const collect = <T extends { id: string }>(modules: Record<string, { default: T 
     .map(([, module]) => module.default)
     .sort((a, b) => a.id.localeCompare(b.id))
 
-export const feeds: Feed[] = collect<Feed>(
-  import.meta.glob('../../../../adapters/feeds/*/feed.json', { eager: true }),
+/**
+ * The JSON is taken to be a Feed or a Metric here without a check: the
+ * pipeline's registry loader and `npm test` validate every feed.json and
+ * metric.json before a build can ship them.
+ */
+export const feeds: Feed[] = collect(
+  import.meta.glob<{ default: Feed }>('../../../../adapters/feeds/*/feed.json', { eager: true }),
 ).filter((feed) => feed.enabled)
 
-export const metrics: Metric[] = collect<Metric>(
-  import.meta.glob('../../../../adapters/metrics/*/metric.json', { eager: true }),
+const feedsById = new Map(feeds.map((feed) => [feed.id, feed]))
+export const feedById = (id: string): Feed | undefined => feedsById.get(id)
+/** A feed's display name; the id itself for a feed that is no longer connected. */
+export const feedName = (id: string): string => feedById(id)?.name ?? id
+
+export const metrics: Metric[] = collect(
+  import.meta.glob<{ default: Metric }>('../../../../adapters/metrics/*/metric.json', {
+    eager: true,
+  }),
 )
 
-export const metricById = (id: string): Metric | undefined =>
-  metrics.find((metric) => metric.id === id)
+/** Ids of the metric adapters the pages read by name: adapters/metrics/<id>. */
+export const TVL_METRIC = 'tvl'
+export const INCIDENTS_METRIC = 'incidents'

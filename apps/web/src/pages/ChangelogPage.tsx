@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
-import { feeds } from '../lib/registry.ts'
+import { feedName } from '../lib/registry.ts'
 import { useChangelog } from '../hooks/useIndex.ts'
 import { dateInfo } from '../lib/view.ts'
 import { IconArrow } from '../components/Icons.tsx'
+import { LoadState } from '../components/LoadState.tsx'
 import { Info, SourceMark } from '../components/UI.tsx'
 
 const MAX_SHOWN = 300
@@ -12,7 +13,6 @@ const MAX_SHOWN = 300
 export const ChangelogPage = ({ index }: { index: IndexBundle | null }) => {
   const { data, error, retry } = useChangelog()
   const events = data ?? []
-  const feedName = (id: string) => feeds.find((feed) => feed.id === id)?.name ?? id
 
   return (
     <>
@@ -46,18 +46,11 @@ export const ChangelogPage = ({ index }: { index: IndexBundle | null }) => {
       </div>
 
       {/* A log we could not read is not an empty log. */}
-      {error ? (
-        <div className="empty-state" role="alert">
-          <h3>The change log could not be loaded</h3>
-          <p>{error}</p>
-          <button className="button primary" type="button" onClick={retry}>
-            Try again
-          </button>
-        </div>
-      ) : !data ? (
-        <div className="empty-state" role="status">
-          <div className="loading-track" />
-        </div>
+      {!data ? (
+        <LoadState error={error} onRetry={retry} failed="The change log could not be loaded">
+          Nothing is listed until it is. An empty list here means no data, not &ldquo;nothing
+          changed&rdquo;.
+        </LoadState>
       ) : events.length === 0 ? (
         <div className="empty-state">
           <h3>Nothing recorded yet</h3>
@@ -73,7 +66,7 @@ export const ChangelogPage = ({ index }: { index: IndexBundle | null }) => {
               className="change-row"
               key={`${event.ts}-${event.protocolId}-${event.feedId}-${index}`}
             >
-              <span className="change-when">{event.ts.slice(0, 10)}</span>
+              <span className="change-when">{dateInfo(event.ts).label}</span>
               <span className="change-subject">
                 <SourceMark id={event.feedId} />
                 <span>

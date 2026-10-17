@@ -1,6 +1,9 @@
 import type { AssessedObject, FeedData } from '@defi-dna/data'
+import { TONE_LABELS } from './status.ts'
 
 export { formatUsd } from '@defi-dna/data'
+
+export const DAY = 86_400_000
 
 /** Categories come from the registry as plain strings; this only prettifies them. */
 const CATEGORY_LABELS: Record<string, string> = {
@@ -30,10 +33,10 @@ export const assessesLabel = (assesses: AssessedObject): string => ASSESSES_LABE
 
 /** The three states a cell can be in. None of them is a safety judgement. */
 export const coverageLabel = (status: FeedData['status']): string =>
-  status === 'ok' ? 'Data available' : status === 'error' ? 'Collection error' : 'No data'
+  TONE_LABELS[status === 'ok' ? 'inf' : status]
 
-/** Stable colour slot for a feed mark, so a new feed needs no CSS. */
-export const sourceTone = (id: string): number =>
+/** Stable colour slot for a feed mark or a protocol avatar, so a new id needs no CSS. */
+export const colourSlot = (id: string): number =>
   [...id].reduce((total, char) => total + char.charCodeAt(0), 0) % 5
 
 export const safeUrl = (value?: string | null): string | undefined => {
@@ -43,6 +46,12 @@ export const safeUrl = (value?: string | null): string | undefined => {
   } catch {
     return undefined
   }
+}
+
+/** `defillama.com` for a link's label; null for anything ExternalLink would not open. */
+export const hostOf = (value?: string | null): string | null => {
+  const safe = safeUrl(value)
+  return safe ? new URL(safe).host.replace(/^www\./, '') : null
 }
 
 /**
@@ -57,8 +66,8 @@ export const dateInfo = (value?: string | null, now = Date.now()) => {
     return unknown
   }
   const date = new Date(value.length === 7 ? `${value}-01T00:00:00Z` : value)
-  if (!Number.isFinite(date.getTime()) || date.getTime() > now + 86400000) return unknown
-  const age = Math.max(0, Math.floor((now - date.getTime()) / 86400000))
+  if (!Number.isFinite(date.getTime()) || date.getTime() > now + DAY) return unknown
+  const age = Math.max(0, Math.floor((now - date.getTime()) / DAY))
   const label = date.toLocaleDateString('en-GB', {
     ...(value.length === 7 ? {} : { day: 'numeric' }),
     month: 'short',
@@ -78,6 +87,8 @@ export const ageLabel = (value?: string | null, now = Date.now()): string | null
   return `${Math.floor(minutes / 1440)}d`
 }
 
+const utcClock = (date: Date): string => `${date.toISOString().slice(11, 16)} UTC`
+
 /** A timestamp with its UTC time, for when the minute matters: `11 Oct 2026 · 13:36 UTC`. */
 export const timeLabel = (value?: string | null): string | null => {
   const date = new Date(value ?? '')
@@ -88,5 +99,14 @@ export const timeLabel = (value?: string | null): string | null => {
     year: 'numeric',
     timeZone: 'UTC',
   })
-  return `${day} · ${date.toISOString().slice(11, 16)} UTC`
+  return `${day} · ${utcClock(date)}`
+}
+
+/** `11 Oct` and `13:15 UTC`, for a timeline that stacks the two. */
+export const dayAndTime = (ts: string): [string, string] => {
+  const date = new Date(ts)
+  return [
+    date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }),
+    utcClock(date),
+  ]
 }

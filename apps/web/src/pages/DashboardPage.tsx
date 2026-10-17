@@ -21,23 +21,25 @@ import {
   type SortKey,
 } from '../lib/matrix.ts'
 import { readCoverageView, writeCoverageView, type CoverageView } from '../lib/prefs.ts'
-import { feeds } from '../lib/registry.ts'
+import { feedName, feeds } from '../lib/registry.ts'
 import { buildRows, changedAt, dataCount, type Group, type Row } from '../lib/rows.ts'
 import {
+  LEGEND_SIGNALS,
+  SIGNALS,
   SIGNAL_LABELS,
+  SIGNAL_TONES,
   TONE_LABELS,
   signalCounts,
   signalOf,
-  type Signal,
   type Tone,
 } from '../lib/status.ts'
-import { ageLabel, categoryLabel, dateInfo, formatUsd, timeLabel } from '../lib/view.ts'
+import { DAY, ageLabel, categoryLabel, dateInfo, formatUsd, timeLabel } from '../lib/view.ts'
 import { CoverageBar, CoverageRing, Prov, StatusDot } from '../components/Coverage.tsx'
 import { FilterDrawer } from '../components/FilterDrawer.tsx'
 import { IconFilters, IconSearch } from '../components/Icons.tsx'
+import { LoadState } from '../components/LoadState.tsx'
 import { Anchored, ProtocolAvatar } from '../components/UI.tsx'
 
-const DAY = 86_400_000
 /** Time to cross from a cell to its card, or to come back, before an unpinned card closes. */
 const HIDE_DELAY = 350
 const feedIds = feeds.map((feed) => feed.id)
@@ -50,37 +52,6 @@ const VIEWS: [CoverageView, string][] = [
   ['bar', 'Bar'],
   ['both', 'Compare'],
 ]
-
-/**
- * What stands in for the rows while the dataset is missing. The table stays
- * empty and says why: an empty table must never read as "no risk found".
- */
-const DatasetState = ({ error, onRetry }: { error: string | null; onRetry: () => void }) =>
-  error ? (
-    <div className="empty-state" role="alert">
-      <h3>The dataset could not be loaded</h3>
-      <p>
-        The table stays empty until it is. An empty table here means no data, not &ldquo;no risk
-        found&rdquo;.
-      </p>
-      <button className="button primary" type="button" onClick={onRetry}>
-        Try again
-      </button>
-      <details>
-        <summary>Technical details</summary>
-        <p>{error}</p>
-        <p>
-          Running locally? Copy the published data with <code>npm run pull</code>, or collect it
-          with <code>npm run refresh</code>.
-        </p>
-      </details>
-    </div>
-  ) : (
-    <div className="empty-state" role="status">
-      <h3>Loading the latest collected data…</h3>
-      <div className="loading-track" />
-    </div>
-  )
 
 /**
  * Files read beside the index that did not arrive. Their columns stay empty
@@ -117,7 +88,6 @@ export const DataGaps = ({
     </div>
   ) : null
 
-const SIGNALS: Signal[] = ['neg', 'neu', 'pos']
 const tonesOf = (row: Row): Tone[] => feeds.map((feed) => row.tones[feed.id] ?? 'none')
 
 const POP_LABELS = {
@@ -557,7 +527,7 @@ export const DashboardPage = ({
             <li key={`${change.ts}-${change.feedId}-${k}`}>
               <span className="mono muted age">{ageLabel(change.ts, now)}</span>
               <span>
-                <b>{feeds.find((feed) => feed.id === change.feedId)?.name ?? change.feedId}</b>{' '}
+                <b>{feedName(change.feedId)}</b>{' '}
                 {change.from === null ? 'published a first value' : 'changed its value'}
               </span>
             </li>
@@ -778,7 +748,22 @@ export const DashboardPage = ({
         </div>
 
         {!index ? (
-          <DatasetState error={error} onRetry={onRetry} />
+          // The table stays empty and says why: an empty table must never read as "no risk found".
+          <LoadState
+            error={error}
+            onRetry={onRetry}
+            failed="The dataset could not be loaded"
+            loading="Loading the latest collected data…"
+            help={
+              <p>
+                Running locally? Copy the published data with <code>npm run pull</code>, or collect
+                it with <code>npm run refresh</code>.
+              </p>
+            }
+          >
+            The table stays empty until it is. An empty table here means no data, not &ldquo;no risk
+            found&rdquo;.
+          </LoadState>
         ) : groups.length === 0 ? (
           <div className="empty">
             <strong>No protocol versions match these filters.</strong>
@@ -800,21 +785,15 @@ export const DashboardPage = ({
         <div className="table-foot">
           <div className="legend">
             <span className="lg-title">Feed status</span>
-            <span>
-              <StatusDot tone="pos" />
-              Positive
-            </span>
-            <span>
-              <StatusDot tone="neu" />
-              Neutral / informational
-            </span>
-            <span>
-              <StatusDot tone="neg" />
-              Negative
-            </span>
+            {LEGEND_SIGNALS.map((signal) => (
+              <span key={signal}>
+                <StatusDot tone={SIGNAL_TONES[signal]} />
+                {SIGNAL_LABELS[signal]}
+              </span>
+            ))}
             <span>
               <StatusDot tone="none" />
-              No data
+              {TONE_LABELS.none}
             </span>
             <span>
               — position on <b>each feed’s own published scale</b>. Data whose scale gives no

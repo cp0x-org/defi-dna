@@ -9,7 +9,8 @@ import {
   writeQuery,
   type MatrixQuery,
 } from './matrix.ts'
-import { buildRows, changesFor, type Group } from './rows.ts'
+import { feedName, feeds } from './registry.ts'
+import { buildRows, changesFor, coverageCount, incidentsByDate, type Group } from './rows.ts'
 
 const NOW = Date.parse('2026-10-11T12:00:00.000Z')
 const FETCHED = '2026-10-11T00:00:00.000Z'
@@ -107,6 +108,29 @@ describe('changesFor', () => {
       'C 61/100',
     ])
     expect(changesFor(changes, 'curve')).toEqual([])
+  })
+})
+
+describe('coverageCount and incidentsByDate', () => {
+  it('counts the versions one feed has data for', () => {
+    expect(coverageCount(index.rows, 'pigi')).toBe(2)
+    expect(coverageCount(index.rows, 'defiscan')).toBe(2)
+    expect(coverageCount(index.rows, 'nope')).toBe(0)
+  })
+
+  it('lists DefiLlama’s entries newest first, and nothing for a missing metric', () => {
+    expect(incidentsByDate(metrics.curve?.incidents).map((entry) => entry.date)).toEqual([
+      '2024-02-01',
+      '2023-07-30',
+    ])
+    expect(incidentsByDate(undefined)).toEqual([])
+  })
+})
+
+describe('feedName', () => {
+  it('names a connected feed and falls back to the id for any other', () => {
+    expect(feedName('pigi')).toBe(feeds.find((feed) => feed.id === 'pigi')?.name)
+    expect(feedName('gone')).toBe('gone')
   })
 })
 

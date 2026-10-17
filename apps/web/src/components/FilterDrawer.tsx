@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { TVL_MIN, UPDATED, withoutFilters, type MatrixQuery } from '../lib/matrix.ts'
+import { TVL_MIN, UPDATED, keysOf, withoutFilters, type MatrixQuery } from '../lib/matrix.ts'
 import { feeds } from '../lib/registry.ts'
-import type { Row } from '../lib/rows.ts'
-import { SIGNAL_LABELS, type Signal } from '../lib/status.ts'
+import { coverageCount, type Row } from '../lib/rows.ts'
+import { SIGNALS, SIGNAL_LABELS, SIGNAL_TONES } from '../lib/status.ts'
 import { categoryLabel } from '../lib/view.ts'
 import { Prov, StatusDot } from './Coverage.tsx'
 import { IconClose } from './Icons.tsx'
@@ -17,7 +17,7 @@ const Segmented = <T extends string | number>({
 }: {
   label: string
   value: T
-  options: [T, string][]
+  options: readonly (readonly [T, string])[]
   onChange: (value: T) => void
   small?: boolean
 }) => (
@@ -130,9 +130,7 @@ export const FilterDrawer = ({
               value={query.tvl}
               options={[
                 ['', 'Any'],
-                ...Object.entries(TVL_MIN).map(
-                  ([key, band]) => [key, band.label] as [string, string],
-                ),
+                ...keysOf(TVL_MIN).map((key) => [key, TVL_MIN[key].label] as const),
               ]}
               onChange={(tvl) => set({ tvl })}
             />
@@ -167,7 +165,7 @@ export const FilterDrawer = ({
             </p>
             <div className="srcgrid">
               {feeds.map((feed) => {
-                const covered = rows.filter((row) => row.feeds[feed.id]).length
+                const covered = coverageCount(rows, feed.id)
                 const value = query.has.includes(feed.id)
                   ? 'has'
                   : query.missing.includes(feed.id)
@@ -216,7 +214,7 @@ export const FilterDrawer = ({
             <p className="fs-note">
               Each feed’s own characterization, read from its own published scale.
             </p>
-            {(['neg', 'neu', 'pos'] as Signal[]).map((signal) => (
+            {SIGNALS.map((signal) => (
               <label className="cb" key={signal}>
                 <input
                   type="checkbox"
@@ -229,7 +227,7 @@ export const FilterDrawer = ({
                     })
                   }
                 />
-                <StatusDot tone={signal} />
+                <StatusDot tone={SIGNAL_TONES[signal]} />
                 Has {SIGNAL_LABELS[signal].toLowerCase()} signals
               </label>
             ))}
@@ -261,9 +259,7 @@ export const FilterDrawer = ({
               value={query.updated}
               options={[
                 ['', 'Any'],
-                ...Object.entries(UPDATED).map(
-                  ([key, window]) => [key, window.label] as [string, string],
-                ),
+                ...keysOf(UPDATED).map((key) => [key, UPDATED[key].label] as const),
               ]}
               onChange={(updated) => set({ updated })}
             />

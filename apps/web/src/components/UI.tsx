@@ -7,7 +7,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react'
-import { safeUrl, sourceTone } from '../lib/view.ts'
+import { colourSlot, safeUrl } from '../lib/view.ts'
 import { IconExternal, IconInfo } from './Icons.tsx'
 
 export const ExternalLink = ({
@@ -163,23 +163,23 @@ export const ProtocolAvatar = ({
   name: string
   id: string
   large?: boolean
-}) => {
-  const color = [...id].reduce((n, char) => n + char.charCodeAt(0), 0) % 5
-  return (
-    <span className={`protocol-avatar avatar-${color}${large ? ' large' : ''}`} aria-hidden="true">
-      {name
-        .replace(/\s+(Finance|Protocol)$/i, '')
-        .split(/\s+/)
-        .map((s) => s[0])
-        .join('')
-        .slice(0, 2)}
-    </span>
-  )
-}
+}) => (
+  <span
+    className={`protocol-avatar avatar-${colourSlot(id)}${large ? ' large' : ''}`}
+    aria-hidden="true"
+  >
+    {name
+      .replace(/\s+(Finance|Protocol)$/i, '')
+      .split(/\s+/)
+      .map((s) => s[0])
+      .join('')
+      .slice(0, 2)}
+  </span>
+)
 
 export const SourceMark = ({ id, large = false }: { id: string; large?: boolean }) => (
   <span
-    className={`source-mark source-tone-${sourceTone(id)}${large ? ' large' : ''}`}
+    className={`source-mark source-tone-${colourSlot(id)}${large ? ' large' : ''}`}
     aria-hidden="true"
   >
     {id.slice(0, 1).toUpperCase()}

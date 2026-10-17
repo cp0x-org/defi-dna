@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { EMPTY_QUERY, writeQuery } from '../lib/matrix.ts'
 import { feeds, metrics } from '../lib/registry.ts'
+import { coverageCount } from '../lib/rows.ts'
 import { assessesLabel, dateInfo } from '../lib/view.ts'
 import { IconArrow, IconChevron } from '../components/Icons.tsx'
 import { ExternalLink, SourceMark } from '../components/UI.tsx'
@@ -25,7 +26,7 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
 
     <div className="directory-grid">
       {feeds.map((feed) => {
-        const covered = index?.rows.filter((row) => row.feeds[feed.id]).length
+        const covered = index ? coverageCount(index.rows, feed.id) : null
         const status = index?.sources?.[feed.id]
         return (
           <article className="directory-card" key={feed.id} id={`feed-${feed.id}`} tabIndex={-1}>

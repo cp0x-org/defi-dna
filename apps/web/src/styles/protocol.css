@@ -169,8 +169,10 @@ a.m:hover .m-v {
   font-size: 11px;
   color: var(--muted);
 }
+/* --feeds is set from the registry, so a new feed needs no CSS. */
 .covsegs {
   display: grid;
+  grid-template-columns: repeat(var(--feeds, 1), minmax(0, 1fr));
   gap: 3px;
   margin-top: 9px;
 }
@@ -973,7 +975,7 @@ a.m:hover .m-v {
   }
   .covsegs {
     overflow-x: auto;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   }
   .risk {
     grid-template-columns: minmax(0, 1fr);

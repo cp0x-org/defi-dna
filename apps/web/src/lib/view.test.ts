@@ -1,17 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import {
+  DAY,
   ageLabel,
   assessesLabel,
   categoryLabel,
+  colourSlot,
   coverageLabel,
   dateInfo,
+  dayAndTime,
+  hostOf,
   safeUrl,
-  sourceTone,
   timeLabel,
 } from './view.ts'
 
 const NOW = Date.parse('2026-10-11T12:00:00.000Z')
-const DAY = 86_400_000
 
 describe('labels', () => {
   it('prettifies known categories and passes unknown ones through', () => {
@@ -27,10 +29,10 @@ describe('labels', () => {
   })
 
   it('gives every id the same colour slot, one of five', () => {
-    expect(sourceTone('pigi')).toBe(sourceTone('pigi'))
+    expect(colourSlot('pigi')).toBe(colourSlot('pigi'))
     for (const id of ['pigi', 'defiscan', 'philidor', 'risklayer', 'x']) {
-      expect(sourceTone(id)).toBeGreaterThanOrEqual(0)
-      expect(sourceTone(id)).toBeLessThan(5)
+      expect(colourSlot(id)).toBeGreaterThanOrEqual(0)
+      expect(colourSlot(id)).toBeLessThan(5)
     }
   })
 })
@@ -48,6 +50,19 @@ describe('safeUrl', () => {
     expect(safeUrl('')).toBeUndefined()
     expect(safeUrl(null)).toBeUndefined()
     expect(safeUrl()).toBeUndefined()
+  })
+})
+
+describe('hostOf', () => {
+  it('names the host of a link, without www', () => {
+    expect(hostOf('https://www.defillama.com/protocol/aave-v3')).toBe('defillama.com')
+    expect(hostOf('http://app.example.org:8080/x')).toBe('app.example.org:8080')
+  })
+
+  it('names nothing that ExternalLink would refuse to open', () => {
+    expect(hostOf('javascript:alert(1)')).toBeNull()
+    expect(hostOf('not a url')).toBeNull()
+    expect(hostOf(undefined)).toBeNull()
   })
 })
 
@@ -109,5 +124,11 @@ describe('timeLabel', () => {
     expect(timeLabel(undefined)).toBeNull()
     expect(timeLabel('')).toBeNull()
     expect(timeLabel('not a date')).toBeNull()
+  })
+})
+
+describe('dayAndTime', () => {
+  it('splits a timestamp into its UTC day and time', () => {
+    expect(dayAndTime('2026-10-11T23:15:00.000Z')).toEqual(['11 Oct', '23:15 UTC'])
   })
 })

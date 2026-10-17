@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Feed, FeedData, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
-import { feeds } from '../lib/registry.ts'
+import { feedById, feeds } from '../lib/registry.ts'
+import { coverageCount } from '../lib/rows.ts'
 import { TONE_LABELS, detailToneOf, ruleWord, toneOf, type Tone } from '../lib/status.ts'
-import { ageLabel, assessesLabel, dateInfo, timeLabel } from '../lib/view.ts'
+import { ageLabel, assessesLabel, dateInfo, hostOf, timeLabel } from '../lib/view.ts'
 import { CoverageBar, CoverageRing, Prov, StatusPill } from './Coverage.tsx'
 import { FeedExtras } from './extra/FeedExtras.tsx'
 import { Block, DataAgeHelp, ExternalLink, SourceMark } from './UI.tsx'
@@ -15,14 +16,6 @@ const GROUPS: [Tone[], string][] = [
   [['none'], 'No data'],
   [['error'], 'Collection error'],
 ]
-
-const hostOf = (url?: string): string | null => {
-  try {
-    return url ? new URL(url).host.replace(/^www\./, '') : null
-  } catch {
-    return null
-  }
-}
 
 /**
  * Everything one feed published about one protocol, as blocks in the order of
@@ -270,7 +263,7 @@ export const RiskIntelligence = ({
   const toneFor = (feed: Feed): Tone => toneOf(feed, record.feeds[feed.id])
   const states = feeds.map(toneFor)
   const withData = feeds.filter((feed) => record.feeds[feed.id]?.status === 'ok').length
-  const selected = feeds.find((feed) => feed.id === feedId)
+  const selected = feedById(feedId)
 
   const item = (feed: Feed) => {
     const tone = toneFor(feed)
@@ -347,7 +340,7 @@ export const RiskIntelligence = ({
             lastRead={index?.sources?.[selected.id]?.lastOkAt}
             covered={
               index
-                ? `${index.rows.filter((row) => row.feeds[selected.id]).length} of ${index.rows.length}`
+                ? `${coverageCount(index.rows, selected.id)} of ${index.rows.length}`
                 : undefined
             }
           />

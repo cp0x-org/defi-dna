@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
+import { LoadState } from '../components/LoadState.tsx'
 import { readQuery } from '../lib/matrix.ts'
 import { feeds } from '../lib/registry.ts'
 import { DashboardPage, DataGaps } from './DashboardPage.tsx'
@@ -91,5 +92,32 @@ describe('the dashboard with the dataset', () => {
     expect(metricsOnly).not.toContain('run log')
 
     expect(render(<DataGaps metricsError={null} changelogError={null} onRetry={retry} />)).toBe('')
+  })
+})
+
+describe('LoadState', () => {
+  it('names a failure, offers a retry and keeps the technical details folded', () => {
+    const html = render(
+      <LoadState error="503 while loading changelog.json" onRetry={retry} failed="Log failed">
+        Nothing is listed until it is.
+      </LoadState>,
+    )
+    expect(html).toContain('role="alert"')
+    expect(html).toContain('<h3>Log failed</h3>')
+    expect(html).toContain('Nothing is listed until it is.')
+    expect(html).toContain('Try again')
+    expect(html).toMatch(/<details>.*503 while loading changelog\.json.*<\/details>/)
+  })
+
+  it('shows only the loading line while waiting, with its heading when given one', () => {
+    const bare = render(<LoadState error={null} onRetry={retry} failed="Log failed" />)
+    expect(bare).toContain('role="status"')
+    expect(bare).not.toContain('<h3>')
+    expect(bare).not.toContain('Log failed')
+
+    const titled = render(
+      <LoadState error={null} onRetry={retry} failed="Log failed" loading="Loading the log…" />,
+    )
+    expect(titled).toContain('<h3>Loading the log…</h3>')
   })
 })

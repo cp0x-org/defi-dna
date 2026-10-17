@@ -1,15 +1,30 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import type { Change, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
 import { useChangelog, useProtocol } from '../hooks/useIndex.ts'
-import { feeds, protocolById, protocols } from '../lib/registry.ts'
-import { changesFor } from '../lib/rows.ts'
-import { ageLabel, categoryLabel, dateInfo, formatUsd, safeUrl } from '../lib/view.ts'
-import { SIGNAL_LABELS, TONE_LABELS, signalCounts, toneOf, type Signal } from '../lib/status.ts'
+import {
+  INCIDENTS_METRIC,
+  TVL_METRIC,
+  feedName,
+  feeds,
+  protocolById,
+  protocols,
+} from '../lib/registry.ts'
+import { changesFor, incidentsByDate } from '../lib/rows.ts'
+import { ageLabel, categoryLabel, dateInfo, dayAndTime, formatUsd, hostOf } from '../lib/view.ts'
+import {
+  LEGEND_SIGNALS,
+  SIGNAL_LABELS,
+  SIGNAL_TONES,
+  TONE_LABELS,
+  signalCounts,
+  toneOf,
+} from '../lib/status.ts'
 import { CoverageRing, Prov, StatusDot, StatusPill } from '../components/Coverage.tsx'
 import { IncidentsExtra, TvlComponentsExtra } from '../components/extra/MetricExtras.tsx'
 import { TextExtra } from '../components/extra/TextExtra.tsx'
 import { IconArrow } from '../components/Icons.tsx'
+import { LoadState } from '../components/LoadState.tsx'
 import { RiskIntelligence } from '../components/RiskIntelligence.tsx'
 import { ExternalLink, Info, ProtocolAvatar, SourceMark } from '../components/UI.tsx'
 
@@ -28,51 +43,6 @@ const TABS = {
   risk: { label: 'Risk intelligence', hint: 'Read each feed in its own words' },
 } as const
 type Tab = keyof typeof TABS
-
-const hostOf = (url?: string): string | null => {
-  const safe = safeUrl(url)
-  return safe ? new URL(safe).host.replace(/^www\./, '') : null
-}
-
-/** `11 Oct` and `13:15 UTC`, for the change timeline. */
-const dayAndTime = (ts: string): [string, string] => {
-  const date = new Date(ts)
-  return [
-    date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }),
-    `${date.toISOString().slice(11, 16)} UTC`,
-  ]
-}
-
-/** What stands in for anything that needs the generated record. */
-const RecordState = ({
-  protocol,
-  error,
-  onRetry,
-}: {
-  protocol: Protocol
-  error: string | null
-  onRetry: () => void
-}) =>
-  error ? (
-    <div className="empty-state" role="alert">
-      <h3>What the feeds publish about {protocol.name} could not be loaded</h3>
-      <p>
-        Nothing is shown until it is. A missing card here means missing data, not a missing risk.
-      </p>
-      <button className="button primary" type="button" onClick={onRetry}>
-        Try again
-      </button>
-      <details>
-        <summary>Technical details</summary>
-        <p>{error}</p>
-      </details>
-    </div>
-  ) : (
-    <div className="empty-state" role="status">
-      <h3>Loading what the feeds publish…</h3>
-      <div className="loading-track" />
-    </div>
-  )
 
 /**
  * One protocol version. The heading comes from the hand-maintained registry
@@ -117,17 +87,12 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const tones = record ? feeds.map((feed) => toneOf(feed, record.feeds[feed.id])) : []
   const signals = signalCounts(tones)
   const metricsMissing = record != null && record.metrics === null
-  const tvl = record?.metrics?.['tvl']
-  const incidents = record?.metrics?.['incidents']
+  const tvl = record?.metrics?.[TVL_METRIC]
+  const incidents = record?.metrics?.[INCIDENTS_METRIC]
   const tvlAge = ageLabel(tvl?.fetchedAt)
-  const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
-    b.date.localeCompare(a.date),
-  )[0]
+  const latestIncident = incidentsByDate(incidents)[0]
   const changes = changesFor(changelog.data ?? [], protocol.id)
   const lastChange = changes[0]
-  const lastChangeFeed = lastChange
-    ? (feeds.find((feed) => feed.id === lastChange.feedId)?.name ?? lastChange.feedId)
-    : null
 
   const figure = (label: ReactNode, value: ReactNode, sub: ReactNode, to?: string): ReactNode => {
     const body = (
@@ -278,7 +243,7 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           changelog.error
             ? 'run log could not be loaded'
             : lastChange
-              ? `${lastChangeFeed} changed`
+              ? `${feedName(lastChange.feedId)} changed`
               : 'latest move in a feed’s value',
         )}
       </section>
@@ -294,9 +259,9 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
               feeds with data
             </span>
             <span className="cov-legend">
-              {(['pos', 'neu', 'neg'] as Signal[]).map((signal) => (
+              {LEGEND_SIGNALS.map((signal) => (
                 <span key={signal}>
-                  <StatusDot tone={signal} />
+                  <StatusDot tone={SIGNAL_TONES[signal]} />
                   {signals[signal]} {SIGNAL_LABELS[signal].toLowerCase()}
                 </span>
               ))}
@@ -315,10 +280,7 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
               Colour = the feed’s own characterization, on its own scale. Click a feed to read it.
             </span>
           </div>
-          <div
-            className="covsegs"
-            style={{ gridTemplateColumns: `repeat(${feeds.length}, minmax(0, 1fr))` }}
-          >
+          <div className="covsegs" style={{ '--feeds': feeds.length } as CSSProperties}>
             {feeds.map((feed, k) => {
               const tone = tones[k] ?? 'none'
               const updated = record.feeds[feed.id]?.updatedAt
@@ -363,7 +325,14 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
       </nav>
 
       {!record ? (
-        <RecordState protocol={protocol} error={error} onRetry={retry} />
+        <LoadState
+          error={error}
+          onRetry={retry}
+          failed={`What the feeds publish about ${protocol.name} could not be loaded`}
+          loading="Loading what the feeds publish…"
+        >
+          Nothing is shown until it is. A missing card here means missing data, not a missing risk.
+        </LoadState>
       ) : tab === 'risk' ? (
         <RiskIntelligence protocol={protocol} record={record} index={index} feedId={feedParam} />
       ) : tab === 'data' ? (
@@ -452,12 +421,9 @@ const OverviewTab = ({
   const base = `/protocol/${protocol.id}`
   const states = feeds.map((feed) => toneOf(feed, record.feeds[feed.id]))
   const withData = feeds.filter((feed) => record.feeds[feed.id]?.status === 'ok').length
-  const tvl = record.metrics?.['tvl']
-  const incidents = record.metrics?.['incidents']
-  const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
-    b.date.localeCompare(a.date),
-  )[0]
-  const feedName = (id: string) => feeds.find((feed) => feed.id === id)?.name ?? id
+  const tvl = record.metrics?.[TVL_METRIC]
+  const incidents = record.metrics?.[INCIDENTS_METRIC]
+  const latestIncident = incidentsByDate(incidents)[0]
 
   return (
     <div className="two">
@@ -685,8 +651,8 @@ const DataTab = ({
   record: ProtocolDetail
   versions: Protocol[]
 }) => {
-  const tvl = record.metrics?.['tvl']
-  const incidents = record.metrics?.['incidents']
+  const tvl = record.metrics?.[TVL_METRIC]
+  const incidents = record.metrics?.[INCIDENTS_METRIC]
   const feedLinks = feeds.filter(
     (feed) => record.feeds[feed.id]?.status === 'ok' && record.feeds[feed.id]?.url,
   )

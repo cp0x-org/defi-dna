@@ -1107,10 +1107,9 @@ details[open] > summary > svg:last-child {
  * Additions for the defi-dna data model.
  *
  * The design above is source-agnostic; these rules cover what this
- * dataset carries and the earlier interface did not: a value's position
- * inside its own feed's published ordering (and the switch that turns
- * that colour off), pipeline-error cells, stale values, and the change
- * log. Nothing here introduces a colour of our own — see CHARTER.md.
+ * dataset carries and the earlier interface did not: source marks,
+ * collection states, the registry table and the change log. Nothing here
+ * introduces a colour of our own — see CHARTER.md.
  * ------------------------------------------------------------------ */
 
 .source-tone-0 {
@@ -1139,12 +1138,10 @@ details[open] > summary > svg:last-child {
   border-color: transparent;
 }
 
-/* One switch drops every ordering colour, everywhere. */
-
 .status-error {
-  color: var(--tone-high);
-  background: var(--tone-high-tint);
-  border-color: var(--tone-high-line);
+  color: var(--neg);
+  background: var(--neg-tint);
+  border-color: var(--neg-line);
 }
 
 .registry-table {

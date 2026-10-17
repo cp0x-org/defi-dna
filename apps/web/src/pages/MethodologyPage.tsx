@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { feeds } from '../lib/registry.ts'
+import { coverageCount } from '../lib/rows.ts'
 import { coverageLabel } from '../lib/view.ts'
 import { IconArrow, IconChevron } from '../components/Icons.tsx'
 import { ExternalLink } from '../components/UI.tsx'
@@ -197,9 +198,7 @@ export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
                   <td className="muted">{feed.topic}</td>
                   <td>{feed.focus}</td>
                   <td className="mono">
-                    {index
-                      ? `${index.rows.filter((row) => row.feeds[feed.id]).length} / ${index.rows.length}`
-                      : '—'}
+                    {index ? `${coverageCount(index.rows, feed.id)} / ${index.rows.length}` : '—'}
                   </td>
                 </tr>
               ))}
