@@ -1,0 +1,39 @@
+
+---
+description: "CSS architecture and styling conventions for the React application"
+globs: "apps/web/src/**/*.css, apps/web/src/**/*.tsx"
+alwaysApply: false
+---
+
+# CSS architecture
+
+## Ownership and organization
+
+- Component-specific styles should live next to the component they belong to.
+- Prefer a component directory containing its TSX file and associated styles.
+- Keep global styles limited to genuine application-wide concerns:
+  resets, base typography, design tokens, global themes, and document-level styling.
+- Keep page-specific styles with the page when they are not shared elsewhere.
+- Shared styling primitives belong in a clearly named shared styles or design-system area.
+
+## Encapsulation
+
+- Prefer CSS Modules for component-specific styles when they improve isolation
+  and reduce collisions with existing global selectors.
+- Use .module.css only when supported by the existing build configuration.
+- Do not convert all CSS to CSS Modules blindly.
+- Identify global selectors, shared class names, CSS variables, and cross-component
+  dependencies before migrating styles.
+- Avoid styling unrelated components through broad element selectors or
+  undocumented parent-child dependencies.
+- Preserve responsive behavior, states, animations, themes, and visual appearance.
+
+## Migration
+
+- Inventory existing CSS files and their imports before moving styles.
+- Identify which components actually use each selector.
+- Migrate one logical group at a time.
+- Update imports and class references together.
+- Remove old styles only after verifying that they are no longer needed.
+- Avoid changing layout, spacing, colors, or typography as part of a purely structural migration.
+- Compare the application before and after the migration and investigate visual regressions.

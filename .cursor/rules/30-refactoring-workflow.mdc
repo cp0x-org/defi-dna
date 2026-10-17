@@ -1,0 +1,44 @@
+
+---
+description: "Required workflow for audits and refactoring existing code"
+alwaysApply: false
+---
+
+# Refactoring workflow
+
+## Before editing
+
+1. Identify the specific problem and the expected improvement.
+2. Inspect the target module and its callers, dependencies, routes, and tests.
+3. Describe the current behavior that must remain unchanged.
+4. Check whether the proposed change is structural cleanup or a behavior change.
+5. Propose a small plan. For multi-file or architectural changes, wait for approval before implementation.
+
+## During implementation
+
+- Change one coherent concern at a time.
+- Preserve public interfaces unless changing them is necessary and approved.
+- Prefer straightforward code over clever abstractions.
+- Do not combine formatting-only changes, dependency upgrades, and behavioral changes in one step.
+- Add or update tests when practical, especially for business rules and regression-prone behavior.
+- If an existing bug is discovered, report it separately rather than silently changing behavior during a structural refactor.
+
+## After implementation
+
+1. Review the diff for unrelated edits and accidental behavior changes.
+2. Run the relevant available checks.
+3. Verify imports, route references, and type errors.
+4. Report files changed, architectural decisions, checks run, and any unresolved risks.
+5. Explain the result in language understandable to a developer who is new to React.
+
+## Audit mode
+
+When asked to audit, inspect and report without modifying files.
+
+The report must distinguish:
+- Confirmed defects.
+- Maintainability risks.
+- Optional improvements.
+- Personal style preferences.
+
+For every major recommendation, provide evidence from the actual code and explain why the change is worthwhile.
