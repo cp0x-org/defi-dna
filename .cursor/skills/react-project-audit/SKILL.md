@@ -1,5 +1,4 @@
 ---
-
 name: react-project-audit
 description: Audit an existing React and TypeScript application for architecture, maintainability, duplication, and unnecessary complexity. Use before planning a refactor. Do not modify code during the audit.
 ---

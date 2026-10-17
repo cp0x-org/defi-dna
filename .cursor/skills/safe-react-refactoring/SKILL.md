@@ -1,5 +1,4 @@
 ---
-
 name: safe-react-refactoring
 description: Safely refactor existing React and TypeScript code in small steps while preserving behavior. Use after reviewing the architecture and agreeing on a specific improvement.
 ---
