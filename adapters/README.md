@@ -172,7 +172,9 @@ response is cached by URL and body. See `adapters/feeds/credora`.
 The same shape, returning `{ value: number | null, url?, note?, extra? }`, plus a
 `metric.json` describing it (`id`, `name`, `homepage`). Metrics are measured
 quantities — they appear on the protocol page and never as a feed column. See
-`adapters/metrics/tvl`.
+`adapters/metrics/tvl`, and `adapters/metrics/governance` for a source read
+over JSON-RPC: batched `eth_call`s go through `postJson` with `ttlSeconds`, so
+they are cached by body and replay offline.
 
 ## While you work
 

@@ -296,6 +296,9 @@ a.m:hover .m-v {
   align-items: start;
   margin-top: 16px;
 }
+.row2 > .span2 {
+  grid-column: 1 / -1;
+}
 .desc {
   font-size: 13px;
   line-height: 1.6;
@@ -489,6 +492,10 @@ a.m:hover .m-v {
   font-size: 11px;
   color: var(--muted);
   margin: 4px 0 12px;
+}
+.governance-facts {
+  margin-top: 12px;
+  max-width: 88ch;
 }
 .tvl-components,
 .extra-text {

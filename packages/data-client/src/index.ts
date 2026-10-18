@@ -30,7 +30,7 @@ export type {
   SourceStatus,
   StatusRule,
 } from '@defi-dna/core/types'
-export { formatUsd } from '@defi-dna/core/format'
+export { formatDuration, formatUsd } from '@defi-dna/core/format'
 export { readStatus, readValue, statusWord } from '@defi-dna/core/status'
 
 /**

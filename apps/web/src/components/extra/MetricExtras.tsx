@@ -1,5 +1,5 @@
-import type { ExtraIncident, ExtraTvlComponent } from '@defi-dna/data'
-import { formatUsd } from '../../lib/view.ts'
+import type { Detail, ExtraIncident, ExtraTvlComponent } from '@defi-dna/data'
+import { formatDuration, formatUsd } from '../../lib/view.ts'
 import { ExternalLink } from '../UI.tsx'
 
 export const TvlComponentsExtra = ({ components }: { components?: ExtraTvlComponent[] }) =>
@@ -85,3 +85,29 @@ export const IncidentsExtra = ({
       </table>
     </div>
   ) : null
+
+/**
+ * The governance metric: the timelock delay as the headline and the facts read
+ * next to it — role holders, signer thresholds, voting parameters — each as the
+ * contract returned it.
+ */
+export const GovernanceExtra = ({ value, facts }: { value: number | null; facts?: Detail[] }) => (
+  <>
+    <div className="tvl-big">{formatDuration(value) ?? '—'}</div>
+    <p className="tvl-note">
+      {value == null
+        ? 'None of the contracts read for this version is a timelock.'
+        : `${value.toLocaleString('en-US')} seconds between scheduling and execution, as the timelock contract reports it.`}
+    </p>
+    {Array.isArray(facts) && facts.length > 0 ? (
+      <dl className="facts one governance-facts">
+        {facts.map((fact) => (
+          <div key={fact.name}>
+            <dt>{fact.name}</dt>
+            <dd className="mono">{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
+    ) : null}
+  </>
+)

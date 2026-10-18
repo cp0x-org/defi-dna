@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { FeedExtras, hasFeedExtras } from './FeedExtras.tsx'
-import { IncidentsExtra, TvlComponentsExtra } from './MetricExtras.tsx'
+import { GovernanceExtra, IncidentsExtra, TvlComponentsExtra } from './MetricExtras.tsx'
 import { TextExtra } from './TextExtra.tsx'
 
 describe('optional extra views', () => {
@@ -106,5 +106,35 @@ describe('optional extra views', () => {
       'DefiLlama records no incident',
     )
     expect(renderToStaticMarkup(<TextExtra />)).toBe('')
+  })
+})
+
+describe('the governance metric view', () => {
+  it('shows the timelock delay in readable units with the facts as read', () => {
+    const html = renderToStaticMarkup(
+      <GovernanceExtra
+        value={172800}
+        facts={[
+          { name: 'Timelock delay', value: '172800 s (2 days)' },
+          { name: 'Community multisig', value: '5 of 9 signers' },
+        ]}
+      />,
+    )
+    expect(html).toContain('2 days')
+    expect(html).toContain('172,800 seconds')
+    expect(html).toContain('Community multisig')
+    expect(html).toContain('5 of 9 signers')
+  })
+
+  it('says when no contract read is a timelock, without judging it', () => {
+    const html = renderToStaticMarkup(
+      <GovernanceExtra
+        value={null}
+        facts={[{ name: 'Morpho Blue owner', value: '0xcba2 (Safe)' }]}
+      />,
+    )
+    expect(html).toContain('—')
+    expect(html).toContain('None of the contracts read for this version is a timelock.')
+    expect(html).toContain('Morpho Blue owner')
   })
 })

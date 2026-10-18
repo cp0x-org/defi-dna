@@ -3,10 +3,21 @@ import { Link, useParams } from 'react-router-dom'
 import type { Change, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
 import { useChangelog, useProtocol } from '../hooks/useIndex.ts'
 import { feeds, protocolById, protocols } from '../lib/registry.ts'
-import { ageLabel, categoryLabel, dateInfo, formatUsd, safeUrl } from '../lib/view.ts'
+import {
+  ageLabel,
+  categoryLabel,
+  dateInfo,
+  formatDuration,
+  formatUsd,
+  safeUrl,
+} from '../lib/view.ts'
 import { SIGNAL_LABELS, TONE_LABELS, signalCounts, toneOf, type Signal } from '../lib/status.ts'
 import { CoverageRing, Prov, StatusDot, StatusPill } from '../components/Coverage.tsx'
-import { IncidentsExtra, TvlComponentsExtra } from '../components/extra/MetricExtras.tsx'
+import {
+  GovernanceExtra,
+  IncidentsExtra,
+  TvlComponentsExtra,
+} from '../components/extra/MetricExtras.tsx'
 import { TextExtra } from '../components/extra/TextExtra.tsx'
 import { IconArrow } from '../components/Icons.tsx'
 import { RiskIntelligence } from '../components/RiskIntelligence.tsx'
@@ -22,7 +33,7 @@ const TABS = {
   },
   data: {
     label: 'Protocol data',
-    hint: 'What the protocol is and what DefiLlama measures — no feed opinions here',
+    hint: 'What the protocol is, what DefiLlama measures and what its governance contracts report — no feed opinions here',
   },
   risk: { label: 'Risk intelligence', hint: 'Read each feed in its own words' },
 } as const
@@ -435,6 +446,7 @@ const OverviewTab = ({
   const withData = feeds.filter((feed) => record.feeds[feed.id]?.status === 'ok').length
   const tvl = record.metrics['tvl']
   const incidents = record.metrics['incidents']
+  const governance = record.metrics['governance']
   const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
     b.date.localeCompare(a.date),
   )[0]
@@ -574,7 +586,7 @@ const OverviewTab = ({
         <section className="card">
           <div className="card-h">
             <h2>Key figures</h2>
-            <Prov kind="meta">Meta · DefiLlama</Prov>
+            <Prov kind="meta">Meta · DefiLlama · Ethereum</Prov>
           </div>
           <div className="card-b kv-body">
             <dl className="kv">
@@ -610,6 +622,20 @@ const OverviewTab = ({
                 <dd>
                   {latestIncident ? dateInfo(latestIncident.date).label : '—'}
                   {latestIncident ? <small>{latestIncident.classification}</small> : null}
+                </dd>
+              </div>
+              <div>
+                <dt>
+                  Governance timelock
+                  <Info label="What this figure is">
+                    The delay the protocol’s governance timelock enforces before a scheduled
+                    decision executes, as the contract reports it on Ethereum mainnet. Empty when
+                    none of the contracts we read is a timelock, or none is mapped.
+                  </Info>
+                </dt>
+                <dd>
+                  {formatDuration(governance?.value) ?? '—'}
+                  <small>read on-chain</small>
                 </dd>
               </div>
             </dl>
@@ -664,6 +690,7 @@ const DataTab = ({
 }) => {
   const tvl = record.metrics['tvl']
   const incidents = record.metrics['incidents']
+  const governance = record.metrics['governance']
   const feedLinks = feeds.filter(
     (feed) => record.feeds[feed.id]?.status === 'ok' && record.feeds[feed.id]?.url,
   )
@@ -698,6 +725,34 @@ const DataTab = ({
             </p>
             <TvlComponentsExtra components={tvl?.extra?.components} />
             <TextExtra text={tvl?.extra?.text} />
+          </div>
+        </section>
+      </div>
+
+      <div className="row2">
+        <section className="card span2" id="governance">
+          <div className="card-h">
+            <h2>Governance timelock</h2>
+            <Prov kind="meta" />
+            <span className="aside">
+              read on-chain · {dateInfo(governance?.updatedAt ?? governance?.fetchedAt).label}
+            </span>
+          </div>
+          <div className="card-b">
+            {governance?.extra?.facts?.length ? (
+              <GovernanceExtra value={governance.value} facts={governance.extra.facts} />
+            ) : (
+              <p className="muted">
+                No governance contracts are mapped for this version; nothing was read.
+              </p>
+            )}
+          </div>
+          <div className="card-f">
+            <span>
+              {governance?.note ??
+                'Contracts and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'}
+            </span>
+            {governance?.url ? <ExternalLink href={governance.url}>Etherscan</ExternalLink> : null}
           </div>
         </section>
       </div>
