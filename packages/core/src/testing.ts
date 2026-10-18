@@ -10,10 +10,12 @@ export interface FakeContextOptions {
  * An AdapterContext over canned responses, for tests.
  *
  * Keys are URLs (`POST <url>` for postJson) and values are bodies: an object
- * is served as JSON, a string as text, `null` as a 404. An unknown URL throws,
- * so a test fails loudly when the adapter asks for something the fixture does
- * not hold. The `headers` function of a request is invoked, as on the network,
- * so an adapter's credential path runs too. `requests` lists what was asked.
+ * is served as JSON, a string as text, `null` as a 404. A function answers a
+ * POST from its body, for an endpoint that serves many queries at one URL
+ * (JSON-RPC). An unknown URL throws, so a test fails loudly when the adapter
+ * asks for something the fixture does not hold. The `headers` function of a
+ * request is invoked, as on the network, so an adapter's credential path runs
+ * too. `requests` lists what was asked.
  */
 export function fakeContext(
   responses: Record<string, unknown>,
@@ -39,12 +41,15 @@ export function fakeContext(
     getText: (url, fetch = {}) => serve(url, fetch),
     getJson: async <T>(url: string, fetch: FetchOptions = {}): Promise<T> =>
       JSON.parse(await serve(url, fetch)) as T,
-    postJson: async <T>(url: string, _body: unknown, post: PostOptions = {}): Promise<T> => {
+    postJson: async <T>(url: string, body: unknown, post: PostOptions = {}): Promise<T> => {
       const key = `POST ${url}`
       requests.push(key)
       if (!(key in responses)) throw new Error(`no fixture for ${key}`)
       await post.headers?.()
-      return responses[key] as T
+      const value = responses[key]
+      return (
+        typeof value === 'function' ? (value as (body: unknown) => unknown)(body) : value
+      ) as T
     },
   }
 }

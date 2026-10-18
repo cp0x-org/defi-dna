@@ -1,6 +1,6 @@
 import type { AssessedObject, FeedData } from '@defi-dna/data'
 
-export { formatUsd } from '@defi-dna/data'
+export { formatDuration, formatUsd } from '@defi-dna/data'
 
 /** Categories come from the registry as plain strings; this only prettifies them. */
 const CATEGORY_LABELS: Record<string, string> = {

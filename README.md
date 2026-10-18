@@ -132,9 +132,13 @@ Risk feeds currently include [DeFiScan](https://www.defiscan.info),
 [DeFi Scoring](https://defiscoring.com),
 [DeFiPunk'd](https://defipunkd.com) (five risk slices per deployment) and
 [Credora](https://www.credora.network) (vault ratings). Independent
-measurements come from DefiLlama's Ethereum TVL and incident history. A feed
-with no data for a protocol is distinct from a collection error; a failed
-refresh retains the previous value.
+measurements come from DefiLlama's Ethereum TVL and incident history, and from
+Ethereum mainnet itself: the governance metric reads timelock delays, multisig
+thresholds and voting parameters over JSON-RPC (`ETH_RPC_URL`; a public
+endpoint is used when it is not set). Every contract and every view it calls is
+listed in `adapters/metrics/governance/systems.json`, so each figure can be
+repeated on Etherscan. A feed with no data for a protocol is
+distinct from a collection error; a failed refresh retains the previous value.
 
 To add a feed, copy `adapters/feeds/_template/`, provide its metadata and
 protocol mapping, then implement `collect()` in `index.ts`. See the

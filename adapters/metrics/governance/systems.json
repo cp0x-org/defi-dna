@@ -1,0 +1,574 @@
+{
+  "_comment": "Governance contracts read on Ethereum mainnet, one entry per governance system; mapping.json says which system decides over which protocol version. Every value on the site comes from one of the `reads` listed here, so a reviewer can repeat it: open the contract's address on Etherscan (Contract → Read), call the view named in `call` with the `args` listed, and compare. `source` is the protocol's own address registry the addresses were taken from; every read answered on-chain on 2026-10-19. Fields of a read: `call` — the Solidity signature as `cast sig` takes it (a list when one fact needs two views: a Safe's threshold and its owner list); `args` — the arguments in order (a number for a uint, a 0x… word for bytes32, `$previousBlock` for the block before the one the run reads at); `word` — which 32-byte word of the answer is read when the view returns a tuple (0 by default); `as` — how that word reads: `seconds` (a uint, shown as `N s (readable)`), `count` (a uint with `unit`), `tokens` (a uint divided by 1e18, with `unit` the token symbol), `percent` (Aragon's 1e18 = 100%), `address`, `account` (an address, after which eth_getCode and the Safe views getThreshold()/getOwners() are called on it to say whether it is an EOA, a Safe with its threshold, or another contract), `enum` (a uint index into `values`), `signers` (getThreshold() of getOwners().length); `fact` — the name the value appears under; `headline: true` — the delay the headline reports, in seconds (where two delays apply one after the other, as at Lido, both are marked and the headline is their sum).",
+  "aave-governance-v3": {
+    "name": "Aave Governance V3",
+    "source": "https://github.com/bgd-labs/aave-address-book/blob/main/src/GovernanceV3Ethereum.sol",
+    "contracts": [
+      {
+        "label": "Payloads Controller",
+        "address": "0xdAbad81aF85554E9ae636395611C58F7eC1aAEc5",
+        "reads": [
+          {
+            "call": "getExecutorSettingsByAccessControl(uint8)",
+            "args": [1],
+            "word": 1,
+            "as": "seconds",
+            "fact": "Executor level 1 delay",
+            "headline": true
+          },
+          {
+            "call": "getExecutorSettingsByAccessControl(uint8)",
+            "args": [1],
+            "word": 0,
+            "as": "address",
+            "fact": "Executor level 1"
+          },
+          {
+            "call": "getExecutorSettingsByAccessControl(uint8)",
+            "args": [2],
+            "word": 1,
+            "as": "seconds",
+            "fact": "Executor level 2 delay"
+          },
+          {
+            "call": "getExecutorSettingsByAccessControl(uint8)",
+            "args": [2],
+            "word": 0,
+            "as": "address",
+            "fact": "Executor level 2"
+          }
+        ]
+      },
+      {
+        "label": "Protocol Guardian",
+        "address": "0x2CFe3ec4d5a6811f4B8067F0DE7e47DfA938Aa30",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Protocol Guardian"
+          }
+        ]
+      },
+      {
+        "label": "Governance Guardian",
+        "address": "0xCe52ab41C40575B072A18C9700091Ccbe4A06710",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Governance Guardian"
+          }
+        ]
+      },
+      {
+        "label": "Risk Council",
+        "address": "0x47c71dFEB55Ebaa431Ae3fbF99Ea50e0D3d30fA8",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Risk Council" }
+        ]
+      }
+    ]
+  },
+  "sky-spark": {
+    "name": "Sky governance (Spark spells)",
+    "source": "https://github.com/sparkdotfi/spark-address-registry/blob/master/src/Ethereum.sol",
+    "contracts": [
+      {
+        "label": "Sky governance pause (MCD_PAUSE)",
+        "address": "0xbE286431454714F511008713973d3B053A2d38f3",
+        "reads": [
+          { "call": "delay()", "as": "seconds", "fact": "MCD_PAUSE delay", "headline": true }
+        ]
+      },
+      {
+        "label": "SparkLend freezer multisig",
+        "address": "0x44efFc473e81632B12486866AA1678edbb7BEeC3",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "SparkLend freezer multisig"
+          }
+        ]
+      },
+      {
+        "label": "ALM relayer multisig",
+        "address": "0x8a25A24EDE9482C4Fc0738F99611BE58F1c839AB",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "ALM relayer multisig"
+          }
+        ]
+      },
+      {
+        "label": "ALM freezer multisig",
+        "address": "0x90D8c80C028B4C09C0d8dcAab9bbB057F0513431",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "ALM freezer multisig"
+          }
+        ]
+      }
+    ]
+  },
+  "morpho-dao": {
+    "name": "Morpho DAO",
+    "source": "https://docs.morpho.org/developers/contracts/addresses/",
+    "contracts": [
+      {
+        "label": "Morpho Blue",
+        "address": "0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb",
+        "reads": [{ "call": "owner()", "as": "account", "fact": "Morpho Blue owner" }]
+      }
+    ]
+  },
+  "fluid-governance": {
+    "name": "Fluid governance",
+    "source": "https://github.com/Instadapp/fluid-contracts-public/blob/main/deployments/deployments.md",
+    "contracts": [
+      {
+        "label": "InstaTimelock",
+        "address": "0x2386DC45AdDed673317eF068992F19421B481F4c",
+        "reads": [
+          { "call": "delay()", "as": "seconds", "fact": "InstaTimelock delay", "headline": true },
+          { "call": "admin()", "as": "account", "fact": "InstaTimelock admin" }
+        ]
+      }
+    ]
+  },
+  "gearbox-dao": {
+    "name": "Gearbox DAO",
+    "source": "https://etherscan.io/address/0x523dA3a8961E4dD4f6206DBf7E6c749f51796bb3",
+    "contracts": [
+      {
+        "label": "ACL",
+        "address": "0x523dA3a8961E4dD4f6206DBf7E6c749f51796bb3",
+        "reads": [{ "call": "owner()", "as": "account", "fact": "ACL owner" }]
+      }
+    ]
+  },
+  "euler-dao": {
+    "name": "Euler DAO",
+    "source": "https://github.com/euler-xyz/euler-interfaces/blob/master/addresses/1/GovernorAddresses.json",
+    "contracts": [
+      {
+        "label": "eVaultFactory timelock",
+        "address": "0xfb034c1C6c7F42171b2d1Cb8486E0f43ED07A968",
+        "reads": [
+          {
+            "call": "getMinDelay()",
+            "as": "seconds",
+            "fact": "eVaultFactory timelock minimum delay",
+            "headline": true
+          }
+        ]
+      },
+      {
+        "label": "DAO multisig",
+        "address": "0xcAD001c30E96765aC90307669d578219D4fb1DCe",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "DAO multisig" }
+        ]
+      },
+      {
+        "label": "Security Council",
+        "address": "0xb3b84e8320250Afe7a5fb313Ee32B52982b73c53",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Security Council" }
+        ]
+      }
+    ]
+  },
+  "compound-governance": {
+    "name": "Compound governance",
+    "source": "https://docs.compound.xyz/governance/",
+    "contracts": [
+      {
+        "label": "Timelock",
+        "address": "0x6d903f6003cca6255D85CcA4D3B5E5146dC33925",
+        "reads": [
+          { "call": "delay()", "as": "seconds", "fact": "Timelock delay", "headline": true },
+          { "call": "admin()", "as": "account", "fact": "Timelock admin" }
+        ]
+      },
+      {
+        "label": "Governor",
+        "address": "0x309a862bbC1A00e45506cB8A802D1ff10004c8C0",
+        "reads": [
+          {
+            "call": "votingDelay()",
+            "as": "count",
+            "unit": "blocks",
+            "fact": "Governor voting delay"
+          },
+          {
+            "call": "votingPeriod()",
+            "as": "count",
+            "unit": "blocks",
+            "fact": "Governor voting period"
+          },
+          {
+            "call": "proposalThreshold()",
+            "as": "tokens",
+            "unit": "COMP",
+            "fact": "Governor proposal threshold"
+          },
+          {
+            "call": "quorum(uint256)",
+            "args": ["$previousBlock"],
+            "as": "tokens",
+            "unit": "COMP",
+            "fact": "Governor quorum"
+          }
+        ]
+      },
+      {
+        "label": "Community multisig",
+        "address": "0xbbf3f1421D886E9b2c5D716B5192aC998af2012c",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Community multisig"
+          }
+        ]
+      }
+    ]
+  },
+  "uniswap-governance": {
+    "name": "Uniswap governance",
+    "source": "https://developers.uniswap.org/docs/ecosystem/governance/technical-reference",
+    "contracts": [
+      {
+        "label": "Timelock",
+        "address": "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
+        "reads": [
+          { "call": "delay()", "as": "seconds", "fact": "Timelock delay", "headline": true },
+          { "call": "admin()", "as": "account", "fact": "Timelock admin" }
+        ]
+      },
+      {
+        "label": "Governor Bravo",
+        "address": "0x408ED6354d4973f66138C91495F2f2FCbd8724C3",
+        "reads": [
+          {
+            "call": "votingDelay()",
+            "as": "count",
+            "unit": "blocks",
+            "fact": "Governor Bravo voting delay"
+          },
+          {
+            "call": "votingPeriod()",
+            "as": "count",
+            "unit": "blocks",
+            "fact": "Governor Bravo voting period"
+          },
+          {
+            "call": "proposalThreshold()",
+            "as": "tokens",
+            "unit": "UNI",
+            "fact": "Governor Bravo proposal threshold"
+          },
+          {
+            "call": "quorumVotes()",
+            "as": "tokens",
+            "unit": "UNI",
+            "fact": "Governor Bravo quorum"
+          }
+        ]
+      }
+    ]
+  },
+  "curve-dao": {
+    "name": "Curve DAO",
+    "source": "https://docs.curve.finance/deployments/dao/",
+    "contracts": [
+      {
+        "label": "Ownership voting",
+        "address": "0xE478de485ad2fe566d49342Cbd03E49ed7DB3356",
+        "reads": [
+          { "call": "voteTime()", "as": "seconds", "fact": "Ownership voting duration" },
+          {
+            "call": "supportRequiredPct()",
+            "as": "percent",
+            "fact": "Ownership voting support required"
+          },
+          {
+            "call": "minAcceptQuorumPct()",
+            "as": "percent",
+            "fact": "Ownership voting minimum quorum"
+          }
+        ]
+      },
+      {
+        "label": "Parameter voting",
+        "address": "0xBCfF8B0b9419b9A88c44546519b1e909cF330399",
+        "reads": [
+          { "call": "voteTime()", "as": "seconds", "fact": "Parameter voting duration" },
+          {
+            "call": "supportRequiredPct()",
+            "as": "percent",
+            "fact": "Parameter voting support required"
+          },
+          {
+            "call": "minAcceptQuorumPct()",
+            "as": "percent",
+            "fact": "Parameter voting minimum quorum"
+          }
+        ]
+      },
+      {
+        "label": "Emergency DAO",
+        "address": "0x467947EE34aF926cF1DCac093870f613C96B1E0c",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Emergency DAO" }
+        ]
+      }
+    ]
+  },
+  "balancer-dao": {
+    "name": "Balancer DAO",
+    "source": "https://docs.balancer.fi/concepts/governance/",
+    "contracts": [
+      {
+        "label": "DAO multisig",
+        "address": "0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "DAO multisig" }
+        ]
+      },
+      {
+        "label": "Emergency subDAO",
+        "address": "0xA29F61256e948F3FB707b4b3B138C5cCb9EF9888",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Emergency subDAO" }
+        ]
+      },
+      {
+        "label": "Treasury",
+        "address": "0x0EFcCBb9E2C09Ea29551879bd9Da32362b32fc89",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Treasury" }
+        ]
+      }
+    ]
+  },
+  "cow-dao": {
+    "name": "CoW DAO",
+    "source": "https://docs.cow.fi/cow-protocol/reference/contracts/core",
+    "contracts": [
+      {
+        "label": "GPv2AllowListAuthentication",
+        "address": "0x2c4c28DDBdAc9C5E7055b4C863b72eA0149D8aFE",
+        "reads": [{ "call": "manager()", "as": "account", "fact": "Solver allow-list manager" }]
+      }
+    ]
+  },
+  "oneinch": {
+    "name": "1inch",
+    "source": "https://etherscan.io/address/0x111111125421cA6dc452d289314280a0f8842A65",
+    "contracts": [
+      {
+        "label": "Aggregation Router V6",
+        "address": "0x111111125421cA6dc452d289314280a0f8842A65",
+        "reads": [{ "call": "owner()", "as": "account", "fact": "Aggregation Router V6 owner" }]
+      }
+    ]
+  },
+  "zerox-settler": {
+    "name": "0x Settler",
+    "source": "https://github.com/0xProject/0x-settler",
+    "contracts": [
+      {
+        "label": "Settler deployer",
+        "address": "0x00000000000004533Fe15556B1E086BB1A72cEae",
+        "reads": [{ "call": "owner()", "as": "account", "fact": "Settler deployer owner" }]
+      }
+    ]
+  },
+  "yearn-governance": {
+    "name": "Yearn governance",
+    "source": "https://github.com/yearn/yearn-devdocs/blob/master/src/ethereum/constants.ts",
+    "contracts": [
+      {
+        "label": "yChad multisig",
+        "address": "0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "yChad multisig" }
+        ]
+      },
+      {
+        "label": "Brain multisig",
+        "address": "0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Brain multisig" }
+        ]
+      }
+    ]
+  },
+  "pendle-governance": {
+    "name": "Pendle governance",
+    "source": "https://github.com/pendle-finance/pendle-core-v2-public/blob/main/deployments/1-core.json",
+    "contracts": [
+      {
+        "label": "Timelock controller",
+        "address": "0x68d8D192dF476bC01895E16b0ED3945673d777AC",
+        "reads": [
+          {
+            "call": "getMinDelay()",
+            "as": "seconds",
+            "fact": "Timelock controller minimum delay",
+            "headline": true
+          }
+        ]
+      },
+      {
+        "label": "Governance multisig",
+        "address": "0x8119EC16F0573B7dAc7C0CB94EB504FB32456ee1",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Governance multisig"
+          }
+        ]
+      },
+      {
+        "label": "ProxyAdmin",
+        "address": "0xA28c08f165116587D4F3E708743B4dEe155c5E64",
+        "reads": [{ "call": "owner()", "as": "account", "fact": "ProxyAdmin owner" }]
+      }
+    ]
+  },
+  "lido-dao": {
+    "name": "Lido DAO",
+    "source": "https://docs.lido.fi/deployed-contracts/",
+    "contracts": [
+      {
+        "label": "Emergency Protected Timelock",
+        "address": "0xCE0425301C85c5Ea2A0873A2dEe44d78E02D2316",
+        "reads": [
+          {
+            "call": "getAfterSubmitDelay()",
+            "as": "seconds",
+            "fact": "After-submit delay",
+            "headline": true
+          },
+          {
+            "call": "getAfterScheduleDelay()",
+            "as": "seconds",
+            "fact": "After-schedule delay",
+            "headline": true
+          },
+          {
+            "call": "isEmergencyModeActive()",
+            "as": "enum",
+            "values": ["not active", "active"],
+            "fact": "Emergency mode"
+          }
+        ]
+      },
+      {
+        "label": "Dual Governance",
+        "address": "0xC1db28B3301331277e307FDCfF8DE28242A4486E",
+        "reads": [
+          {
+            "call": "getEffectiveState()",
+            "as": "enum",
+            "values": [
+              "Unset",
+              "Normal",
+              "VetoSignalling",
+              "VetoSignallingDeactivation",
+              "VetoCooldown",
+              "RageQuit"
+            ],
+            "fact": "Dual Governance state"
+          }
+        ]
+      },
+      {
+        "label": "Aragon voting",
+        "address": "0x2e59A20f205bB85a89C53f1936454680651E618e",
+        "reads": [
+          { "call": "voteTime()", "as": "seconds", "fact": "Aragon voting duration" },
+          {
+            "call": "supportRequiredPct()",
+            "as": "percent",
+            "fact": "Aragon voting support required"
+          },
+          {
+            "call": "minAcceptQuorumPct()",
+            "as": "percent",
+            "fact": "Aragon voting minimum quorum"
+          }
+        ]
+      },
+      {
+        "label": "Emergency activation committee",
+        "address": "0x8B7854488Fde088d686Ea672B6ba1A5242515f45",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Emergency activation committee"
+          }
+        ]
+      },
+      {
+        "label": "Emergency execution committee",
+        "address": "0xC7792b3F2B399bB0EdF53fECDceCeB97FBEB18AF",
+        "reads": [
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Emergency execution committee"
+          }
+        ]
+      },
+      {
+        "label": "Reseal committee",
+        "address": "0xFFe21561251c49AdccFad065C94Fb4931dF49081",
+        "reads": [
+          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Reseal committee" }
+        ]
+      }
+    ]
+  },
+  "rocket-pool-dao": {
+    "name": "Rocket Pool DAO",
+    "source": "https://docs.rocketpool.net/overview/contracts-integrations",
+    "contracts": [
+      {
+        "label": "RocketStorage",
+        "address": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+        "reads": [
+          { "call": "getGuardian()", "as": "account", "fact": "RocketStorage guardian" },
+          {
+            "call": "getAddress(bytes32)",
+            "args": ["0x72244aef95b32bf9d0fd65a6e3212550a59abd181a93cfc66753a7197c36df07"],
+            "as": "address",
+            "fact": "Security council contract (rocketDAOSecurity)"
+          }
+        ]
+      },
+      {
+        "label": "RocketDAOSecurity",
+        "address": "0x84aE6D61Df5c6ba7196b5C76Bcb112B8a689aD37",
+        "reads": [
+          {
+            "call": "getMemberCount()",
+            "as": "count",
+            "unit": "members",
+            "fact": "Security council members"
+          }
+        ]
+      }
+    ]
+  }
+}

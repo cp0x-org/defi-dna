@@ -8,7 +8,7 @@ import {
   writeQuery,
   type MatrixQuery,
 } from './matrix.ts'
-import { buildRows, type Group } from './rows.ts'
+import { buildRows, groupRows, type Group } from './rows.ts'
 
 const NOW = Date.parse('2026-10-11T12:00:00.000Z')
 const FETCHED = '2026-10-11T00:00:00.000Z'
@@ -46,7 +46,28 @@ const metrics: MetricsFile = {
       extra: { incidents: [incident('2023-07-30'), incident('2024-02-01')] },
     },
   },
-  'aave-v3': { incidents: { value: 0, fetchedAt: FETCHED } },
+  'aave-v3': {
+    incidents: { value: 0, fetchedAt: FETCHED },
+    governance: {
+      value: 86400,
+      fetchedAt: FETCHED,
+      extra: {
+        facts: [],
+        multisigs: [{ name: 'Protocol Guardian', address: '0x2cfe', threshold: 4, signers: 7 }],
+      },
+    },
+  },
+  'aave-v4': {
+    governance: {
+      value: 86400,
+      fetchedAt: FETCHED,
+      extra: {
+        facts: [],
+        multisigs: [{ name: 'Protocol Guardian', address: '0x2cfe', threshold: 4, signers: 7 }],
+      },
+    },
+  },
+  lido: { governance: { value: null, fetchedAt: FETCHED, extra: { facts: [] } } },
 }
 const changes: Change[] = [
   {
@@ -82,6 +103,20 @@ describe('buildRows', () => {
     expect(rows.find((row) => row.protocol.id === 'lido')?.changes.map((c) => c.to)).toEqual([
       'B 83.64/100',
     ])
+  })
+
+  it('joins what the governance metric read, and tells "not mapped" from "no timelock"', () => {
+    const governance = (id: string) => rows.find((row) => row.protocol.id === id)?.governance
+    expect(governance('aave-v3')).toEqual({
+      delay: 86400,
+      multisigs: [{ name: 'Protocol Guardian', address: '0x2cfe', threshold: 4, signers: 7 }],
+    })
+    expect(governance('lido')).toEqual({ delay: null, multisigs: [] })
+    expect(governance('curve')).toBeNull()
+    // The group row repeats the reading only when every version shares it.
+    const groups = groupRows(rows)
+    expect(groups.find((group) => group.key === 'Aave')?.governance?.delay).toBe(86400)
+    expect(groups.find((group) => group.key === 'curve')?.governance).toBeNull()
   })
 
   it('takes each feed’s own reading from the index; data without one is neutral', () => {
