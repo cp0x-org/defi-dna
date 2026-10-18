@@ -1,5 +1,5 @@
 {
-  "_comment": "Governance contracts read on Ethereum mainnet, one entry per governance system; mapping.json says which system decides over which protocol version. Every value on the site comes from one of the `reads` listed here, so a reviewer can repeat it: open the contract's address on Etherscan (Contract → Read), call the view named in `call` with the `args` listed, and compare. `source` is the protocol's own address registry the addresses were taken from; every read answered on-chain on 2026-10-19. Each contract has a `type` — timelock, governor (a token vote), aragon-voting (a token vote), dual-governance (a holder veto), safe, holder (a contract whose privileged role is read), registry, council — and, where a token votes, `token`; the page lists who decides from these. Fields of a read: `call` — the Solidity signature as `cast sig` takes it (a list when one fact needs two views: a Safe's threshold and its owner list); `args` — the arguments in order (a number for a uint, a 0x… word for bytes32, `$previousBlock` for the block before the one the run reads at); `word` — which 32-byte word of the answer is read when the view returns a tuple (0 by default); `as` — how that word reads: `seconds` (a uint, shown as `N s (readable)`), `count` (a uint with `unit`), `tokens` (a uint divided by 1e18, with `unit` the token symbol), `percent` (Aragon's 1e18 = 100%), `address`, `account` (an address, after which eth_getCode and the Safe views getThreshold()/getOwners() are called on it to say whether it is an EOA, a Safe with its threshold, or another contract), `enum` (a uint index into `values`), `signers` (getThreshold() of getOwners().length); `fact` — the name the value appears under; `headline: true` — the delay the headline reports, in seconds (where two delays apply one after the other, as at Lido, both are marked and the headline is their sum).",
+  "_comment": "Governance contracts read on Ethereum mainnet, one entry per governance system; mapping.json says which system decides over which protocol version. Every value on the site comes from one of the `reads` listed here, so a reviewer can repeat it: open the contract's address on Etherscan (Contract → Read), call the view named in `call` with the `args` listed, and compare. `source` is the protocol's own address registry the addresses were taken from; every read answered on-chain on 2026-10-19. Each contract has a `type` — timelock, governor (a token vote), aragon-voting (a token vote), dual-governance (a holder veto), safe, holder (a contract whose privileged role is read), registry, council — and, where a token votes, `token`; the page lists who decides from these. `voting`, on a system whose token holders vote where no contract reports it (Snapshot) or not at all, says so and links the place; the adapter appends it to the note, it is never a value. Fields of a read: `call` — the Solidity signature as `cast sig` takes it (a list when one fact needs two views: a Safe's threshold and its owner list); `args` — the arguments in order (a number for a uint, a 0x… word for bytes32, `$previousBlock` for the block before the one the run reads at); `word` — which 32-byte word of the answer is read when the view returns a tuple (0 by default); `as` — how that word reads: `seconds` (a uint, shown as `N s (readable)`), `count` (a uint with `unit`), `tokens` (a uint divided by 1e18, with `unit` the token symbol), `percent` (Aragon's 1e18 = 100%), `address`, `account` (an address, after which eth_getCode and the Safe views getThreshold()/getOwners() are called on it to say whether it is an EOA, a Safe with its threshold, or another contract), `enum` (a uint index into `values`), `signers` (getThreshold() of getOwners().length); `fact` — the name the value appears under; `headline: true` — the delay the headline reports, in seconds (where two delays apply one after the other, as at Lido, both are marked and the headline is their sum).",
   "aave-governance-v3": {
     "name": "Aave Governance V3",
     "source": "https://github.com/bgd-labs/aave-address-book/blob/main/src/GovernanceV3Ethereum.sol",
@@ -206,6 +206,10 @@
   "morpho-dao": {
     "name": "Morpho DAO",
     "source": "https://docs.morpho.org/developers/contracts/addresses/",
+    "voting": {
+      "note": "MORPHO holders vote off-chain on Snapshot; the owner Safe executes.",
+      "url": "https://snapshot.box/#/s:morpho.eth"
+    },
     "contracts": [
       {
         "label": "Morpho Blue",
@@ -242,12 +246,53 @@
             "fact": "InstaTimelock admin"
           }
         ]
+      },
+      {
+        "label": "Governor",
+        "address": "0x0204Cd037B2ec03605CFdFe482D8e257C765fA1B",
+        "type": "governor",
+        "token": "FLUID",
+        "reads": [
+          {
+            "call": "votingDelay()",
+            "as": "count",
+            "unit": "blocks",
+            "fact": "Governor voting delay"
+          },
+          {
+            "call": "votingPeriod()",
+            "as": "count",
+            "unit": "blocks",
+            "fact": "Governor voting period"
+          },
+          {
+            "call": "proposalThreshold()",
+            "as": "tokens",
+            "unit": "FLUID",
+            "fact": "Governor proposal threshold"
+          },
+          {
+            "call": "quorumVotes()",
+            "as": "tokens",
+            "unit": "FLUID",
+            "fact": "Governor quorum"
+          },
+          {
+            "call": "token()",
+            "as": "address",
+            "fact": "Voting token"
+          }
+        ]
       }
     ]
   },
   "gearbox-dao": {
     "name": "Gearbox DAO",
     "source": "https://etherscan.io/address/0x523dA3a8961E4dD4f6206DBf7E6c749f51796bb3",
+    "voting": {
+      "note": "GEAR holders vote off-chain on Snapshot; the multisigs behind the ACL execute.",
+      "url": "https://snapshot.box/#/s:gearbox.eth"
+    },
     "contracts": [
       {
         "label": "ACL",
@@ -266,6 +311,10 @@
   "euler-dao": {
     "name": "Euler DAO",
     "source": "https://github.com/euler-xyz/euler-interfaces/blob/master/addresses/1/GovernorAddresses.json",
+    "voting": {
+      "note": "EUL holders vote off-chain on Snapshot; the DAO multisig executes through the timelock.",
+      "url": "https://snapshot.box/#/s:eulerdao.eth"
+    },
     "contracts": [
       {
         "label": "eVaultFactory timelock",
@@ -498,6 +547,10 @@
   "balancer-dao": {
     "name": "Balancer DAO",
     "source": "https://docs.balancer.fi/concepts/governance/",
+    "voting": {
+      "note": "BAL holders vote off-chain on Snapshot; the multisigs listed execute.",
+      "url": "https://snapshot.box/#/s:balancer.eth"
+    },
     "contracts": [
       {
         "label": "DAO multisig",
@@ -540,6 +593,10 @@
   "cow-dao": {
     "name": "CoW DAO",
     "source": "https://docs.cow.fi/cow-protocol/reference/contracts/core",
+    "voting": {
+      "note": "COW holders vote off-chain on Snapshot; the CoW DAO Safe executes.",
+      "url": "https://snapshot.box/#/s:cow.eth"
+    },
     "contracts": [
       {
         "label": "GPv2AllowListAuthentication",
@@ -558,6 +615,10 @@
   "oneinch": {
     "name": "1inch",
     "source": "https://etherscan.io/address/0x111111125421cA6dc452d289314280a0f8842A65",
+    "voting": {
+      "note": "1INCH holders vote off-chain on Snapshot; the owner Safe executes.",
+      "url": "https://snapshot.box/#/s:1inch.eth"
+    },
     "contracts": [
       {
         "label": "Aggregation Router V6",
@@ -576,6 +637,9 @@
   "zerox-settler": {
     "name": "0x Settler",
     "source": "https://github.com/0xProject/0x-settler",
+    "voting": {
+      "note": "0x publishes no token vote over the Settler registry; its owner decides."
+    },
     "contracts": [
       {
         "label": "Settler deployer",
@@ -594,6 +658,10 @@
   "yearn-governance": {
     "name": "Yearn governance",
     "source": "https://github.com/yearn/yearn-devdocs/blob/master/src/ethereum/constants.ts",
+    "voting": {
+      "note": "YFI holders vote off-chain on Snapshot; the yChad multisig executes.",
+      "url": "https://snapshot.box/#/s:veyfi.eth"
+    },
     "contracts": [
       {
         "label": "yChad multisig",
@@ -624,6 +692,9 @@
   "pendle-governance": {
     "name": "Pendle governance",
     "source": "https://github.com/pendle-finance/pendle-core-v2-public/blob/main/deployments/1-core.json",
+    "voting": {
+      "note": "Pendle publishes no token vote over these contracts; the governance multisig and the timelock decide."
+    },
     "contracts": [
       {
         "label": "Timelock controller",
@@ -794,6 +865,12 @@
             "args": ["0x72244aef95b32bf9d0fd65a6e3212550a59abd181a93cfc66753a7197c36df07"],
             "as": "address",
             "fact": "Security council contract (rocketDAOSecurity)"
+          },
+          {
+            "call": "getAddress(bytes32)",
+            "args": ["0x5aa44b41e40cd45c081364aad7a61c1f32e659ec04db2ab21b4b81488165d219"],
+            "as": "address",
+            "fact": "Protocol DAO proposal settings contract (rocketDAOProtocolSettingsProposals)"
           }
         ]
       },
@@ -807,6 +884,50 @@
             "as": "count",
             "unit": "members",
             "fact": "Security council members"
+          }
+        ]
+      },
+      {
+        "label": "RocketDAOProtocolSettingsProposals",
+        "address": "0xf6ad771dfB1cd10c66F688E251b5E5c21cbfDF81",
+        "type": "governor",
+        "token": "RPL",
+        "reads": [
+          {
+            "call": "getVoteDelayTime()",
+            "as": "seconds",
+            "fact": "Protocol DAO vote delay"
+          },
+          {
+            "call": "getVotePhase1Time()",
+            "as": "seconds",
+            "fact": "Protocol DAO vote phase 1"
+          },
+          {
+            "call": "getVotePhase2Time()",
+            "as": "seconds",
+            "fact": "Protocol DAO vote phase 2"
+          },
+          {
+            "call": "getExecuteTime()",
+            "as": "seconds",
+            "fact": "Protocol DAO execution window"
+          },
+          {
+            "call": "getProposalQuorum()",
+            "as": "percent",
+            "fact": "Protocol DAO proposal quorum"
+          },
+          {
+            "call": "getProposalVetoQuorum()",
+            "as": "percent",
+            "fact": "Protocol DAO veto quorum"
+          },
+          {
+            "call": "getProposalBond()",
+            "as": "tokens",
+            "unit": "RPL",
+            "fact": "Protocol DAO proposal bond"
           }
         ]
       }

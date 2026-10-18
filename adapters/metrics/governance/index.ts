@@ -50,6 +50,14 @@ const SELECTOR: Record<string, string> = {
   'hat()': '0xfe95a5ce',
   'live()': '0x957aa58c',
   'GOV()': '0x180cb47f',
+  'token()': '0xfc0c546a',
+  'getVoteDelayTime()': '0x10f66424',
+  'getVotePhase1Time()': '0xfb587022',
+  'getVotePhase2Time()': '0x1e0aa3f2',
+  'getExecuteTime()': '0x0a092a4e',
+  'getProposalQuorum()': '0x8e0add62',
+  'getProposalVetoQuorum()': '0xde249462',
+  'getProposalBond()': '0x1b61cd22',
 }
 
 /* ------------------------------------------------------------- systems.json */
@@ -108,6 +116,8 @@ interface Contract {
 interface System {
   name: string
   source: string
+  /** Where token holders vote when no contract reports it: appended to the note, never a value. */
+  voting?: { note: string; url?: string }
   contracts: Contract[]
 }
 
@@ -477,12 +487,15 @@ const adapter: MetricAdapter<Prepared> = {
         ? `The headline is the sum of the delays the ${timelock.label} of ${system.name} enforces one after the other (${headlines.join(', ')}) before a scheduled action executes, in seconds. ${observed}`
         : `The headline is the delay the ${timelock.label} of ${system.name} enforces before a scheduled action executes, in seconds. ${observed}`
       : `None of the contracts read for ${system.name} is a timelock, so the headline stays empty; the facts list what they report. ${observed}`
+    const voting = system.voting
+      ? ` ${system.voting.note}${system.voting.url ? ` (${system.voting.url})` : ''}`
+      : ''
 
     return {
       value: delay,
       updatedAt: prepared.observedAt,
       url: `${ETHERSCAN}${(timelock ?? system.contracts[0])?.address}`,
-      note,
+      note: note + voting,
       extra: { facts, ...(bodies.length > 0 ? { bodies } : {}) },
     }
   },

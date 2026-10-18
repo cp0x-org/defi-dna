@@ -132,6 +132,9 @@ describe('governance', () => {
     const morpho = await adapter.collect({ protocol: protocol('morpho-blue'), ctx, prepared })
     expect(morpho?.value).toBeNull()
     expect(morpho?.note).toContain('None of the contracts read for Morpho DAO is a timelock')
+    // Where the token vote happens off-chain, the note says so and where; it is never a value.
+    expect(morpho?.note).toContain('MORPHO holders vote off-chain on Snapshot')
+    expect(morpho?.note).toContain('https://snapshot.box/#/s:morpho.eth')
     expect(morpho?.extra?.facts).toEqual([
       {
         name: 'Morpho Blue owner',

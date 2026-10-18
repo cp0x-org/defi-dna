@@ -30,6 +30,22 @@ import { RiskIntelligence } from '../components/RiskIntelligence.tsx'
 import { ExternalLink, Info, ProtocolAvatar, SourceMark } from '../components/UI.tsx'
 
 const REGISTRY_URL = 'https://github.com/cp0x-org/defi-dna/blob/main/registry/protocols.json'
+const LINK = /(https?:\/\/[^\s)]+)/
+
+/** A note with its URLs clickable, for a metric that names where to look (a Snapshot space). */
+const Linked = ({ text }: { text: string }) => (
+  <>
+    {text.split(LINK).map((part, k) =>
+      LINK.test(part) ? (
+        <ExternalLink key={k} href={part}>
+          {part.replace(/^https?:\/\//, '')}
+        </ExternalLink>
+      ) : (
+        part
+      ),
+    )}
+  </>
+)
 const TIMELINE_SHOWN = 8
 
 const TABS = {
@@ -803,8 +819,11 @@ const DataTab = ({
           </div>
           <div className="card-f">
             <span>
-              {governance?.note ??
-                'Contracts, the views called on them and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'}
+              {governance?.note ? (
+                <Linked text={governance.note} />
+              ) : (
+                'Contracts, the views called on them and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'
+              )}
               {governance?.note
                 ? ' Each fact names the view and the contract it was read from; open the contract on Etherscan (Contract → Read) to repeat it.'
                 : ''}
