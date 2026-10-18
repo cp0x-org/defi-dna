@@ -13,6 +13,7 @@ export type {
   ExtraData,
   ExtraFinding,
   ExtraIncident,
+  ExtraMultisig,
   ExtraReview,
   ExtraTvlComponent,
   ExtraVault,

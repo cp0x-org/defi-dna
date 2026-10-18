@@ -809,3 +809,51 @@ button.hit:hover {
     width: 100%;
   }
 }
+
+/* Governance columns: one multisig per line, its threshold first and the contract's name after it. */
+.msigs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.msigs li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+.msigs li b {
+  font-weight: 600;
+  font-size: 12px;
+}
+.grid td .msigs small {
+  display: inline;
+  margin: 0;
+}
+/* The column picker: a checkbox per column, in the card's list style. */
+.pop-list.columns li {
+  padding: 0;
+}
+.pop-list.columns .cb {
+  flex: 1;
+  padding: 5px 7px;
+  border-radius: 5px;
+}
+.pop-list.columns .cb:hover {
+  background: var(--subtle);
+}
+
+/* A "?" beside a column name opens the column's definition; it stays as small as the header text. */
+.grid thead .info {
+  margin-left: 2px;
+}
+.grid thead .info-button {
+  width: 20px;
+  height: 20px;
+}
+.grid thead .info-button svg {
+  width: 12px;
+  height: 12px;
+}

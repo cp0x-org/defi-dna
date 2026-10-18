@@ -81,7 +81,7 @@
 /* ------------------------------------------------------------------ key figures */
 .mstrip {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 1px;
   margin-top: 16px;
   background: var(--line);
@@ -496,6 +496,14 @@ a.m:hover .m-v {
 .governance-facts {
   margin-top: 12px;
   max-width: 88ch;
+}
+.governance-facts dd .where {
+  display: block;
+  margin-top: 2px;
+  font: 10px/1.4 var(--mono);
+  color: var(--faint);
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .tvl-components,
 .extra-text {
@@ -957,7 +965,7 @@ a.m:hover .m-v {
 /* ------------------------------------------------------------------ narrow screens */
 @media (max-width: 1199px) {
   .mstrip {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
   .two,
   .row2 {

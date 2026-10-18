@@ -1,4 +1,11 @@
-import type { Change, ExtraIncident, IndexBundle, MetricsFile, Protocol } from '@defi-dna/data'
+import type {
+  Change,
+  ExtraIncident,
+  ExtraMultisig,
+  IndexBundle,
+  MetricsFile,
+  Protocol,
+} from '@defi-dna/data'
 import { feeds, protocols } from './registry.ts'
 import { toneFromIndex, type Tone } from './status.ts'
 
@@ -8,10 +15,20 @@ export interface Incidents {
   latest: ExtraIncident | null
 }
 
+/** What the governance metric read from the version's contracts on Ethereum mainnet. */
+export interface Governance {
+  /** Seconds the executor timelock enforces; null when none of the contracts read is a timelock. */
+  delay: number | null
+  /** Multisigs among the contracts read, each with the threshold its contract reports. */
+  multisigs: ExtraMultisig[]
+}
+
 /** One protocol version: the hand-maintained entry joined with what we collected. */
 export interface Row {
   protocol: Protocol
   tvl: number | null
+  /** null when nothing was read on-chain for this version (no contracts mapped, or the read failed). */
+  governance: Governance | null
   /** feed id -> that feed has data for this version */
   feeds: Record<string, boolean>
   /** feed id -> the feed's own reading of its value, as the bundle copied it; neutral when none. */
@@ -35,6 +52,8 @@ export interface Group {
   rows: Row[]
   tvl: number | null
   incidents: number | null
+  /** The reading every version shares; null when versions differ or one has none. */
+  governance: Governance | null
   feeds: Record<string, boolean>
   /** The newest change across the versions, or null when the log has none. */
   changedAt: string | null
@@ -58,12 +77,17 @@ export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {
   return protocols.map((protocol) => {
     const generated = collected.get(protocol.id)
     const incidents = sources.metrics?.[protocol.id]?.['incidents']
+    const governance = sources.metrics?.[protocol.id]?.['governance']
     const list = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
       b.date.localeCompare(a.date),
     )
     return {
       protocol,
       tvl: generated?.tvl ?? null,
+      // A version with no contracts mapped is stored as a bare null; only a cell with facts was read.
+      governance: governance?.extra?.facts
+        ? { delay: governance.value, multisigs: governance.extra.multisigs ?? [] }
+        : null,
       feeds: generated?.feeds ?? {},
       tones: Object.fromEntries(
         feeds.map((feed) => [feed.id, generated ? toneFromIndex(generated, feed.id) : 'none']),
@@ -87,6 +111,7 @@ export function groupRows(rows: Row[]): Group[] {
       rows: [],
       tvl: null,
       incidents: null,
+      governance: null,
       feeds: {},
       changedAt: null,
     }
@@ -103,6 +128,15 @@ export function groupRows(rows: Row[]): Group[] {
 
   for (const group of groups.values()) {
     group.rows.sort((a, b) => (b.tvl ?? -1) - (a.tvl ?? -1))
+    // Versions usually share one governance; the group row repeats it only when they all do.
+    const first = group.rows[0]?.governance ?? null
+    group.governance =
+      first && group.rows.every((row) => sameGovernance(row.governance, first)) ? first : null
   }
   return [...groups.values()]
 }
+
+const sameGovernance = (a: Governance | null, b: Governance): boolean =>
+  a != null &&
+  a.delay === b.delay &&
+  a.multisigs.map((m) => m.address).join() === b.multisigs.map((m) => m.address).join()

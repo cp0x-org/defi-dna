@@ -86,10 +86,29 @@ export const IncidentsExtra = ({
     </div>
   ) : null
 
+const ETHERSCAN = 'https://etherscan.io/address/'
+const ADDRESS = /(0x[0-9a-fA-F]{40})/
+
+/** The read behind a fact — "delay() on Timelock 0x6d90…" — with the contract linked to Etherscan's read tab. */
+const Where = ({ text }: { text: string }) => (
+  <small className="where">
+    {text.split(ADDRESS).map((part, k) =>
+      ADDRESS.test(part) ? (
+        <ExternalLink key={k} href={`${ETHERSCAN}${part}#readContract`}>
+          {part}
+        </ExternalLink>
+      ) : (
+        part
+      ),
+    )}
+  </small>
+)
+
 /**
  * The governance metric: the timelock delay as the headline and the facts read
  * next to it — role holders, signer thresholds, voting parameters — each as the
- * contract returned it.
+ * contract returned it, with the view and the contract it was read from so a
+ * reader can repeat the call.
  */
 export const GovernanceExtra = ({ value, facts }: { value: number | null; facts?: Detail[] }) => (
   <>
@@ -104,7 +123,10 @@ export const GovernanceExtra = ({ value, facts }: { value: number | null; facts?
         {facts.map((fact) => (
           <div key={fact.name}>
             <dt>{fact.name}</dt>
-            <dd className="mono">{fact.value}</dd>
+            <dd className="mono">
+              {fact.value}
+              {fact.description ? <Where text={fact.description} /> : null}
+            </dd>
           </div>
         ))}
       </dl>

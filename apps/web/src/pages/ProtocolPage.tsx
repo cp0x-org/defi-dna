@@ -120,6 +120,10 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const signals = signalCounts(tones)
   const tvl = record?.metrics['tvl']
   const incidents = record?.metrics['incidents']
+  const governance = record?.metrics['governance']
+  // A version with no contracts mapped is stored as a bare null; only a cell with facts was read.
+  const governanceRead = governance?.extra?.facts != null
+  const multisigs = governance?.extra?.multisigs ?? []
   const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
     b.date.localeCompare(a.date),
   )[0]
@@ -215,6 +219,36 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           </>,
           formatUsd(tvl?.value) ?? '—',
           tvl ? `DefiLlama · Ethereum · ${ageLabel(tvl.fetchedAt) ?? '—'} ago` : 'DefiLlama',
+        )}
+        {figure(
+          <>
+            Timelock <Prov kind="meta" />
+          </>,
+          formatDuration(governance?.value) ?? '—',
+          !record
+            ? 'governance executor · on-chain'
+            : !governanceRead
+              ? 'nothing read on-chain'
+              : governance?.value == null
+                ? 'no timelock among the contracts read'
+                : `governance executor · read ${ageLabel(governance.updatedAt) ?? '—'} ago`,
+          `${base}/data`,
+        )}
+        {figure(
+          <>
+            Multisigs <Prov kind="meta" />
+          </>,
+          multisigs.length > 0
+            ? multisigs.map((multisig) => `${multisig.threshold}/${multisig.signers}`).join(' · ')
+            : '—',
+          multisigs.length > 0
+            ? multisigs.map((multisig) => multisig.name).join(' · ')
+            : !record
+              ? 'signers required · on-chain'
+              : governanceRead
+                ? 'no multisig among the contracts read'
+                : 'nothing read on-chain',
+          `${base}/data`,
         )}
         {figure(
           <>
@@ -732,7 +766,7 @@ const DataTab = ({
       <div className="row2">
         <section className="card span2" id="governance">
           <div className="card-h">
-            <h2>Governance timelock</h2>
+            <h2>Governance</h2>
             <Prov kind="meta" />
             <span className="aside">
               read on-chain · {dateInfo(governance?.updatedAt ?? governance?.fetchedAt).label}
@@ -750,7 +784,10 @@ const DataTab = ({
           <div className="card-f">
             <span>
               {governance?.note ??
-                'Contracts and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'}
+                'Contracts, the views called on them and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'}
+              {governance?.note
+                ? ' Each fact names the view and the contract it was read from; open the contract on Etherscan (Contract → Read) to repeat it.'
+                : ''}
             </span>
             {governance?.url ? <ExternalLink href={governance.url}>Etherscan</ExternalLink> : null}
           </div>

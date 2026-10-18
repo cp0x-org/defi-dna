@@ -115,7 +115,11 @@ describe('the governance metric view', () => {
       <GovernanceExtra
         value={172800}
         facts={[
-          { name: 'Timelock delay', value: '172800 s (2 days)' },
+          {
+            name: 'Timelock delay',
+            value: '172800 s (2 days)',
+            description: 'delay() on Timelock 0x6d903f6003cca6255D85CcA4D3B5E5146dC33925',
+          },
           { name: 'Community multisig', value: '5 of 9 signers' },
         ]}
       />,
@@ -124,6 +128,11 @@ describe('the governance metric view', () => {
     expect(html).toContain('172,800 seconds')
     expect(html).toContain('Community multisig')
     expect(html).toContain('5 of 9 signers')
+    // The read behind a fact is shown, with the contract linked to Etherscan's read tab.
+    expect(html).toContain('delay() on Timelock ')
+    expect(html).toContain(
+      'href="https://etherscan.io/address/0x6d903f6003cca6255D85CcA4D3B5E5146dC33925#readContract"',
+    )
   })
 
   it('says when no contract read is a timelock, without judging it', () => {

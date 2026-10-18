@@ -174,7 +174,10 @@ The same shape, returning `{ value: number | null, url?, note?, extra? }`, plus 
 quantities — they appear on the protocol page and never as a feed column. See
 `adapters/metrics/tvl`, and `adapters/metrics/governance` for a source read
 over JSON-RPC: batched `eth_call`s go through `postJson` with `ttlSeconds`, so
-they are cached by body and replay offline.
+they are cached by body and replay offline. That adapter keeps what it reads in
+data, not code: `systems.json` lists every contract and every view called on
+it, and `index.ts` only performs those reads, so a reviewer can repeat any
+figure on Etherscan.
 
 ## While you work
 

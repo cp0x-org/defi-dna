@@ -20,9 +20,24 @@ import {
   type MatrixQuery,
   type SortKey,
 } from '../lib/matrix.ts'
-import { readCoverageView, writeCoverageView, type CoverageView } from '../lib/prefs.ts'
+import {
+  COLUMNS,
+  readCoverageView,
+  readHiddenColumns,
+  writeCoverageView,
+  writeHiddenColumns,
+  type ColumnKey,
+  type CoverageView,
+} from '../lib/prefs.ts'
 import { feeds } from '../lib/registry.ts'
-import { buildRows, changedAt, dataCount, type Group, type Row } from '../lib/rows.ts'
+import {
+  buildRows,
+  changedAt,
+  dataCount,
+  type Governance,
+  type Group,
+  type Row,
+} from '../lib/rows.ts'
 import {
   SIGNAL_LABELS,
   TONE_LABELS,
@@ -31,16 +46,34 @@ import {
   type Signal,
   type Tone,
 } from '../lib/status.ts'
-import { ageLabel, categoryLabel, dateInfo, formatUsd, timeLabel } from '../lib/view.ts'
+import {
+  ageLabel,
+  categoryLabel,
+  dateInfo,
+  formatDuration,
+  formatUsd,
+  timeLabel,
+} from '../lib/view.ts'
 import { CoverageBar, CoverageRing, Prov, StatusDot } from '../components/Coverage.tsx'
 import { FilterDrawer } from '../components/FilterDrawer.tsx'
 import { IconFilters, IconSearch } from '../components/Icons.tsx'
-import { Anchored, ProtocolAvatar } from '../components/UI.tsx'
+import { Anchored, Info, ProtocolAvatar } from '../components/UI.tsx'
 
 const DAY = 86_400_000
 /** Time to cross from a cell to its card, or to come back, before an unpinned card closes. */
 const HIDE_DELAY = 350
+/** Multisigs listed in a cell before the rest is left to the protocol page. */
+const MULTISIGS_SHOWN = 3
 const feedIds = feeds.map((feed) => feed.id)
+/**
+ * Which columns sit under which provenance header; the protocol column always
+ * leads the first. "Updated" is coverage too, but closes the table on its own.
+ */
+const COLUMN_GROUPS: Record<'meta' | 'cov' | 'src', ColumnKey[]> = {
+  meta: ['category', 'tvl', 'timelock', 'multisigs'],
+  cov: ['coverage'],
+  src: ['signals', 'incidents'],
+}
 
 /** The registry joined with nothing: names and categories without any collected fact. */
 const NO_DATA: IndexBundle = { generatedAt: '', rows: [] }
@@ -124,6 +157,8 @@ export const DashboardPage = ({
   const [now] = useState(() => Date.now())
   const [view, setView] = useState<CoverageView>(readCoverageView)
   const [drawer, setDrawer] = useState(false)
+  const [hidden, setHidden] = useState<Set<ColumnKey>>(readHiddenColumns)
+  const [columnsMenu, setColumnsMenu] = useState<HTMLElement | null>(null)
   const [pop, setPop] = useState<Pop | null>(null)
   const search = useRef<HTMLInputElement>(null)
   const hideTimer = useRef<number | undefined>(undefined)
@@ -147,6 +182,7 @@ export const DashboardPage = ({
       if (event.key === 'Escape') {
         setPop(null)
         setDrawer(false)
+        setColumnsMenu(null)
       }
       const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName ?? '')
       if (event.key === '/' && !typing) {
@@ -175,6 +211,19 @@ export const DashboardPage = ({
       window.removeEventListener('scroll', scroll, true)
     }
   }, [pop])
+
+  // The column picker closes on a click anywhere else; the cards are closed while it is open.
+  useEffect(() => {
+    if (!columnsMenu) return
+    const outside = (event: PointerEvent) => {
+      const target = event.target as Node
+      if (!columnsMenu.contains(target) && !document.querySelector('.pop')?.contains(target)) {
+        setColumnsMenu(null)
+      }
+    }
+    document.addEventListener('pointerdown', outside)
+    return () => document.removeEventListener('pointerdown', outside)
+  }, [columnsMenu])
 
   // An unpinned card stays while the pointer is on its cell or on the card itself, and
   // closes a moment after it leaves both — long enough to move onto the card and read it.
@@ -208,6 +257,69 @@ export const DashboardPage = ({
   const chooseView = (next: CoverageView) => {
     setView(next)
     writeCoverageView(next)
+  }
+
+  const show = (key: ColumnKey) => !hidden.has(key)
+  const shownIn = (group: keyof typeof COLUMN_GROUPS) => COLUMN_GROUPS[group].filter(show).length
+  const toggleColumn = (key: ColumnKey, shown: boolean) => {
+    const next = new Set(hidden)
+    if (shown) next.delete(key)
+    else next.add(key)
+    setHidden(next)
+    writeHiddenColumns(next)
+  }
+
+  /** The executor timelock as the contract reports it; a dash says why there is none. */
+  const timelockCell = (governance: Governance | null, absent: string) =>
+    governance == null ? (
+      <span className="muted" title={absent}>
+        —
+      </span>
+    ) : governance.delay == null ? (
+      <>
+        <span className="muted">—</span>
+        <small>no timelock read</small>
+      </>
+    ) : (
+      <>
+        <span className="mono">{formatDuration(governance.delay)}</span>
+        <small>{governance.delay.toLocaleString('en-US')} s</small>
+      </>
+    )
+
+  /** Each multisig read, as "threshold of signers"; the names say which contract. */
+  const multisigCell = (governance: Governance | null, absent: string) => {
+    if (governance == null) {
+      return (
+        <span className="muted" title={absent}>
+          —
+        </span>
+      )
+    }
+    const shown = governance.multisigs.slice(0, MULTISIGS_SHOWN)
+    const more = governance.multisigs.length - shown.length
+    return shown.length === 0 ? (
+      <>
+        <span className="muted">—</span>
+        <small>no multisig read</small>
+      </>
+    ) : (
+      <ul className="msigs">
+        {shown.map((multisig) => (
+          <li key={multisig.address}>
+            <b className="mono">
+              {multisig.threshold} of {multisig.signers}
+            </b>
+            <small>{multisig.name}</small>
+          </li>
+        ))}
+        {more > 0 ? (
+          <li>
+            <small>+{more} more on the protocol page</small>
+          </li>
+        ) : null}
+      </ul>
+    )
   }
 
   const sortButton = (key: SortKey, label: string, alternate?: SortKey) => {
@@ -286,64 +398,80 @@ export const DashboardPage = ({
             </span>
           </div>
         </td>
-        <td>{categoryLabel(protocol.category)}</td>
-        <td className="num">
-          <span className="mono">{formatUsd(row.tvl) ?? '—'}</span>
-          <small>Ethereum</small>
-        </td>
-        <td>
-          <button
-            type="button"
-            className="hit"
-            aria-label={`${covered} of ${feeds.length} feeds have data — show the list`}
-            {...popTarget('coverage', row)}
-          >
-            <span className="v-ring">
-              <CoverageRing states={states} />
-            </span>
-            <span className="v-bar">
-              <CoverageBar states={states} />
-            </span>
-            <span className="cov-count">
-              {covered}
-              <span>/{feeds.length}</span>
-            </span>
-          </button>
-        </td>
-        <td>{fresh(changedAt(row))}</td>
-        <td>
-          <button
-            type="button"
-            className="hit sig"
-            aria-label={`Feed signals: ${counts.neg} negative, ${counts.neu} neutral or informational, ${counts.pos} positive`}
-            {...popTarget('signals', row)}
-          >
-            {SIGNALS.map((signal) => (
-              <span key={signal} className={`sc ${signal}${counts[signal] ? '' : ' zero'}`}>
-                <i />
-                {counts[signal]}
+        {show('category') ? <td>{categoryLabel(protocol.category)}</td> : null}
+        {show('tvl') ? (
+          <td className="num">
+            <span className="mono">{formatUsd(row.tvl) ?? '—'}</span>
+            <small>Ethereum</small>
+          </td>
+        ) : null}
+        {show('timelock') ? (
+          <td className="num">
+            {timelockCell(row.governance, 'Nothing read on-chain for this version')}
+          </td>
+        ) : null}
+        {show('multisigs') ? (
+          <td>{multisigCell(row.governance, 'Nothing read on-chain for this version')}</td>
+        ) : null}
+        {show('coverage') ? (
+          <td>
+            <button
+              type="button"
+              className="hit"
+              aria-label={`${covered} of ${feeds.length} feeds have data — show the list`}
+              {...popTarget('coverage', row)}
+            >
+              <span className="v-ring">
+                <CoverageRing states={states} />
               </span>
-            ))}
-          </button>
-        </td>
-        <td>
-          {incidents == null ? (
-            <span className="muted" title="Not collected for this version">
-              —
-            </span>
-          ) : incidents.count === 0 ? (
-            <span className="evt zero">0 recorded</span>
-          ) : (
-            <button type="button" className="hit" {...popTarget('incidents', row)}>
-              <span>
-                <span className="evt">{incidents.count} recorded</span>
-                {incidents.latest ? (
-                  <small>latest {dateInfo(incidents.latest.date).label}</small>
-                ) : null}
+              <span className="v-bar">
+                <CoverageBar states={states} />
+              </span>
+              <span className="cov-count">
+                {covered}
+                <span>/{feeds.length}</span>
               </span>
             </button>
-          )}
-        </td>
+          </td>
+        ) : null}
+        {show('signals') ? (
+          <td>
+            <button
+              type="button"
+              className="hit sig"
+              aria-label={`Feed signals: ${counts.neg} negative, ${counts.neu} neutral or informational, ${counts.pos} positive`}
+              {...popTarget('signals', row)}
+            >
+              {SIGNALS.map((signal) => (
+                <span key={signal} className={`sc ${signal}${counts[signal] ? '' : ' zero'}`}>
+                  <i />
+                  {counts[signal]}
+                </span>
+              ))}
+            </button>
+          </td>
+        ) : null}
+        {show('incidents') ? (
+          <td>
+            {incidents == null ? (
+              <span className="muted" title="Not collected for this version">
+                —
+              </span>
+            ) : incidents.count === 0 ? (
+              <span className="evt zero">0 recorded</span>
+            ) : (
+              <button type="button" className="hit" {...popTarget('incidents', row)}>
+                <span>
+                  <span className="evt">{incidents.count} recorded</span>
+                  {incidents.latest ? (
+                    <small>latest {dateInfo(incidents.latest.date).label}</small>
+                  ) : null}
+                </span>
+              </button>
+            )}
+          </td>
+        ) : null}
+        {show('updated') ? <td>{fresh(changedAt(row))}</td> : null}
         <td className="go" aria-hidden="true">
           →
         </td>
@@ -364,31 +492,47 @@ export const DashboardPage = ({
             </span>
           </div>
         </td>
-        <td>{categories.length === 1 ? categoryLabel(categories[0] ?? '') : 'Mixed'}</td>
-        <td className="num">
-          <span className="mono">{formatUsd(group.tvl) ?? '—'}</span>
-          <small>sum of versions</small>
-        </td>
-        <td>
-          {/* Versions can read differently in one feed; the group row shows only how many have data. */}
-          <span className="cov-count" title="Feeds with data for at least one version">
-            {dataCount(group.feeds, feedIds)}
-            <span>/{feeds.length}</span>
-            <small>any version</small>
-          </span>
-        </td>
-        <td>{fresh(group.changedAt)}</td>
-        <td />
-        <td>
-          {group.incidents == null ? (
-            <span className="muted">—</span>
-          ) : (
-            <span className={`evt${group.incidents ? '' : ' zero'}`}>
-              {group.incidents} recorded
-              <small>across versions</small>
+        {show('category') ? (
+          <td>{categories.length === 1 ? categoryLabel(categories[0] ?? '') : 'Mixed'}</td>
+        ) : null}
+        {show('tvl') ? (
+          <td className="num">
+            <span className="mono">{formatUsd(group.tvl) ?? '—'}</span>
+            <small>sum of versions</small>
+          </td>
+        ) : null}
+        {show('timelock') ? (
+          <td className="num">
+            {timelockCell(group.governance, 'Differs by version, or not read')}
+          </td>
+        ) : null}
+        {show('multisigs') ? (
+          <td>{multisigCell(group.governance, 'Differs by version, or not read')}</td>
+        ) : null}
+        {show('coverage') ? (
+          <td>
+            {/* Versions can read differently in one feed; the group row shows only how many have data. */}
+            <span className="cov-count" title="Feeds with data for at least one version">
+              {dataCount(group.feeds, feedIds)}
+              <span>/{feeds.length}</span>
+              <small>any version</small>
             </span>
-          )}
-        </td>
+          </td>
+        ) : null}
+        {show('signals') ? <td /> : null}
+        {show('incidents') ? (
+          <td>
+            {group.incidents == null ? (
+              <span className="muted">—</span>
+            ) : (
+              <span className={`evt${group.incidents ? '' : ' zero'}`}>
+                {group.incidents} recorded
+                <small>across versions</small>
+              </span>
+            )}
+          </td>
+        ) : null}
+        {show('updated') ? <td>{fresh(group.changedAt)}</td> : null}
         <td />
       </tr>
     )
@@ -520,42 +664,84 @@ export const DashboardPage = ({
   const head = (
     <thead>
       <tr className="grp">
-        <th colSpan={3} className="g-meta">
+        <th colSpan={1 + shownIn('meta')} className="g-meta">
           <Prov kind="meta">Protocol metadata</Prov>
-          <span className="grp-note">registry · TVL via DefiLlama</span>
+          <span className="grp-note">registry · TVL via DefiLlama · governance read on-chain</span>
         </th>
-        <th colSpan={2} className="g-cov">
-          <Prov kind="cov">Data coverage</Prov>
-          <span className="grp-note">facts about our collection, not the protocol</span>
-        </th>
-        <th colSpan={2} className="g-src">
-          <Prov kind="src">Source-reported</Prov>
-          <span className="grp-note">what sources published — not verified or scored by us</span>
-        </th>
+        {shownIn('cov') > 0 ? (
+          <th colSpan={shownIn('cov')} className="g-cov">
+            <Prov kind="cov">Data coverage</Prov>
+            <span className="grp-note">facts about our collection, not the protocol</span>
+          </th>
+        ) : null}
+        {shownIn('src') > 0 ? (
+          <th colSpan={shownIn('src')} className="g-src">
+            <Prov kind="src">Source-reported</Prov>
+            <span className="grp-note">what sources published — not verified or scored by us</span>
+          </th>
+        ) : null}
+        {show('updated') ? (
+          <th className="g-cov">
+            <Prov kind="cov">Data coverage</Prov>
+            <span className="grp-note">when a feed’s value last moved</span>
+          </th>
+        ) : null}
         <th />
       </tr>
       <tr className="cols">
         <th aria-sort={ariaSort('name-asc')}>{sortButton('name-asc', 'Protocol')}</th>
-        <th>Category</th>
-        <th className="num" aria-sort={ariaSort('tvl-desc', 'tvl-asc')}>
-          {sortButton('tvl-desc', 'TVL', 'tvl-asc')}
-        </th>
-        <th aria-sort={ariaSort('coverage-desc')}>
-          {sortButton('coverage-desc', 'Coverage')}
-          <span className="th-sub">feeds with data · hover for the list</span>
-        </th>
-        <th aria-sort={ariaSort('updated-desc')}>
-          {sortButton('updated-desc', 'Changed')}
-          <span className="th-sub">latest move in a feed’s value</span>
-        </th>
-        <th aria-sort={ariaSort('signals-desc')}>
-          {sortButton('signals-desc', 'Signals')}
-          <span className="th-sub">negative · neutral/info · positive</span>
-        </th>
-        <th aria-sort={ariaSort('incidents-desc')}>
-          {sortButton('incidents-desc', 'Incidents')}
-          <span className="th-sub">recorded by DefiLlama</span>
-        </th>
+        {show('category') ? <th>Category</th> : null}
+        {show('tvl') ? (
+          <th className="num" aria-sort={ariaSort('tvl-desc', 'tvl-asc')}>
+            {sortButton('tvl-desc', 'TVL', 'tvl-asc')}
+          </th>
+        ) : null}
+        {show('timelock') ? (
+          <th className="num">
+            Timelock
+            <Info label="Timelock">
+              The delay the protocol’s governance executor — its timelock contract — enforces
+              between scheduling a decision and executing it, read from that contract on Ethereum
+              mainnet. The contract and the view it was read with are named on the protocol page. A
+              dash means no timelock is among the contracts read, or nothing was read for this
+              version.
+            </Info>
+          </th>
+        ) : null}
+        {show('multisigs') ? (
+          <th>
+            Multisigs
+            <Info label="Multisigs">
+              Every multisig among the governance contracts read on-chain, as “signers required of
+              signers”: the threshold the Safe reports and the size of its owner list. The name is
+              the contract’s label on the protocol page, where each is linked to Etherscan.
+            </Info>
+          </th>
+        ) : null}
+        {show('coverage') ? (
+          <th aria-sort={ariaSort('coverage-desc')}>
+            {sortButton('coverage-desc', 'Coverage')}
+            <span className="th-sub">feeds with data · hover for the list</span>
+          </th>
+        ) : null}
+        {show('signals') ? (
+          <th aria-sort={ariaSort('signals-desc')}>
+            {sortButton('signals-desc', 'Signals')}
+            <span className="th-sub">negative · neutral/info · positive</span>
+          </th>
+        ) : null}
+        {show('incidents') ? (
+          <th aria-sort={ariaSort('incidents-desc')}>
+            {sortButton('incidents-desc', 'Incidents')}
+            <span className="th-sub">recorded by DefiLlama</span>
+          </th>
+        ) : null}
+        {show('updated') ? (
+          <th aria-sort={ariaSort('updated-desc')}>
+            {sortButton('updated-desc', 'Updated')}
+            <span className="th-sub">latest move in a feed’s value</span>
+          </th>
+        ) : null}
         <th>
           <span className="sr-only">Open</span>
         </th>
@@ -633,6 +819,19 @@ export const DashboardPage = ({
               ))}
             </select>
           </label>
+          <button
+            className="btn"
+            type="button"
+            aria-expanded={columnsMenu != null}
+            aria-haspopup="dialog"
+            onClick={(event) => {
+              setPop(null)
+              setColumnsMenu(columnsMenu ? null : event.currentTarget)
+            }}
+          >
+            Columns
+            {hidden.size > 0 ? <span className="badge">{hidden.size} hidden</span> : null}
+          </button>
           <span className="result-count" aria-live="polite">
             {!index ? (
               'Data not loaded'
@@ -696,7 +895,7 @@ export const DashboardPage = ({
           <table className="grid">
             <caption className="sr-only">
               {index
-                ? `${shown} protocol versions: size, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
+                ? `${shown} protocol versions: size, the governance timelock and multisig thresholds read on-chain, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
                 : 'The table is empty: the dataset is not loaded.'}
             </caption>
             {head}
@@ -758,7 +957,8 @@ export const DashboardPage = ({
           <div className="legend">
             <span className="lg-title">Provenance</span>
             <span>
-              <Prov kind="meta" /> protocol facts from our registry and DefiLlama
+              <Prov kind="meta" /> protocol facts from our registry, DefiLlama and the protocol’s
+              governance contracts on Ethereum mainnet
             </span>
             <span>
               <Prov kind="cov" /> which feeds have data, and when it last changed
@@ -777,6 +977,32 @@ export const DashboardPage = ({
           </div>
         </div>
       </div>
+
+      {columnsMenu ? (
+        <Anchored anchor={columnsMenu} label="Columns">
+          <div className="pop-h">
+            <strong>Columns</strong>
+          </div>
+          <div className="pop-sub">
+            Pick what the table shows. The protocol column always stays; the choice is kept in this
+            browser.
+          </div>
+          <ul className="pop-list columns">
+            {(Object.keys(COLUMNS) as ColumnKey[]).map((key) => (
+              <li key={key}>
+                <label className="cb">
+                  <input
+                    type="checkbox"
+                    checked={show(key)}
+                    onChange={(event) => toggleColumn(key, event.target.checked)}
+                  />
+                  {COLUMNS[key]}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </Anchored>
+      ) : null}
 
       {pop ? (
         <Anchored
