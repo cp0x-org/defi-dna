@@ -1,7 +1,7 @@
 import type {
   Change,
   ExtraIncident,
-  ExtraMultisig,
+  ExtraGovernanceBody,
   IndexBundle,
   MetricsFile,
   Protocol,
@@ -19,8 +19,8 @@ export interface Incidents {
 export interface Governance {
   /** Seconds the executor timelock enforces; null when none of the contracts read is a timelock. */
   delay: number | null
-  /** Multisigs among the contracts read, each with the threshold its contract reports. */
-  multisigs: ExtraMultisig[]
+  /** Who decides, as the contracts read report it: token votes, multisigs, single keys. */
+  bodies: ExtraGovernanceBody[]
 }
 
 /** One protocol version: the hand-maintained entry joined with what we collected. */
@@ -86,7 +86,7 @@ export function buildRows(index: IndexBundle, sources: RowSources = {}): Row[] {
       tvl: generated?.tvl ?? null,
       // A version with no contracts mapped is stored as a bare null; only a cell with facts was read.
       governance: governance?.extra?.facts
-        ? { delay: governance.value, multisigs: governance.extra.multisigs ?? [] }
+        ? { delay: governance.value, bodies: governance.extra.bodies ?? [] }
         : null,
       feeds: generated?.feeds ?? {},
       tones: Object.fromEntries(
@@ -139,4 +139,4 @@ export function groupRows(rows: Row[]): Group[] {
 const sameGovernance = (a: Governance | null, b: Governance): boolean =>
   a != null &&
   a.delay === b.delay &&
-  a.multisigs.map((m) => m.address).join() === b.multisigs.map((m) => m.address).join()
+  a.bodies.map((body) => body.address).join() === b.bodies.map((body) => body.address).join()

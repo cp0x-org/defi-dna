@@ -62,8 +62,8 @@ describe('governance', () => {
     expect(shown).toEqual([
       { name: 'Timelock delay', value: '172800 s (2 days)' },
       { name: 'Timelock admin', value: '0x309a862bbc1a00e45506cb8a802d1ff10004c8c0 (contract)' },
-      { name: 'Governor voting delay', value: '13140 blocks' },
-      { name: 'Governor voting period', value: '19710 blocks' },
+      { name: 'Governor voting delay', value: '13,140 blocks' },
+      { name: 'Governor voting period', value: '19,710 blocks' },
       { name: 'Governor proposal threshold', value: '25,000 COMP' },
       { name: 'Governor quorum', value: '400,000 COMP' },
       { name: 'Community multisig', value: '5 of 9 signers' },
@@ -75,10 +75,18 @@ describe('governance', () => {
     expect(compound?.extra?.facts?.[6]?.description).toBe(
       'getThreshold() + getOwners() on Community multisig 0xbbf3f1421D886E9b2c5D716B5192aC998af2012c',
     )
-    expect(compound?.extra?.multisigs).toEqual([
+    // Who decides: the governor by its type, the Safe by what getThreshold()/getOwners() returned.
+    expect(compound?.extra?.bodies).toEqual([
+      {
+        name: 'Governor',
+        address: '0x309a862bbC1A00e45506cB8A802D1ff10004c8C0',
+        kind: 'token-vote',
+        token: 'COMP',
+      },
       {
         name: 'Community multisig',
         address: '0xbbf3f1421D886E9b2c5D716B5192aC998af2012c',
+        kind: 'multisig',
         threshold: 5,
         signers: 9,
       },
@@ -93,7 +101,13 @@ describe('governance', () => {
     expect(lido?.value).toBe(259200 + 86400)
     expect(lido?.note).toContain('sum of the delays')
     expect(lido?.note).toContain('After-submit delay, After-schedule delay')
-    expect(lido?.extra?.multisigs).toHaveLength(3)
+    expect(lido?.extra?.bodies?.map((body) => `${body.kind} ${body.token ?? body.name}`)).toEqual([
+      'veto stETH',
+      'token-vote LDO',
+      'multisig Emergency activation committee',
+      'multisig Emergency execution committee',
+      'multisig Reseal committee',
+    ])
     expect(lido?.extra?.facts).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ name: 'After-submit delay', value: '259200 s (3 days)' }),
@@ -126,11 +140,12 @@ describe('governance', () => {
           'owner() on Morpho Blue 0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb · then eth_getCode, getThreshold() and getOwners() on the address returned',
       },
     ])
-    // A Safe found behind a role is listed as a multisig too, under the fact's name.
-    expect(morpho?.extra?.multisigs).toEqual([
+    // A Safe found behind a role is listed as a body too, under the fact's name.
+    expect(morpho?.extra?.bodies).toEqual([
       {
         name: 'Morpho Blue owner',
         address: '0xcba28b38103307ec8da98377fff9816c164f9afa',
+        kind: 'multisig',
         threshold: 6,
         signers: 10,
       },

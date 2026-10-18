@@ -160,11 +160,11 @@
             "$ref": "#/definitions/tvlComponent"
           }
         },
-        "multisigs": {
-          "description": "Multisigs read on-chain, each with the threshold and signer count its contract reports.",
+        "bodies": {
+          "description": "Who decides, as the governance contracts read report it: token votes, multisigs with their thresholds, single keys, holder vetoes.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/multisig"
+            "$ref": "#/definitions/governanceBody"
           }
         },
         "text": {
@@ -176,10 +176,10 @@
         }
       }
     },
-    "multisig": {
+    "governanceBody": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "address", "threshold", "signers"],
+      "required": ["name", "address", "kind"],
       "properties": {
         "name": {
           "type": "string",
@@ -188,13 +188,25 @@
         "address": {
           "type": "string"
         },
+        "kind": {
+          "enum": ["token-vote", "multisig", "eoa", "veto"]
+        },
+        "token": {
+          "type": "string"
+        },
         "threshold": {
           "type": "integer"
         },
         "signers": {
           "type": "integer"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "multisig" } } },
+          "then": { "required": ["threshold", "signers"] }
+        }
+      ]
     },
     "review": {
       "type": "object",

@@ -29,10 +29,20 @@ export interface CollectOptions {
   print?: (line: string) => void
 }
 
+/** One thing the run could not do: a source skipped as a whole, or one cell it could not read. */
+export interface Failure {
+  /** The adapter id: the feed or metric folder. */
+  source: string
+  /** The protocol whose cell kept its previous value; null when the whole source was skipped. */
+  protocol: string | null
+  /** What went wrong, naming the request where there was one. */
+  message: string
+}
+
 export interface CollectSummary {
   records: ProtocolRecord[]
   changes: Change[]
-  failures: string[]
+  failures: Failure[]
 }
 
 /** Protocols in flight at once. Kept low to stay polite to third-party APIs. */
@@ -96,11 +106,15 @@ export async function collect(options: CollectOptions = {}): Promise<CollectSumm
       }
     }
   }
-  const failures = [...skipped].map(([id, why]) => `${id}: skipped, ${why}`)
+  const failures: Failure[] = [...skipped].map(([source, why]) => ({
+    source,
+    protocol: null,
+    message: why,
+  }))
   const failed = new Map<string, number>()
-  const fail = (sourceId: string, protocolId: string, error: unknown) => {
-    failures.push(`${protocolId}/${sourceId}: ${message(error)}`)
-    failed.set(sourceId, (failed.get(sourceId) ?? 0) + 1)
+  const fail = (source: string, protocol: string, error: unknown) => {
+    failures.push({ source, protocol, message: message(error) })
+    failed.set(source, (failed.get(source) ?? 0) + 1)
   }
 
   const feedIds = registry.feeds.map(({ feed }) => feed.id)

@@ -810,25 +810,25 @@ button.hit:hover {
   }
 }
 
-/* Governance columns: one multisig per line, its threshold first and the contract's name after it. */
-.msigs {
+/* Governance column: one body per line, what it is first and the contract's name after it. */
+.bodies {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   gap: 2px;
 }
-.msigs li {
+.bodies li {
   display: flex;
   align-items: baseline;
   gap: 6px;
   white-space: nowrap;
 }
-.msigs li b {
+.bodies li b {
   font-weight: 600;
   font-size: 12px;
 }
-.grid td .msigs small {
+.grid td .bodies small {
   display: inline;
   margin: 0;
 }

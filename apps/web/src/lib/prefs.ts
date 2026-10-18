@@ -34,7 +34,7 @@ export const COLUMNS = {
   category: 'Category',
   tvl: 'TVL',
   timelock: 'Governance timelock',
-  multisigs: 'Multisigs',
+  governance: 'Governance',
   coverage: 'Coverage',
   signals: 'Signals',
   incidents: 'Incidents',
