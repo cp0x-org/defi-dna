@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { useChangelog, useProtocol } from '../../data/useData.ts'
 import {
+  GOVERNANCE_METRIC,
   INCIDENTS_METRIC,
   TVL_METRIC,
   feedName,
@@ -12,7 +13,13 @@ import {
 } from '../../shared/lib/registry.ts'
 import { summarizeRecord } from './record.ts'
 import { changesFor } from '../dashboard/rows.ts'
-import { ageLabel, categoryLabel, dateInfo, formatUsd } from '../../shared/lib/view.ts'
+import {
+  ageLabel,
+  categoryLabel,
+  dateInfo,
+  formatDuration,
+  formatUsd,
+} from '../../shared/lib/view.ts'
 import {
   LEGEND_SIGNALS,
   SIGNAL_LABELS,
@@ -35,7 +42,7 @@ const TABS = {
   },
   data: {
     label: 'Protocol data',
-    hint: 'What the protocol is and what DefiLlama measures — no feed opinions here',
+    hint: 'What the protocol is, what DefiLlama measures and what its governance contracts report — no feed opinions here',
   },
   risk: { label: 'Risk intelligence', hint: 'Read each feed in its own words' },
 } as const
@@ -83,6 +90,10 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const metricsMissing = record != null && record.metrics === null
   const tvl = record?.metrics?.[TVL_METRIC]
   const incidents = record?.metrics?.[INCIDENTS_METRIC]
+  const governance = record?.metrics?.[GOVERNANCE_METRIC]
+  // A version with no contracts mapped is stored as a bare null; only a cell with facts was read.
+  const governanceRead = governance?.extra?.facts != null
+  const multisigs = governance?.extra?.multisigs ?? []
   const tvlAge = ageLabel(tvl?.fetchedAt)
   const latestIncident = summary?.latestIncident
   const changes = changesFor(changelog.data ?? [], protocol.id)
@@ -176,6 +187,40 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           metricsMissing
             ? 'DefiLlama · could not be loaded'
             : `DefiLlama · Ethereum${tvlAge ? ` · ${tvlAge} ago` : ''}`,
+        )}
+        {figure(
+          <>
+            Timelock <Prov kind="meta" />
+          </>,
+          formatDuration(governance?.value) ?? '—',
+          metricsMissing
+            ? 'on-chain · could not be loaded'
+            : !record
+              ? 'governance executor · on-chain'
+              : !governanceRead
+                ? 'nothing read on-chain'
+                : governance?.value == null
+                  ? 'no timelock among the contracts read'
+                  : `governance executor · read ${ageLabel(governance.updatedAt) ?? '—'} ago`,
+          `${base}/data`,
+        )}
+        {figure(
+          <>
+            Multisigs <Prov kind="meta" />
+          </>,
+          multisigs.length > 0
+            ? multisigs.map((multisig) => `${multisig.threshold}/${multisig.signers}`).join(' · ')
+            : '—',
+          multisigs.length > 0
+            ? multisigs.map((multisig) => multisig.name).join(' · ')
+            : metricsMissing
+              ? 'on-chain · could not be loaded'
+              : !record
+                ? 'signers required · on-chain'
+                : governanceRead
+                  ? 'no multisig among the contracts read'
+                  : 'nothing read on-chain',
+          `${base}/data`,
         )}
         {figure(
           <>

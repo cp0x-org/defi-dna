@@ -43,7 +43,7 @@ Write the answers into the pull request; they are the review.
 | `name`           | yes      | the feed's name as it writes it: "DeFiScan", "pigi.finance"                                                    |
 | `topic`          | yes      | two or three words under the name in the column header: "Decentralization", "Vault risk"                       |
 | `focus`          | yes      | one line on what the feed looks at, in its own terms; shown on the feeds page and in the card's help           |
-| `assesses`       | yes      | `protocol`, `deployment`, `vault`, `pool`, `asset` or `research`                                               |
+| `assesses`       | yes      | `protocol`, `deployment`, `vault`, `vault-protocol`, `pool`, `asset` or `research`                             |
 | `homepage`       | yes      | the feed's site                                                                                                |
 | `methodologyUrl` | no       | where the feed explains its scale; linked from the feeds page                                                  |
 | `enabled`        | yes      | `true` to collect and show the feed. `false` hides it and stops collecting, but keeps the cells already stored |

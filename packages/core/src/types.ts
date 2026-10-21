@@ -33,6 +33,7 @@ export const ASSESSED_OBJECTS = [
   'protocol',
   'deployment',
   'vault',
+  'vault-protocol',
   'pool',
   'asset',
   'research',
@@ -117,6 +118,14 @@ export interface ExtraFinding {
   description: string | null
 }
 
+/** A multisig read on-chain: how many of its signers an action needs. */
+export interface ExtraMultisig {
+  name: string
+  address: string
+  threshold: number
+  signers: number
+}
+
 export interface ExtraVault {
   name: string
   version: string | null
@@ -161,6 +170,8 @@ export interface ExtraData {
   vaults?: ExtraVault[]
   incidents?: ExtraIncident[]
   components?: ExtraTvlComponent[]
+  /** Multisigs the governance metric read, each with its threshold and signer count. */
+  multisigs?: ExtraMultisig[]
   /** Optional feed- or metric-supplied paragraphs; never synthesized by us. */
   text?: string[]
 }

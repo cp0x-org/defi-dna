@@ -20,6 +20,10 @@ const change: Change = {
 const row: Row = {
   protocol: { id: 'curve', name: 'Curve', category: 'dex' },
   tvl: 2e9,
+  governance: {
+    delay: 172800,
+    multisigs: [{ name: 'Emergency DAO', address: '0x467947ee', threshold: 5, signers: 9 }],
+  },
   feeds: { [feedId]: true },
   tones: { [feedId]: 'inf' },
   incidents: null,
@@ -38,11 +42,13 @@ describe('dashboard rows and cards', () => {
               now={NOW}
               noChangeTitle="No change"
               noIncidentsTitle="Not collected"
+              noGovernanceTitle="Nothing read"
               popTarget={() => ({
                 onMouseEnter: () => {},
                 onMouseLeave: () => {},
                 onClick: () => {},
               })}
+              show={() => true}
             />
           </tbody>
         </table>
@@ -51,6 +57,40 @@ describe('dashboard rows and cards', () => {
     expect(html).toContain('Curve')
     expect(html).toContain('NEW · 1')
     expect(html).toContain(`1 of ${feeds.length} feeds have data`)
+    // Governance as the contracts report it: the delay in words and seconds, each multisig as a ratio.
+    expect(html).toContain('2 days')
+    expect(html).toContain('172,800 s')
+    expect(html).toContain('5 of 9')
+    expect(html).toContain('Emergency DAO')
+  })
+
+  it('leaves out the columns the visitor hid, and the protocol column never', () => {
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <table>
+          <tbody>
+            <VersionRow
+              row={row}
+              nested={false}
+              now={NOW}
+              noChangeTitle="No change"
+              noIncidentsTitle="Not collected"
+              noGovernanceTitle="Nothing read"
+              popTarget={() => ({
+                onMouseEnter: () => {},
+                onMouseLeave: () => {},
+                onClick: () => {},
+              })}
+              show={(key) => key !== 'multisigs' && key !== 'tvl'}
+            />
+          </tbody>
+        </table>
+      </MemoryRouter>,
+    )
+    expect(html).toContain('Curve')
+    expect(html).toContain('172,800 s')
+    expect(html).not.toContain('Emergency DAO')
+    expect(html).not.toContain('Ethereum</small>')
   })
 
   it('lists every feed in the coverage card and the move in the changes card', () => {

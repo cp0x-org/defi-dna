@@ -160,12 +160,39 @@
             "$ref": "#/definitions/tvlComponent"
           }
         },
+        "multisigs": {
+          "description": "Multisigs read on-chain, each with the threshold and signer count its contract reports.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/multisig"
+          }
+        },
         "text": {
           "description": "Optional source-supplied paragraphs for information that has no more specific shape.",
           "type": "array",
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "multisig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "address", "threshold", "signers"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "address": {
+          "type": "string"
+        },
+        "threshold": {
+          "type": "integer"
+        },
+        "signers": {
+          "type": "integer"
         }
       }
     },

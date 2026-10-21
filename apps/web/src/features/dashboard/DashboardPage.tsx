@@ -12,7 +12,15 @@ import {
   type MatrixQuery,
   type SortKey,
 } from './matrix.ts'
-import { readCoverageView, writeCoverageView, type CoverageView } from '../../shared/lib/prefs.ts'
+import {
+  COLUMNS,
+  readCoverageView,
+  readHiddenColumns,
+  writeCoverageView,
+  writeHiddenColumns,
+  type ColumnKey,
+  type CoverageView,
+} from '../../shared/lib/prefs.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { buildRows, changedWithinDay } from './rows.ts'
 import {
@@ -59,13 +67,14 @@ export const DataGaps = ({
       <ul>
         {metricsError ? (
           <li>
-            <b>DefiLlama’s incident figures could not be loaded.</b> The Incidents column is empty
-            because of our failure, not because DefiLlama records none.
+            <b>DefiLlama’s incident figures could not be loaded</b>, and neither could the on-chain
+            governance readings kept beside them. The Incidents, Timelock and Multisigs columns are
+            empty because of our failure, not because DefiLlama records none or nothing was read.
           </li>
         ) : null}
         {changelogError ? (
           <li>
-            <b>The run log could not be loaded.</b> The Changed column and the freshness filter have
+            <b>The run log could not be loaded.</b> The Updated column and the freshness filter have
             nothing to show until it is.
           </li>
         ) : null}
@@ -103,8 +112,14 @@ export const DashboardPage = ({
   const [now] = useState(() => Date.now())
   const [view, setView] = useState<CoverageView>(readCoverageView)
   const [drawer, setDrawer] = useState(false)
+  const [hidden, setHidden] = useState<Set<ColumnKey>>(readHiddenColumns)
+  const [columnsMenu, setColumnsMenu] = useState<HTMLElement | null>(null)
+  const columnsCard = useRef<HTMLDivElement | null>(null)
   const search = useRef<HTMLInputElement>(null)
-  const { pop, cardRef, target, keepOpen, hideSoon, close } = usePopover(() => setDrawer(false))
+  const { pop, cardRef, target, keepOpen, hideSoon, close } = usePopover(() => {
+    setDrawer(false)
+    setColumnsMenu(null)
+  })
 
   const rows = useMemo(
     () => buildRows(index ?? NO_DATA, { metrics: metrics.data, changes: changelog.data }),
@@ -128,6 +143,11 @@ export const DashboardPage = ({
     : metrics.data
       ? 'Not collected for this version'
       : 'Loading DefiLlama’s incident list…'
+  const noGovernanceTitle = metrics.error
+    ? 'The on-chain governance readings could not be loaded'
+    : metrics.data
+      ? 'Nothing read on-chain for this version'
+      : 'Loading the on-chain governance readings…'
 
   // "/" jumps to the search, as on most data tables. Esc belongs to the popover.
   useEffect(() => {
@@ -142,12 +162,41 @@ export const DashboardPage = ({
     return () => document.removeEventListener('keydown', keys)
   }, [])
 
+  // The column picker closes on a click anywhere else; the cards are closed while it is open.
+  useEffect(() => {
+    if (!columnsMenu) return
+    const outside = (event: PointerEvent) => {
+      const target = event.target as Node
+      if (!columnsMenu.contains(target) && !columnsCard.current?.contains(target)) {
+        setColumnsMenu(null)
+      }
+    }
+    document.addEventListener('pointerdown', outside)
+    return () => document.removeEventListener('pointerdown', outside)
+  }, [columnsMenu])
+
   const chooseView = (next: CoverageView) => {
     setView(next)
     writeCoverageView(next)
   }
 
-  const rowProps = { now, noChangeTitle, noIncidentsTitle, popTarget: target }
+  const show = (key: ColumnKey) => !hidden.has(key)
+  const toggleColumn = (key: ColumnKey, shown: boolean) => {
+    const next = new Set(hidden)
+    if (shown) next.delete(key)
+    else next.add(key)
+    setHidden(next)
+    writeHiddenColumns(next)
+  }
+
+  const rowProps = {
+    now,
+    noChangeTitle,
+    noIncidentsTitle,
+    noGovernanceTitle,
+    popTarget: target,
+    show,
+  }
 
   return (
     <div className="page">
@@ -219,6 +268,19 @@ export const DashboardPage = ({
               ))}
             </select>
           </label>
+          <button
+            className="btn"
+            type="button"
+            aria-expanded={columnsMenu != null}
+            aria-haspopup="dialog"
+            onClick={(event) => {
+              close()
+              setColumnsMenu(columnsMenu ? null : event.currentTarget)
+            }}
+          >
+            Columns
+            {hidden.size > 0 ? <span className="badge">{hidden.size} hidden</span> : null}
+          </button>
           <span className="result-count" aria-live="polite">
             {!index ? (
               'Data not loaded'
@@ -293,10 +355,10 @@ export const DashboardPage = ({
           <table className="grid">
             <caption className="sr-only">
               {index
-                ? `${shown} protocol versions: size, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
+                ? `${shown} protocol versions: size, the governance timelock and multisig thresholds read on-chain, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
                 : 'The table is empty: the dataset is not loaded.'}
             </caption>
-            <MatrixHead query={query} onSort={(sort) => setQuery({ ...query, sort })} />
+            <MatrixHead query={query} onSort={(sort) => setQuery({ ...query, sort })} show={show} />
             <tbody>
               {groups.map((group) =>
                 group.rows.length === 1 && group.rows[0] ? (
@@ -313,6 +375,7 @@ export const DashboardPage = ({
                       now={now}
                       noChangeTitle={noChangeTitle}
                       noIncidentsTitle={noIncidentsTitle}
+                      show={show}
                     />
                     {group.rows.map((row) => (
                       <VersionRow key={row.protocol.id} row={row} nested {...rowProps} />
@@ -381,7 +444,8 @@ export const DashboardPage = ({
           <div className="legend">
             <span className="lg-title">Provenance</span>
             <span>
-              <Prov kind="meta" /> protocol facts from our registry and DefiLlama
+              <Prov kind="meta" /> protocol facts from our registry, DefiLlama and the protocol’s
+              governance contracts on Ethereum mainnet
             </span>
             <span>
               <Prov kind="cov" /> which feeds have data, and when it last changed
@@ -400,6 +464,32 @@ export const DashboardPage = ({
           </div>
         </div>
       </div>
+
+      {columnsMenu ? (
+        <Anchored anchor={columnsMenu} label="Columns" cardRef={columnsCard}>
+          <div className="pop-h">
+            <strong>Columns</strong>
+          </div>
+          <div className="pop-sub">
+            Pick what the table shows. The protocol column always stays; the choice is kept in this
+            browser.
+          </div>
+          <ul className="pop-list columns">
+            {(Object.keys(COLUMNS) as ColumnKey[]).map((key) => (
+              <li key={key}>
+                <label className="cb">
+                  <input
+                    type="checkbox"
+                    checked={show(key)}
+                    onChange={(event) => toggleColumn(key, event.target.checked)}
+                  />
+                  {COLUMNS[key]}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </Anchored>
+      ) : null}
 
       {pop && popRow ? (
         <Anchored

@@ -37,4 +37,18 @@ describe('validateMetricData', () => {
     expect(validateMetricData({ value: null, note: 'none', fetchedAt: since })).toBeNull()
     expect(validateMetricData({ value: '12.5', fetchedAt: since })).toContain('number')
   })
+
+  it('knows the multisig shape the governance metric stores', () => {
+    const multisig = { name: 'Risk Council', address: '0x47c7', threshold: 2, signers: 2 }
+    expect(
+      validateMetricData({ value: 86400, fetchedAt: since, extra: { multisigs: [multisig] } }),
+    ).toBeNull()
+    expect(
+      validateMetricData({
+        value: 86400,
+        fetchedAt: since,
+        extra: { multisigs: [{ name: 'Risk Council', address: '0x47c7', threshold: 2 }] },
+      }),
+    ).toContain('signers')
+  })
 })

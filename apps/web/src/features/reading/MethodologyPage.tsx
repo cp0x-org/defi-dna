@@ -106,10 +106,10 @@ export const MethodologyPage = ({ index }: { index: IndexBundle | null }) => (
       </div>
       <p>
         We compute no rating, index, ranking or weighted average across feeds, and we never decide
-        which feed is right when two disagree. Measured quantities (TVL, incident counts) and facts
-        about our own coverage are not the same thing: they are published by their sources or
-        describe this project. Relaxing this rule requires written agreement from the Ethereum
-        Foundation and an amendment to the charter in the repository.
+        which feed is right when two disagree. Measured quantities (TVL, incident counts, governance
+        parameters read on-chain) and facts about our own coverage are not the same thing: they are
+        published by their sources or describe this project. Relaxing this rule requires written
+        agreement from the Ethereum Foundation and an amendment to the charter in the repository.
       </p>
     </section>
 

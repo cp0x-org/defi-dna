@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom'
 import type { Change, Protocol, ProtocolDetail } from '@defi-dna/data'
-import { TVL_METRIC, INCIDENTS_METRIC, feedName, feeds } from '../../shared/lib/registry.ts'
+import {
+  GOVERNANCE_METRIC,
+  INCIDENTS_METRIC,
+  TVL_METRIC,
+  feedName,
+  feeds,
+} from '../../shared/lib/registry.ts'
 import type { RecordSummary } from './record.ts'
-import { dateInfo, dayAndTime, formatUsd } from '../../shared/lib/view.ts'
+import { dateInfo, dayAndTime, formatDuration, formatUsd } from '../../shared/lib/view.ts'
 import { CoverageRing, Prov, StatusPill } from '../../shared/ui/Coverage.tsx'
 import { Info, SourceMark } from '../../shared/ui/UI.tsx'
 import { RegistryFacts } from './RegistryFacts.tsx'
@@ -30,6 +36,7 @@ export const OverviewTab = ({
   const base = `/protocol/${protocol.id}`
   const tvl = record.metrics?.[TVL_METRIC]
   const incidents = record.metrics?.[INCIDENTS_METRIC]
+  const governance = record.metrics?.[GOVERNANCE_METRIC]
 
   return (
     <div className="two">
@@ -166,7 +173,7 @@ export const OverviewTab = ({
         <section className="card">
           <div className="card-h">
             <h2>Key figures</h2>
-            <Prov kind="meta">Meta · DefiLlama</Prov>
+            <Prov kind="meta">Meta · DefiLlama · Ethereum</Prov>
           </div>
           <div className="card-b kv-body">
             <dl className="kv">
@@ -206,6 +213,20 @@ export const OverviewTab = ({
                   ) : null}
                 </dd>
               </div>
+              <div>
+                <dt>
+                  Governance timelock
+                  <Info label="What this figure is">
+                    The delay the protocol’s governance timelock enforces before a scheduled
+                    decision executes, as the contract reports it on Ethereum mainnet. Empty when
+                    none of the contracts we read is a timelock, or none is mapped.
+                  </Info>
+                </dt>
+                <dd>
+                  {formatDuration(governance?.value) ?? '—'}
+                  <small>read on-chain</small>
+                </dd>
+              </div>
             </dl>
           </div>
           <div className="card-f">
@@ -227,7 +248,10 @@ export const OverviewTab = ({
           <div className="card-b legend-list">
             <div>
               <Prov kind="meta" />
-              <span>Facts about the protocol: our registry, and what DefiLlama measures.</span>
+              <span>
+                Facts about the protocol: our registry, what DefiLlama measures and what its
+                governance contracts report on-chain.
+              </span>
             </div>
             <div>
               <Prov kind="cov" />

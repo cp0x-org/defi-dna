@@ -40,7 +40,7 @@ What the feed is. Shown on the Feeds page, nothing more.
 
 `topic` is the two or three words printed under the feed's name in the column
 header. `assesses` names the object the feed's values are about — `protocol`,
-`deployment`, `vault`, `pool`, `asset` or `research` — and is printed next to
+`deployment`, `vault`, `vault-protocol`, `pool`, `asset` or `research` — and is printed next to
 every value, so a vault tier is never read as a verdict on the protocol. The
 frontend imports this file at build time.
 
@@ -172,7 +172,12 @@ response is cached by URL and body. See `adapters/feeds/credora`.
 The same shape, returning `{ value: number | null, url?, note?, extra? }`, plus a
 `metric.json` describing it (`id`, `name`, `homepage`). Metrics are measured
 quantities — they appear on the protocol page and never as a feed column. See
-`adapters/metrics/tvl`.
+`adapters/metrics/tvl`, and `adapters/metrics/governance` for a source read
+over JSON-RPC: batched `eth_call`s go through `postJson` with `ttlSeconds`, so
+they are cached by body and replay offline. That adapter keeps what it reads in
+data, not code: `systems.json` lists every contract and every view called on
+it, and `index.ts` only performs those reads, so a reviewer can repeat any
+figure on Etherscan.
 
 ## While you work
 

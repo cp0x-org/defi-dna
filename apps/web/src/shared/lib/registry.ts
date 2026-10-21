@@ -44,3 +44,4 @@ export const metrics: Metric[] = collect(
 /** Ids of the metric adapters the pages read by name: adapters/metrics/<id>. */
 export const TVL_METRIC = 'tvl'
 export const INCIDENTS_METRIC = 'incidents'
+export const GOVERNANCE_METRIC = 'governance'

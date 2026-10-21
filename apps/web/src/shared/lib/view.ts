@@ -1,7 +1,7 @@
 import type { AssessedObject, FeedData } from '@defi-dna/data'
 import { TONE_LABELS } from './status.ts'
 
-export { formatUsd } from '@defi-dna/data'
+export { formatDuration, formatUsd } from '@defi-dna/data'
 
 export const DAY = 86_400_000
 
@@ -24,6 +24,7 @@ const ASSESSES_LABELS: Record<AssessedObject, string> = {
   protocol: 'the protocol',
   deployment: 'each deployment separately',
   vault: 'individual vaults, not the protocol',
+  'vault-protocol': 'individual vaults and the protocol',
   pool: 'individual pools, not the protocol',
   asset: 'individual assets, not the protocol',
   research: 'in published research, without a rating scale',

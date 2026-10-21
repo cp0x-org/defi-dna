@@ -1,8 +1,13 @@
 import type { Protocol, ProtocolDetail } from '@defi-dna/data'
-import { INCIDENTS_METRIC, TVL_METRIC, feeds } from '../../shared/lib/registry.ts'
+import {
+  GOVERNANCE_METRIC,
+  INCIDENTS_METRIC,
+  TVL_METRIC,
+  feeds,
+} from '../../shared/lib/registry.ts'
 import { dateInfo, formatUsd, hostOf } from '../../shared/lib/view.ts'
 import { Prov } from '../../shared/ui/Coverage.tsx'
-import { IncidentsExtra, TvlComponentsExtra } from './extra/MetricExtras.tsx'
+import { GovernanceExtra, IncidentsExtra, TvlComponentsExtra } from './extra/MetricExtras.tsx'
 import { TextExtra } from './extra/TextExtra.tsx'
 import { ExternalLink } from '../../shared/ui/UI.tsx'
 import { RegistryFacts } from './RegistryFacts.tsx'
@@ -21,6 +26,7 @@ export const DataTab = ({
 }) => {
   const tvl = record.metrics?.[TVL_METRIC]
   const incidents = record.metrics?.[INCIDENTS_METRIC]
+  const governance = record.metrics?.[GOVERNANCE_METRIC]
   const feedLinks = feeds.filter(
     (feed) => record.feeds[feed.id]?.status === 'ok' && record.feeds[feed.id]?.url,
   )
@@ -57,6 +63,42 @@ export const DataTab = ({
             </p>
             <TvlComponentsExtra components={tvl?.extra?.components} />
             <TextExtra text={tvl?.extra?.text} />
+          </div>
+        </section>
+      </div>
+
+      <div className="row2">
+        <section className="card span2" id="governance">
+          <div className="card-h">
+            <h2>Governance</h2>
+            <Prov kind="meta" />
+            <span className="aside">
+              read on-chain · {dateInfo(governance?.updatedAt ?? governance?.fetchedAt).label}
+            </span>
+          </div>
+          <div className="card-b">
+            {governance?.extra?.facts?.length ? (
+              <GovernanceExtra value={governance.value} facts={governance.extra.facts} />
+            ) : record.metrics ? (
+              <p className="muted">
+                No governance contracts are mapped for this version; nothing was read.
+              </p>
+            ) : (
+              <p className="muted">
+                What the governance contracts report could not be loaded. This is our failure, not
+                an empty reading.
+              </p>
+            )}
+          </div>
+          <div className="card-f">
+            <span>
+              {governance?.note ??
+                'Contracts, the views called on them and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'}
+              {governance?.note
+                ? ' Each fact names the view and the contract it was read from; open the contract on Etherscan (Contract → Read) to repeat it.'
+                : ''}
+            </span>
+            {governance?.url ? <ExternalLink href={governance.url}>Etherscan</ExternalLink> : null}
           </div>
         </section>
       </div>

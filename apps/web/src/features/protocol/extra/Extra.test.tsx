@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { FeedExtras, hasFeedExtras } from './FeedExtras.tsx'
-import { IncidentsExtra, TvlComponentsExtra } from './MetricExtras.tsx'
+import { GovernanceExtra, IncidentsExtra, TvlComponentsExtra } from './MetricExtras.tsx'
 import { TextExtra } from './TextExtra.tsx'
 
 describe('optional extra views', () => {
@@ -106,5 +106,44 @@ describe('optional extra views', () => {
       'DefiLlama records no incident',
     )
     expect(renderToStaticMarkup(<TextExtra />)).toBe('')
+  })
+})
+
+describe('the governance metric view', () => {
+  it('shows the timelock delay in readable units with the facts as read', () => {
+    const html = renderToStaticMarkup(
+      <GovernanceExtra
+        value={172800}
+        facts={[
+          {
+            name: 'Timelock delay',
+            value: '172800 s (2 days)',
+            description: 'delay() on Timelock 0x6d903f6003cca6255D85CcA4D3B5E5146dC33925',
+          },
+          { name: 'Community multisig', value: '5 of 9 signers' },
+        ]}
+      />,
+    )
+    expect(html).toContain('2 days')
+    expect(html).toContain('172,800 seconds')
+    expect(html).toContain('Community multisig')
+    expect(html).toContain('5 of 9 signers')
+    // The read behind a fact is shown, with the contract linked to Etherscan's read tab.
+    expect(html).toContain('delay() on Timelock ')
+    expect(html).toContain(
+      'href="https://etherscan.io/address/0x6d903f6003cca6255D85CcA4D3B5E5146dC33925#readContract"',
+    )
+  })
+
+  it('says when no contract read is a timelock, without judging it', () => {
+    const html = renderToStaticMarkup(
+      <GovernanceExtra
+        value={null}
+        facts={[{ name: 'Morpho Blue owner', value: '0xcba2 (Safe)' }]}
+      />,
+    )
+    expect(html).toContain('—')
+    expect(html).toContain('None of the contracts read for this version is a timelock.')
+    expect(html).toContain('Morpho Blue owner')
   })
 })
