@@ -38,16 +38,19 @@ describe('validateMetricData', () => {
     expect(validateMetricData({ value: '12.5', fetchedAt: since })).toContain('number')
   })
 
-  it('knows the multisig shape the governance metric stores', () => {
-    const multisig = { name: 'Risk Council', address: '0x47c7', threshold: 2, signers: 2 }
-    expect(
-      validateMetricData({ value: 86400, fetchedAt: since, extra: { multisigs: [multisig] } }),
-    ).toBeNull()
+  it('knows the governance bodies the governance metric stores', () => {
+    const bodies = [
+      { name: 'Governor', address: '0x309a', kind: 'token-vote', token: 'COMP' },
+      { name: 'Risk Council', address: '0x47c7', kind: 'multisig', threshold: 2, signers: 2 },
+    ]
+    expect(validateMetricData({ value: 86400, fetchedAt: since, extra: { bodies } })).toBeNull()
     expect(
       validateMetricData({
         value: 86400,
         fetchedAt: since,
-        extra: { multisigs: [{ name: 'Risk Council', address: '0x47c7', threshold: 2 }] },
+        extra: {
+          bodies: [{ name: 'Risk Council', address: '0x47c7', kind: 'multisig', threshold: 2 }],
+        },
       }),
     ).toContain('signers')
   })

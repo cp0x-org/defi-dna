@@ -23,6 +23,50 @@ interface CacheEntry {
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 /**
+ * A URL as the log may show it. Keyed endpoints carry the key in the path
+ * (`/eth/<64 hex>`, `/v3/<32 hex>`) or the query (`?apikey=…`), and the run
+ * log of a public repository is public, so anything that looks like a key is
+ * dropped; a protocol slug is shorter than that.
+ */
+export function redactUrl(url: string): string {
+  try {
+    const parsed = new URL(url)
+    const secret = /^[A-Za-z0-9_-]{24,}$/
+    parsed.pathname = parsed.pathname
+      .split('/')
+      .map((segment) => (secret.test(segment) ? '***' : segment))
+      .join('/')
+    for (const [key, value] of parsed.searchParams) {
+      if (secret.test(value) || /key|token|secret/i.test(key)) parsed.searchParams.set(key, '***')
+    }
+    return parsed.toString()
+  } catch {
+    return url
+  }
+}
+
+/**
+ * Why a request failed, in one line. Node's fetch says only "fetch failed";
+ * the reason — a DNS miss, a refused connection, a rejected certificate — is
+ * in `cause`, sometimes two levels down, sometimes inside an AggregateError.
+ */
+export function explainError(error: unknown): string {
+  if (error instanceof Error && error.name === 'TimeoutError') return 'timed out'
+  const parts: string[] = []
+  for (let current: unknown = error; current;) {
+    const { code, cause, errors } = current as {
+      code?: string
+      cause?: unknown
+      errors?: unknown[]
+    }
+    const text = current instanceof Error ? current.message : String(current)
+    parts.push(code && !text.includes(code) ? `${text} (${code})` : text)
+    current = cause ?? errors?.[0]
+  }
+  return parts.join(' — ')
+}
+
+/**
  * HTTP with an on-disk cache.
  *
  * The cache is what makes `--offline` work: a run with no network still
@@ -61,6 +105,8 @@ export class Http {
     options: FetchOptions
   }): Promise<string> {
     const label = body === undefined ? url : `POST ${url}`
+    // How the request is named in errors and logs: method, URL, no key.
+    const shown = `${body === undefined ? 'GET' : 'POST'} ${redactUrl(url)}`
     const file = path.join(
       this.options.cacheDir ?? paths.cache,
       `${createHash('sha256')
@@ -73,7 +119,7 @@ export class Http {
     if (cached && (this.options.offline || Date.now() - cached.storedAt < ttl)) {
       return cached.body
     }
-    if (this.options.offline) throw new Error(`offline and nothing cached for ${label}`)
+    if (this.options.offline) throw new Error(`offline and nothing cached for ${shown}`)
 
     const fetchImpl = this.options.fetch ?? fetch
     let lastError: unknown
@@ -103,8 +149,9 @@ export class Http {
         if (!response.ok && response.status !== 206) {
           // A query API names the cause in the body (`UNAUTHENTICATED`); it never echoes a key.
           const cause = body === undefined ? '' : `: ${(await response.text()).slice(0, 200)}`
-          lastError = new Error(`HTTP ${response.status} for ${label}${cause}`)
-          if (this.options.verbose) console.warn(`  retry ${attempt + 1}: ${String(lastError)}`)
+          const failure = new Error(`HTTP ${response.status} for ${shown}${cause}`)
+          lastError = failure
+          if (this.options.verbose) console.warn(`  retry ${attempt + 1}: ${failure.message}`)
           continue
         }
         const text = await response.text()
@@ -117,14 +164,21 @@ export class Http {
         })
         return text
       } catch (error) {
-        lastError = error
-        if (this.options.verbose) console.warn(`  retry ${attempt + 1}: ${String(error)}`)
+        const failure = new Error(`${shown}: ${explainError(error)}`, { cause: error })
+        lastError = failure
+        if (this.options.verbose) console.warn(`  retry ${attempt + 1}: ${failure.message}`)
       }
     }
     // Network trouble, but we have an older copy: serving it beats emptying a
-    // cell that is genuinely covered.
-    if (cached) return cached.body
-    throw lastError instanceof Error ? lastError : new Error(`failed to fetch ${label}`)
+    // cell that is genuinely covered. Said out loud, or a source that is down
+    // looks healthy for as long as the copies last.
+    if (cached) {
+      console.warn(
+        `  stale: ${lastError instanceof Error ? lastError.message : shown}; serving the copy stored ${new Date(cached.storedAt).toISOString().slice(0, 10)}`,
+      )
+      return cached.body
+    }
+    throw lastError instanceof Error ? lastError : new Error(`${shown}: no response`)
   }
 
   async getJson<T>(url: string, options: FetchOptions = {}): Promise<T> {
@@ -132,7 +186,7 @@ export class Http {
     try {
       return JSON.parse(text) as T
     } catch {
-      throw new Error(`response from ${url} is not valid JSON`)
+      throw new Error(`response from GET ${redactUrl(url)} is not valid JSON`)
     }
   }
 
@@ -149,29 +203,34 @@ export class Http {
       try {
         return JSON.parse(text) as T
       } catch {
-        throw new Error(`response from POST ${url} is not valid JSON`)
+        throw new Error(`response from POST ${redactUrl(url)} is not valid JSON`)
       }
     }
-    if (this.options.offline) throw new Error(`offline: cannot POST to ${url}`)
-    const response = await (this.options.fetch ?? fetch)(url, {
-      method: 'POST',
-      headers: {
-        ...(await options.headers?.()),
-        'user-agent': USER_AGENT,
-        accept: 'application/json',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(60_000),
-    })
+    const shown = `POST ${redactUrl(url)}`
+    if (this.options.offline) throw new Error(`offline: cannot ${shown}`)
+    let response: Response
+    try {
+      response = await (this.options.fetch ?? fetch)(url, {
+        method: 'POST',
+        headers: {
+          ...(await options.headers?.()),
+          'user-agent': USER_AGENT,
+          accept: 'application/json',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(60_000),
+      })
+    } catch (error) {
+      throw new Error(`${shown}: ${explainError(error)}`, { cause: error })
+    }
     const text = await response.text()
     // The error body names the cause (`invalid_api_key`); it never echoes the key.
-    if (!response.ok)
-      throw new Error(`HTTP ${response.status} for POST ${url}: ${text.slice(0, 200)}`)
+    if (!response.ok) throw new Error(`HTTP ${response.status} for ${shown}: ${text.slice(0, 200)}`)
     try {
       return JSON.parse(text) as T
     } catch {
-      throw new Error(`response from POST ${url} is not valid JSON`)
+      throw new Error(`response from ${shown} is not valid JSON`)
     }
   }
 }

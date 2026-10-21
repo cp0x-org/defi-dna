@@ -102,7 +102,10 @@ describe('collect', () => {
     const first = (await record('p1')).feeds['f1']
     const summary = await run(registry([answering('f1', { p1: boom, p2: boom })]))
     // Protocols run in parallel, so the failures arrive in completion order.
-    expect([...summary.failures].sort()).toEqual(['p1/f1: boom', 'p2/f1: boom'])
+    expect([...summary.failures].sort((a, b) => a.protocol!.localeCompare(b.protocol!))).toEqual([
+      { source: 'f1', protocol: 'p1', message: 'boom' },
+      { source: 'f1', protocol: 'p2', message: 'boom' },
+    ])
     const cell = (await record('p1')).feeds['f1']
     expect(cell).toEqual(first) // value, status and since all kept
     expect((await read<RunStatus>('status.json')).sources['f1']).toMatchObject({
@@ -115,11 +118,15 @@ describe('collect', () => {
   it('skips the whole column when prepare() fails or a secret is missing', async () => {
     await run(registry([answering('f1', { p1: A })]))
     const failing = registry([answering('f1', { p1: B }, { prepare: async () => boom() })])
-    expect((await run(failing)).failures).toEqual(['f1: skipped, boom'])
+    expect((await run(failing)).failures).toEqual([
+      { source: 'f1', protocol: null, message: 'boom' },
+    ])
     expect((await record('p1')).feeds['f1']?.value).toBe('A')
 
     const keyed = registry([answering('f1', { p1: B }, { secrets: ['DEFI_DNA_TEST_NOPE'] })])
-    expect((await run(keyed)).failures).toEqual(['f1: skipped, DEFI_DNA_TEST_NOPE is not set'])
+    expect((await run(keyed)).failures).toEqual([
+      { source: 'f1', protocol: null, message: 'DEFI_DNA_TEST_NOPE is not set' },
+    ])
     expect((await record('p1')).feeds['f1']?.value).toBe('A')
     // Offline, a secret is never needed: the adapter runs from the cache.
     expect((await run(keyed, { offline: true })).failures).toEqual([])
@@ -171,7 +178,7 @@ describe('collect', () => {
     await run(registry([answering('f1', { p1: A })]))
     const wrong = registry([answering('f1', { p1: { value: 42 } as unknown as FeedResult })])
     const summary = await run(wrong)
-    expect(summary.failures[0]).toContain('does not match the schema')
+    expect(summary.failures[0]?.message).toContain('does not match the schema')
     expect((await record('p1')).feeds['f1']?.value).toBe('A')
   })
 })

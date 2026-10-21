@@ -1,6 +1,12 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import type { Change, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
+import type {
+  Change,
+  ExtraGovernanceBody,
+  IndexBundle,
+  Protocol,
+  ProtocolDetail,
+} from '@defi-dna/data'
 import { useChangelog, useProtocol } from '../hooks/useIndex.ts'
 import { feeds, protocolById, protocols } from '../lib/registry.ts'
 import {
@@ -24,6 +30,22 @@ import { RiskIntelligence } from '../components/RiskIntelligence.tsx'
 import { ExternalLink, Info, ProtocolAvatar, SourceMark } from '../components/UI.tsx'
 
 const REGISTRY_URL = 'https://github.com/cp0x-org/defi-dna/blob/main/registry/protocols.json'
+const LINK = /(https?:\/\/[^\s)]+)/
+
+/** A note with its URLs clickable, for a metric that names where to look (a Snapshot space). */
+const Linked = ({ text }: { text: string }) => (
+  <>
+    {text.split(LINK).map((part, k) =>
+      LINK.test(part) ? (
+        <ExternalLink key={k} href={part}>
+          {part.replace(/^https?:\/\//, '')}
+        </ExternalLink>
+      ) : (
+        part
+      ),
+    )}
+  </>
+)
 const TIMELINE_SHOWN = 8
 
 const TABS = {
@@ -123,7 +145,15 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const governance = record?.metrics['governance']
   // A version with no contracts mapped is stored as a bare null; only a cell with facts was read.
   const governanceRead = governance?.extra?.facts != null
-  const multisigs = governance?.extra?.multisigs ?? []
+  const bodies = governance?.extra?.bodies ?? []
+  const bodyLabel = (body: ExtraGovernanceBody) =>
+    body.kind === 'multisig'
+      ? `${body.threshold}/${body.signers} ${body.name}`
+      : body.kind === 'token-vote'
+        ? `${body.token ?? body.name} vote`
+        : body.kind === 'veto'
+          ? `${body.token ?? body.name} veto`
+          : `EOA ${body.name}`
   const latestIncident = [...(incidents?.extra?.incidents ?? [])].sort((a, b) =>
     b.date.localeCompare(a.date),
   )[0]
@@ -236,17 +266,23 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
         )}
         {figure(
           <>
-            Multisigs <Prov kind="meta" />
+            Governance <Prov kind="meta" />
           </>,
-          multisigs.length > 0
-            ? multisigs.map((multisig) => `${multisig.threshold}/${multisig.signers}`).join(' · ')
+          bodies[0]
+            ? bodies[0].kind === 'multisig'
+              ? `Multisig ${bodies[0].threshold}/${bodies[0].signers}`
+              : bodies[0].kind === 'token-vote'
+                ? 'Token vote'
+                : bodies[0].kind === 'veto'
+                  ? 'Veto'
+                  : 'EOA'
             : '—',
-          multisigs.length > 0
-            ? multisigs.map((multisig) => multisig.name).join(' · ')
+          bodies.length > 0
+            ? bodies.map(bodyLabel).join(' · ')
             : !record
-              ? 'signers required · on-chain'
+              ? 'who decides · on-chain'
               : governanceRead
-                ? 'no multisig among the contracts read'
+                ? 'no deciding body among the contracts read'
                 : 'nothing read on-chain',
           `${base}/data`,
         )}
@@ -783,8 +819,11 @@ const DataTab = ({
           </div>
           <div className="card-f">
             <span>
-              {governance?.note ??
-                'Contracts, the views called on them and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'}
+              {governance?.note ? (
+                <Linked text={governance.note} />
+              ) : (
+                'Contracts, the views called on them and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'
+              )}
               {governance?.note
                 ? ' Each fact names the view and the contract it was read from; open the contract on Etherscan (Contract → Read) to repeat it.'
                 : ''}

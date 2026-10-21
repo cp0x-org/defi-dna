@@ -62,15 +62,15 @@ import { Anchored, Info, ProtocolAvatar } from '../components/UI.tsx'
 const DAY = 86_400_000
 /** Time to cross from a cell to its card, or to come back, before an unpinned card closes. */
 const HIDE_DELAY = 350
-/** Multisigs listed in a cell before the rest is left to the protocol page. */
-const MULTISIGS_SHOWN = 3
+/** Bodies listed in a cell before the rest is left to the protocol page. */
+const BODIES_SHOWN = 3
 const feedIds = feeds.map((feed) => feed.id)
 /**
  * Which columns sit under which provenance header; the protocol column always
  * leads the first. "Updated" is coverage too, but closes the table on its own.
  */
 const COLUMN_GROUPS: Record<'meta' | 'cov' | 'src', ColumnKey[]> = {
-  meta: ['category', 'tvl', 'timelock', 'multisigs'],
+  meta: ['category', 'tvl', 'timelock', 'governance'],
   cov: ['coverage'],
   src: ['signals', 'incidents'],
 }
@@ -287,8 +287,8 @@ export const DashboardPage = ({
       </>
     )
 
-  /** Each multisig read, as "threshold of signers"; the names say which contract. */
-  const multisigCell = (governance: Governance | null, absent: string) => {
+  /** Who decides, one body per line: a token vote by its token, a multisig as "threshold of signers", a key as EOA. */
+  const governanceCell = (governance: Governance | null, absent: string) => {
     if (governance == null) {
       return (
         <span className="muted" title={absent}>
@@ -296,21 +296,27 @@ export const DashboardPage = ({
         </span>
       )
     }
-    const shown = governance.multisigs.slice(0, MULTISIGS_SHOWN)
-    const more = governance.multisigs.length - shown.length
+    const shown = governance.bodies.slice(0, BODIES_SHOWN)
+    const more = governance.bodies.length - shown.length
     return shown.length === 0 ? (
       <>
         <span className="muted">—</span>
-        <small>no multisig read</small>
+        <small>no deciding body among the contracts read</small>
       </>
     ) : (
-      <ul className="msigs">
-        {shown.map((multisig) => (
-          <li key={multisig.address}>
-            <b className="mono">
-              {multisig.threshold} of {multisig.signers}
+      <ul className="bodies">
+        {shown.map((body) => (
+          <li key={`${body.kind}-${body.address}`}>
+            <b className={body.kind === 'multisig' ? 'mono' : undefined}>
+              {body.kind === 'multisig'
+                ? `${body.threshold} of ${body.signers}`
+                : body.kind === 'token-vote'
+                  ? 'Token vote'
+                  : body.kind === 'veto'
+                    ? 'Veto'
+                    : 'EOA'}
             </b>
-            <small>{multisig.name}</small>
+            <small>{body.token ? `${body.token} · ${body.name}` : body.name}</small>
           </li>
         ))}
         {more > 0 ? (
@@ -410,8 +416,8 @@ export const DashboardPage = ({
             {timelockCell(row.governance, 'Nothing read on-chain for this version')}
           </td>
         ) : null}
-        {show('multisigs') ? (
-          <td>{multisigCell(row.governance, 'Nothing read on-chain for this version')}</td>
+        {show('governance') ? (
+          <td>{governanceCell(row.governance, 'Nothing read on-chain for this version')}</td>
         ) : null}
         {show('coverage') ? (
           <td>
@@ -506,8 +512,8 @@ export const DashboardPage = ({
             {timelockCell(group.governance, 'Differs by version, or not read')}
           </td>
         ) : null}
-        {show('multisigs') ? (
-          <td>{multisigCell(group.governance, 'Differs by version, or not read')}</td>
+        {show('governance') ? (
+          <td>{governanceCell(group.governance, 'Differs by version, or not read')}</td>
         ) : null}
         {show('coverage') ? (
           <td>
@@ -708,13 +714,15 @@ export const DashboardPage = ({
             </Info>
           </th>
         ) : null}
-        {show('multisigs') ? (
+        {show('governance') ? (
           <th>
-            Multisigs
-            <Info label="Multisigs">
-              Every multisig among the governance contracts read on-chain, as “signers required of
-              signers”: the threshold the Safe reports and the size of its owner list. The name is
-              the contract’s label on the protocol page, where each is linked to Etherscan.
+            Governance
+            <Info label="Governance">
+              Who decides, as the governance contracts read on-chain report it, one line per body: a
+              token vote (a governor or an Aragon voting app, named by its token), a multisig as
+              “signatures required of signers” (the threshold the Safe reports and the size of its
+              owner list), a single key as EOA, or a holder veto. Only contracts we read are listed;
+              a protocol may have more. Each is linked to Etherscan on the protocol page.
             </Info>
           </th>
         ) : null}
@@ -895,7 +903,7 @@ export const DashboardPage = ({
           <table className="grid">
             <caption className="sr-only">
               {index
-                ? `${shown} protocol versions: size, the governance timelock and multisig thresholds read on-chain, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
+                ? `${shown} protocol versions: size, the governance timelock and the bodies that decide as read on-chain, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
                 : 'The table is empty: the dataset is not loaded.'}
             </caption>
             {head}

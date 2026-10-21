@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { Http } from './http.ts'
+import { Http, explainError, redactUrl } from './http.ts'
 
 let cacheDir: string
 beforeEach(async () => {
@@ -44,6 +44,36 @@ describe('Http', () => {
     expect(await http.getText(URL_, { ttlSeconds: 0 })).toBe('two')
     expect(await http.getText(URL_, { ttlSeconds: 0 })).toBe('two') // the network failed; the copy stands
     expect(calls).toHaveLength(3)
+  })
+
+  it('names the request and the reason when the network fails, and keeps a key out of it', async () => {
+    // What Node's fetch throws on a rejected certificate: a bare "fetch failed" with the reason in cause.
+    const rejected = () => {
+      throw Object.assign(new TypeError('fetch failed'), {
+        cause: Object.assign(new Error('self-signed certificate'), {
+          code: 'DEPTH_ZERO_SELF_SIGNED_CERT',
+        }),
+      })
+    }
+    const { fetch } = scripted([rejected])
+    const http = new Http({ cacheDir, fetch, retries: 0 })
+    await expect(
+      http.getJson('https://rpc.example.com/eth/0123456789abcdef0123456789abcdef?x=1'),
+    ).rejects.toThrow(
+      'GET https://rpc.example.com/eth/***?x=1: fetch failed — self-signed certificate (DEPTH_ZERO_SELF_SIGNED_CERT)',
+    )
+    expect(redactUrl('https://api.example.com/v1/protocols/morpho-blue?apiKey=abc')).toBe(
+      'https://api.example.com/v1/protocols/morpho-blue?apiKey=***',
+    )
+    expect(explainError(Object.assign(new Error('x'), { name: 'TimeoutError' }))).toBe('timed out')
+    expect(
+      explainError(
+        new AggregateError(
+          [Object.assign(new Error('connect ECONNREFUSED'), { code: 'ECONNREFUSED' })],
+          'fetch failed',
+        ),
+      ),
+    ).toBe('fetch failed — connect ECONNREFUSED')
   })
 
   it('offline serves the cache, whatever its age, and refuses the network', async () => {

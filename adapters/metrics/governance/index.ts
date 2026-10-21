@@ -2,7 +2,7 @@ import {
   formatDuration,
   type AdapterContext,
   type Detail,
-  type ExtraMultisig,
+  type ExtraGovernanceBody,
   type MetricAdapter,
 } from '@defi-dna/core'
 import systemsFile from './systems.json' with { type: 'json' }
@@ -46,6 +46,18 @@ const SELECTOR: Record<string, string> = {
   'getGuardian()': '0xa75b87d2',
   'getAddress(bytes32)': '0x21f8a721',
   'getMemberCount()': '0x997072f7',
+  'getVotingConfig(uint8)': '0x1c84e321',
+  'hat()': '0xfe95a5ce',
+  'live()': '0x957aa58c',
+  'GOV()': '0x180cb47f',
+  'token()': '0xfc0c546a',
+  'getVoteDelayTime()': '0x10f66424',
+  'getVotePhase1Time()': '0xfb587022',
+  'getVotePhase2Time()': '0x1e0aa3f2',
+  'getExecuteTime()': '0x0a092a4e',
+  'getProposalQuorum()': '0x8e0add62',
+  'getProposalVetoQuorum()': '0xde249462',
+  'getProposalBond()': '0x1b61cd22',
 }
 
 /* ------------------------------------------------------------- systems.json */
@@ -71,15 +83,41 @@ interface Read {
   headline?: boolean
 }
 
+/** What a contract is, so the page can say who decides; the reads are what prove it. */
+type ContractType =
+  | 'timelock'
+  | 'governor'
+  | 'aragon-voting'
+  | 'dual-governance'
+  | 'safe'
+  | 'holder'
+  | 'registry'
+  | 'council'
+const CONTRACT_TYPES: ContractType[] = [
+  'timelock',
+  'governor',
+  'aragon-voting',
+  'dual-governance',
+  'safe',
+  'holder',
+  'registry',
+  'council',
+]
+
 interface Contract {
   label: string
   address: string
+  type: ContractType
+  /** `governor`, `aragon-voting`, `dual-governance`: the token that votes (or vetoes). */
+  token?: string
   reads: Read[]
 }
 
 interface System {
   name: string
   source: string
+  /** Where token holders vote when no contract reports it: appended to the note, never a value. */
+  voting?: { note: string; url?: string }
   contracts: Contract[]
 }
 
@@ -240,6 +278,7 @@ async function must(rpc: Rpc, contract: Contract, signature: string, args: strin
 
 interface Account {
   text: string
+  eoa?: true
   safe?: { threshold: number; signers: number }
 }
 
@@ -254,7 +293,7 @@ async function describe(rpc: Rpc, address: string): Promise<Account> {
     rpc.call(address, SELECTOR['getThreshold()'] as string),
     rpc.call(address, SELECTOR['getOwners()'] as string),
   ])
-  if (code === '0x') return { text: `${address} (EOA)` }
+  if (code === '0x') return { text: `${address} (EOA)`, eoa: true }
   if (threshold && owners) {
     const safe = { threshold: Number(word(threshold)), signers: addressList(owners).length }
     return { text: `${address} (Safe, ${safe.threshold} of ${safe.signers} signers)`, safe }
@@ -266,8 +305,8 @@ interface Outcome {
   fact: Detail
   /** Set on a headline read: the seconds it reports. */
   delay?: number
-  /** Set when the read found a Safe: the multisig as the dashboard lists it. */
-  multisig?: ExtraMultisig
+  /** Set when the read found a Safe or a single key holding a role. */
+  body?: ExtraGovernanceBody
 }
 
 /** One read of systems.json, performed: the calls it names, decoded as it says. */
@@ -291,7 +330,7 @@ async function perform(rpc: Rpc, contract: Contract, read: Read, block: number):
     case 'seconds':
       return { fact: fact(seconds(value)), ...(read.headline ? { delay: Number(value) } : {}) }
     case 'count':
-      return { fact: fact(`${value} ${read.unit ?? ''}`.trim()) }
+      return { fact: fact(`${value.toLocaleString('en-US')} ${read.unit ?? ''}`.trim()) }
     case 'tokens':
       return { fact: fact(tokens(value, read.unit ?? 'votes')) }
     case 'percent':
@@ -309,8 +348,10 @@ async function perform(rpc: Rpc, contract: Contract, read: Read, block: number):
           `${where} · then eth_getCode, getThreshold() and getOwners() on the address returned`,
         ),
         ...(account.safe
-          ? { multisig: { name: read.fact, address: holder, ...account.safe } }
-          : {}),
+          ? { body: { name: read.fact, address: holder, kind: 'multisig', ...account.safe } }
+          : account.eoa
+            ? { body: { name: read.fact, address: holder, kind: 'eoa' } }
+            : {}),
       }
     }
     case 'signers': {
@@ -318,7 +359,7 @@ async function perform(rpc: Rpc, contract: Contract, read: Read, block: number):
       const signers = addressList(answers[1] ?? first).length
       return {
         fact: fact(`${threshold} of ${signers} signers`),
-        multisig: { name: read.fact, address: contract.address, threshold, signers },
+        body: { name: read.fact, address: contract.address, kind: 'multisig', threshold, signers },
       }
     }
     default:
@@ -336,7 +377,20 @@ interface Reading {
   timelock: Contract | null
   /** Facts in systems.json order: contract by contract, read by read. */
   facts: Detail[]
-  multisigs: ExtraMultisig[]
+  /** Who decides, in the same order: a voting contract as such, a Safe or a key as the reads found it. */
+  bodies: ExtraGovernanceBody[]
+}
+
+/** The body a contract is by its type: a token vote or a holder veto. Safes and keys come from the reads. */
+function bodyOf(contract: Contract): ExtraGovernanceBody[] {
+  if (!CONTRACT_TYPES.includes(contract.type))
+    throw new Error(`systems.json: ${contract.label} has the unknown type "${contract.type}"`)
+  const { label: name, address, token } = contract
+  if (contract.type === 'governor' || contract.type === 'aragon-voting')
+    return [{ name, address, kind: 'token-vote', ...(token ? { token } : {}) }]
+  if (contract.type === 'dual-governance')
+    return [{ name, address, kind: 'veto', ...(token ? { token } : {}) }]
+  return []
 }
 
 export interface Prepared {
@@ -403,7 +457,10 @@ const adapter: MetricAdapter<Prepared> = {
             : null,
           timelock: headline[0]?.contract ?? null,
           facts: results.map((result) => result.fact),
-          multisigs: results.flatMap((result) => (result.multisig ? [result.multisig] : [])),
+          bodies: outcomes.flatMap(({ contract, results }) => [
+            ...bodyOf(contract),
+            ...results.flatMap((result) => (result.body ? [result.body] : [])),
+          ]),
         })
       } catch (error) {
         systems.set(id, error instanceof Error ? error : new Error(String(error)))
@@ -419,7 +476,7 @@ const adapter: MetricAdapter<Prepared> = {
     const reading = prepared.systems.get(id)
     if (!reading) throw new Error(`${id} was not read`)
     if (reading instanceof Error) throw reading
-    const { system, delay, timelock, facts, multisigs } = reading
+    const { system, delay, timelock, facts, bodies } = reading
 
     const observed = `Read from Ethereum mainnet at block ${prepared.block}.`
     const headlines = timelock
@@ -430,13 +487,16 @@ const adapter: MetricAdapter<Prepared> = {
         ? `The headline is the sum of the delays the ${timelock.label} of ${system.name} enforces one after the other (${headlines.join(', ')}) before a scheduled action executes, in seconds. ${observed}`
         : `The headline is the delay the ${timelock.label} of ${system.name} enforces before a scheduled action executes, in seconds. ${observed}`
       : `None of the contracts read for ${system.name} is a timelock, so the headline stays empty; the facts list what they report. ${observed}`
+    const voting = system.voting
+      ? ` ${system.voting.note}${system.voting.url ? ` (${system.voting.url})` : ''}`
+      : ''
 
     return {
       value: delay,
       updatedAt: prepared.observedAt,
       url: `${ETHERSCAN}${(timelock ?? system.contracts[0])?.address}`,
-      note,
-      extra: { facts, ...(multisigs.length > 0 ? { multisigs } : {}) },
+      note: note + voting,
+      extra: { facts, ...(bodies.length > 0 ? { bodies } : {}) },
     }
   },
 }
