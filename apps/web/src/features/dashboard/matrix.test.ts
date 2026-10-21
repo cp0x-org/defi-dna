@@ -63,7 +63,15 @@ const metrics: MetricsFile = {
       fetchedAt: FETCHED,
       extra: {
         facts: [],
-        multisigs: [{ name: 'Protocol Guardian', address: '0x2cfe', threshold: 4, signers: 7 }],
+        bodies: [
+          {
+            name: 'Protocol Guardian',
+            address: '0x2cfe',
+            kind: 'multisig',
+            threshold: 4,
+            signers: 7,
+          },
+        ],
       },
     },
   },
@@ -73,7 +81,15 @@ const metrics: MetricsFile = {
       fetchedAt: FETCHED,
       extra: {
         facts: [],
-        multisigs: [{ name: 'Protocol Guardian', address: '0x2cfe', threshold: 4, signers: 7 }],
+        bodies: [
+          {
+            name: 'Protocol Guardian',
+            address: '0x2cfe',
+            kind: 'multisig',
+            threshold: 4,
+            signers: 7,
+          },
+        ],
       },
     },
   },
@@ -125,9 +141,17 @@ describe('buildRows', () => {
     const governance = (id: string) => rows.find((row) => row.protocol.id === id)?.governance
     expect(governance('aave-v3')).toEqual({
       delay: 86400,
-      multisigs: [{ name: 'Protocol Guardian', address: '0x2cfe', threshold: 4, signers: 7 }],
+      bodies: [
+        {
+          name: 'Protocol Guardian',
+          address: '0x2cfe',
+          kind: 'multisig',
+          threshold: 4,
+          signers: 7,
+        },
+      ],
     })
-    expect(governance('lido')).toEqual({ delay: null, multisigs: [] })
+    expect(governance('lido')).toEqual({ delay: null, bodies: [] })
     expect(governance('curve')).toBeNull()
     // The group row repeats the reading only when every version shares it.
     const groups = groupRows(rows)

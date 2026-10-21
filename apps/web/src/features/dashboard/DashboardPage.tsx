@@ -68,7 +68,7 @@ export const DataGaps = ({
         {metricsError ? (
           <li>
             <b>DefiLlama’s incident figures could not be loaded</b>, and neither could the on-chain
-            governance readings kept beside them. The Incidents, Timelock and Multisigs columns are
+            governance readings kept beside them. The Incidents, Timelock and Governance columns are
             empty because of our failure, not because DefiLlama records none or nothing was read.
           </li>
         ) : null}
@@ -355,7 +355,7 @@ export const DashboardPage = ({
           <table className="grid">
             <caption className="sr-only">
               {index
-                ? `${shown} protocol versions: size, the governance timelock and multisig thresholds read on-chain, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
+                ? `${shown} protocol versions: size, the governance timelock and the bodies that decide as read on-chain, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
                 : 'The table is empty: the dataset is not loaded.'}
             </caption>
             <MatrixHead query={query} onSort={(sort) => setQuery({ ...query, sort })} show={show} />

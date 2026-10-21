@@ -1,5 +1,5 @@
 {
-  "_comment": "Governance contracts read on Ethereum mainnet, one entry per governance system; mapping.json says which system decides over which protocol version. Every value on the site comes from one of the `reads` listed here, so a reviewer can repeat it: open the contract's address on Etherscan (Contract → Read), call the view named in `call` with the `args` listed, and compare. `source` is the protocol's own address registry the addresses were taken from; every read answered on-chain on 2026-10-19. Fields of a read: `call` — the Solidity signature as `cast sig` takes it (a list when one fact needs two views: a Safe's threshold and its owner list); `args` — the arguments in order (a number for a uint, a 0x… word for bytes32, `$previousBlock` for the block before the one the run reads at); `word` — which 32-byte word of the answer is read when the view returns a tuple (0 by default); `as` — how that word reads: `seconds` (a uint, shown as `N s (readable)`), `count` (a uint with `unit`), `tokens` (a uint divided by 1e18, with `unit` the token symbol), `percent` (Aragon's 1e18 = 100%), `address`, `account` (an address, after which eth_getCode and the Safe views getThreshold()/getOwners() are called on it to say whether it is an EOA, a Safe with its threshold, or another contract), `enum` (a uint index into `values`), `signers` (getThreshold() of getOwners().length); `fact` — the name the value appears under; `headline: true` — the delay the headline reports, in seconds (where two delays apply one after the other, as at Lido, both are marked and the headline is their sum).",
+  "_comment": "Governance contracts read on Ethereum mainnet, one entry per governance system; mapping.json says which system decides over which protocol version. Every value on the site comes from one of the `reads` listed here, so a reviewer can repeat it: open the contract's address on Etherscan (Contract → Read), call the view named in `call` with the `args` listed, and compare. `source` is the protocol's own address registry the addresses were taken from; every read answered on-chain on 2026-10-19. Each contract has a `type` — timelock, governor (a token vote), aragon-voting (a token vote), dual-governance (a holder veto), safe, holder (a contract whose privileged role is read), registry, council — and, where a token votes, `token`; the page lists who decides from these. `voting`, on a system whose token holders vote where no contract reports it (Snapshot) or not at all, says so and links the place; the adapter appends it to the note, it is never a value. Fields of a read: `call` — the Solidity signature as `cast sig` takes it (a list when one fact needs two views: a Safe's threshold and its owner list); `args` — the arguments in order (a number for a uint, a 0x… word for bytes32, `$previousBlock` for the block before the one the run reads at); `word` — which 32-byte word of the answer is read when the view returns a tuple (0 by default); `as` — how that word reads: `seconds` (a uint, shown as `N s (readable)`), `count` (a uint with `unit`), `tokens` (a uint divided by 1e18, with `unit` the token symbol), `percent` (Aragon's 1e18 = 100%), `address`, `account` (an address, after which eth_getCode and the Safe views getThreshold()/getOwners() are called on it to say whether it is an EOA, a Safe with its threshold, or another contract), `enum` (a uint index into `values`), `signers` (getThreshold() of getOwners().length); `fact` — the name the value appears under; `headline: true` — the delay the headline reports, in seconds (where two delays apply one after the other, as at Lido, both are marked and the headline is their sum).",
   "aave-governance-v3": {
     "name": "Aave Governance V3",
     "source": "https://github.com/bgd-labs/aave-address-book/blob/main/src/GovernanceV3Ethereum.sol",
@@ -7,6 +7,7 @@
       {
         "label": "Payloads Controller",
         "address": "0xdAbad81aF85554E9ae636395611C58F7eC1aAEc5",
+        "type": "timelock",
         "reads": [
           {
             "call": "getExecutorSettingsByAccessControl(uint8)",
@@ -40,8 +41,55 @@
         ]
       },
       {
+        "label": "Governance V3",
+        "address": "0x9AEE0B04504CeF83A65AC3f0e838D0593BCb2BC7",
+        "type": "governor",
+        "token": "AAVE",
+        "reads": [
+          {
+            "call": "getVotingConfig(uint8)",
+            "args": [1],
+            "word": 1,
+            "as": "seconds",
+            "fact": "Level 1 voting duration"
+          },
+          {
+            "call": "getVotingConfig(uint8)",
+            "args": [1],
+            "word": 2,
+            "as": "count",
+            "unit": "AAVE",
+            "fact": "Level 1 yes threshold"
+          },
+          {
+            "call": "getVotingConfig(uint8)",
+            "args": [1],
+            "word": 4,
+            "as": "count",
+            "unit": "AAVE",
+            "fact": "Level 1 proposition power required"
+          },
+          {
+            "call": "getVotingConfig(uint8)",
+            "args": [2],
+            "word": 1,
+            "as": "seconds",
+            "fact": "Level 2 voting duration"
+          },
+          {
+            "call": "getVotingConfig(uint8)",
+            "args": [2],
+            "word": 2,
+            "as": "count",
+            "unit": "AAVE",
+            "fact": "Level 2 yes threshold"
+          }
+        ]
+      },
+      {
         "label": "Protocol Guardian",
         "address": "0x2CFe3ec4d5a6811f4B8067F0DE7e47DfA938Aa30",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -53,6 +101,7 @@
       {
         "label": "Governance Guardian",
         "address": "0xCe52ab41C40575B072A18C9700091Ccbe4A06710",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -64,8 +113,13 @@
       {
         "label": "Risk Council",
         "address": "0x47c71dFEB55Ebaa431Ae3fbF99Ea50e0D3d30fA8",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Risk Council" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Risk Council"
+          }
         ]
       }
     ]
@@ -77,13 +131,44 @@
       {
         "label": "Sky governance pause (MCD_PAUSE)",
         "address": "0xbE286431454714F511008713973d3B053A2d38f3",
+        "type": "timelock",
         "reads": [
-          { "call": "delay()", "as": "seconds", "fact": "MCD_PAUSE delay", "headline": true }
+          {
+            "call": "delay()",
+            "as": "seconds",
+            "fact": "MCD_PAUSE delay",
+            "headline": true
+          }
+        ]
+      },
+      {
+        "label": "Chief",
+        "address": "0x929d9A1435662357F54AdcF64DcEE4d6b867a6f9",
+        "type": "governor",
+        "token": "SKY",
+        "reads": [
+          {
+            "call": "live()",
+            "as": "enum",
+            "values": ["not live", "live"],
+            "fact": "Chief"
+          },
+          {
+            "call": "hat()",
+            "as": "address",
+            "fact": "Elected hat (spell with most votes)"
+          },
+          {
+            "call": "GOV()",
+            "as": "address",
+            "fact": "Voting token"
+          }
         ]
       },
       {
         "label": "SparkLend freezer multisig",
         "address": "0x44efFc473e81632B12486866AA1678edbb7BEeC3",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -95,6 +180,7 @@
       {
         "label": "ALM relayer multisig",
         "address": "0x8a25A24EDE9482C4Fc0738F99611BE58F1c839AB",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -106,6 +192,7 @@
       {
         "label": "ALM freezer multisig",
         "address": "0x90D8c80C028B4C09C0d8dcAab9bbB057F0513431",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -119,11 +206,22 @@
   "morpho-dao": {
     "name": "Morpho DAO",
     "source": "https://docs.morpho.org/developers/contracts/addresses/",
+    "voting": {
+      "note": "MORPHO holders vote off-chain on Snapshot; the owner Safe executes.",
+      "url": "https://snapshot.box/#/s:morpho.eth"
+    },
     "contracts": [
       {
         "label": "Morpho Blue",
         "address": "0xBBBBBbbBBb9cC5e90e3b3Af64bdAF62C37EEFFCb",
-        "reads": [{ "call": "owner()", "as": "account", "fact": "Morpho Blue owner" }]
+        "type": "holder",
+        "reads": [
+          {
+            "call": "owner()",
+            "as": "account",
+            "fact": "Morpho Blue owner"
+          }
+        ]
       }
     ]
   },
@@ -134,9 +232,56 @@
       {
         "label": "InstaTimelock",
         "address": "0x2386DC45AdDed673317eF068992F19421B481F4c",
+        "type": "timelock",
         "reads": [
-          { "call": "delay()", "as": "seconds", "fact": "InstaTimelock delay", "headline": true },
-          { "call": "admin()", "as": "account", "fact": "InstaTimelock admin" }
+          {
+            "call": "delay()",
+            "as": "seconds",
+            "fact": "InstaTimelock delay",
+            "headline": true
+          },
+          {
+            "call": "admin()",
+            "as": "account",
+            "fact": "InstaTimelock admin"
+          }
+        ]
+      },
+      {
+        "label": "Governor",
+        "address": "0x0204Cd037B2ec03605CFdFe482D8e257C765fA1B",
+        "type": "governor",
+        "token": "FLUID",
+        "reads": [
+          {
+            "call": "votingDelay()",
+            "as": "count",
+            "unit": "blocks",
+            "fact": "Governor voting delay"
+          },
+          {
+            "call": "votingPeriod()",
+            "as": "count",
+            "unit": "blocks",
+            "fact": "Governor voting period"
+          },
+          {
+            "call": "proposalThreshold()",
+            "as": "tokens",
+            "unit": "FLUID",
+            "fact": "Governor proposal threshold"
+          },
+          {
+            "call": "quorumVotes()",
+            "as": "tokens",
+            "unit": "FLUID",
+            "fact": "Governor quorum"
+          },
+          {
+            "call": "token()",
+            "as": "address",
+            "fact": "Voting token"
+          }
         ]
       }
     ]
@@ -144,21 +289,37 @@
   "gearbox-dao": {
     "name": "Gearbox DAO",
     "source": "https://etherscan.io/address/0x523dA3a8961E4dD4f6206DBf7E6c749f51796bb3",
+    "voting": {
+      "note": "GEAR holders vote off-chain on Snapshot; the multisigs behind the ACL execute.",
+      "url": "https://snapshot.box/#/s:gearbox.eth"
+    },
     "contracts": [
       {
         "label": "ACL",
         "address": "0x523dA3a8961E4dD4f6206DBf7E6c749f51796bb3",
-        "reads": [{ "call": "owner()", "as": "account", "fact": "ACL owner" }]
+        "type": "holder",
+        "reads": [
+          {
+            "call": "owner()",
+            "as": "account",
+            "fact": "ACL owner"
+          }
+        ]
       }
     ]
   },
   "euler-dao": {
     "name": "Euler DAO",
     "source": "https://github.com/euler-xyz/euler-interfaces/blob/master/addresses/1/GovernorAddresses.json",
+    "voting": {
+      "note": "EUL holders vote off-chain on Snapshot; the DAO multisig executes through the timelock.",
+      "url": "https://snapshot.box/#/s:eulerdao.eth"
+    },
     "contracts": [
       {
         "label": "eVaultFactory timelock",
         "address": "0xfb034c1C6c7F42171b2d1Cb8486E0f43ED07A968",
+        "type": "timelock",
         "reads": [
           {
             "call": "getMinDelay()",
@@ -171,15 +332,25 @@
       {
         "label": "DAO multisig",
         "address": "0xcAD001c30E96765aC90307669d578219D4fb1DCe",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "DAO multisig" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "DAO multisig"
+          }
         ]
       },
       {
         "label": "Security Council",
         "address": "0xb3b84e8320250Afe7a5fb313Ee32B52982b73c53",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Security Council" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Security Council"
+          }
         ]
       }
     ]
@@ -191,14 +362,26 @@
       {
         "label": "Timelock",
         "address": "0x6d903f6003cca6255D85CcA4D3B5E5146dC33925",
+        "type": "timelock",
         "reads": [
-          { "call": "delay()", "as": "seconds", "fact": "Timelock delay", "headline": true },
-          { "call": "admin()", "as": "account", "fact": "Timelock admin" }
+          {
+            "call": "delay()",
+            "as": "seconds",
+            "fact": "Timelock delay",
+            "headline": true
+          },
+          {
+            "call": "admin()",
+            "as": "account",
+            "fact": "Timelock admin"
+          }
         ]
       },
       {
         "label": "Governor",
         "address": "0x309a862bbC1A00e45506cB8A802D1ff10004c8C0",
+        "type": "governor",
+        "token": "COMP",
         "reads": [
           {
             "call": "votingDelay()",
@@ -230,6 +413,7 @@
       {
         "label": "Community multisig",
         "address": "0xbbf3f1421D886E9b2c5D716B5192aC998af2012c",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -247,14 +431,26 @@
       {
         "label": "Timelock",
         "address": "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
+        "type": "timelock",
         "reads": [
-          { "call": "delay()", "as": "seconds", "fact": "Timelock delay", "headline": true },
-          { "call": "admin()", "as": "account", "fact": "Timelock admin" }
+          {
+            "call": "delay()",
+            "as": "seconds",
+            "fact": "Timelock delay",
+            "headline": true
+          },
+          {
+            "call": "admin()",
+            "as": "account",
+            "fact": "Timelock admin"
+          }
         ]
       },
       {
         "label": "Governor Bravo",
         "address": "0x408ED6354d4973f66138C91495F2f2FCbd8724C3",
+        "type": "governor",
+        "token": "UNI",
         "reads": [
           {
             "call": "votingDelay()",
@@ -291,8 +487,14 @@
       {
         "label": "Ownership voting",
         "address": "0xE478de485ad2fe566d49342Cbd03E49ed7DB3356",
+        "type": "aragon-voting",
+        "token": "veCRV",
         "reads": [
-          { "call": "voteTime()", "as": "seconds", "fact": "Ownership voting duration" },
+          {
+            "call": "voteTime()",
+            "as": "seconds",
+            "fact": "Ownership voting duration"
+          },
           {
             "call": "supportRequiredPct()",
             "as": "percent",
@@ -308,8 +510,14 @@
       {
         "label": "Parameter voting",
         "address": "0xBCfF8B0b9419b9A88c44546519b1e909cF330399",
+        "type": "aragon-voting",
+        "token": "veCRV",
         "reads": [
-          { "call": "voteTime()", "as": "seconds", "fact": "Parameter voting duration" },
+          {
+            "call": "voteTime()",
+            "as": "seconds",
+            "fact": "Parameter voting duration"
+          },
           {
             "call": "supportRequiredPct()",
             "as": "percent",
@@ -325,8 +533,13 @@
       {
         "label": "Emergency DAO",
         "address": "0x467947EE34aF926cF1DCac093870f613C96B1E0c",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Emergency DAO" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Emergency DAO"
+          }
         ]
       }
     ]
@@ -334,26 +547,45 @@
   "balancer-dao": {
     "name": "Balancer DAO",
     "source": "https://docs.balancer.fi/concepts/governance/",
+    "voting": {
+      "note": "BAL holders vote off-chain on Snapshot; the multisigs listed execute.",
+      "url": "https://snapshot.box/#/s:balancer.eth"
+    },
     "contracts": [
       {
         "label": "DAO multisig",
         "address": "0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "DAO multisig" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "DAO multisig"
+          }
         ]
       },
       {
         "label": "Emergency subDAO",
         "address": "0xA29F61256e948F3FB707b4b3B138C5cCb9EF9888",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Emergency subDAO" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Emergency subDAO"
+          }
         ]
       },
       {
         "label": "Treasury",
         "address": "0x0EFcCBb9E2C09Ea29551879bd9Da32362b32fc89",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Treasury" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Treasury"
+          }
         ]
       }
     ]
@@ -361,52 +593,98 @@
   "cow-dao": {
     "name": "CoW DAO",
     "source": "https://docs.cow.fi/cow-protocol/reference/contracts/core",
+    "voting": {
+      "note": "COW holders vote off-chain on Snapshot; the CoW DAO Safe executes.",
+      "url": "https://snapshot.box/#/s:cow.eth"
+    },
     "contracts": [
       {
         "label": "GPv2AllowListAuthentication",
         "address": "0x2c4c28DDBdAc9C5E7055b4C863b72eA0149D8aFE",
-        "reads": [{ "call": "manager()", "as": "account", "fact": "Solver allow-list manager" }]
+        "type": "holder",
+        "reads": [
+          {
+            "call": "manager()",
+            "as": "account",
+            "fact": "Solver allow-list manager"
+          }
+        ]
       }
     ]
   },
   "oneinch": {
     "name": "1inch",
     "source": "https://etherscan.io/address/0x111111125421cA6dc452d289314280a0f8842A65",
+    "voting": {
+      "note": "1INCH holders vote off-chain on Snapshot; the owner Safe executes.",
+      "url": "https://snapshot.box/#/s:1inch.eth"
+    },
     "contracts": [
       {
         "label": "Aggregation Router V6",
         "address": "0x111111125421cA6dc452d289314280a0f8842A65",
-        "reads": [{ "call": "owner()", "as": "account", "fact": "Aggregation Router V6 owner" }]
+        "type": "holder",
+        "reads": [
+          {
+            "call": "owner()",
+            "as": "account",
+            "fact": "Aggregation Router V6 owner"
+          }
+        ]
       }
     ]
   },
   "zerox-settler": {
     "name": "0x Settler",
     "source": "https://github.com/0xProject/0x-settler",
+    "voting": {
+      "note": "0x publishes no token vote over the Settler registry; its owner decides."
+    },
     "contracts": [
       {
         "label": "Settler deployer",
         "address": "0x00000000000004533Fe15556B1E086BB1A72cEae",
-        "reads": [{ "call": "owner()", "as": "account", "fact": "Settler deployer owner" }]
+        "type": "holder",
+        "reads": [
+          {
+            "call": "owner()",
+            "as": "account",
+            "fact": "Settler deployer owner"
+          }
+        ]
       }
     ]
   },
   "yearn-governance": {
     "name": "Yearn governance",
     "source": "https://github.com/yearn/yearn-devdocs/blob/master/src/ethereum/constants.ts",
+    "voting": {
+      "note": "YFI holders vote off-chain on Snapshot; the yChad multisig executes.",
+      "url": "https://snapshot.box/#/s:veyfi.eth"
+    },
     "contracts": [
       {
         "label": "yChad multisig",
         "address": "0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "yChad multisig" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "yChad multisig"
+          }
         ]
       },
       {
         "label": "Brain multisig",
         "address": "0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Brain multisig" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Brain multisig"
+          }
         ]
       }
     ]
@@ -414,10 +692,14 @@
   "pendle-governance": {
     "name": "Pendle governance",
     "source": "https://github.com/pendle-finance/pendle-core-v2-public/blob/main/deployments/1-core.json",
+    "voting": {
+      "note": "Pendle publishes no token vote over these contracts; the governance multisig and the timelock decide."
+    },
     "contracts": [
       {
         "label": "Timelock controller",
         "address": "0x68d8D192dF476bC01895E16b0ED3945673d777AC",
+        "type": "timelock",
         "reads": [
           {
             "call": "getMinDelay()",
@@ -430,6 +712,7 @@
       {
         "label": "Governance multisig",
         "address": "0x8119EC16F0573B7dAc7C0CB94EB504FB32456ee1",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -441,7 +724,14 @@
       {
         "label": "ProxyAdmin",
         "address": "0xA28c08f165116587D4F3E708743B4dEe155c5E64",
-        "reads": [{ "call": "owner()", "as": "account", "fact": "ProxyAdmin owner" }]
+        "type": "holder",
+        "reads": [
+          {
+            "call": "owner()",
+            "as": "account",
+            "fact": "ProxyAdmin owner"
+          }
+        ]
       }
     ]
   },
@@ -452,6 +742,7 @@
       {
         "label": "Emergency Protected Timelock",
         "address": "0xCE0425301C85c5Ea2A0873A2dEe44d78E02D2316",
+        "type": "timelock",
         "reads": [
           {
             "call": "getAfterSubmitDelay()",
@@ -476,6 +767,8 @@
       {
         "label": "Dual Governance",
         "address": "0xC1db28B3301331277e307FDCfF8DE28242A4486E",
+        "type": "dual-governance",
+        "token": "stETH",
         "reads": [
           {
             "call": "getEffectiveState()",
@@ -495,8 +788,14 @@
       {
         "label": "Aragon voting",
         "address": "0x2e59A20f205bB85a89C53f1936454680651E618e",
+        "type": "aragon-voting",
+        "token": "LDO",
         "reads": [
-          { "call": "voteTime()", "as": "seconds", "fact": "Aragon voting duration" },
+          {
+            "call": "voteTime()",
+            "as": "seconds",
+            "fact": "Aragon voting duration"
+          },
           {
             "call": "supportRequiredPct()",
             "as": "percent",
@@ -512,6 +811,7 @@
       {
         "label": "Emergency activation committee",
         "address": "0x8B7854488Fde088d686Ea672B6ba1A5242515f45",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -523,6 +823,7 @@
       {
         "label": "Emergency execution committee",
         "address": "0xC7792b3F2B399bB0EdF53fECDceCeB97FBEB18AF",
+        "type": "safe",
         "reads": [
           {
             "call": ["getThreshold()", "getOwners()"],
@@ -534,8 +835,13 @@
       {
         "label": "Reseal committee",
         "address": "0xFFe21561251c49AdccFad065C94Fb4931dF49081",
+        "type": "safe",
         "reads": [
-          { "call": ["getThreshold()", "getOwners()"], "as": "signers", "fact": "Reseal committee" }
+          {
+            "call": ["getThreshold()", "getOwners()"],
+            "as": "signers",
+            "fact": "Reseal committee"
+          }
         ]
       }
     ]
@@ -547,25 +853,81 @@
       {
         "label": "RocketStorage",
         "address": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+        "type": "registry",
         "reads": [
-          { "call": "getGuardian()", "as": "account", "fact": "RocketStorage guardian" },
+          {
+            "call": "getGuardian()",
+            "as": "account",
+            "fact": "RocketStorage guardian"
+          },
           {
             "call": "getAddress(bytes32)",
             "args": ["0x72244aef95b32bf9d0fd65a6e3212550a59abd181a93cfc66753a7197c36df07"],
             "as": "address",
             "fact": "Security council contract (rocketDAOSecurity)"
+          },
+          {
+            "call": "getAddress(bytes32)",
+            "args": ["0x5aa44b41e40cd45c081364aad7a61c1f32e659ec04db2ab21b4b81488165d219"],
+            "as": "address",
+            "fact": "Protocol DAO proposal settings contract (rocketDAOProtocolSettingsProposals)"
           }
         ]
       },
       {
         "label": "RocketDAOSecurity",
         "address": "0x84aE6D61Df5c6ba7196b5C76Bcb112B8a689aD37",
+        "type": "council",
         "reads": [
           {
             "call": "getMemberCount()",
             "as": "count",
             "unit": "members",
             "fact": "Security council members"
+          }
+        ]
+      },
+      {
+        "label": "RocketDAOProtocolSettingsProposals",
+        "address": "0xf6ad771dfB1cd10c66F688E251b5E5c21cbfDF81",
+        "type": "governor",
+        "token": "RPL",
+        "reads": [
+          {
+            "call": "getVoteDelayTime()",
+            "as": "seconds",
+            "fact": "Protocol DAO vote delay"
+          },
+          {
+            "call": "getVotePhase1Time()",
+            "as": "seconds",
+            "fact": "Protocol DAO vote phase 1"
+          },
+          {
+            "call": "getVotePhase2Time()",
+            "as": "seconds",
+            "fact": "Protocol DAO vote phase 2"
+          },
+          {
+            "call": "getExecuteTime()",
+            "as": "seconds",
+            "fact": "Protocol DAO execution window"
+          },
+          {
+            "call": "getProposalQuorum()",
+            "as": "percent",
+            "fact": "Protocol DAO proposal quorum"
+          },
+          {
+            "call": "getProposalVetoQuorum()",
+            "as": "percent",
+            "fact": "Protocol DAO veto quorum"
+          },
+          {
+            "call": "getProposalBond()",
+            "as": "tokens",
+            "unit": "RPL",
+            "fact": "Protocol DAO proposal bond"
           }
         ]
       }

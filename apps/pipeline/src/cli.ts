@@ -50,7 +50,21 @@ async function runCollect(options: CollectOptions): Promise<void> {
   console.log(`collect${options.offline ? ' (offline)' : ''}`)
   const { records, changes, failures } = await collect(options)
   console.log(`\n  ${records.length} protocols written, ${changes.length} value(s) changed`)
-  for (const failure of failures) console.log(`  failed: ${failure}`)
+  // Failures grouped by adapter: what was skipped, and which cells kept their
+  // previous value, each with the request that failed and why.
+  for (const source of new Set(failures.map((failure) => failure.source))) {
+    const own = failures.filter((failure) => failure.source === source)
+    for (const skipped of own.filter((failure) => failure.protocol === null)) {
+      console.log(`  skipped: ${source} — ${skipped.message}; its column keeps the previous values`)
+    }
+    const cells = own.filter((failure) => failure.protocol !== null)
+    if (cells.length > 0) {
+      console.log(
+        `  failed: ${source} — ${cells.length} of ${records.length} protocols could not be read; those cells keep the previous value`,
+      )
+      for (const cell of cells) console.log(`    ${cell.protocol?.padEnd(14)} ${cell.message}`)
+    }
+  }
 }
 
 async function runBundle(): Promise<void> {

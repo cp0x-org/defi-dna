@@ -22,7 +22,10 @@ const row: Row = {
   tvl: 2e9,
   governance: {
     delay: 172800,
-    multisigs: [{ name: 'Emergency DAO', address: '0x467947ee', threshold: 5, signers: 9 }],
+    bodies: [
+      { name: 'DAO', address: '0x40907540', kind: 'token-vote', token: 'veCRV' },
+      { name: 'Emergency DAO', address: '0x467947ee', kind: 'multisig', threshold: 5, signers: 9 },
+    ],
   },
   feeds: { [feedId]: true },
   tones: { [feedId]: 'inf' },
@@ -57,9 +60,11 @@ describe('dashboard rows and cards', () => {
     expect(html).toContain('Curve')
     expect(html).toContain('NEW · 1')
     expect(html).toContain(`1 of ${feeds.length} feeds have data`)
-    // Governance as the contracts report it: the delay in words and seconds, each multisig as a ratio.
+    // Governance as the contracts report it: the delay in words and seconds, each body by what it is.
     expect(html).toContain('2 days')
     expect(html).toContain('172,800 s')
+    expect(html).toContain('Token vote')
+    expect(html).toContain('veCRV · DAO')
     expect(html).toContain('5 of 9')
     expect(html).toContain('Emergency DAO')
   })
@@ -81,7 +86,7 @@ describe('dashboard rows and cards', () => {
                 onMouseLeave: () => {},
                 onClick: () => {},
               })}
-              show={(key) => key !== 'multisigs' && key !== 'tvl'}
+              show={(key) => key !== 'governance' && key !== 'tvl'}
             />
           </tbody>
         </table>

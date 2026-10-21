@@ -8,7 +8,7 @@ import { Info } from '../../shared/ui/UI.tsx'
  * leads the first. "Updated" is coverage too, but closes the table on its own.
  */
 const COLUMN_GROUPS: Record<'meta' | 'cov' | 'src', ColumnKey[]> = {
-  meta: ['category', 'tvl', 'timelock', 'multisigs'],
+  meta: ['category', 'tvl', 'timelock', 'governance'],
   cov: ['coverage'],
   src: ['signals', 'incidents'],
 }
@@ -94,13 +94,15 @@ export const MatrixHead = ({
             </Info>
           </th>
         ) : null}
-        {show('multisigs') ? (
+        {show('governance') ? (
           <th>
-            Multisigs
-            <Info label="Multisigs">
-              Every multisig among the governance contracts read on-chain, as “signers required of
-              signers”: the threshold the Safe reports and the size of its owner list. The name is
-              the contract’s label on the protocol page, where each is linked to Etherscan.
+            Governance
+            <Info label="Governance">
+              Who decides, as the governance contracts read on-chain report it, one line per body: a
+              token vote (a governor or an Aragon voting app, named by its token), a multisig as
+              “signatures required of signers” (the threshold the Safe reports and the size of its
+              owner list), a single key as EOA, or a holder veto. Only contracts we read are listed;
+              a protocol may have more. Each is linked to Etherscan on the protocol page.
             </Info>
           </th>
         ) : null}

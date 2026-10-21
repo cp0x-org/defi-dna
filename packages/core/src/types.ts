@@ -118,12 +118,21 @@ export interface ExtraFinding {
   description: string | null
 }
 
-/** A multisig read on-chain: how many of its signers an action needs. */
-export interface ExtraMultisig {
+/**
+ * One body that decides, as the governance contracts read report it: a token
+ * vote (a governor or an Aragon voting app), a multisig (a Safe), a single key
+ * (an EOA holding a role) or a holder veto such as Lido's Dual Governance.
+ */
+export interface ExtraGovernanceBody {
+  /** The contract's label, or the role a holder was found behind. */
   name: string
   address: string
-  threshold: number
-  signers: number
+  kind: 'token-vote' | 'multisig' | 'eoa' | 'veto'
+  /** token-vote and veto: the token that votes. */
+  token?: string
+  /** multisig: signatures required, and how many signers there are. */
+  threshold?: number
+  signers?: number
 }
 
 export interface ExtraVault {
@@ -170,8 +179,8 @@ export interface ExtraData {
   vaults?: ExtraVault[]
   incidents?: ExtraIncident[]
   components?: ExtraTvlComponent[]
-  /** Multisigs the governance metric read, each with its threshold and signer count. */
-  multisigs?: ExtraMultisig[]
+  /** Who decides, as the governance metric read it: token votes, multisigs with their thresholds, single keys. */
+  bodies?: ExtraGovernanceBody[]
   /** Optional feed- or metric-supplied paragraphs; never synthesized by us. */
   text?: string[]
 }

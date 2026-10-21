@@ -4,7 +4,7 @@ import { dataCount, type Group } from './rows.ts'
 import { categoryLabel, formatUsd } from '../../shared/lib/view.ts'
 import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
 import { Fresh } from './Fresh.tsx'
-import { MultisigCell, TimelockCell } from './GovernanceCells.tsx'
+import { GovernanceCell, TimelockCell } from './GovernanceCells.tsx'
 
 const feedIds = feeds.map((feed) => feed.id)
 /** The group row repeats a governance reading only when every version shares it. */
@@ -51,9 +51,9 @@ export const GroupRow = ({
           <TimelockCell governance={group.governance} absent={NO_GOVERNANCE} />
         </td>
       ) : null}
-      {show('multisigs') ? (
+      {show('governance') ? (
         <td>
-          <MultisigCell governance={group.governance} absent={NO_GOVERNANCE} />
+          <GovernanceCell governance={group.governance} absent={NO_GOVERNANCE} />
         </td>
       ) : null}
       {show('coverage') ? (

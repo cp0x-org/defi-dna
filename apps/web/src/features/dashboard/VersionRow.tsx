@@ -7,7 +7,7 @@ import { categoryLabel, dateInfo, formatUsd } from '../../shared/lib/view.ts'
 import { CoverageBar, CoverageRing } from '../../shared/ui/Coverage.tsx'
 import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
 import { Fresh } from './Fresh.tsx'
-import { MultisigCell, TimelockCell } from './GovernanceCells.tsx'
+import { GovernanceCell, TimelockCell } from './GovernanceCells.tsx'
 import type { PopKind, PopTarget } from './usePopover.ts'
 
 const feedIds = feeds.map((feed) => feed.id)
@@ -80,9 +80,9 @@ export const VersionRow = ({
           <TimelockCell governance={row.governance} absent={noGovernanceTitle} />
         </td>
       ) : null}
-      {show('multisigs') ? (
+      {show('governance') ? (
         <td>
-          <MultisigCell governance={row.governance} absent={noGovernanceTitle} />
+          <GovernanceCell governance={row.governance} absent={noGovernanceTitle} />
         </td>
       ) : null}
       {show('coverage') ? (

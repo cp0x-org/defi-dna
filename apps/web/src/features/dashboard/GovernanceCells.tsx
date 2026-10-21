@@ -1,8 +1,8 @@
 import type { Governance } from './rows.ts'
 import { formatDuration } from '../../shared/lib/view.ts'
 
-/** Multisigs listed in a cell before the rest is left to the protocol page. */
-const MULTISIGS_SHOWN = 3
+/** Bodies listed in a cell before the rest is left to the protocol page. */
+const BODIES_SHOWN = 3
 
 /** The executor timelock as the contract reports it; a dash says why there is none. */
 export const TimelockCell = ({
@@ -29,8 +29,8 @@ export const TimelockCell = ({
     </>
   )
 
-/** Each multisig read, as "threshold of signers"; the names say which contract. */
-export const MultisigCell = ({
+/** Who decides, one body per line: a token vote by its token, a multisig as "threshold of signers", a key as EOA. */
+export const GovernanceCell = ({
   governance,
   absent,
 }: {
@@ -44,21 +44,27 @@ export const MultisigCell = ({
       </span>
     )
   }
-  const shown = governance.multisigs.slice(0, MULTISIGS_SHOWN)
-  const more = governance.multisigs.length - shown.length
+  const shown = governance.bodies.slice(0, BODIES_SHOWN)
+  const more = governance.bodies.length - shown.length
   return shown.length === 0 ? (
     <>
       <span className="muted">—</span>
-      <small>no multisig read</small>
+      <small>no deciding body among the contracts read</small>
     </>
   ) : (
-    <ul className="msigs">
-      {shown.map((multisig) => (
-        <li key={multisig.address}>
-          <b className="mono">
-            {multisig.threshold} of {multisig.signers}
+    <ul className="bodies">
+      {shown.map((body) => (
+        <li key={`${body.kind}-${body.address}`}>
+          <b className={body.kind === 'multisig' ? 'mono' : undefined}>
+            {body.kind === 'multisig'
+              ? `${body.threshold} of ${body.signers}`
+              : body.kind === 'token-vote'
+                ? 'Token vote'
+                : body.kind === 'veto'
+                  ? 'Veto'
+                  : 'EOA'}
           </b>
-          <small>{multisig.name}</small>
+          <small>{body.token ? `${body.token} · ${body.name}` : body.name}</small>
         </li>
       ))}
       {more > 0 ? (
