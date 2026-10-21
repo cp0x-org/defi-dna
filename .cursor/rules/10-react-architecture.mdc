@@ -1,0 +1,59 @@
+
+---
+description: "Architecture and maintainability conventions for React components, hooks, routes, and application modules"
+globs: "apps/web/src/**/*.ts, apps/web/src/**/*.tsx"
+alwaysApply: false
+---
+
+# React architecture
+
+## General principles
+
+- Prefer the simplest architecture that solves the demonstrated problem.
+- Follow existing project conventions unless they create a concrete maintainability problem.
+- Do not introduce abstractions just to make the code look more layered or enterprise-ready.
+- Every module, component, hook, and service should have a clear responsibility.
+- Separate concerns when doing so makes behavior easier to understand, test, or change.
+
+## Components
+
+- Use function components and JSX/TSX.
+- Keep UI rendering separate from complex business rules and data transformation when this improves readability or reuse.
+- Extract a component when it has a distinct responsibility, meaningful reuse, or an independently understandable interface.
+- Do not extract every JSX fragment into a separate component.
+- Avoid components with many unrelated responsibilities or deeply nested conditional rendering.
+- Keep state as close as practical to the components that use it.
+- Lift state up only when multiple components genuinely need to share it.
+- Avoid long chains of props through components that do not use the passed values.
+
+## Hooks and effects
+
+- Follow the Rules of Hooks.
+- Do not use useEffect to calculate values that can be derived during rendering.
+- Do not use useEffect merely to respond to a user event; handle the event in its event handler.
+- Use effects for synchronization with external systems, subscriptions, timers, or imperative APIs when appropriate.
+- Clean up subscriptions, timers, and other resources created by effects.
+- Do not introduce useMemo or useCallback by default. Use them when there is a concrete reason.
+- Extract a custom hook when it encapsulates reusable stateful behavior or substantially clarifies a component.
+
+## Data and business logic
+
+- Keep API access and data transformation out of presentation components when doing so clarifies responsibilities.
+- Reuse existing API clients and shared data modules before introducing new ones.
+- Treat @defi-dna/data as an existing project dependency: inspect its exports and intended responsibilities before duplicating its functionality.
+- Keep domain-specific calculations in named, testable functions when practical.
+- Do not invent a generic repository, service, or factory layer without a concrete use case.
+
+## Routing
+
+- Follow the existing React Router DOM v6 setup.
+- Keep route definitions and page-level composition easy to discover.
+- Do not change URLs, route nesting, navigation behavior, or route guards during unrelated refactoring.
+- Separate route configuration from page implementation only when it improves clarity.
+
+## File organization
+
+- Group files by meaningful feature or domain when that fits the existing application.
+- Use shared modules for genuinely shared functionality, not as a dumping ground.
+- Avoid circular dependencies.
+- Do not move many files at once without a migration plan and verified import updates.

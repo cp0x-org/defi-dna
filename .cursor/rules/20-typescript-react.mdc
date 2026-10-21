@@ -1,0 +1,24 @@
+
+---
+description: "TypeScript, TSX, props, state, and React API conventions"
+globs: "apps/web/src/**/*.ts, apps/web/src/**/*.tsx"
+alwaysApply: false
+---
+
+# TypeScript and React conventions
+
+- Use TypeScript for new application code. Use TSX for files containing JSX.
+- Preserve the existing TypeScript configuration and compiler strictness. Do not weaken compiler settings to make a refactor pass.
+- Prefer explicit, meaningful types for public component props, shared data structures, and module boundaries.
+- Let TypeScript infer simple local variable types when the inferred type is clear.
+- Prefer type-safe domain models over repeated inline object shapes.
+- Avoid any. If a type is genuinely unknown, prefer unknown and narrow it safely.
+- Do not use type assertions to silence errors without understanding the underlying data.
+- Handle null, undefined, and optional properties intentionally.
+- Prefer discriminated unions when they make mutually exclusive states explicit.
+- Use named types or interfaces when they improve readability or are reused.
+- Do not create a separate type file for every small component.
+- Use React's supported types for component props, event handlers, and refs when needed.
+- Do not use deprecated React patterns or class components for new code unless a concrete compatibility requirement exists.
+- Prefer const arrow functions for ordinary local functions and exported helpers. Use function declarations when they materially improve recursion, hoisting, or readability.
+- Avoid non-null assertions unless the invariant is established and documented.

@@ -41,6 +41,10 @@
   --source-ink-1: #795997;
   --source-2: #e5f1ed;
   --source-ink-2: #2d7860;
+  --source-3: #eaf0e6;
+  --source-ink-3: #55703f;
+  --source-4: #f6ebe4;
+  --source-ink-4: #90603e;
 }
 
 :root[data-theme='dark'] {
@@ -84,36 +88,6 @@
   --source-ink-1: #d0b6e9;
   --source-2: #254437;
   --source-ink-2: #a0dbc3;
-}
-
-/* Tones that render a value's position inside the scale its own feed published.
-   Never our judgement — see CHARTER.md — and switchable off in every view. */
-:root {
-  --tone-low: #1c7a52;
-  --tone-low-tint: #e8f4ee;
-  --tone-low-line: #c5e3d3;
-  --tone-medium: #906012;
-  --tone-medium-tint: #fbf5e8;
-  --tone-medium-line: #ebdcbc;
-  --tone-high: #b0403a;
-  --tone-high-tint: #fbeeed;
-  --tone-high-line: #f0cfcc;
-  --source-3: #eaf0e6;
-  --source-ink-3: #55703f;
-  --source-4: #f6ebe4;
-  --source-ink-4: #90603e;
-}
-
-:root[data-theme='dark'] {
-  --tone-low: #7bd1b7;
-  --tone-low-tint: #203c36;
-  --tone-low-line: #345b4e;
-  --tone-medium: #e0bb74;
-  --tone-medium-tint: #3a3425;
-  --tone-medium-line: #5e5135;
-  --tone-high: #e99a94;
-  --tone-high-tint: #3a2725;
-  --tone-high-line: #5f3f3c;
   --source-3: #2f3d2a;
   --source-ink-3: #b5cfa2;
   --source-4: #453529;
@@ -133,6 +107,7 @@
   --neg: #b0403a;
   --neg-seg: #c9534b;
   --neg-tint: #fbeeed;
+  --neg-line: #f0cfcc;
   --none-seg: #d5dde4;
   --pop-shadow: 0 8px 32px #0002;
 }
@@ -147,6 +122,7 @@
   --neg: #e99a94;
   --neg-seg: #e0776f;
   --neg-tint: #3a2725;
+  --neg-line: #5f3f3c;
   --none-seg: #34495a;
   --pop-shadow: 0 10px 36px #0009;
 }

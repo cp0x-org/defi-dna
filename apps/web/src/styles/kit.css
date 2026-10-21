@@ -2,8 +2,9 @@
  * Pieces shared by the dashboard and the protocol page.
  *
  * These pages are denser than the reading pages, so their base size is
- * set on `.page`. The only status colours are coverage states — data, no
- * data, our own read failure — never a reading of what a feed said.
+ * set on `.page`. A `st-*` colour other than neutral or grey is the feed's
+ * own characterization, read with the rule in its feed.json (see
+ * lib/status.ts); no data and our own read failure stay grey.
  * ------------------------------------------------------------------ */
 
 .page {

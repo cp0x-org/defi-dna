@@ -89,7 +89,7 @@ CI runs the last line. The pre-commit hook runs lint-staged and typecheck.
   does not match stays neutral. The registry rejects a rule it cannot apply;
   `readStatus` (`packages/core/src/status.ts`) applies it, and `bundle` copies
   the reading — never the value — into `index.json` as `readings`. Add the
-  feed's real headlines to `apps/web/src/lib/status.test.ts`.
+  feed's real headlines to `apps/web/src/shared/lib/status.test.ts`.
 - `detailStatus` in `feed.json`: the same shape, applied to the `value` of each
   `details` entry on the protocol page, for a feed that grades parts of its
   assessment on its own scale (DeFiPunk’d's slices). It colours that entry's
@@ -120,7 +120,7 @@ CI runs the last line. The pre-commit hook runs lint-staged and typecheck.
 - Comments explain why, not what. Keep the existing tone of the docs.
 - Documentation to update when a feed is added: README "Sources and
   contributions", `.env.example` and `refresh-data.yml` if a key is needed,
-  and the prose in `apps/web/src/pages/MethodologyPage.tsx` if it names feeds.
+  and the prose in `apps/web/src/features/reading/MethodologyPage.tsx` if it names feeds.
 
 ## Do not
 
