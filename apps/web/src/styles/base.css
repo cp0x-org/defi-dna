@@ -409,6 +409,21 @@ code {
   font-size: 24px;
   letter-spacing: -1px;
 }
+/* Icon tiles: no avatar-* slot. Letter fallbacks keep the pastel avatar-0…4 colours. */
+.protocol-avatar.has-icon {
+  border-color: transparent;
+  padding: 2px;
+  overflow: hidden;
+}
+.protocol-avatar.large.has-icon {
+  padding: 8px;
+}
+.protocol-avatar.has-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
 .source-mark {
   display: inline-flex;
   width: 27px;
@@ -422,6 +437,24 @@ code {
   color: var(--ink);
   font-size: 12px;
   font-weight: 800;
+}
+.source-mark.has-icon {
+  padding: 3px;
+  overflow: hidden;
+  background: var(--subtle);
+  border-color: var(--line);
+}
+.source-mark.large.has-icon {
+  padding: 5px;
+}
+.source-mark.has-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+:root[data-theme='dark'] .source-mark.has-icon img.mono {
+  filter: invert(1);
 }
 
 .info {
