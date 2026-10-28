@@ -1,0 +1,189 @@
+{
+  "generated": "2026-10-28T15:01:13Z",
+  "chain": "ethereum",
+  "methodology": "https://imal1ice.github.io/admin-feed/control/methodology.html",
+  "protocols": {
+    "aave-v3": {
+      "name": "Aave Governance V3",
+      "source": "https://github.com/bgd-labs/aave-address-book/blob/main/src/GovernanceV3Ethereum.sol",
+      "value": "2 control changes \u00b7 19 governance executions in 90 days",
+      "note": null,
+      "updatedAt": "2026-10-28",
+      "lastEvent": "2026-10-28",
+      "controlChanges": 2,
+      "governanceExecutions": 19,
+      "window": {
+        "days": 90,
+        "from": "2026-07-30"
+      },
+      "contracts": [
+        {
+          "address": "0xdAbad81aF85554E9ae636395611C58F7eC1aAEc5",
+          "label": "Payloads Controller",
+          "type": "timelock",
+          "since": "2026-10-21",
+          "events": 19,
+          "last": "2026-10-28"
+        },
+        {
+          "address": "0x9AEE0B04504CeF83A65AC3f0e838D0593BCb2BC7",
+          "label": "Governance V3",
+          "type": "governor",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0x2CFe3ec4d5a6811f4B8067F0DE7e47DfA938Aa30",
+          "label": "Protocol Guardian",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0xCe52ab41C40575B072A18C9700091Ccbe4A06710",
+          "label": "Governance Guardian",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0x47c71dFEB55Ebaa431Ae3fbF99Ea50e0D3d30fA8",
+          "label": "Risk Council",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 2,
+          "last": "2026-10-22"
+        },
+        {
+          "address": "0x5300A1a15135EA4dc7aD5a167152C01EFc9b192A",
+          "label": "Executor Lvl 1",
+          "type": "executor",
+          "since": "2026-10-21",
+          "events": 0,
+          "last": null
+        }
+      ],
+      "system": "aave-governance-v3",
+      "url": "https://imal1ice.github.io/admin-feed/control/#aave-governance-v3"
+    },
+    "balancer-v2": {
+      "name": "Balancer DAO",
+      "source": "https://docs.balancer.fi/concepts/governance/",
+      "value": "2 control changes in 90 days",
+      "note": "Governed through Safes or acting contracts directly: a Safe transaction is not classified, so only control changes are counted.",
+      "updatedAt": "2026-10-28",
+      "lastEvent": "2026-09-10",
+      "controlChanges": 2,
+      "governanceExecutions": 0,
+      "window": {
+        "days": 90,
+        "from": "2026-07-30"
+      },
+      "contracts": [
+        {
+          "address": "0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",
+          "label": "DAO multisig",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0xA29F61256e948F3FB707b4b3B138C5cCb9EF9888",
+          "label": "Emergency subDAO",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0x0EFcCBb9E2C09Ea29551879bd9Da32362b32fc89",
+          "label": "Treasury",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 2,
+          "last": "2026-09-10"
+        }
+      ],
+      "system": "balancer-dao",
+      "url": "https://imal1ice.github.io/admin-feed/control/#balancer-dao"
+    },
+    "lido": {
+      "name": "Lido DAO",
+      "source": "https://docs.lido.fi/deployed-contracts/",
+      "value": null,
+      "note": "ownerwatch decodes Lido's Aragon votes but not yet Dual Governance or the Emergency Protected Timelock, through which Lido proposals execute; nothing is counted.",
+      "updatedAt": "2026-10-28",
+      "lastEvent": "2026-10-19",
+      "controlChanges": 0,
+      "governanceExecutions": 3,
+      "window": {
+        "days": 90,
+        "from": "2026-07-30"
+      },
+      "contracts": [
+        {
+          "address": "0xCE0425301C85c5Ea2A0873A2dEe44d78E02D2316",
+          "label": "Emergency Protected Timelock",
+          "type": "timelock",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0xC1db28B3301331277e307FDCfF8DE28242A4486E",
+          "label": "Dual Governance",
+          "type": "dual-governance",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0x2e59A20f205bB85a89C53f1936454680651E618e",
+          "label": "Aragon voting",
+          "type": "aragon-voting",
+          "since": "2026-10-21",
+          "events": 3,
+          "last": "2026-10-19"
+        },
+        {
+          "address": "0x8B7854488Fde088d686Ea672B6ba1A5242515f45",
+          "label": "Emergency activation committee",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0xC7792b3F2B399bB0EdF53fECDceCeB97FBEB18AF",
+          "label": "Emergency execution committee",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0xFFe21561251c49AdccFad065C94Fb4931dF49081",
+          "label": "Reseal committee",
+          "type": "safe",
+          "since": "2026-10-28",
+          "events": 0,
+          "last": null
+        },
+        {
+          "address": "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c",
+          "label": "Aragon Agent",
+          "type": "agent",
+          "since": "2026-10-21",
+          "events": 0,
+          "last": null
+        }
+      ],
+      "system": "lido-dao",
+      "url": "https://imal1ice.github.io/admin-feed/control/#lido-dao"
+    }
+  }
+}
