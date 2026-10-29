@@ -8,6 +8,7 @@ import {
   type ReactNode,
   type MutableRefObject,
 } from 'react'
+import { FEED_MONOCHROME, feedIconUrl, protocolIconUrl } from '../lib/icons.ts'
 import { colourSlot, safeUrl } from '../lib/view.ts'
 import { IconExternal, IconInfo } from './Icons.tsx'
 
@@ -171,28 +172,40 @@ export const ProtocolAvatar = ({
   name: string
   id: string
   large?: boolean
-}) => (
-  <span
-    className={`protocol-avatar avatar-${colourSlot(id)}${large ? ' large' : ''}`}
-    aria-hidden="true"
-  >
-    {name
-      .replace(/\s+(Finance|Protocol)$/i, '')
-      .split(/\s+/)
-      .map((s) => s[0])
-      .join('')
-      .slice(0, 2)}
-  </span>
-)
+}) => {
+  const icon = protocolIconUrl(id)
+  const initials = name
+    .replace(/\s+(Finance|Protocol)$/i, '')
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+  return (
+    <span
+      className={`protocol-avatar${icon ? ' has-icon' : ` avatar-${colourSlot(id)}`}${large ? ' large' : ''}`}
+      aria-hidden="true"
+    >
+      {icon ? <img src={icon} alt="" /> : initials}
+    </span>
+  )
+}
 
-export const SourceMark = ({ id, large = false }: { id: string; large?: boolean }) => (
-  <span
-    className={`source-mark source-tone-${colourSlot(id)}${large ? ' large' : ''}`}
-    aria-hidden="true"
-  >
-    {id.slice(0, 1).toUpperCase()}
-  </span>
-)
+export const SourceMark = ({ id, large = false }: { id: string; large?: boolean }) => {
+  const icon = feedIconUrl(id)
+  const mono = Boolean(icon && FEED_MONOCHROME.has(id))
+  return (
+    <span
+      className={`source-mark${icon ? ' has-icon' : ` source-tone-${colourSlot(id)}`}${large ? ' large' : ''}`}
+      aria-hidden="true"
+    >
+      {icon ? (
+        <img src={icon} alt="" className={mono ? 'mono' : undefined} />
+      ) : (
+        id.slice(0, 1).toUpperCase()
+      )}
+    </span>
+  )
+}
 
 /** One field of a feed's record, labelled with the field it came from. */
 export const Block = ({
