@@ -85,22 +85,22 @@ h4 {
 }
 h1 {
   font-size: 44px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: -1.8px;
 }
 h2 {
   font-size: 23px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: -0.6px;
 }
 h3 {
   font-size: 17px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: -0.3px;
 }
 h4 {
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 700;
 }
 svg {
   flex-shrink: 0;
@@ -146,7 +146,7 @@ code {
   gap: 8px;
   color: var(--muted);
   font-size: 11px;
-  font-weight: 750;
+  font-weight: 700;
   line-height: 1.5;
   letter-spacing: 1.4px;
   text-transform: uppercase;
@@ -700,7 +700,7 @@ details[open] > summary > svg:last-child {
  * The design above is source-agnostic; these rules cover what this
  * dataset carries and the earlier interface did not: source marks,
  * collection states, the registry table and the change log. Nothing here
- * introduces a colour of our own — see CHARTER.md.
+ * introduces a colour of our own � see CHARTER.md.
  * ------------------------------------------------------------------ */
 
 .source-tone-0 {

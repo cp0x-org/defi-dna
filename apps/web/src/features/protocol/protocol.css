@@ -18,7 +18,7 @@
 }
 .crumbs [aria-current] {
   color: var(--ink);
-  font-weight: 650;
+  font-weight: 600;
 }
 
 /* ------------------------------------------------------------------ identity */
@@ -41,7 +41,7 @@
 }
 .id-title h1 {
   font-size: 30px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: -1.2px;
   line-height: 1.1;
 }
@@ -147,7 +147,7 @@ a.m:hover .m-v {
   font-size: 12px;
 }
 .cov-head .ttl {
-  font-weight: 750;
+  font-weight: 700;
 }
 .cov-head .ttl b {
   font-family: var(--mono);
@@ -416,7 +416,7 @@ a.m:hover .m-v {
   font-size: 12px;
 }
 .tl .what b {
-  font-weight: 750;
+  font-weight: 700;
 }
 .tl .det {
   font-size: 11px;
@@ -600,7 +600,7 @@ a.m:hover .m-v {
 .rs-st {
   text-align: right;
   font-size: 10px;
-  font-weight: 750;
+  font-weight: 700;
   white-space: nowrap;
 }
 .rs-st small {
@@ -646,7 +646,7 @@ a.m:hover .m-v {
 }
 .src-title h2 {
   font-size: 18px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: -0.4px;
 }
 .src-meta {
@@ -660,7 +660,7 @@ a.m:hover .m-v {
 }
 .src-meta b {
   color: var(--ink);
-  font-weight: 650;
+  font-weight: 600;
 }
 .src-meta b.older {
   color: var(--amber);
@@ -718,7 +718,7 @@ a.m:hover .m-v {
   gap: 8px;
 }
 .tbl q {
-  quotes: '“' '”';
+  quotes: '�' '�';
 }
 
 .blocks {
@@ -754,7 +754,7 @@ a.m:hover .m-v {
 }
 .b-title {
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 700;
   margin-bottom: 5px;
   letter-spacing: normal;
 }

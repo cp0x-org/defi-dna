@@ -87,7 +87,7 @@
   align-items: center;
   gap: 5px;
   font-size: 10px;
-  font-weight: 750;
+  font-weight: 700;
   padding: 2px 7px;
   border-radius: 4px;
   white-space: nowrap;
@@ -243,7 +243,7 @@
   border-radius: 6px;
   background: var(--surface);
   font-size: 12px;
-  font-weight: 650;
+  font-weight: 600;
   white-space: nowrap;
 }
 .linkbtn:hover {
@@ -356,7 +356,7 @@ a.tag:hover {
 }
 .card-h h2 {
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 700;
   letter-spacing: -0.2px;
 }
 .card-h .aside {
@@ -438,7 +438,7 @@ a.tag:hover {
   background: var(--subtle);
   color: var(--muted);
   font-size: 11px;
-  font-weight: 650;
+  font-weight: 600;
 }
 .tbl tbody tr:last-child td {
   border-bottom: 0;

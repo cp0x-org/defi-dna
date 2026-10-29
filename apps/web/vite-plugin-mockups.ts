@@ -52,7 +52,7 @@ const page = (title: string, body: string, head = ''): string =>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 ${NOINDEX}
 ${head}<title>${title}</title>
-<style>body{margin:0;padding:48px;font:15px/1.6 system-ui,sans-serif;background:#111c24;color:#e3edf2}a{color:#7bd1b7}li{margin:6px 0}code{color:#9fb1bd}</style>
+<style>body{margin:0;padding:48px;font:15px/1.6 system-ui,sans-serif;background:#16161f;color:#ededed}a{color:#28e5e5}li{margin:6px 0}code{color:#7a8d9a}</style>
 </head>
 <body>${body}</body>
 </html>
