@@ -1,0 +1,10 @@
+{
+  "id": "ownerwatch",
+  "name": "ownerwatch",
+  "topic": "Admin events",
+  "focus": "Control changes (owners, roles, upgrades, delays, Safe signers and thresholds) and executed governance actions recorded on each protocol’s governance contracts over the last 90 days, read from on-chain events. Counts of events, not a rating.",
+  "assesses": "protocol",
+  "homepage": "https://imal1ice.github.io/admin-feed/control/",
+  "methodologyUrl": "https://imal1ice.github.io/admin-feed/control/methodology.html",
+  "enabled": true
+}

@@ -130,8 +130,10 @@ Risk feeds currently include [DeFiScan](https://www.defiscan.info),
 [Philidor](https://analytics.philidor.io),
 [pigi.finance](https://pigi.finance),
 [DeFi Scoring](https://defiscoring.com),
-[DeFiPunk'd](https://defipunkd.com) (five risk slices per deployment) and
-[Credora](https://www.credora.network) (vault ratings). Independent
+[DeFiPunk'd](https://defipunkd.com) (five risk slices per deployment),
+[Credora](https://www.credora.network) (vault ratings) and
+[ownerwatch](https://imal1ice.github.io/admin-feed/control/) (admin events
+counted on each protocol's governance contracts). Independent
 measurements come from DefiLlama's Ethereum TVL and incident history, and from
 Ethereum mainnet itself: the governance metric reads timelock delays, multisig
 thresholds and voting parameters over JSON-RPC (`ETH_RPC_URL`; a public
