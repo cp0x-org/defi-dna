@@ -52,24 +52,28 @@ export const MatrixHead = ({
       <tr className="grp">
         <th colSpan={1 + shownIn('meta')} className="g-meta">
           <Prov kind="meta">Protocol metadata</Prov>
-          <span className="grp-note">registry · TVL via DefiLlama · governance read on-chain</span>
+          <Info label="Protocol metadata">
+            Registry facts, TVL via DefiLlama, and governance parameters read on-chain.
+          </Info>
         </th>
         {shownIn('cov') > 0 ? (
           <th colSpan={shownIn('cov')} className="g-cov">
             <Prov kind="cov">Data coverage</Prov>
-            <span className="grp-note">facts about our collection, not the protocol</span>
+            <Info label="Data coverage">Facts about our collection, not the protocol.</Info>
           </th>
         ) : null}
         {shownIn('src') > 0 ? (
           <th colSpan={shownIn('src')} className="g-src">
             <Prov kind="src">Source-reported</Prov>
-            <span className="grp-note">what sources published — not verified or scored by us</span>
+            <Info label="Source-reported">
+              What sources published — not verified or scored by us.
+            </Info>
           </th>
         ) : null}
         {show('updated') ? (
           <th className="g-cov">
             <Prov kind="cov">Data coverage</Prov>
-            <span className="grp-note">when a feed’s value last moved</span>
+            <Info label="Data coverage">When a feed’s value last moved.</Info>
           </th>
         ) : null}
         <th />
@@ -109,25 +113,29 @@ export const MatrixHead = ({
         {show('coverage') ? (
           <th aria-sort={ariaSort('coverage-desc')}>
             {sortButton('coverage-desc', 'Coverage')}
-            <span className="th-sub">feeds with data · hover for the list</span>
+            <Info label="Coverage">
+              How many feeds have data for this version. Hover a cell for the list.
+            </Info>
           </th>
         ) : null}
         {show('signals') ? (
           <th aria-sort={ariaSort('signals-desc')}>
             {sortButton('signals-desc', 'Signals')}
-            <span className="th-sub">negative · neutral/info · positive</span>
+            <Info label="Signals">
+              Counts of feeds by their own characterization: negative, neutral/info, positive.
+            </Info>
           </th>
         ) : null}
         {show('incidents') ? (
           <th aria-sort={ariaSort('incidents-desc')}>
             {sortButton('incidents-desc', 'Incidents')}
-            <span className="th-sub">recorded by DefiLlama</span>
+            <Info label="Incidents">Incidents recorded by DefiLlama for this version.</Info>
           </th>
         ) : null}
         {show('updated') ? (
           <th aria-sort={ariaSort('updated-desc')}>
             {sortButton('updated-desc', 'Updated')}
-            <span className="th-sub">latest move in a feed’s value</span>
+            <Info label="Updated">The latest move in a feed’s value, from our run log.</Info>
           </th>
         ) : null}
         <th>

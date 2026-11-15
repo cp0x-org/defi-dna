@@ -32,6 +32,9 @@ export const ExternalLink = ({
   )
 }
 
+const INFO_OPEN_DELAY_MS = 200
+const INFO_CLOSE_DELAY_MS = 100
+
 export const Info = ({
   label,
   children,
@@ -42,52 +45,89 @@ export const Info = ({
   icon?: ReactNode
 }) => {
   const [open, setOpen] = useState(false)
-  const [position, setPosition] = useState({ left: 16, top: 16 })
-  const ref = useRef<HTMLSpanElement>(null)
+  const [style, setStyle] = useState<CSSProperties>({ visibility: 'hidden' })
+  const rootRef = useRef<HTMLSpanElement>(null)
+  const popoverRef = useRef<HTMLSpanElement>(null)
+  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const id = useId()
-  useEffect(() => {
-    if (!open) return
-    const close = (event: PointerEvent) => {
-      if (!ref.current?.contains(event.target as Node)) setOpen(false)
+
+  const clearTimers = () => {
+    if (openTimer.current) {
+      clearTimeout(openTimer.current)
+      openTimer.current = null
     }
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setOpen(false)
-        ref.current?.querySelector('button')?.focus()
-      }
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
     }
-    const reposition = () => {
-      const rect = ref.current?.getBoundingClientRect()
-      if (!rect) return
-      const popoverHeight =
-        ref.current?.querySelector('.info-popover')?.getBoundingClientRect().height ?? 180
+  }
+
+  const showSoon = () => {
+    clearTimers()
+    openTimer.current = setTimeout(() => setOpen(true), INFO_OPEN_DELAY_MS)
+  }
+
+  const hideSoon = () => {
+    clearTimers()
+    closeTimer.current = setTimeout(() => setOpen(false), INFO_CLOSE_DELAY_MS)
+  }
+
+  const hideNow = () => {
+    clearTimers()
+    setOpen(false)
+  }
+
+  useEffect(() => () => clearTimers(), [])
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setStyle({ visibility: 'hidden' })
+      return
+    }
+    const place = () => {
+      const trigger = rootRef.current
+      const popover = popoverRef.current
+      if (!trigger || !popover) return
+      const rect = trigger.getBoundingClientRect()
       const width = Math.min(310, window.innerWidth - 32)
-      setPosition({
+      const height = popover.offsetHeight
+      setStyle({
+        visibility: 'visible',
         left: Math.max(16, Math.min(rect.right - width, window.innerWidth - width - 16)),
         top:
-          rect.bottom + popoverHeight + 16 > window.innerHeight
-            ? Math.max(16, rect.top - popoverHeight - 8)
+          rect.bottom + height + 16 > window.innerHeight
+            ? Math.max(16, rect.top - height - 8)
             : rect.bottom + 8,
       })
     }
-    reposition()
-    document.addEventListener('pointerdown', close)
-    document.addEventListener('keydown', escape)
-    window.addEventListener('resize', reposition)
-    window.addEventListener('scroll', reposition, true)
+    place()
+    window.addEventListener('resize', place)
+    window.addEventListener('scroll', place, true)
     return () => {
-      document.removeEventListener('pointerdown', close)
-      document.removeEventListener('keydown', escape)
-      window.removeEventListener('resize', reposition)
-      window.removeEventListener('scroll', reposition, true)
+      window.removeEventListener('resize', place)
+      window.removeEventListener('scroll', place, true)
     }
   }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') hideNow()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open])
+
   return (
     <span
       className="info"
-      ref={ref}
+      ref={rootRef}
+      onMouseEnter={showSoon}
+      onMouseLeave={hideSoon}
+      onFocus={showSoon}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false)
+        if (!event.currentTarget.contains(event.relatedTarget)) hideNow()
       }}
     >
       <button
@@ -95,17 +135,16 @@ export const Info = ({
         type="button"
         aria-label={label}
         aria-expanded={open}
-        aria-controls={id}
-        onClick={() => setOpen(!open)}
+        aria-describedby={open ? id : undefined}
       >
         {icon}
       </button>
-      {open && (
-        <span className="info-popover" id={id} role="note" style={position}>
+      {open ? (
+        <span className="info-popover" id={id} role="tooltip" ref={popoverRef} style={style}>
           <strong>{label}</strong>
           {children}
         </span>
-      )}
+      ) : null}
     </span>
   )
 }

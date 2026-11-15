@@ -70,8 +70,7 @@
   color: var(--muted);
 }
 .search:focus-within {
-  outline: 2px solid var(--focus);
-  outline-offset: 1px;
+  border-color: var(--line-strong);
 }
 .search svg {
   width: 16px;
@@ -104,16 +103,71 @@
   padding: 0 4px 0 10px;
   border: 1px solid var(--line);
   border-radius: 7px;
+  background: var(--surface);
   font-size: 12px;
   color: var(--muted);
 }
-.sort select {
+.sort:hover {
+  border-color: var(--line-strong);
+}
+.sort-label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.sort-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 6px 0 4px;
   border: 0;
+  border-radius: 5px;
   background: transparent;
   font-size: 12px;
   font-weight: 700;
   color: var(--ink);
-  height: 32px;
+  white-space: nowrap;
+}
+.sort-trigger:hover {
+  color: var(--accent);
+}
+.sort-trigger[aria-expanded='true'] {
+  color: var(--accent);
+}
+.sort-trigger svg {
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+.sort-trigger[aria-expanded='true'] svg {
+  color: var(--accent);
+  transform: rotate(180deg);
+}
+.pop-list.sort-options {
+  min-width: 220px;
+  padding: 6px;
+}
+.pop-list.sort-options li {
+  padding: 0;
+}
+.pop-list.sort-options button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 7px 9px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+}
+.pop-list.sort-options button:hover {
+  background: var(--subtle);
+}
+.pop-list.sort-options button.on {
+  background: var(--accent-tint);
+  color: var(--accent);
 }
 .spacer {
   flex: 1;
@@ -236,9 +290,6 @@
   overflow-x: auto;
   scrollbar-width: thin;
 }
-.table-scroll:focus-visible {
-  outline-offset: -2px;
-}
 table.grid {
   width: 100%;
   border-collapse: collapse;
@@ -269,12 +320,6 @@ table.grid {
 }
 .grid thead tr.grp th.g-src {
   box-shadow: inset 0 -2px 0 var(--source-ink-1);
-}
-.grp-note {
-  font-size: 10px;
-  color: var(--muted);
-  font-weight: 500;
-  margin-left: 6px;
 }
 .grid thead tr.cols th {
   background: var(--subtle);
@@ -307,13 +352,6 @@ table.grid {
 }
 .th-sort.sorted .arr {
   opacity: 1;
-}
-.th-sub {
-  display: block;
-  font-size: 9px;
-  font-weight: 500;
-  color: var(--faint);
-  margin-top: 1px;
 }
 .grid tbody tr {
   cursor: pointer;
@@ -660,8 +698,9 @@ button.hit:hover {
   background: var(--surface);
   border-left: 1px solid var(--line-strong);
   box-shadow: var(--pop-shadow);
-  transform: translateX(105%);
+  transform: translateX(100%);
   visibility: hidden;
+  pointer-events: none;
   transition:
     transform 0.18s ease,
     visibility 0s 0.18s;
@@ -669,6 +708,7 @@ button.hit:hover {
 .drawer.open {
   transform: none;
   visibility: visible;
+  pointer-events: auto;
   transition: transform 0.18s ease;
 }
 .dr-head {
@@ -766,10 +806,6 @@ button.hit:hover {
 }
 .chk input:checked + span em {
   color: var(--accent);
-}
-.chk input:focus-visible + span {
-  outline: 2px solid var(--focus);
-  outline-offset: 1px;
 }
 .srcgrid {
   display: grid;

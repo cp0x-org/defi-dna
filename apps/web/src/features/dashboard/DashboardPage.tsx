@@ -36,7 +36,7 @@ import { MatrixHead } from './MatrixHead.tsx'
 import { PopCard } from './PopCard.tsx'
 import { POP_LABELS, usePopover } from './usePopover.ts'
 import { VersionRow } from './VersionRow.tsx'
-import { IconFilters, IconSearch } from '../../shared/ui/Icons.tsx'
+import { IconChevron, IconFilters, IconSearch } from '../../shared/ui/Icons.tsx'
 import { LoadState } from '../../shared/ui/LoadState.tsx'
 import { Anchored } from '../../shared/ui/UI.tsx'
 
@@ -114,11 +114,14 @@ export const DashboardPage = ({
   const [drawer, setDrawer] = useState(false)
   const [hidden, setHidden] = useState<Set<ColumnKey>>(readHiddenColumns)
   const [columnsMenu, setColumnsMenu] = useState<HTMLElement | null>(null)
+  const [sortMenu, setSortMenu] = useState<HTMLElement | null>(null)
   const columnsCard = useRef<HTMLDivElement | null>(null)
+  const sortCard = useRef<HTMLDivElement | null>(null)
   const search = useRef<HTMLInputElement>(null)
   const { pop, cardRef, target, keepOpen, hideSoon, close } = usePopover(() => {
     setDrawer(false)
     setColumnsMenu(null)
+    setSortMenu(null)
   })
 
   const rows = useMemo(
@@ -162,18 +165,21 @@ export const DashboardPage = ({
     return () => document.removeEventListener('keydown', keys)
   }, [])
 
-  // The column picker closes on a click anywhere else; the cards are closed while it is open.
+  // The column and sort menus close on a click anywhere else.
   useEffect(() => {
-    if (!columnsMenu) return
+    if (!columnsMenu && !sortMenu) return
     const outside = (event: PointerEvent) => {
-      const target = event.target as Node
-      if (!columnsMenu.contains(target) && !columnsCard.current?.contains(target)) {
+      const node = event.target as Node
+      if (columnsMenu && !columnsMenu.contains(node) && !columnsCard.current?.contains(node)) {
         setColumnsMenu(null)
+      }
+      if (sortMenu && !sortMenu.contains(node) && !sortCard.current?.contains(node)) {
+        setSortMenu(null)
       }
     }
     document.addEventListener('pointerdown', outside)
     return () => document.removeEventListener('pointerdown', outside)
-  }, [columnsMenu])
+  }, [columnsMenu, sortMenu])
 
   const chooseView = (next: CoverageView) => {
     setView(next)
@@ -247,6 +253,8 @@ export const DashboardPage = ({
             aria-controls="filters"
             onClick={() => {
               close()
+              setSortMenu(null)
+              setColumnsMenu(null)
               setDrawer(true)
             }}
           >
@@ -254,20 +262,27 @@ export const DashboardPage = ({
             Filters
             {chips.length > 0 ? <span className="badge">{chips.length}</span> : null}
           </button>
-          <label className="sort">
-            Sort
-            <select
-              value={query.sort}
+          <div className="sort">
+            <span className="sort-label" id="sort-label">
+              Sort
+            </span>
+            <button
+              className="sort-trigger"
+              type="button"
+              aria-expanded={sortMenu != null}
+              aria-haspopup="listbox"
+              aria-labelledby="sort-label"
               aria-label="Sort protocols"
-              onChange={(event) => setQuery({ ...query, sort: event.target.value as SortKey })}
+              onClick={(event) => {
+                close()
+                setColumnsMenu(null)
+                setSortMenu(sortMenu ? null : event.currentTarget)
+              }}
             >
-              {Object.entries(SORTS).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
+              <span>{SORTS[query.sort]}</span>
+              <IconChevron />
+            </button>
+          </div>
           <button
             className="btn"
             type="button"
@@ -275,6 +290,7 @@ export const DashboardPage = ({
             aria-haspopup="dialog"
             onClick={(event) => {
               close()
+              setSortMenu(null)
               setColumnsMenu(columnsMenu ? null : event.currentTarget)
             }}
           >
@@ -464,6 +480,29 @@ export const DashboardPage = ({
           </div>
         </div>
       </div>
+
+      {sortMenu ? (
+        <Anchored anchor={sortMenu} label="Sort" cardRef={sortCard}>
+          <ul className="pop-list sort-options" role="listbox" aria-label="Sort protocols">
+            {(Object.keys(SORTS) as SortKey[]).map((key) => (
+              <li key={key}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={query.sort === key}
+                  className={query.sort === key ? 'on' : undefined}
+                  onClick={() => {
+                    setQuery({ ...query, sort: key })
+                    setSortMenu(null)
+                  }}
+                >
+                  {SORTS[key]}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Anchored>
+      ) : null}
 
       {columnsMenu ? (
         <Anchored anchor={columnsMenu} label="Columns" cardRef={columnsCard}>

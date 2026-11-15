@@ -6,6 +6,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 108px;
+  overflow-x: clip;
 }
 body {
   margin: 0;
@@ -15,6 +16,12 @@ body {
   font-size: 14px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+.app-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 button,
 input,
@@ -59,11 +66,8 @@ summary {
     color 0.15s,
     border-color 0.15s;
 }
+:focus,
 :focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 4px;
-}
-[tabindex='-1']:focus:not(:focus-visible) {
   outline: none;
 }
 ::selection {
@@ -329,12 +333,14 @@ code {
   max-width: 1440px;
   margin: auto;
   padding: 0 32px;
-  min-height: calc(100vh - 250px);
+  flex: 1 0 auto;
 }
 .site-footer {
   max-width: 1440px;
+  width: 100%;
   margin: 40px auto 0;
   padding: 24px 32px 28px;
+  flex-shrink: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 20px 28px;
