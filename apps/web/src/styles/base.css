@@ -5,7 +5,7 @@
 }
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 108px;
+  scroll-padding-top: 116px;
   overflow-x: clip;
 }
 body {
@@ -13,8 +13,8 @@ body {
   background: var(--canvas);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
@@ -127,8 +127,8 @@ code {
   font-size: 0.92em;
 }
 .small {
-  font-size: 12px;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.55;
 }
 .muted {
   color: var(--muted);
@@ -149,10 +149,10 @@ code {
   align-items: center;
   gap: 8px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1.5;
-  letter-spacing: 1.4px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
 }
 .text-link {
@@ -160,7 +160,7 @@ code {
   align-items: center;
   gap: 7px;
   color: var(--accent);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 .text-link:hover {
@@ -181,7 +181,7 @@ code {
   padding: 10px 16px;
   border: 1px solid transparent;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   line-height: 1.4;
 }
@@ -226,7 +226,7 @@ code {
   border: 1px solid var(--line);
   border-radius: 5px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
   padding: 4px 8px;
@@ -236,8 +236,8 @@ code {
   background: var(--subtle);
   border: 0;
   font-family: var(--mono);
-  font-size: 12px;
-  padding: 3px 7px;
+  font-size: 14px;
+  padding: 3px 8px;
 }
 .skip-link {
   position: fixed;
@@ -263,10 +263,10 @@ code {
   backdrop-filter: blur(16px);
 }
 .site-header-inner {
-  max-width: 1440px;
+  width: 100%;
   margin: auto;
-  padding: 0 32px;
-  height: 64px;
+  padding: 0 clamp(20px, 2vw, 40px);
+  height: 72px;
   display: flex;
   align-items: center;
   gap: 48px;
@@ -277,7 +277,7 @@ code {
   align-items: center;
   gap: 14px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 .data-cut {
   white-space: nowrap;
@@ -286,7 +286,7 @@ code {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 21px;
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: -1px;
   white-space: nowrap;
@@ -317,7 +317,7 @@ code {
   border-bottom: 2px solid transparent;
   padding-top: 2px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -330,22 +330,20 @@ code {
 }
 .page-container {
   width: 100%;
-  max-width: 1440px;
   margin: auto;
-  padding: 0 32px;
+  padding: 0 clamp(20px, 2vw, 40px);
   flex: 1 0 auto;
 }
 .site-footer {
-  max-width: 1440px;
   width: 100%;
   margin: 40px auto 0;
-  padding: 24px 32px 28px;
+  padding: 24px clamp(20px, 2vw, 40px) 28px;
   flex-shrink: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 20px 28px;
   border-top: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
 }
 .footer-main {
@@ -364,7 +362,7 @@ code {
   margin-left: auto;
 }
 .footer-links a {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
 }
 .footer-links a:hover {
@@ -373,17 +371,17 @@ code {
 .footer-note {
   flex-basis: 100%;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 .protocol-avatar {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  font-size: 12px;
+  border-radius: 9px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: -0.5px;
   border: 1px solid var(--avatar-border);
@@ -409,10 +407,10 @@ code {
   color: var(--avatar-ink-4);
 }
 .protocol-avatar.large {
-  width: 56px;
-  height: 56px;
-  border-radius: 15px;
-  font-size: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  font-size: 26px;
   letter-spacing: -1px;
 }
 /* Icon tiles: no avatar-* slot. Letter fallbacks keep the pastel avatar-0…4 colours. */
@@ -432,16 +430,16 @@ code {
 }
 .source-mark {
   display: inline-flex;
-  width: 27px;
-  height: 27px;
+  width: 32px;
+  height: 32px;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   background: var(--subtle);
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: 8px;
   color: var(--ink);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
 }
 .source-mark.has-icon {
@@ -468,7 +466,7 @@ code {
   display: inline-flex;
   flex-shrink: 0;
   vertical-align: middle;
-  font-size: 12px;
+  font-size: 14px;
 }
 .info-button {
   width: 28px;
@@ -501,8 +499,8 @@ code {
   box-shadow: 0 8px 32px #0002;
   text-align: left;
   font-weight: 400;
-  font-size: 12px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.6;
   letter-spacing: normal;
   white-space: normal;
   text-transform: none;
@@ -511,7 +509,7 @@ code {
 }
 .info-popover strong {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--ink);
   margin-bottom: 6px;
 }
@@ -538,11 +536,11 @@ details[open] > summary > svg:last-child {
   flex-wrap: wrap;
   gap: 12px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 38px;
 }
 .page-end-note .text-link {
-  font-size: 12px;
+  font-size: 14px;
 }
 .empty-state {
   padding: 65px 24px;
@@ -555,7 +553,7 @@ details[open] > summary > svg:last-child {
   height: 26px;
 }
 .empty-state p {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
   margin: 12px 0 24px;
 }
@@ -632,20 +630,25 @@ details[open] > summary > svg:last-child {
   .header-tools {
     order: 1;
     gap: 9px;
-    font-size: 11px;
+    font-size: 12px;
   }
   .brand {
-    font-size: 20px;
+    font-size: 22px;
   }
   .primary-nav {
     order: 2;
     width: 100%;
-    gap: 26px;
-    height: 36px;
+    gap: 12px;
+    height: 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .primary-nav::-webkit-scrollbar {
+    display: none;
   }
   .primary-nav a {
-    font-size: 12px;
-    padding: 0 0 12px;
+    font-size: 14px;
+    padding: 0 0 10px;
   }
   .page-container {
     padding: 0 20px;
@@ -657,25 +660,25 @@ details[open] > summary > svg:last-child {
   }
   .footer-main {
     width: 100%;
-    font-size: 11px;
+    font-size: 12px;
   }
   .footer-links {
     gap: 20px;
   }
   .protocol-avatar.large {
-    width: 60px;
-    height: 60px;
-    font-size: 22px;
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
     border-radius: 16px;
   }
   .page-end-note {
     justify-content: flex-start;
     gap: 7px;
-    font-size: 11px;
+    font-size: 12px;
     margin-top: 28px;
   }
   .page-end-note .text-link {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 @media (max-width: 479px) {
@@ -739,7 +742,7 @@ details[open] > summary > svg:last-child {
 }
 .empty-state details {
   margin-top: 24px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   overflow-wrap: anywhere;
 }
