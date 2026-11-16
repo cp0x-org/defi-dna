@@ -155,7 +155,7 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
               <span className="tag">Ethereum mainnet</span>
               {versions.length > 1 ? (
                 <>
-                  <span className="lbl">Versions</span>
+                  <span className="lbl">Protocol versions</span>
                   {versions.map((version) =>
                     version.id === protocol.id ? (
                       <span className="tag on" key={version.id} aria-current="page">

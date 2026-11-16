@@ -112,7 +112,7 @@ export const FeedSource = ({
               <dd>{timeLabel(lastRead) ?? 'Not known'}</dd>
             </div>
             <div>
-              <dt>Versions this feed covers</dt>
+              <dt>Protocol versions this risk feed covers</dt>
               <dd>{covered ?? '—'}</dd>
             </div>
             {data?.note ? (
@@ -299,7 +299,7 @@ export const RiskIntelligence = ({
 
   return (
     <div className="risk">
-      <aside className="card rside" aria-label="Feeds">
+      <aside className="card rside" aria-label="Risk feeds">
         <Link
           className={`rs-item${selected ? '' : ' on'}`}
           to={base}
@@ -307,7 +307,7 @@ export const RiskIntelligence = ({
         >
           <CoverageRing states={states} size={22} />
           <span>
-            <b>All feeds</b>
+            <b>All risk feeds</b>
             <small>every feed’s headline</small>
           </span>
           <span className="rs-st">
@@ -353,7 +353,7 @@ export const RiskIntelligence = ({
               <CoverageRing states={states} size={40} label={String(withData)} />
               <div>
                 <div className="src-title">
-                  <h2>All feeds</h2>
+                  <h2>All risk feeds</h2>
                   <span className="pill plain">
                     {withData} / {feeds.length} with data
                   </span>

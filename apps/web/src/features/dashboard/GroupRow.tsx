@@ -33,7 +33,7 @@ export const GroupRow = ({
           <ProtocolAvatar id={group.key} name={group.name} />
           <span>
             <strong>{group.name}</strong>
-            <small>{group.rows.length} versions tracked</small>
+            <small>{group.rows.length} protocol versions tracked</small>
           </span>
         </div>
       </td>

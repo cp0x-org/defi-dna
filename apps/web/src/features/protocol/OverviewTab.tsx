@@ -240,36 +240,6 @@ export const OverviewTab = ({
             </Link>
           </div>
         </section>
-
-        <section className="card">
-          <div className="card-h">
-            <h2>How to read this page</h2>
-          </div>
-          <div className="card-b legend-list">
-            <div>
-              <Prov kind="meta" />
-              <span>
-                Facts about the protocol: our registry, what DefiLlama measures and what its
-                governance contracts report on-chain.
-              </span>
-            </div>
-            <div>
-              <Prov kind="cov" />
-              <span>Which feeds have published anything about {protocol.name}, and when.</span>
-            </div>
-            <div>
-              <Prov kind="src" />
-              <span>Published by a named source. Shown as-is, with its date and a link.</span>
-            </div>
-            <div>
-              <Prov kind="cp" />
-              <span>
-                Written by defi-dna about <i>our data</i> — scope, gaps, failures, and the reading a
-                feed’s own scale gives. Never a verdict of ours on the protocol.
-              </span>
-            </div>
-          </div>
-        </section>
       </aside>
     </div>
   )

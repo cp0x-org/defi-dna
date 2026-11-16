@@ -210,9 +210,11 @@ export const DashboardPage = ({
         <div>
           <h1>Protocols</h1>
           <p>
-            What each risk feed publishes about a protocol version on Ethereum mainnet, with the
-            feed named on every value. Colours are each feed’s own characterization, read from its
-            own published scale — <strong>defi-dna does not rate protocols.</strong>
+            DeFi DNA is a neutral source of information about the risks of DeFi protocols on
+            Ethereum mainnet. We gather what independent risk feeds publish, put it in one place
+            with the feed named on every value, and{' '}
+            <strong>never assign a score of our own.</strong> Colours are each feed’s own
+            characterization, read from its own published scale.
           </p>
         </div>
         <dl className="ph-stats">

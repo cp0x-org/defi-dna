@@ -469,22 +469,6 @@ a.m:hover .m-v {
   font: 500 12px var(--font);
   color: var(--muted);
 }
-.legend-list {
-  display: grid;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--muted);
-}
-.legend-list > div {
-  display: grid;
-  grid-template-columns: 78px 1fr;
-  gap: 8px;
-  align-items: start;
-}
-.legend-list .prov {
-  justify-self: start;
-}
-
 /* ------------------------------------------------------------------ protocol data */
 .tvl-big {
   font: 600 32px/1.2 var(--mono);

@@ -186,7 +186,7 @@ export const FilterDrawer = ({
             <h3>
               Coverage <Prov kind="cov" />
             </h3>
-            <div className="fl-label">Feeds with data</div>
+            <div className="fl-label">Risk feeds with data</div>
             <Segmented
               label="Feeds with data"
               value={query.feedsMin}
@@ -203,7 +203,7 @@ export const FilterDrawer = ({
 
           <section className="fs">
             <h3>
-              By feed <Prov kind="cov" />
+              By risk feed <Prov kind="cov" />
             </h3>
             <p className="fs-note">
               Filters on whether a feed has published data about a version — never on what the feed

@@ -11,7 +11,7 @@ import { ExternalLink, SourceMark } from '../../shared/ui/UI.tsx'
 export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
   <>
     <section className="page-intro">
-      <span className="eyebrow">THE FEED REGISTRY</span>
+      <span className="eyebrow">THE RISK FEED REGISTRY</span>
       <h1>
         Different lenses.
         <br />
@@ -33,7 +33,9 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
             <div className="directory-heading">
               <SourceMark id={feed.id} />
               <span className="outline-badge">
-                {index ? `${covered} / ${index.rows.length} versions` : '— versions'}
+                {index
+                  ? `${covered} / ${index.rows.length} protocol versions`
+                  : '— protocol versions'}
               </span>
             </div>
             <h2>{feed.name}</h2>

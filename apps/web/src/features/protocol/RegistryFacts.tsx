@@ -30,7 +30,7 @@ export const RegistryFacts = ({
       <dd>Ethereum mainnet</dd>
     </div>
     <div>
-      <dt>Versions tracked</dt>
+      <dt>Protocol versions tracked</dt>
       <dd>{versions.length}</dd>
     </div>
     <div>
