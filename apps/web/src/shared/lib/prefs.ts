@@ -47,7 +47,6 @@ export const COLUMNS = {
   governance: 'Governance',
   coverage: 'Coverage',
   incidents: 'Incidents',
-  updated: 'Updated',
 } as const
 export type ColumnKey = keyof typeof COLUMNS
 

@@ -60,8 +60,6 @@ export interface Group {
   /** The reading every version shares; null when versions differ or one has none. */
   governance: Governance | null
   feeds: Record<string, boolean>
-  /** The newest change across the versions, or null when the log has none. */
-  changedAt: string | null
 }
 
 /** Read beside the index. Either may still be loading, or have failed: rows then carry no such facts. */
@@ -87,8 +85,6 @@ export const incidentsByDate = (metric?: MetricData): ExtraIncident[] =>
  */
 export const changesFor = (log: Change[], protocolId: string): Change[] =>
   log.filter((change) => change.protocolId === protocolId).sort((a, b) => b.ts.localeCompare(a.ts))
-
-export const changedAt = (row: Row): string | null => row.changes?.[0]?.ts ?? null
 
 /** Moves in a feed's value during the last 24 hours. An unreadable log counts as none here. */
 export const changedWithinDay = (row: Row, now: number): Change[] =>
@@ -135,7 +131,6 @@ export const groupRows = (rows: Row[]): Group[] => {
       incidents: null,
       governance: null,
       feeds: {},
-      changedAt: null,
     }
     group.rows.push(row)
     if (row.tvl != null) group.tvl = (group.tvl ?? 0) + row.tvl
@@ -143,8 +138,6 @@ export const groupRows = (rows: Row[]): Group[] => {
     for (const feed of feeds) {
       if (row.feeds[feed.id]) group.feeds[feed.id] = true
     }
-    const changed = changedAt(row)
-    if (changed && (!group.changedAt || changed > group.changedAt)) group.changedAt = changed
     groups.set(key, group)
   }
 

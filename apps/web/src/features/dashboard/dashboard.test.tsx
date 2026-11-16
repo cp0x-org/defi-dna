@@ -43,7 +43,6 @@ describe('dashboard rows and cards', () => {
               row={row}
               nested={false}
               now={NOW}
-              noChangeTitle="No change"
               noIncidentsTitle="Not collected"
               noGovernanceTitle="Nothing read"
               popTarget={() => ({
@@ -78,7 +77,6 @@ describe('dashboard rows and cards', () => {
               row={row}
               nested={false}
               now={NOW}
-              noChangeTitle="No change"
               noIncidentsTitle="Not collected"
               noGovernanceTitle="Nothing read"
               popTarget={() => ({

@@ -258,25 +258,8 @@ table.grid {
   vertical-align: middle;
   white-space: nowrap;
 }
-.grid thead tr.grp th {
-  padding: 10px 16px 8px;
-  background: var(--subtle);
-  border-top: 1px solid var(--line);
-  border-bottom: 0;
-}
-.grid thead tr.grp th + th {
-  border-left: 5px solid var(--surface);
-}
-.grid thead tr.grp th.g-meta {
-  box-shadow: inset 0 -2px 0 var(--line-strong);
-}
-.grid thead tr.grp th.g-cov {
-  box-shadow: inset 0 -2px 0 var(--source-ink-0);
-}
-.grid thead tr.grp th.g-src {
-  box-shadow: inset 0 -2px 0 var(--source-ink-1);
-}
 .grid thead tr.cols th {
+  border-top: 1px solid var(--line);
   background: var(--subtle);
   color: var(--muted);
   font-size: 14px;
@@ -427,23 +410,6 @@ button.hit:hover {
 .evt.zero {
   color: var(--muted);
   font-weight: 400;
-}
-.fresh {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font: 500 14px var(--mono);
-}
-.fresh.recent::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-tint);
-}
-.fresh.stale {
-  color: var(--amber);
 }
 .grid .go {
   color: var(--faint);
@@ -831,7 +797,6 @@ button.hit:hover {
 .table-scroll {
   position: relative;
 }
-.grid thead tr.grp th,
 .grid .th-sub {
   white-space: normal;
 }
@@ -839,8 +804,7 @@ button.hit:hover {
    column in view there instead of behind the panel's own scrollbar. */
 @media (max-width: 1365px) {
   .grid th,
-  .grid td,
-  .grid thead tr.grp th {
+  .grid td {
     padding-left: 8px;
     padding-right: 8px;
   }

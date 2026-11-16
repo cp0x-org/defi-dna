@@ -65,8 +65,8 @@ export const DataGaps = ({
         ) : null}
         {changelogError ? (
           <li>
-            <b>The run log could not be loaded.</b> The Updated column and the freshness filter have
-            nothing to show until it is.
+            <b>The run log could not be loaded.</b> The NEW marks and the “Changed in 24h” figure
+            have nothing to show until it is.
           </li>
         ) : null}
       </ul>
@@ -118,19 +118,11 @@ export const DashboardPage = ({
     () => buildRows(index ?? NO_DATA, { metrics: metrics.data, changes: changelog.data }),
     [index, metrics.data, changelog.data],
   )
-  const groups = useMemo(
-    () => (index ? matrixGroups(rows, query, now) : []),
-    [index, rows, query, now],
-  )
+  const groups = useMemo(() => (index ? matrixGroups(rows, query) : []), [index, rows, query])
   const shown = groups.reduce((total, group) => total + group.rows.length, 0)
   const chips = filterChips(query)
   const changedToday = rows.filter((row) => changedWithinDay(row, now).length > 0)
   const popRow = pop ? rows.find((row) => row.protocol.id === pop.protocolId) : undefined
-  const noChangeTitle = changelog.error
-    ? 'The run log could not be loaded'
-    : changelog.data
-      ? 'No change in our run log'
-      : 'Loading the run log…'
   const noIncidentsTitle = metrics.error
     ? 'DefiLlama’s incident list could not be loaded'
     : metrics.data
@@ -182,7 +174,6 @@ export const DashboardPage = ({
 
   const rowProps = {
     now,
-    noChangeTitle,
     noIncidentsTitle,
     noGovernanceTitle,
     popTarget: target,
@@ -338,7 +329,7 @@ export const DashboardPage = ({
           <table className="grid">
             <caption className="sr-only">
               {index
-                ? `${shown} protocol versions: size, the governance timelock and the bodies that decide as read on-chain, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, when a feed’s value last changed, and incidents recorded by DefiLlama.`
+                ? `${shown} protocol versions: size, the governance timelock and the bodies that decide as read on-chain, which of ${feeds.length} risk feeds publish data about each and how each feed characterizes it, and incidents recorded by DefiLlama.`
                 : 'The table is empty: the dataset is not loaded.'}
             </caption>
             <MatrixHead query={query} onSort={(sort) => setQuery({ ...query, sort })} show={show} />
@@ -353,13 +344,7 @@ export const DashboardPage = ({
                   />
                 ) : (
                   <Fragment key={group.key}>
-                    <GroupRow
-                      group={group}
-                      now={now}
-                      noChangeTitle={noChangeTitle}
-                      noIncidentsTitle={noIncidentsTitle}
-                      show={show}
-                    />
+                    <GroupRow group={group} noIncidentsTitle={noIncidentsTitle} show={show} />
                     {group.rows.map((row) => (
                       <VersionRow key={row.protocol.id} row={row} nested {...rowProps} />
                     ))}

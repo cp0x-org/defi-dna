@@ -1,12 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'
 import type { ColumnKey } from '../../shared/lib/prefs.ts'
 import { feeds } from '../../shared/lib/registry.ts'
-import { changedAt, changedWithinDay, dataCount, type Row } from './rows.ts'
+import { changedWithinDay, dataCount, type Row } from './rows.ts'
 import type { Tone } from '../../shared/lib/status.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../../shared/lib/view.ts'
 import { CoverageRing } from '../../shared/ui/Coverage.tsx'
 import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
-import { Fresh } from './Fresh.tsx'
 import { GovernanceCell, TimelockCell } from './GovernanceCells.tsx'
 import type { PopKind, PopTarget } from './usePopover.ts'
 
@@ -18,7 +17,6 @@ export const VersionRow = ({
   row,
   nested,
   now,
-  noChangeTitle,
   noIncidentsTitle,
   noGovernanceTitle,
   popTarget,
@@ -27,7 +25,6 @@ export const VersionRow = ({
   row: Row
   nested: boolean
   now: number
-  noChangeTitle: string
   noIncidentsTitle: string
   noGovernanceTitle: string
   popTarget: (kind: PopKind, protocolId: string) => PopTarget
@@ -118,11 +115,6 @@ export const VersionRow = ({
               </span>
             </button>
           )}
-        </td>
-      ) : null}
-      {show('updated') ? (
-        <td>
-          <Fresh changed={changedAt(row)} now={now} emptyTitle={noChangeTitle} />
         </td>
       ) : null}
       <td className="go" aria-hidden="true">

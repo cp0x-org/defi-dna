@@ -3,7 +3,6 @@ import { feeds } from '../../shared/lib/registry.ts'
 import { dataCount, type Group } from './rows.ts'
 import { categoryLabel, formatUsd } from '../../shared/lib/view.ts'
 import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
-import { Fresh } from './Fresh.tsx'
 import { GovernanceCell, TimelockCell } from './GovernanceCells.tsx'
 
 const feedIds = feeds.map((feed) => feed.id)
@@ -13,14 +12,10 @@ const NO_GOVERNANCE = 'Differs by version, or not read'
 /** A protocol with more than one tracked version. Its figures add those versions up. */
 export const GroupRow = ({
   group,
-  now,
-  noChangeTitle,
   noIncidentsTitle,
   show,
 }: {
   group: Group
-  now: number
-  noChangeTitle: string
   noIncidentsTitle: string
   /** Whether the visitor keeps a column in the table; the protocol column always stays. */
   show: (key: ColumnKey) => boolean
@@ -78,11 +73,6 @@ export const GroupRow = ({
               <small>across versions</small>
             </span>
           )}
-        </td>
-      ) : null}
-      {show('updated') ? (
-        <td>
-          <Fresh changed={group.changedAt} now={now} emptyTitle={noChangeTitle} />
         </td>
       ) : null}
       <td />

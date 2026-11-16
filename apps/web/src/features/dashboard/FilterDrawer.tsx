@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { TVL_MIN, UPDATED, keysOf, withoutFilters, type MatrixQuery } from './matrix.ts'
+import { TVL_MIN, keysOf, withoutFilters, type MatrixQuery } from './matrix.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { coverageCount, type Row } from './rows.ts'
 import { categoryLabel } from '../../shared/lib/view.ts'
@@ -264,24 +264,6 @@ export const FilterDrawer = ({
               />
               Has incidents recorded by DefiLlama
             </label>
-          </section>
-
-          <section className="fs">
-            <h3>
-              Freshness <Prov kind="cov" />
-            </h3>
-            <div className="fl-label">
-              Last change <span className="muted">in a feed’s published value</span>
-            </div>
-            <Segmented
-              label="Last change"
-              value={query.updated}
-              options={[
-                ['', 'Any'],
-                ...keysOf(UPDATED).map((key) => [key, UPDATED[key].label] as const),
-              ]}
-              onChange={(updated) => set({ updated })}
-            />
           </section>
         </div>
         <div className="dr-foot">

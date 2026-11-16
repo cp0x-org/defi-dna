@@ -1,19 +1,8 @@
 import type { MatrixQuery, SortKey } from './matrix.ts'
 import type { ColumnKey } from '../../shared/lib/prefs.ts'
-import { Prov } from '../../shared/ui/Coverage.tsx'
 import { Info } from '../../shared/ui/UI.tsx'
 
-/**
- * Which columns sit under which provenance header; the protocol column always
- * leads the first. "Updated" is coverage too, but closes the table on its own.
- */
-const COLUMN_GROUPS: Record<'meta' | 'cov' | 'src', ColumnKey[]> = {
-  meta: ['category', 'tvl', 'timelock', 'governance'],
-  cov: ['coverage'],
-  src: ['incidents'],
-}
-
-/** The two header rows: where each group of columns comes from, then the sortable columns. */
+/** The header row: one sortable column per fact, each with its definition behind a "?". */
 export const MatrixHead = ({
   query,
   onSort,
@@ -24,7 +13,6 @@ export const MatrixHead = ({
   /** Whether the visitor keeps a column in the table; the protocol column always stays. */
   show: (key: ColumnKey) => boolean
 }) => {
-  const shownIn = (group: keyof typeof COLUMN_GROUPS) => COLUMN_GROUPS[group].filter(show).length
   const sortButton = (key: SortKey, label: string, alternate?: SortKey) => {
     const active = query.sort === key || query.sort === alternate
     return (
@@ -49,35 +37,6 @@ export const MatrixHead = ({
 
   return (
     <thead>
-      <tr className="grp">
-        <th colSpan={1 + shownIn('meta')} className="g-meta">
-          <Prov kind="meta">Protocol metadata</Prov>
-          <Info label="Protocol metadata">
-            Registry facts, TVL via DefiLlama, and governance parameters read on-chain.
-          </Info>
-        </th>
-        {shownIn('cov') > 0 ? (
-          <th colSpan={shownIn('cov')} className="g-cov">
-            <Prov kind="cov">Data coverage</Prov>
-            <Info label="Data coverage">Facts about our collection, not the protocol.</Info>
-          </th>
-        ) : null}
-        {shownIn('src') > 0 ? (
-          <th colSpan={shownIn('src')} className="g-src">
-            <Prov kind="src">Source-reported</Prov>
-            <Info label="Source-reported">
-              What sources published — not verified or scored by us.
-            </Info>
-          </th>
-        ) : null}
-        {show('updated') ? (
-          <th className="g-cov">
-            <Prov kind="cov">Data coverage</Prov>
-            <Info label="Data coverage">When a feed’s value last moved.</Info>
-          </th>
-        ) : null}
-        <th />
-      </tr>
       <tr className="cols">
         <th aria-sort={ariaSort('name-asc')}>{sortButton('name-asc', 'Protocol')}</th>
         {show('category') ? <th>Category</th> : null}
@@ -122,12 +81,6 @@ export const MatrixHead = ({
           <th aria-sort={ariaSort('incidents-desc')}>
             {sortButton('incidents-desc', 'Incidents')}
             <Info label="Incidents">Incidents recorded by DefiLlama for this version.</Info>
-          </th>
-        ) : null}
-        {show('updated') ? (
-          <th aria-sort={ariaSort('updated-desc')}>
-            {sortButton('updated-desc', 'Updated')}
-            <Info label="Updated">The latest move in a feed’s value, from our run log.</Info>
           </th>
         ) : null}
         <th>

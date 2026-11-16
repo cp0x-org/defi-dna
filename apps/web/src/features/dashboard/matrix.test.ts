@@ -220,7 +220,6 @@ describe('readQuery and writeQuery', () => {
       has: ['pigi'],
       missing: ['defiscan'],
       incidents: true,
-      updated: '7d',
       sort: 'name-asc',
     })
     expect(readQuery(writeQuery(full))).toEqual(full)
@@ -228,7 +227,7 @@ describe('readQuery and writeQuery', () => {
   })
 
   it('falls back to the defaults for unknown values in a shared link', () => {
-    const stale = new URLSearchParams('sort=constructor&tvl=5m&updated=1y&has=nope&feeds=-1')
+    const stale = new URLSearchParams('sort=constructor&tvl=5m&has=nope&feeds=-1')
     expect(readQuery(stale)).toEqual(query())
   })
 })
@@ -243,7 +242,6 @@ describe('withoutFilters', () => {
       has: ['pigi'],
       missing: ['defiscan'],
       incidents: true,
-      updated: '7d',
       sort: 'name-asc',
     })
     expect(withoutFilters(busy)).toEqual(query({ q: 'aave', sort: 'name-asc' }))
@@ -263,7 +261,7 @@ describe('filterChips', () => {
 
 describe('matrixGroups', () => {
   it('nests versions, sums their TVL and puts rows without a figure last', () => {
-    const groups = matrixGroups(rows, query(), NOW)
+    const groups = matrixGroups(rows, query())
     expect(names(groups).slice(0, 2)).toEqual(['Curve', 'Aave'])
     const aave = groups.find((group) => group.name === 'Aave')
     expect(aave?.tvl).toBe(15e9)
@@ -273,44 +271,27 @@ describe('matrixGroups', () => {
   })
 
   it('filters by name, category, TVL and whether a feed has data', () => {
-    expect(names(matrixGroups(rows, query({ q: ' AAVE ' }), NOW))).toEqual(['Aave'])
-    expect(names(matrixGroups(rows, query({ categories: ['dex'], tvl: '1b' }), NOW))).toEqual([
-      'Curve',
-    ])
-    expect(ids(matrixGroups(rows, query({ feedsMin: 2 }), NOW))).toEqual(['aave-v3'])
-    const pigiOnly = matrixGroups(rows, query({ has: ['pigi'], missing: ['defiscan'] }), NOW)
+    expect(names(matrixGroups(rows, query({ q: ' AAVE ' })))).toEqual(['Aave'])
+    expect(names(matrixGroups(rows, query({ categories: ['dex'], tvl: '1b' })))).toEqual(['Curve'])
+    expect(ids(matrixGroups(rows, query({ feedsMin: 2 })))).toEqual(['aave-v3'])
+    const pigiOnly = matrixGroups(rows, query({ has: ['pigi'], missing: ['defiscan'] }))
     expect(ids(pigiOnly)).toEqual(['lido'])
   })
 
-  it('filters on DefiLlama incidents and on when a value last moved', () => {
-    expect(ids(matrixGroups(rows, query({ incidents: true }), NOW))).toEqual(['curve'])
-    expect(ids(matrixGroups(rows, query({ updated: '24h' }), NOW))).toEqual(['lido'])
-    const quiet = ids(matrixGroups(rows, query({ updated: 'old' }), NOW))
-    expect(quiet).toContain('aave-v3')
-    expect(quiet).toContain('aave-v4')
-    expect(quiet).not.toContain('lido')
+  it('filters on DefiLlama incidents', () => {
+    expect(ids(matrixGroups(rows, query({ incidents: true })))).toEqual(['curve'])
   })
 
-  it('lets nothing through a freshness filter when the run log is missing', () => {
-    const withoutLog = buildRows(index, { metrics })
-    expect(matrixGroups(withoutLog, query({ updated: 'old' }), NOW)).toEqual([])
-    expect(matrixGroups(withoutLog, query({ updated: '24h' }), NOW)).toEqual([])
-    expect(matrixGroups(withoutLog, query(), NOW).length).toBeGreaterThan(0)
-  })
-
-  it('sorts by name, coverage, last change and incidents', () => {
-    const byName = names(matrixGroups(rows, query({ q: 'a', sort: 'name-asc' }), NOW))
+  it('sorts by name, coverage and incidents', () => {
+    const byName = names(matrixGroups(rows, query({ q: 'a', sort: 'name-asc' })))
     expect(byName).toEqual([...byName].sort((a, b) => a.localeCompare(b)))
 
-    const byCoverage = names(matrixGroups(rows, query({ sort: 'coverage-desc' }), NOW))
+    const byCoverage = names(matrixGroups(rows, query({ sort: 'coverage-desc' })))
     expect(byCoverage.slice(0, 3)).toEqual(['Aave', 'Curve', 'Lido'])
 
-    const byChange = names(matrixGroups(rows, query({ sort: 'updated-desc' }), NOW))
-    expect(byChange.slice(0, 2)).toEqual(['Lido', 'Aave'])
+    expect(names(matrixGroups(rows, query({ sort: 'incidents-desc' })))[0]).toBe('Curve')
 
-    expect(names(matrixGroups(rows, query({ sort: 'incidents-desc' }), NOW))[0]).toBe('Curve')
-
-    const smallest = names(matrixGroups(rows, query({ sort: 'tvl-asc' }), NOW))
+    const smallest = names(matrixGroups(rows, query({ sort: 'tvl-asc' })))
     expect(smallest.slice(0, 2)).toEqual(['Aave', 'Curve'])
   })
 })
