@@ -5,7 +5,6 @@ import { LoadState } from '../shared/ui/LoadState.tsx'
 import { readQuery } from '../features/dashboard/matrix.ts'
 import { feeds } from '../shared/lib/registry.ts'
 import { DashboardPage, DataGaps } from '../features/dashboard/DashboardPage.tsx'
-import { MethodologyPage } from '../features/reading/MethodologyPage.tsx'
 import { ProtocolPage } from '../features/protocol/ProtocolPage.tsx'
 import { SourcesPage } from '../features/reading/SourcesPage.tsx'
 
@@ -47,9 +46,7 @@ describe('pages without the dataset', () => {
     const sources = render(<SourcesPage index={null} />)
     for (const feed of feeds) expect(sources).toContain(feed.focus)
     expect(sources).toContain('Not loaded')
-
-    const methodology = render(<MethodologyPage index={null} />)
-    for (const feed of feeds) expect(methodology).toContain(feed.name)
+    expect(sources).toContain('Contribute on GitHub')
   })
 })
 
