@@ -23,10 +23,9 @@ export const TimelockCell = ({
       <small>no timelock read</small>
     </>
   ) : (
-    <>
-      <span className="mono">{formatDuration(governance.delay)}</span>
-      <small>{governance.delay.toLocaleString('en-US')} s</small>
-    </>
+    <span className="mono" title={`${governance.delay.toLocaleString('en-US')} seconds`}>
+      {formatDuration(governance.delay)}
+    </span>
   )
 
 /** Who decides, one body per line: a token vote by its token, a multisig as "threshold of signers", a key as EOA. */

@@ -19,7 +19,7 @@ import {
   type ColumnKey,
 } from '../../shared/lib/prefs.ts'
 import { feeds } from '../../shared/lib/registry.ts'
-import { buildRows, changedWithinDay } from './rows.ts'
+import { buildRows, changedWithinDay, groupRows } from './rows.ts'
 import {
   LEGEND_SIGNALS,
   SIGNAL_LABELS,
@@ -134,11 +134,13 @@ export const DashboardPage = ({
       ? 'Nothing read on-chain for this version'
       : 'Loading the on-chain governance readings…'
 
-  // "/" jumps to the search, as on most data tables. Esc belongs to the popover.
+  // "/" jumps to the search, as on most data tables. The physical key, not the
+  // character: on a Cyrillic layout the same key types "." Esc belongs to the popover.
   useEffect(() => {
     const keys = (event: KeyboardEvent) => {
       const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName ?? '')
-      if (event.key === '/' && !typing) {
+      const plain = !event.ctrlKey && !event.metaKey && !event.altKey
+      if (event.code === 'Slash' && plain && !typing) {
         event.preventDefault()
         search.current?.focus()
       }
@@ -195,11 +197,11 @@ export const DashboardPage = ({
         </div>
         <dl className="ph-stats">
           <div>
-            <dt>Protocol versions</dt>
-            <dd>{rows.length}</dd>
+            <dt>DeFi protocols</dt>
+            <dd>{groupRows(rows).length}</dd>
           </div>
           <div>
-            <dt>Feeds connected</dt>
+            <dt>Risk feeds covered</dt>
             <dd>{feeds.length}</dd>
           </div>
           <div>
@@ -222,7 +224,6 @@ export const DashboardPage = ({
               value={query.q}
               onChange={(event) => setQuery({ ...query, q: event.target.value })}
             />
-            <kbd>/</kbd>
           </label>
           <button
             className="btn"
@@ -275,16 +276,13 @@ export const DashboardPage = ({
             Columns
             {hidden.size > 0 ? <span className="badge">{hidden.size} hidden</span> : null}
           </button>
+          {/* The count appears only once a filter or the search has narrowed the table. */}
           <span className="result-count" aria-live="polite">
             {!index ? (
               'Data not loaded'
-            ) : shown === rows.length ? (
+            ) : shown === rows.length ? null : (
               <>
-                <strong>{rows.length}</strong> versions
-              </>
-            ) : (
-              <>
-                Showing <strong>{shown}</strong> of {rows.length}
+                Showing <strong>{shown}</strong> of {rows.length} protocol versions
               </>
             )}
           </span>

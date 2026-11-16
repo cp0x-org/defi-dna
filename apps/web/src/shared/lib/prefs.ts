@@ -55,9 +55,17 @@ const COLUMNS_COOKIE = 'defi-dna_hidden_columns'
 
 const isColumn = (key: string): key is ColumnKey => Object.hasOwn(COLUMNS, key)
 
+/**
+ * Governance starts hidden: four lines of bodies per row made the table the
+ * hardest thing on the page to scan. A visitor who turns it on keeps it on.
+ */
+const HIDDEN_BY_DEFAULT: ColumnKey[] = ['governance']
+
 /** What is stored is the hidden set, so a column added later shows for everyone. */
-export const readHiddenColumns = (): Set<ColumnKey> =>
-  new Set((read(COLUMNS_KEY, COLUMNS_COOKIE) ?? '').split(',').filter(isColumn))
+export const readHiddenColumns = (): Set<ColumnKey> => {
+  const stored = read(COLUMNS_KEY, COLUMNS_COOKIE)
+  return new Set(stored == null ? HIDDEN_BY_DEFAULT : stored.split(',').filter(isColumn))
+}
 
 export const writeHiddenColumns = (hidden: Set<ColumnKey>): void =>
   write(COLUMNS_KEY, COLUMNS_COOKIE, [...hidden].join(','))

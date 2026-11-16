@@ -281,6 +281,16 @@ code {
 }
 .data-cut {
   white-space: nowrap;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.data-cut .mono {
+  font-weight: 700;
+}
+/* Our collection has stopped: the only amber in the header, and it is about us. */
+.data-cut.stale {
+  color: var(--amber);
 }
 .brand {
   display: inline-flex;

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { TVL_MIN, keysOf, withoutFilters, type MatrixQuery } from './matrix.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { coverageCount, type Row } from './rows.ts'
@@ -15,7 +15,7 @@ const Segmented = <T extends string | number>({
 }: {
   label: string
   value: T
-  options: readonly (readonly [T, string])[]
+  options: readonly (readonly [T, ReactNode])[]
   onChange: (value: T) => void
   small?: boolean
 }) => (
@@ -170,7 +170,21 @@ export const FilterDrawer = ({
               value={query.tvl}
               options={[
                 ['', 'Any'],
-                ...keysOf(TVL_MIN).map((key) => [key, TVL_MIN[key].label] as const),
+                ...keysOf(TVL_MIN).map(
+                  (key) =>
+                    [
+                      key,
+                      <>
+                        {TVL_MIN[key].label}{' '}
+                        <em>
+                          {
+                            rows.filter((row) => row.tvl != null && row.tvl > TVL_MIN[key].min)
+                              .length
+                          }
+                        </em>
+                      </>,
+                    ] as const,
+                ),
               ]}
               onChange={(tvl) => set({ tvl })}
             />

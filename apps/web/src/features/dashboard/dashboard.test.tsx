@@ -59,9 +59,9 @@ describe('dashboard rows and cards', () => {
     expect(html).toContain('Curve')
     expect(html).toContain('NEW · 1')
     expect(html).toContain(`1 of ${feeds.length} feeds have data`)
-    // Governance as the contracts report it: the delay in words and seconds, each body by what it is.
+    // Governance as the contracts report it: the delay in words, the seconds behind it, each body by what it is.
     expect(html).toContain('2 days')
-    expect(html).toContain('172,800 s')
+    expect(html).toContain('title="172,800 seconds"')
     expect(html).toContain('Token vote')
     expect(html).toContain('veCRV · DAO')
     expect(html).toContain('5 of 9')
@@ -91,7 +91,7 @@ describe('dashboard rows and cards', () => {
       </MemoryRouter>,
     )
     expect(html).toContain('Curve')
-    expect(html).toContain('172,800 s')
+    expect(html).toContain('2 days')
     expect(html).not.toContain('Emergency DAO')
     expect(html).not.toContain('Ethereum</small>')
   })

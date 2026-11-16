@@ -88,13 +88,6 @@
 .search input::placeholder {
   color: var(--muted);
 }
-.search kbd {
-  font: 12px var(--mono);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  padding: 0 5px;
-  color: var(--muted);
-}
 .sort {
   display: inline-flex;
   align-items: center;

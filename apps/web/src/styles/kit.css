@@ -298,6 +298,14 @@
   color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent-line);
 }
+/* How many rows an option would keep, in the same quiet figure as the category chips. */
+.seg button em {
+  font: normal 12px var(--mono);
+  color: var(--faint);
+}
+.seg button.on em {
+  color: var(--accent);
+}
 .seg.sm button {
   height: 28px;
   padding: 0 9px;
