@@ -39,22 +39,6 @@ const write = (key: string, cookie: string, value: string): void => {
   }
 }
 
-/** How the dashboard draws coverage: a ring, a bar of segments, or both side by side. */
-export type CoverageView = 'ring' | 'bar' | 'both'
-
-const VIEW_KEY = 'defi-dna-coverage-view'
-const VIEW_COOKIE = 'defi-dna_coverage_view'
-
-const isView = (value: string | null): value is CoverageView =>
-  value === 'ring' || value === 'bar' || value === 'both'
-
-export const readCoverageView = (): CoverageView => {
-  const value = read(VIEW_KEY, VIEW_COOKIE)
-  return isView(value) ? value : 'ring'
-}
-
-export const writeCoverageView = (view: CoverageView): void => write(VIEW_KEY, VIEW_COOKIE, view)
-
 /** The dashboard columns a visitor can hide, in table order; the protocol column always shows. */
 export const COLUMNS = {
   category: 'Category',

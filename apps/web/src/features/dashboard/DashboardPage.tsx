@@ -14,12 +14,9 @@ import {
 } from './matrix.ts'
 import {
   COLUMNS,
-  readCoverageView,
   readHiddenColumns,
-  writeCoverageView,
   writeHiddenColumns,
   type ColumnKey,
-  type CoverageView,
 } from '../../shared/lib/prefs.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { buildRows, changedWithinDay } from './rows.ts'
@@ -29,7 +26,7 @@ import {
   SIGNAL_TONES,
   TONE_LABELS,
 } from '../../shared/lib/status.ts'
-import { CoverageBar, CoverageRing, Prov, StatusDot } from '../../shared/ui/Coverage.tsx'
+import { Prov, StatusDot } from '../../shared/ui/Coverage.tsx'
 import { FilterDrawer } from './FilterDrawer.tsx'
 import { GroupRow } from './GroupRow.tsx'
 import { MatrixHead } from './MatrixHead.tsx'
@@ -42,12 +39,6 @@ import { Anchored } from '../../shared/ui/UI.tsx'
 
 /** The registry joined with nothing: names and categories without any collected fact. */
 const NO_DATA: IndexBundle = { generatedAt: '', rows: [] }
-
-const VIEWS: [CoverageView, string][] = [
-  ['ring', 'Ring'],
-  ['bar', 'Bar'],
-  ['both', 'Compare'],
-]
 
 /**
  * Files read beside the index that did not arrive. Their columns stay empty
@@ -110,7 +101,6 @@ export const DashboardPage = ({
   const metrics = useMetrics()
   const changelog = useChangelog()
   const [now] = useState(() => Date.now())
-  const [view, setView] = useState<CoverageView>(readCoverageView)
   const [drawer, setDrawer] = useState(false)
   const [hidden, setHidden] = useState<Set<ColumnKey>>(readHiddenColumns)
   const [columnsMenu, setColumnsMenu] = useState<HTMLElement | null>(null)
@@ -181,11 +171,6 @@ export const DashboardPage = ({
     return () => document.removeEventListener('pointerdown', outside)
   }, [columnsMenu, sortMenu])
 
-  const chooseView = (next: CoverageView) => {
-    setView(next)
-    writeCoverageView(next)
-  }
-
   const show = (key: ColumnKey) => !hidden.has(key)
   const toggleColumn = (key: ColumnKey, shown: boolean) => {
     const next = new Set(hidden)
@@ -233,7 +218,7 @@ export const DashboardPage = ({
         </dl>
       </div>
 
-      <div className="panel" data-view={view}>
+      <div className="panel">
         <div className="toolbar">
           <label className="search">
             <IconSearch />
@@ -312,26 +297,6 @@ export const DashboardPage = ({
               </>
             )}
           </span>
-          <span className="spacer" />
-          <div className="viewtoggle" role="group" aria-label="Coverage indicator style">
-            <span>Coverage view</span>
-            {VIEWS.map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                className={view === key ? 'on' : undefined}
-                aria-pressed={view === key}
-                onClick={() => chooseView(key)}
-              >
-                {key === 'ring' ? (
-                  <CoverageRing states={['pos', 'neu', 'none', 'neg', 'none']} size={14} />
-                ) : key === 'bar' ? (
-                  <CoverageBar states={['pos', 'neu', 'none']} />
-                ) : null}
-                {label}
-              </button>
-            ))}
-          </div>
         </div>
 
         {chips.length > 0 ? (

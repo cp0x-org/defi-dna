@@ -4,7 +4,7 @@ import { feeds } from '../../shared/lib/registry.ts'
 import { changedAt, changedWithinDay, dataCount, type Row } from './rows.ts'
 import type { Tone } from '../../shared/lib/status.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../../shared/lib/view.ts'
-import { CoverageBar, CoverageRing } from '../../shared/ui/Coverage.tsx'
+import { CoverageRing } from '../../shared/ui/Coverage.tsx'
 import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
 import { Fresh } from './Fresh.tsx'
 import { GovernanceCell, TimelockCell } from './GovernanceCells.tsx'
@@ -92,12 +92,7 @@ export const VersionRow = ({
             aria-label={`${covered} of ${feeds.length} feeds have data — show the list`}
             {...popTarget('coverage', protocol.id)}
           >
-            <span className="v-ring">
-              <CoverageRing states={states} />
-            </span>
-            <span className="v-bar">
-              <CoverageBar states={states} />
-            </span>
+            <CoverageRing states={states} />
             <span className="cov-count">
               {covered}
               <span>/{feeds.length}</span>

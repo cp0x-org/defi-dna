@@ -169,51 +169,6 @@
   background: var(--accent-tint);
   color: var(--accent);
 }
-.spacer {
-  flex: 1;
-}
-.viewtoggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  height: 44px;
-}
-.viewtoggle > span {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted);
-  padding: 0 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-.viewtoggle button {
-  height: 36px;
-  padding: 0 9px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--muted);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.viewtoggle button:hover {
-  color: var(--ink);
-  background: var(--subtle);
-}
-.viewtoggle button.on {
-  background: var(--accent-tint);
-  color: var(--accent);
-}
-.viewtoggle .ring path {
-  stroke-width: 2.4;
-}
-.viewtoggle .sbar i {
-  width: 3px;
-  height: 11px;
-}
 .result-count {
   font-size: 14px;
   color: var(--muted);
@@ -460,14 +415,6 @@ button.hit:hover {
 .cov-count span {
   color: var(--muted);
   font-weight: 400;
-}
-.v-ring,
-.v-bar {
-  display: inline-flex;
-}
-.panel[data-view='ring'] .v-bar,
-.panel[data-view='bar'] .v-ring {
-  display: none;
 }
 .group-row .cov-count small {
   display: inline;
@@ -809,9 +756,6 @@ button.hit:hover {
     padding-left: 0;
     border-left: 0;
   }
-  .spacer {
-    display: none;
-  }
 }
 @media (max-width: 759px) {
   .page-head h1 {
@@ -822,9 +766,6 @@ button.hit:hover {
   }
   .search {
     flex: 1 1 100%;
-  }
-  .viewtoggle > span {
-    display: none;
   }
   .drawer {
     width: 100vw;
