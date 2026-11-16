@@ -155,12 +155,15 @@
   min-width: 0;
   align-content: start;
 }
+/* The overview: the feed cards first, full width, then the run log beside the figures. */
+.overview {
+  margin-top: 16px;
+}
 .two {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 420px;
   gap: 14px;
   align-items: start;
-  margin-top: 16px;
 }
 .row2 {
   display: grid;
@@ -230,12 +233,11 @@
 .ft-top .pill {
   margin-left: auto;
 }
+/* The headline is the feed's own words: it wraps rather than ends in an ellipsis. */
 .ft-head {
   font-size: 14px;
   margin-top: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 .ftile.st-none .ft-head,
 .ftile.st-error .ft-head {
