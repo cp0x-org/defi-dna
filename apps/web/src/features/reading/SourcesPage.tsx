@@ -7,6 +7,8 @@ import { assessesLabel, dateInfo } from '../../shared/lib/view.ts'
 import { IconArrow, IconChevron } from '../../shared/ui/Icons.tsx'
 import { ExternalLink, SourceMark } from '../../shared/ui/UI.tsx'
 
+const REPO = 'https://github.com/cp0x-org/defi-dna'
+
 /** Coverage counts need the dataset; everything else here is hand-maintained. */
 export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
   <>
@@ -107,9 +109,6 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
           vaults inside it. We show the difference rather than averaging it away.
         </p>
       </div>
-      <Link to="/methodology" className="button secondary">
-        Reading guide <IconArrow />
-      </Link>
     </section>
 
     <section className="reading-section">
@@ -145,11 +144,32 @@ export const SourcesPage = ({ index }: { index: IndexBundle | null }) => (
       </div>
     </section>
 
-    <div className="page-end-note">
-      <span>A feed we should add?</span>
-      <Link to="/methodology#contribute" className="text-link">
-        How to propose one <IconArrow />
-      </Link>
-    </div>
+    <section id="contribute" className="contribute-panel" tabIndex={-1}>
+      <div>
+        <span className="eyebrow">OPEN DATA, SHARED RESPONSIBILITY</span>
+        <h2>Corrections are pull requests.</h2>
+        <p>
+          Everything on this site comes from plain JSON in a public AGPL-3.0 repository, and every
+          refresh is committed — so the history of a value survives a feed editing its own page. A
+          risk feed we should add, an outdated value, a missing mapping: open an issue or a pull
+          request.
+        </p>
+      </div>
+      <ExternalLink className="button secondary" href={REPO}>
+        Contribute on GitHub
+      </ExternalLink>
+      <details className="contribute-details">
+        <summary>
+          For data contributors
+          <IconChevron />
+        </summary>
+        <p>
+          Protocols live in <code>registry/protocols.json</code>. A feed describes itself in{' '}
+          <code>adapters/feeds/&lt;feed&gt;/feed.json</code> and maps our protocol ids to its own in{' '}
+          <code>mapping.json</code> — one id per line, nothing else. A protocol a feed does not
+          cover is simply absent from that mapping.
+        </p>
+      </details>
+    </section>
   </>
 )

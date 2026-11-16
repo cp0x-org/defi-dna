@@ -98,7 +98,6 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
           <span>Every verdict belongs to the feed that published it. No composite score.</span>
         </div>
         <div className="footer-links">
-          <Link to="/methodology">Methodology</Link>
           <ExternalLink href={DATA_REPO}>Open data</ExternalLink>
           <ExternalLink href={`${REPO}/blob/main/CHARTER.md`}>Charter</ExternalLink>
           <ExternalLink href={REPO}>GitHub · AGPL-3.0</ExternalLink>

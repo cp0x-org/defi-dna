@@ -126,7 +126,7 @@ export const FeedSource = ({
             <ExternalLink className="linkbtn" href={feed.homepage}>
               Open {feed.name}
             </ExternalLink>
-            <Link className="linkbtn" to="/methodology#contribute">
+            <Link className="linkbtn" to="/sources#contribute">
               Suggest a mapping
             </Link>
           </div>
@@ -151,9 +151,6 @@ export const FeedSource = ({
             as neutral data. We set no threshold of our own.
           </span>
         )}
-        <Link className="text-link" to="/methodology">
-          How to read
-        </Link>
       </div>
       <div className="mapping">
         <Prov kind="cp" />

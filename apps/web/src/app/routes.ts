@@ -5,7 +5,6 @@
 export const NAV = [
   { to: '/', label: 'Protocols', end: true },
   { to: '/sources', label: 'Risk feeds', title: 'Risk feeds' },
-  { to: '/methodology', label: 'How to read', title: 'How to read' },
   { to: '/changelog', label: 'What changed', title: 'What changed' },
 ] as const
 

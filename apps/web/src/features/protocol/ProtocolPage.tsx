@@ -412,7 +412,7 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
 
       <div className="page-end-note">
         <span>Spotted an outdated value or a missing feed?</span>
-        <Link to="/methodology#contribute" className="text-link">
+        <Link to="/sources#contribute" className="text-link">
           Send a correction <IconArrow />
         </Link>
       </div>
