@@ -77,6 +77,29 @@
   flex-wrap: wrap;
   justify-content: flex-end;
 }
+/* TVL beside the name: the only figure in the header, set like a key figure. */
+.id-figure {
+  display: grid;
+  justify-items: end;
+  margin-left: auto;
+  text-align: right;
+  white-space: nowrap;
+}
+.id-figure .lbl {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.id-figure b {
+  font: 600 26px/1.25 var(--mono);
+  letter-spacing: -0.6px;
+}
+.id-figure small {
+  font-size: 12px;
+  color: var(--muted);
+}
 
 /* ------------------------------------------------------------------ key figures */
 .mstrip {

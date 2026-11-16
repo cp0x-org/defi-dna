@@ -1,33 +1,11 @@
-import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import type { ExtraGovernanceBody, IndexBundle } from '@defi-dna/data'
+import type { IndexBundle } from '@defi-dna/data'
 import { useChangelog, useProtocol } from '../../data/useData.ts'
-import {
-  GOVERNANCE_METRIC,
-  INCIDENTS_METRIC,
-  TVL_METRIC,
-  feedName,
-  feeds,
-  protocolById,
-  protocols,
-} from '../../shared/lib/registry.ts'
+import { TVL_METRIC, feeds, protocolById, protocols } from '../../shared/lib/registry.ts'
 import { summarizeRecord } from './record.ts'
 import { changesFor } from '../dashboard/rows.ts'
-import {
-  ageLabel,
-  categoryLabel,
-  dateInfo,
-  formatDuration,
-  formatUsd,
-} from '../../shared/lib/view.ts'
-import {
-  LEGEND_SIGNALS,
-  SIGNAL_LABELS,
-  SIGNAL_TONES,
-  TONE_LABELS,
-  signalCounts,
-} from '../../shared/lib/status.ts'
-import { Prov, StatusDot } from '../../shared/ui/Coverage.tsx'
+import { ageLabel, categoryLabel, formatUsd } from '../../shared/lib/view.ts'
 import { IconArrow } from '../../shared/ui/Icons.tsx'
 import { LoadState } from '../../shared/ui/LoadState.tsx'
 import { ExternalLink, ProtocolAvatar } from '../../shared/ui/UI.tsx'
@@ -50,9 +28,9 @@ type Tab = keyof typeof TABS
 
 /**
  * One protocol version. The heading comes from the hand-maintained registry
- * and always renders; everything else comes from the generated record and
- * waits for it. Three tabs: a summary, the protocol's own facts, and every
- * feed in its own words.
+ * and always renders; the TVL beside it and everything below come from the
+ * generated record and wait for it. Three tabs: a summary, the protocol's own
+ * facts, and every feed in its own words.
  */
 export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const { id = '', tab: tabParam = '', feed: feedParam = '' } = useParams()
@@ -86,43 +64,10 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
     ? protocols.filter((other) => other.group === protocol.group)
     : [protocol]
   const summary = record ? summarizeRecord(record) : null
-  const signals = signalCounts(summary?.tones ?? [])
   const metricsMissing = record != null && record.metrics === null
   const tvl = record?.metrics?.[TVL_METRIC]
-  const incidents = record?.metrics?.[INCIDENTS_METRIC]
-  const governance = record?.metrics?.[GOVERNANCE_METRIC]
-  // A version with no contracts mapped is stored as a bare null; only a cell with facts was read.
-  const governanceRead = governance?.extra?.facts != null
-  const bodies = governance?.extra?.bodies ?? []
-  const bodyLabel = (body: ExtraGovernanceBody) =>
-    body.kind === 'multisig'
-      ? `${body.threshold}/${body.signers} ${body.name}`
-      : body.kind === 'token-vote'
-        ? `${body.token ?? body.name} vote`
-        : body.kind === 'veto'
-          ? `${body.token ?? body.name} veto`
-          : `EOA ${body.name}`
   const tvlAge = ageLabel(tvl?.fetchedAt)
-  const latestIncident = summary?.latestIncident
   const changes = changesFor(changelog.data ?? [], protocol.id)
-  const lastChange = changes[0]
-
-  const figure = (label: ReactNode, value: ReactNode, sub: ReactNode, to?: string): ReactNode => {
-    const body = (
-      <>
-        <div className="m-l">{label}</div>
-        <div className="m-v">{value}</div>
-        <div className="m-s">{sub}</div>
-      </>
-    )
-    return to ? (
-      <Link className="m" to={to}>
-        {body}
-      </Link>
-    ) : (
-      <div className="m">{body}</div>
-    )
-  }
 
   return (
     <div className="page protocol-page">
@@ -144,7 +89,6 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           <div>
             <div className="id-title">
               <h1>{protocol.name}</h1>
-              <Prov kind="meta" title="Protocol facts from the defi-dna registry" />
             </div>
             <div className="id-sub">
               <b>{categoryLabel(protocol.category)}</b>
@@ -172,6 +116,16 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
             </div>
           </div>
         </div>
+        {/* The one figure worth the header: size, as DefiLlama measures it. Not a rating. */}
+        <div className="id-figure">
+          <span className="lbl">TVL</span>
+          <b className="mono">{formatUsd(tvl?.value) ?? '—'}</b>
+          <small>
+            {metricsMissing
+              ? 'DefiLlama · could not be loaded'
+              : `DefiLlama · Ethereum${tvlAge ? ` · ${tvlAge} ago` : ''}`}
+          </small>
+        </div>
         <div className="id-links">
           {protocol.website ? (
             <ExternalLink className="linkbtn" href={protocol.website}>
@@ -185,179 +139,6 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           ) : null}
         </div>
       </section>
-
-      <section className="mstrip" aria-label="Key figures">
-        {figure(
-          <>
-            TVL <Prov kind="meta" />
-          </>,
-          formatUsd(tvl?.value) ?? '—',
-          metricsMissing
-            ? 'DefiLlama · could not be loaded'
-            : `DefiLlama · Ethereum${tvlAge ? ` · ${tvlAge} ago` : ''}`,
-        )}
-        {figure(
-          <>
-            Timelock <Prov kind="meta" />
-          </>,
-          formatDuration(governance?.value) ?? '—',
-          metricsMissing
-            ? 'on-chain · could not be loaded'
-            : !record
-              ? 'governance executor · on-chain'
-              : !governanceRead
-                ? 'nothing read on-chain'
-                : governance?.value == null
-                  ? 'no timelock among the contracts read'
-                  : `governance executor · read ${ageLabel(governance.updatedAt) ?? '—'} ago`,
-          `${base}/data`,
-        )}
-        {figure(
-          <>
-            Governance <Prov kind="meta" />
-          </>,
-          bodies[0]
-            ? bodies[0].kind === 'multisig'
-              ? `Multisig ${bodies[0].threshold}/${bodies[0].signers}`
-              : bodies[0].kind === 'token-vote'
-                ? 'Token vote'
-                : bodies[0].kind === 'veto'
-                  ? 'Veto'
-                  : 'EOA'
-            : '—',
-          bodies.length > 0
-            ? bodies.map(bodyLabel).join(' · ')
-            : metricsMissing
-              ? 'on-chain · could not be loaded'
-              : !record
-                ? 'who decides · on-chain'
-                : governanceRead
-                  ? 'no deciding body among the contracts read'
-                  : 'nothing read on-chain',
-          `${base}/data`,
-        )}
-        {figure(
-          <>
-            Category <Prov kind="meta" />
-          </>,
-          categoryLabel(protocol.category),
-          'registry',
-        )}
-        {figure(
-          <>
-            Network <Prov kind="meta" />
-          </>,
-          'Ethereum',
-          'mainnet only',
-        )}
-        {figure(
-          <>
-            Coverage <Prov kind="cov">Cov</Prov>
-          </>,
-          summary ? (
-            <>
-              {summary.withData.length} <small>/ {feeds.length}</small>
-            </>
-          ) : (
-            '—'
-          ),
-          'feeds with data',
-          `${base}/risk`,
-        )}
-        {figure(
-          <>
-            Incidents <Prov kind="src">Src</Prov>
-          </>,
-          incidents?.value != null ? (
-            <>
-              {incidents.value} <small>recorded</small>
-            </>
-          ) : (
-            '—'
-          ),
-          metricsMissing
-            ? 'DefiLlama · could not be loaded'
-            : latestIncident
-              ? `DefiLlama · latest ${dateInfo(latestIncident.date).label}`
-              : 'DefiLlama',
-          `${base}/data`,
-        )}
-        {figure(
-          <>
-            Changed <Prov kind="cov">Cov</Prov>
-          </>,
-          lastChange ? (
-            <>
-              {ageLabel(lastChange.ts)} <small>ago</small>
-            </>
-          ) : (
-            '—'
-          ),
-          changelog.error
-            ? 'run log could not be loaded'
-            : lastChange
-              ? `${feedName(lastChange.feedId)} changed`
-              : 'latest move in a feed’s value',
-        )}
-      </section>
-
-      {record && summary ? (
-        <section className="covblock" aria-label="Feed coverage">
-          <div className="cov-head">
-            <Prov kind="cov">Data coverage</Prov>
-            <span className="ttl">
-              <b>
-                {summary.withData.length} / {feeds.length}
-              </b>{' '}
-              feeds with data
-            </span>
-            <span className="cov-legend">
-              {LEGEND_SIGNALS.map((signal) => (
-                <span key={signal}>
-                  <StatusDot tone={SIGNAL_TONES[signal]} />
-                  {signals[signal]} {SIGNAL_LABELS[signal].toLowerCase()}
-                </span>
-              ))}
-              <span>
-                <StatusDot tone="none" />
-                {feeds.length - summary.withData.length - summary.errors.length} no data
-              </span>
-              {summary.errors.length > 0 ? (
-                <span>
-                  <StatusDot tone="error" />
-                  {summary.errors.length} collection error
-                </span>
-              ) : null}
-            </span>
-            <span className="note">
-              Colour = the feed’s own characterization, on its own scale. Click a feed to read it.
-            </span>
-          </div>
-          <div className="covsegs" style={{ '--feeds': feeds.length } as CSSProperties}>
-            {feeds.map((feed, k) => {
-              const tone = summary.tones[k] ?? 'none'
-              const updated = record.feeds[feed.id]?.updatedAt
-              return (
-                <Link
-                  key={feed.id}
-                  className={`cseg st-${tone}`}
-                  to={`${base}/risk/${feed.id}`}
-                  title={`${feed.name} — ${TONE_LABELS[tone]}`}
-                >
-                  <i />
-                  <span>{feed.name}</span>
-                  <small>
-                    {TONE_LABELS[tone]}
-                    {record.feeds[feed.id]?.status === 'ok' && updated
-                      ? ` · ${dateInfo(updated).label}`
-                      : ''}
-                  </small>
-                </Link>
-              )
-            })}
-          </div>
-        </section>
-      ) : null}
 
       <div className="tabs-anchor" ref={anchor} />
       <nav className="tabs" aria-label="Protocol sections">
