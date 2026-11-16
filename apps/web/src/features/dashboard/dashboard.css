@@ -885,3 +885,32 @@ button.hit:hover {
   width: 12px;
   height: 12px;
 }
+
+/* The table fits its panel, and only the panel scrolls sideways. Header notes
+   wrap, so a note never makes a column wider than its cells; the scroll box
+   contains its absolutely positioned children (the screen-reader label of the
+   last column), so they cannot widen the page and give it a scrollbar. */
+.table-scroll {
+  position: relative;
+}
+.grid thead tr.grp th,
+.grid .th-sub {
+  white-space: normal;
+}
+/* A 1280 px laptop is the narrowest common desktop: tighter cells keep every
+   column in view there instead of behind the panel's own scrollbar. */
+@media (max-width: 1365px) {
+  .grid th,
+  .grid td,
+  .grid thead tr.grp th {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+/* On the narrowest phones the three page figures stay side by side by letting
+   their labels take two lines. */
+@media (max-width: 389px) {
+  .ph-stats dt {
+    white-space: normal;
+  }
+}
