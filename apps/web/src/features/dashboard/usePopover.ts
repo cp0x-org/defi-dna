@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type MouseEvent } from 'react'
 
 export const POP_LABELS = {
   coverage: 'Feed coverage',
-  signals: 'Feed signals',
   incidents: 'Incidents',
   changes: 'Recent changes',
 } as const

@@ -62,7 +62,6 @@ export const COLUMNS = {
   timelock: 'Governance timelock',
   governance: 'Governance',
   coverage: 'Coverage',
-  signals: 'Signals',
   incidents: 'Incidents',
   updated: 'Updated',
 } as const

@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { feedName, feeds } from '../../shared/lib/registry.ts'
 import { changedWithinDay, dataCount, type Row } from './rows.ts'
-import { SIGNALS, SIGNAL_LABELS, signalOf } from '../../shared/lib/status.ts'
 import { ageLabel, dateInfo } from '../../shared/lib/view.ts'
 import { FeedStatusList } from './FeedStatusList.tsx'
 import type { PopKind } from './usePopover.ts'
@@ -45,35 +44,6 @@ const CoverageCard = ({ row, pinned, onClose }: CardProps) => (
       text="Click to pin"
       to={`/protocol/${row.protocol.id}/risk`}
       link="Risk intelligence →"
-      onClose={onClose}
-    />
-  </>
-)
-
-const SignalsCard = ({ row, pinned, onClose }: CardProps) => (
-  <>
-    <div className="pop-h">
-      <strong>Feed signals · {row.protocol.name}</strong>
-    </div>
-    <div className="pop-sub">
-      Feeds grouped by their own characterization. Not combined into a verdict.
-    </div>
-    {SIGNALS.map((signal) => {
-      const members = feeds.filter((feed) => signalOf(row.tones[feed.id] ?? 'none') === signal)
-      return members.length > 0 ? (
-        <div key={signal}>
-          <div className="pop-group">
-            {SIGNAL_LABELS[signal]} · {members.length}
-          </div>
-          <FeedStatusList feeds={members} tones={row.tones} />
-        </div>
-      ) : null
-    })}
-    <Foot
-      pinned={pinned}
-      text={`${dataCount(row.feeds, feedIds)} of ${feeds.length} feeds reporting`}
-      to={`/protocol/${row.protocol.id}/risk`}
-      link="Read each feed →"
       onClose={onClose}
     />
   </>
@@ -146,7 +116,6 @@ interface CardProps {
 
 const CARDS: Record<PopKind, (props: CardProps) => ReactNode> = {
   coverage: CoverageCard,
-  signals: SignalsCard,
   incidents: IncidentsCard,
   changes: ChangesCard,
 }

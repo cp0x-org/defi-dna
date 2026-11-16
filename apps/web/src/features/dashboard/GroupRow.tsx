@@ -66,7 +66,6 @@ export const GroupRow = ({
           </span>
         </td>
       ) : null}
-      {show('signals') ? <td /> : null}
       {show('incidents') ? (
         <td>
           {group.incidents == null ? (

@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import type { ColumnKey } from '../../shared/lib/prefs.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { changedAt, changedWithinDay, dataCount, type Row } from './rows.ts'
-import { SIGNALS, signalCounts, type Tone } from '../../shared/lib/status.ts'
+import type { Tone } from '../../shared/lib/status.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../../shared/lib/view.ts'
 import { CoverageBar, CoverageRing } from '../../shared/ui/Coverage.tsx'
 import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
@@ -39,7 +39,6 @@ export const VersionRow = ({
   const href = `/protocol/${protocol.id}`
   const states = tonesOf(row)
   const covered = dataCount(row.feeds, feedIds)
-  const counts = signalCounts(states)
   const today = changedWithinDay(row, now)
   return (
     <tr className={nested ? 'version-row' : undefined} onClick={() => navigate(href)}>
@@ -103,23 +102,6 @@ export const VersionRow = ({
               {covered}
               <span>/{feeds.length}</span>
             </span>
-          </button>
-        </td>
-      ) : null}
-      {show('signals') ? (
-        <td>
-          <button
-            type="button"
-            className="hit sig"
-            aria-label={`Feed signals: ${counts.neg} negative, ${counts.neu} neutral or informational, ${counts.pos} positive`}
-            {...popTarget('signals', protocol.id)}
-          >
-            {SIGNALS.map((signal) => (
-              <span key={signal} className={`sc ${signal}${counts[signal] ? '' : ' zero'}`}>
-                <i />
-                {counts[signal]}
-              </span>
-            ))}
           </button>
         </td>
       ) : null}

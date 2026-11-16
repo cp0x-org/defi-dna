@@ -469,37 +469,6 @@ button.hit:hover {
 .panel[data-view='bar'] .v-ring {
   display: none;
 }
-.sig {
-  gap: 10px;
-}
-.sc {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font: 600 14px var(--mono);
-  min-width: 24px;
-}
-.sc i {
-  width: 7px;
-  height: 7px;
-  border-radius: 2px;
-}
-.sc.neg i {
-  background: var(--neg-seg);
-}
-.sc.neu i {
-  background: var(--neu-seg);
-}
-.sc.pos i {
-  background: var(--pos-seg);
-}
-.sc.zero {
-  color: var(--faint);
-  font-weight: 400;
-}
-.sc.zero i {
-  opacity: 0.35;
-}
 .group-row .cov-count small {
   display: inline;
   margin-left: 6px;
@@ -639,14 +608,6 @@ button.hit:hover {
   color: var(--neg);
 }
 .pop-list li.st-none {
-  color: var(--muted);
-}
-.pop-group {
-  padding: 8px 13px 2px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
   color: var(--muted);
 }
 .pop-list .age {

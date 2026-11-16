@@ -10,7 +10,7 @@ import { Info } from '../../shared/ui/UI.tsx'
 const COLUMN_GROUPS: Record<'meta' | 'cov' | 'src', ColumnKey[]> = {
   meta: ['category', 'tvl', 'timelock', 'governance'],
   cov: ['coverage'],
-  src: ['signals', 'incidents'],
+  src: ['incidents'],
 }
 
 /** The two header rows: where each group of columns comes from, then the sortable columns. */
@@ -115,14 +115,6 @@ export const MatrixHead = ({
             {sortButton('coverage-desc', 'Coverage')}
             <Info label="Coverage">
               How many feeds have data for this version. Hover a cell for the list.
-            </Info>
-          </th>
-        ) : null}
-        {show('signals') ? (
-          <th aria-sort={ariaSort('signals-desc')}>
-            {sortButton('signals-desc', 'Signals')}
-            <Info label="Signals">
-              Counts of feeds by their own characterization: negative, neutral/info, positive.
             </Info>
           </th>
         ) : null}

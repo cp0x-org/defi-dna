@@ -61,8 +61,6 @@ export const SIGNAL_LABELS: Record<Signal, string> = {
   pos: 'Positive',
 }
 
-/** Negative first, as in the dashboard's Signals column. */
-export const SIGNALS: Signal[] = ['neg', 'neu', 'pos']
 /** Legends read from positive to negative. */
 export const LEGEND_SIGNALS: Signal[] = ['pos', 'neu', 'neg']
 

@@ -2,9 +2,8 @@ import { useEffect, useRef } from 'react'
 import { TVL_MIN, UPDATED, keysOf, withoutFilters, type MatrixQuery } from './matrix.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { coverageCount, type Row } from './rows.ts'
-import { SIGNALS, SIGNAL_LABELS, SIGNAL_TONES } from '../../shared/lib/status.ts'
 import { categoryLabel } from '../../shared/lib/view.ts'
-import { Prov, StatusDot } from '../../shared/ui/Coverage.tsx'
+import { Prov } from '../../shared/ui/Coverage.tsx'
 import { IconClose } from '../../shared/ui/Icons.tsx'
 
 /** A row of mutually exclusive buttons. */
@@ -251,32 +250,6 @@ export const FilterDrawer = ({
                 )
               })}
             </div>
-          </section>
-
-          <section className="fs">
-            <h3>
-              Signals <Prov kind="src" />
-            </h3>
-            <p className="fs-note">
-              Each feed’s own characterization, read from its own published scale.
-            </p>
-            {SIGNALS.map((signal) => (
-              <label className="cb" key={signal}>
-                <input
-                  type="checkbox"
-                  checked={query.signals.includes(signal)}
-                  onChange={(event) =>
-                    set({
-                      signals: event.target.checked
-                        ? [...query.signals, signal]
-                        : query.signals.filter((other) => other !== signal),
-                    })
-                  }
-                />
-                <StatusDot tone={SIGNAL_TONES[signal]} />
-                Has {SIGNAL_LABELS[signal].toLowerCase()} signals
-              </label>
-            ))}
           </section>
 
           <section className="fs">
