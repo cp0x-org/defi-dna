@@ -3,7 +3,6 @@ import { TVL_MIN, keysOf, withoutFilters, type MatrixQuery } from './matrix.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { coverageCount, type Row } from './rows.ts'
 import { categoryLabel } from '../../shared/lib/view.ts'
-import { Prov } from '../../shared/ui/Coverage.tsx'
 import { IconClose } from '../../shared/ui/Icons.tsx'
 
 /** A row of mutually exclusive buttons. */
@@ -136,9 +135,7 @@ export const FilterDrawer = ({
         </div>
         <div className="dr-body">
           <section className="fs">
-            <h3>
-              Protocol <Prov kind="meta" />
-            </h3>
+            <h3>Protocol</h3>
             <div className="fl-label">Category</div>
             <div className="chipset">
               {categories.map((category) => (
@@ -164,9 +161,7 @@ export const FilterDrawer = ({
           </section>
 
           <section className="fs">
-            <h3>
-              Size <Prov kind="meta" />
-            </h3>
+            <h3>Size</h3>
             <div className="fl-label">
               TVL <span className="muted">DefiLlama · Ethereum</span>
             </div>
@@ -182,9 +177,7 @@ export const FilterDrawer = ({
           </section>
 
           <section className="fs">
-            <h3>
-              Coverage <Prov kind="cov" />
-            </h3>
+            <h3>Risk feeds</h3>
             <div className="fl-label">Risk feeds with data</div>
             <Segmented
               label="Feeds with data"
@@ -201,9 +194,7 @@ export const FilterDrawer = ({
           </section>
 
           <section className="fs">
-            <h3>
-              By risk feed <Prov kind="cov" />
-            </h3>
+            <h3>By risk feed</h3>
             <p className="fs-note">
               Filters on whether a feed has published data about a version — never on what the feed
               says.
@@ -253,9 +244,7 @@ export const FilterDrawer = ({
           </section>
 
           <section className="fs">
-            <h3>
-              Incidents <Prov kind="src" />
-            </h3>
+            <h3>Incidents</h3>
             <label className="cb">
               <input
                 type="checkbox"

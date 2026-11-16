@@ -26,7 +26,7 @@ import {
   SIGNAL_TONES,
   TONE_LABELS,
 } from '../../shared/lib/status.ts'
-import { Prov, StatusDot } from '../../shared/ui/Coverage.tsx'
+import { StatusDot } from '../../shared/ui/Coverage.tsx'
 import { FilterDrawer } from './FilterDrawer.tsx'
 import { GroupRow } from './GroupRow.tsx'
 import { MatrixHead } from './MatrixHead.tsx'
@@ -392,7 +392,14 @@ export const DashboardPage = ({
 
         <div className="table-foot">
           <div className="legend">
-            <span className="lg-title">Feed status</span>
+            <span className="lg-title">Coverage ring</span>
+            <span>
+              One segment per risk feed, clockwise from 12 o’clock:{' '}
+              {feeds.map((feed, k) => `${k + 1} ${feed.name}`).join(' · ')}.
+            </span>
+          </div>
+          <div className="legend">
+            <span className="lg-title">Colours</span>
             {LEGEND_SIGNALS.map((signal) => (
               <span key={signal}>
                 <StatusDot tone={SIGNAL_TONES[signal]} />
@@ -404,30 +411,8 @@ export const DashboardPage = ({
               {TONE_LABELS.none}
             </span>
             <span>
-              — position on <b>each feed’s own published scale</b>. Data whose scale gives no
-              reading is neutral. “No data” means the feed has not covered the version; it is not a
-              signal.
-            </span>
-          </div>
-          <div className="legend">
-            <span className="lg-title">Provenance</span>
-            <span>
-              <Prov kind="meta" /> protocol facts from our registry, DefiLlama and the protocol’s
-              governance contracts on Ethereum mainnet
-            </span>
-            <span>
-              <Prov kind="cov" /> which feeds have data, and when it last changed
-            </span>
-            <span>
-              <Prov kind="src" /> published by a named source, shown as-is — signals count feeds by
-              their own characterization
-            </span>
-          </div>
-          <div className="legend">
-            <span className="lg-title">Segment order</span>
-            <span>
-              {feeds.map((feed, k) => `${k + 1} ${feed.name}`).join(' · ')} — same order in every
-              row, clockwise from 12 o’clock in the ring.
+              — each feed’s own characterization on <b>its own published scale</b>. Data whose scale
+              gives no reading is neutral; “No data” means the feed has not covered the version.
             </span>
           </div>
         </div>
