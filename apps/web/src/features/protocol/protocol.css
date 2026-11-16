@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------ *
- * The protocol page: identity, key figures, coverage, then three tabs.
+ * The protocol page: identity with TVL, then three tabs.
  * ------------------------------------------------------------------ */
 
 .protocol-page {
@@ -99,158 +99,6 @@
 .id-figure small {
   font-size: 12px;
   color: var(--muted);
-}
-
-/* ------------------------------------------------------------------ key figures */
-.mstrip {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 1px;
-  margin-top: 16px;
-  background: var(--line);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-.m {
-  padding: 14px 18px 16px;
-  min-width: 0;
-  background: var(--surface);
-}
-a.m:hover {
-  background: var(--row-hover);
-}
-a.m:hover .m-v {
-  color: var(--accent);
-}
-.m-l {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.m-v {
-  font: 600 22px/1.35 var(--mono);
-  letter-spacing: -0.4px;
-  margin-top: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.m-v small {
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 500;
-}
-.m-s {
-  font-size: 12px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ------------------------------------------------------------------ coverage strip */
-.covblock {
-  margin-top: 10px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 14px 18px 16px;
-}
-.cov-head {
-  display: flex;
-  align-items: center;
-  gap: 10px 16px;
-  flex-wrap: wrap;
-  font-size: 14px;
-}
-.cov-head .ttl {
-  font-weight: 700;
-}
-.cov-head .ttl b {
-  font-family: var(--mono);
-}
-.cov-legend {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  color: var(--muted);
-  font-size: 14px;
-}
-.cov-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.cov-head .note {
-  margin-left: auto;
-  font-size: 14px;
-  color: var(--muted);
-}
-/* --feeds is set from the registry, so a new feed needs no CSS. */
-.covsegs {
-  display: grid;
-  grid-template-columns: repeat(var(--feeds, 1), minmax(0, 1fr));
-  gap: 3px;
-  margin-top: 9px;
-}
-.cseg {
-  display: block;
-  padding: 0 0 2px;
-  border-radius: 4px;
-  min-width: 0;
-}
-.cseg i {
-  display: block;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--none-seg);
-}
-.cseg.st-pos i {
-  background: var(--pos-seg);
-}
-.cseg.st-neu i,
-.cseg.st-inf i {
-  background: var(--neu-seg);
-}
-.cseg.st-neg i {
-  background: var(--neg-seg);
-}
-.cseg.st-error i {
-  background: repeating-linear-gradient(135deg, var(--none-seg) 0 3px, transparent 3px 6px);
-}
-.cseg span {
-  display: block;
-  font-size: 14px;
-  font-weight: 700;
-  margin-top: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cseg small {
-  display: block;
-  font-size: 12px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cseg.st-none span,
-.cseg.st-error span {
-  color: var(--muted);
-  font-weight: 500;
-}
-.cseg:hover span {
-  color: var(--accent);
-}
-.cseg:hover i {
-  box-shadow: 0 0 0 2px var(--accent-tint);
 }
 
 /* ------------------------------------------------------------------ tabs */
@@ -973,9 +821,6 @@ a.m:hover .m-v {
 
 /* ------------------------------------------------------------------ narrow screens */
 @media (max-width: 1199px) {
-  .mstrip {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
   .two,
   .row2 {
     grid-template-columns: minmax(0, 1fr);
@@ -991,13 +836,13 @@ a.m:hover .m-v {
   .id-links {
     justify-content: flex-start;
   }
-  .cov-head .note,
+  .id-figure {
+    margin-left: 0;
+    justify-items: start;
+    text-align: left;
+  }
   .tabs .hint {
     display: none;
-  }
-  .covsegs {
-    overflow-x: auto;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   }
   .risk {
     grid-template-columns: minmax(0, 1fr);
@@ -1022,9 +867,6 @@ a.m:hover .m-v {
   }
   .id-title h1 {
     font-size: 30px;
-  }
-  .mstrip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .two > aside.stack,
   .facts,
