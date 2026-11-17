@@ -1,4 +1,10 @@
-import { formatUsd, type Detail, type FeedAdapter, type FeedResult } from '@defi-dna/core'
+import {
+  formatUsd,
+  type Detail,
+  type ExtraFinding,
+  type FeedAdapter,
+  type FeedResult,
+} from '@defi-dna/core'
 
 const DATA = 'https://www.defiscan.info/data'
 const SITE = 'https://www.defiscan.info/protocol'
@@ -7,6 +13,10 @@ const DAY = 86_400
 const SUMMARY_CHARS = 700
 /** Named admins listed individually on the protocol page, largest by reachable capital. */
 const TOP_ADMINS = 5
+/** The admin types DeFiScan’s page counts as holding permissioned access. */
+const PERMISSIONED = new Set(['EOA', 'EOAPermissioned', 'Multisig', 'Timelock'])
+/** Proxy types DeFiScan’s page leaves out when it asks whether every contract is immutable. */
+const NOT_CODE = new Set(['gnosis safe', 'EOA'])
 
 interface ReviewTotals {
   contractCount?: number
@@ -16,7 +26,23 @@ interface ReviewTotals {
   dependencyCount?: number
   totalCapitalAtRisk?: number
   totalTokenValueAtRisk?: number
+  totalTokenValue?: number
   coverage?: number
+}
+
+interface ReviewMitigation {
+  /** delay | valueRange | relativeValue | other */
+  type?: string
+  delaySeconds?: number | null
+  valueRange?: { min?: number | null; max?: number | null } | null
+  relativeValue?: { maxChangePercent?: number | null } | null
+  description?: string | null
+}
+
+interface ReviewFunction {
+  directFundsUsd?: number
+  reachableContracts?: { fundsAtRisk?: boolean; fundsUsd?: number }[]
+  mitigations?: ReviewMitigation[] | null
 }
 
 interface ReviewAdmin {
@@ -26,6 +52,17 @@ interface ReviewAdmin {
   isGovernance?: boolean
   totalReachableCapital?: number
   totalReachableTokenValue?: number
+  functions?: ReviewFunction[]
+}
+
+interface ReviewDependency {
+  entity?: string | null
+  functions?: ReviewFunction[]
+}
+
+interface ReviewContract {
+  isExternal?: boolean
+  proxyType?: string | null
 }
 
 interface CompiledReview {
@@ -43,6 +80,8 @@ interface CompiledReview {
   }
   totals?: ReviewTotals
   admins?: ReviewAdmin[]
+  contracts?: ReviewContract[]
+  dependencies?: ReviewDependency[]
 }
 
 export interface AssessedReview {
@@ -64,6 +103,190 @@ const trim = (text: string | undefined, max = SUMMARY_CHARS): string | undefined
 
 const count = (value: number | undefined): string | null =>
   value != null && Number.isFinite(value) ? String(value) : null
+
+const usd = (value: number): string => formatUsd(value) ?? `$${value}`
+const plural = (count: number, one: string, many = `${one}s`): string =>
+  `${count} ${count === 1 ? one : many}`
+
+/** A mitigation delay the way DeFiScan’s page words it: "1 day", "1.5 days", "2 hours", "30 min". */
+const spanOf = (seconds: number): string => {
+  const unit = (count: number, name: string) =>
+    `${Number.isInteger(count) ? count : count.toFixed(1)} ${name}${count !== 1 ? 's' : ''}`
+  if (seconds >= DAY) return unit(seconds / DAY, 'day')
+  if (seconds >= 3_600) return unit(seconds / 3_600, 'hour')
+  if (seconds >= 60)
+    return `${Number.isInteger(seconds / 60) ? seconds / 60 : (seconds / 60).toFixed(1)} min`
+  return `${seconds}s`
+}
+
+const finding = (severity: string, title: string, description: string): ExtraFinding => ({
+  title,
+  severity,
+  category: null,
+  description,
+})
+
+/**
+ * The "Key Findings" DeFiScan’s protocol page derives from a compiled review,
+ * under its own rules and in its own words, applied here to the same public
+ * JSON. Each rule is one of the page's six; none is ours. A review that lacks
+ * the fields a rule reads simply yields no finding from it.
+ */
+export const findingsOf = (review: CompiledReview): ExtraFinding[] => {
+  const admins = review.admins ?? []
+  const totals = review.totals ?? {}
+  const found: (ExtraFinding | null)[] = []
+
+  // Immutability: no admin with permissioned access at all, else every contract immutable code.
+  const ownCode = (review.contracts ?? []).filter(
+    (contract) => !contract.isExternal && !NOT_CODE.has(contract.proxyType ?? ''),
+  )
+  found.push(
+    admins.length > 0 &&
+      !admins.some((admin) => PERMISSIONED.has(admin.adminType ?? '') || admin.isGovernance)
+      ? finding(
+          'positive',
+          'Fully immutable protocol',
+          'All admin controls resolve to immutable contracts or revoked addresses. No admin can modify protocol behavior after deployment.',
+        )
+      : ownCode.length > 0 && ownCode.every((contract) => contract.proxyType === 'immutable')
+        ? finding(
+            'info',
+            'Immutable code',
+            'Every protocol contract is deployed as immutable bytecode. Admins can still write to on-chain parameters exposed by these contracts, but they cannot change the code itself.',
+          )
+        : null,
+  )
+
+  // Keys and multisigs that can reach funds.
+  const reachOf = (list: ReviewAdmin[]) =>
+    Math.max(0, ...list.map((admin) => admin.totalReachableCapital ?? 0))
+  const eoas = admins.filter(
+    (admin) => admin.adminType === 'EOA' || admin.adminType === 'EOAPermissioned',
+  )
+  found.push(
+    eoas.length > 0 && reachOf(eoas) > 0
+      ? finding(
+          'critical',
+          `${plural(eoas.length, 'EOA')} with permissioned access`,
+          `Externally owned account${eoas.length > 1 ? 's' : ''} can execute critical functions affecting up to ${usd(reachOf(eoas))} in TVL.`,
+        )
+      : null,
+  )
+  const multisigs = admins.filter((admin) => admin.adminType === 'Multisig')
+  found.push(
+    multisigs.length > 0 && reachOf(multisigs) > 0
+      ? finding(
+          'warning',
+          `${plural(multisigs.length, 'multisig')} with permissioned access`,
+          `Multisig wallets provide distributed control but still require trust in a known group of signers. ${multisigs.map((admin) => admin.name ?? 'unnamed').join(', ')}.`,
+        )
+      : null,
+  )
+
+  // Total value secured: funds in the contracts plus the protocol token's market cap.
+  const tokens = totals.totalTokenValue ?? totals.totalTokenValueAtRisk ?? 0
+  const capital = totals.totalCapitalAtRisk ?? 0
+  found.push(
+    capital + tokens > 0
+      ? finding(
+          'info',
+          `${usd(capital + tokens)} TVS`,
+          tokens > 0 && capital > 0
+            ? `Total Value Secured by the protocol: ${usd(capital)} in TVL (funds locked in protocol contracts) and ${usd(tokens)} in protocol token market cap.`
+            : capital > 0
+              ? `Total Value Secured by the protocol, consisting of ${usd(capital)} in TVL (tokens held in contracts).`
+              : `Total Value Secured by the protocol, consisting of ${usd(tokens)} in protocol token market cap.`,
+        )
+      : null,
+  )
+
+  // External dependencies, counted by the vendor behind them where DeFiScan names one.
+  const dependencies = review.dependencies
+  if (dependencies) {
+    const vendors = new Set(dependencies.map((dep) => dep.entity).filter(Boolean)).size
+    found.push(
+      dependencies.length === 0
+        ? finding(
+            'positive',
+            'Fully autonomous protocol',
+            'The protocol does not depend on any external contracts, operating entirely through its own on-chain logic.',
+          )
+        : finding(
+            'warning',
+            vendors > 0
+              ? plural(vendors, 'external vendor')
+              : plural(dependencies.length, 'external dependency', 'external dependencies'),
+            `The protocol depends on ${plural(dependencies.length, 'external contract')} from ${vendors > 0 ? plural(vendors, 'vendor') : 'external sources'}, introducing third-party risk. A failure or compromise in any dependency could affect protocol operations.`,
+          ),
+    )
+  }
+
+  found.push(mitigationsOf(admins, dependencies ?? []))
+  return found.filter((entry) => entry !== null)
+}
+
+/** How many of the functions that can reach funds carry a mitigation, and of what kinds. */
+const mitigationsOf = (
+  admins: ReviewAdmin[],
+  dependencies: ReviewDependency[],
+): ExtraFinding | null => {
+  const all: ReviewMitigation[] = []
+  let total = 0
+  let mitigated = 0
+  for (const admin of admins) {
+    for (const fn of admin.functions ?? []) {
+      if (fn.mitigations) all.push(...fn.mitigations)
+      const reachable = (fn.reachableContracts ?? [])
+        .filter((contract) => contract.fundsAtRisk)
+        .reduce((sum, contract) => sum + (contract.fundsUsd ?? 0), 0)
+      if ((fn.directFundsUsd ?? 0) <= 0 && reachable <= 0) continue
+      total++
+      if (fn.mitigations && fn.mitigations.length > 0) mitigated++
+    }
+  }
+  for (const dep of dependencies) {
+    for (const fn of dep.functions ?? []) if (fn.mitigations) all.push(...fn.mitigations)
+  }
+  if (all.length === 0 || mitigated === 0) return null
+
+  const seen = new Set<string>()
+  const unique = all.filter((entry) => {
+    const key = [
+      entry.type,
+      entry.delaySeconds ?? '',
+      entry.valueRange?.min ?? '',
+      entry.valueRange?.max ?? '',
+      entry.relativeValue?.maxChangePercent ?? '',
+      entry.description,
+    ].join(':')
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+  const types = new Set(unique.map((entry) => entry.type))
+  const kinds: string[] = []
+  if (types.has('delay')) {
+    const delays = [
+      ...new Set(
+        unique.flatMap((entry) =>
+          entry.type === 'delay' && entry.delaySeconds != null ? [entry.delaySeconds] : [],
+        ),
+      ),
+    ].sort((a, b) => a - b)
+    kinds.push(delays.length > 0 ? `time delays (${delays.map(spanOf).join(', ')})` : 'time delays')
+  }
+  if (types.has('valueRange')) kinds.push('value range limits')
+  if (types.has('relativeValue')) kinds.push('relative value caps')
+  if (types.has('other')) kinds.push('additional safeguards')
+  const list =
+    kinds.length > 1 ? `${kinds.slice(0, -1).join(', ')} and ${kinds.at(-1)}` : (kinds[0] ?? '')
+  return finding(
+    'info',
+    `${mitigated} out of ${total} functions with potential impact on funds have mitigations`,
+    `Taking into account only functions which can impact funds. Mitigations include ${list}.`,
+  )
+}
 
 /** Headline from DeFiScan’s published totals — counts and capital, not a Stage. */
 export const headlineOf = (totals: ReviewTotals | undefined): string | null => {
