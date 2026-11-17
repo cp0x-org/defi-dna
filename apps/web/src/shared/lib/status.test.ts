@@ -1,7 +1,7 @@
 import type { FeedData } from '@defi-dna/data'
 import { describe, expect, it } from 'vitest'
 import { feeds } from './registry.ts'
-import { detailToneOf, signalCounts, toneFromIndex, toneOf, type Tone } from './status.ts'
+import { detailToneOf, toneFromIndex, toneOf, type Tone } from './status.ts'
 
 const feed = (id: string) => {
   const found = feeds.find((candidate) => candidate.id === id)
@@ -60,15 +60,5 @@ describe('toneFromIndex', () => {
     expect(toneFromIndex(row, 'defiscan')).toBe('inf')
     expect(toneFromIndex(row, 'philidor')).toBe('none')
     expect(toneFromIndex({ feeds: { pigi: true } }, 'pigi')).toBe('inf')
-  })
-})
-
-describe('signalCounts', () => {
-  it('keeps each group apart and puts data without a reading with neutral', () => {
-    expect(signalCounts(['neg', 'inf', 'neu', 'pos', 'none', 'error'])).toEqual({
-      neg: 1,
-      neu: 2,
-      pos: 1,
-    })
   })
 })
