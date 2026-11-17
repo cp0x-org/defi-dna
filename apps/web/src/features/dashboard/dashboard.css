@@ -20,6 +20,18 @@
   font-size: 14px;
   margin-top: 4px;
 }
+.page-head .quick {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.page-head .quick a {
+  font-weight: 700;
+  color: var(--accent);
+}
+.page-head .quick a:hover {
+  text-decoration: underline;
+}
 .page-head p strong {
   color: var(--ink);
 }

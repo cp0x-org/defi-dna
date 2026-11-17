@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
 import { useChangelog, useMetrics } from '../../data/useData.ts'
 import {
@@ -39,6 +39,8 @@ import { Anchored } from '../../shared/ui/UI.tsx'
 
 /** The registry joined with nothing: names and categories without any collected fact. */
 const NO_DATA: IndexBundle = { generatedAt: '', rows: [] }
+/** Quick entries under the intro: the largest protocols by TVL. */
+const QUICK_ENTRIES = 4
 
 /**
  * Files read beside the index that did not arrive. Their columns stay empty
@@ -174,6 +176,12 @@ export const DashboardPage = ({
     writeHiddenColumns(next)
   }
 
+  // A newcomer's way in: the largest protocols, by a measured size, never by a rating.
+  const largest = groupRows(rows)
+    .filter((group) => group.tvl != null)
+    .sort((a, b) => (b.tvl ?? 0) - (a.tvl ?? 0))
+    .slice(0, QUICK_ENTRIES)
+
   const rowProps = {
     now,
     noIncidentsTitle,
@@ -194,6 +202,17 @@ export const DashboardPage = ({
             <strong>never assign a score of our own.</strong> Colours are each feed’s own
             characterization, read from its own published scale.
           </p>
+          {largest.length > 0 ? (
+            <p className="quick">
+              Largest by TVL:{' '}
+              {largest.map((group, k) => (
+                <Fragment key={group.key}>
+                  {k > 0 ? ' · ' : ''}
+                  <Link to={`/protocol/${group.rows[0]?.protocol.id}`}>{group.name}</Link>
+                </Fragment>
+              ))}
+            </p>
+          ) : null}
         </div>
         <dl className="ph-stats">
           <div>

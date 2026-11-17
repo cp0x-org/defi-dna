@@ -8,7 +8,7 @@ import {
   feeds,
 } from '../../shared/lib/registry.ts'
 import { runsOf, type RecordSummary } from './record.ts'
-import { dateInfo, dayAndTime, formatDuration } from '../../shared/lib/view.ts'
+import { assessesLabel, dateInfo, dayAndTime, formatDuration } from '../../shared/lib/view.ts'
 import { CoverageRing, StatusPill } from '../../shared/ui/Coverage.tsx'
 import { Info, SourceMark } from '../../shared/ui/UI.tsx'
 import { SliceChips } from './SliceChips.tsx'
@@ -82,9 +82,22 @@ export const OverviewTab = ({
                     )}
                   </span>
                   <span className="ft-meta">
-                    {feed.topic}
+                    {feed.topic} · assesses {assessesLabel(feed.assesses)}
                     {status === 'ok' ? ` · assessed ${dateInfo(data?.updatedAt).label}` : ''}
                   </span>
+                  {status === 'ok' && data?.value ? (
+                    // How the colour above was read: the feed's own rule, or none.
+                    <span
+                      className="ft-rule"
+                      title={feed.detailStatus?.rule ?? feed.status?.rule ?? undefined}
+                    >
+                      {feed.detailStatus
+                        ? `Chip colours: ${feed.detailStatus.rule}`
+                        : feed.status
+                          ? `Colour: ${feed.status.rule}`
+                          : `No colour rule: ${feed.name}’s scale gives no reading, so the value is neutral.`}
+                    </span>
+                  ) : null}
                 </Link>
               )
             })}
