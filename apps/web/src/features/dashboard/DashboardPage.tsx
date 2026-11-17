@@ -408,7 +408,7 @@ export const DashboardPage = ({
               <StatusDot tone="none" />
               {TONE_LABELS.none}
             </span>
-            <span>
+            <span className="lg-note">
               — each feed’s own characterization on <b>its own published scale</b>. Data whose scale
               gives no reading is neutral; “No data” means the feed has not covered the version.
             </span>

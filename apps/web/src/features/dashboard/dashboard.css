@@ -456,6 +456,10 @@ button.hit:hover {
   color: var(--ink);
   min-width: 92px;
 }
+/* Running prose, not a flex row: its <b> must not become a separate item. */
+.legend > .lg-note {
+  display: inline;
+}
 
 /* ------------------------------------------------------------------ popover */
 .pop {
@@ -719,6 +723,10 @@ button.hit:hover {
 @media (max-width: 759px) {
   .page-head h1 {
     font-size: 28px;
+  }
+  .ph-stats {
+    flex-wrap: wrap;
+    row-gap: 10px;
   }
   .ph-stats > div {
     padding: 0 12px;
