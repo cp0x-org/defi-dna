@@ -265,10 +265,13 @@ export const Block = ({
   </div>
 )
 
+/** The three dates on these pages, named apart so none is mistaken for another. */
 export const DataAgeHelp = () => (
-  <Info label="About assessment dates">
-    Dates belong to the feed’s own assessment, not to our last download. Amber marks a date more
-    than 90 days old; it does not mean the assessment is invalid. Some reviews only change when the
-    protocol does.
+  <Info label="About the dates">
+    <b>Assessed</b> is the feed’s own date for its assessment, not our download. Amber marks a date
+    more than 90 days old; it does not mean the assessment is invalid, some reviews only change when
+    the protocol does. <b>Data cut</b> is when our pipeline last collected everything, and{' '}
+    <b>Last read</b> when it last read this feed without a failure. <b>Changed</b> is when a value
+    moved between two of our runs.
   </Info>
 )

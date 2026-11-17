@@ -7,7 +7,7 @@ import {
   feedName,
   feeds,
 } from '../../shared/lib/registry.ts'
-import type { RecordSummary } from './record.ts'
+import { runsOf, type RecordSummary } from './record.ts'
 import { dateInfo, dayAndTime, formatDuration } from '../../shared/lib/view.ts'
 import { CoverageRing, StatusPill } from '../../shared/ui/Coverage.tsx'
 import { Info, SourceMark } from '../../shared/ui/UI.tsx'
@@ -103,7 +103,7 @@ export const OverviewTab = ({
         <section className="card">
           <div className="card-h">
             <h2>Latest changes</h2>
-            <span className="aside">from our run log</span>
+            <span className="aside">Changed · when a value moved between our runs</span>
           </div>
           <div className="card-b tl-body">
             {changelogError ? (
@@ -114,37 +114,87 @@ export const OverviewTab = ({
               <p className="muted">No change recorded for {protocol.name} since the log began.</p>
             ) : (
               <ul className="tl">
-                {changes.slice(0, TIMELINE_SHOWN).map((change, k) => {
-                  const [day, time] = dayAndTime(change.ts)
-                  return (
-                    <li key={`${change.ts}-${change.feedId}-${k}`}>
-                      <span className="d">
-                        {day}
-                        <small>{time}</small>
-                      </span>
-                      <span className="who">
-                        <SourceMark id={change.feedId} />
-                      </span>
-                      <div>
-                        <div className="what">
-                          <b>{feedName(change.feedId)}</b>{' '}
-                          {change.from === null ? 'published a first value' : 'changed its value'}
-                        </div>
-                        <div className="det">
-                          {change.from === null ? null : (
+                {runsOf(changes)
+                  .slice(0, TIMELINE_SHOWN)
+                  .map((run) => {
+                    const newest = run.entries[0]!
+                    const oldest = run.entries[run.entries.length - 1]!
+                    const [day, time] = dayAndTime(newest.ts)
+                    const moves = run.entries.length
+                    return (
+                      <li key={`${newest.ts}-${run.feedId}`}>
+                        <span className="d">
+                          {day}
+                          <small>{time}</small>
+                        </span>
+                        <span className="who">
+                          <SourceMark id={run.feedId} />
+                        </span>
+                        <div>
+                          {moves === 1 ? (
                             <>
-                              <q>{change.from}</q> →{' '}
+                              <div className="what">
+                                <b>{feedName(run.feedId)}</b>{' '}
+                                {newest.from === null
+                                  ? 'published a first value'
+                                  : 'changed its value'}
+                              </div>
+                              <div className="det">
+                                {newest.from === null ? null : (
+                                  <>
+                                    <q>{newest.from}</q> →{' '}
+                                  </>
+                                )}
+                                {newest.to === null ? 'no value' : <q>{newest.to}</q>}, as
+                                published.
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              {/* Back-to-back moves of one feed, folded: the span, the latest value, and every move on request. */}
+                              <div className="what">
+                                <b>{feedName(run.feedId)}</b>{' '}
+                                {oldest.from === null
+                                  ? `published a first value, then changed it ${moves - 1} time${moves === 2 ? '' : 's'}`
+                                  : `changed its value ${moves} times`}
+                              </div>
+                              <div className="det">
+                                {dayAndTime(oldest.ts)[0]} – {day} · latest{' '}
+                                {newest.to === null ? 'no value' : <q>{newest.to}</q>}, as
+                                published.
+                              </div>
+                              <details className="tl-runs">
+                                <summary>Show the {moves} moves</summary>
+                                <ul>
+                                  {run.entries.map((change) => {
+                                    const [moveDay, moveTime] = dayAndTime(change.ts)
+                                    return (
+                                      <li key={change.ts}>
+                                        <span className="d">
+                                          {moveDay} {moveTime}
+                                        </span>
+                                        <span>
+                                          {change.from === null ? (
+                                            'first value'
+                                          ) : (
+                                            <q>{change.from}</q>
+                                          )}{' '}
+                                          → {change.to === null ? 'no value' : <q>{change.to}</q>}
+                                        </span>
+                                      </li>
+                                    )
+                                  })}
+                                </ul>
+                              </details>
                             </>
                           )}
-                          {change.to === null ? 'no value' : <q>{change.to}</q>}, as published.
                         </div>
-                      </div>
-                      <Link className="go" to={`${base}/risk/${change.feedId}`}>
-                        View feed →
-                      </Link>
-                    </li>
-                  )
-                })}
+                        <Link className="go" to={`${base}/risk/${run.feedId}`}>
+                          View feed →
+                        </Link>
+                      </li>
+                    )
+                  })}
               </ul>
             )}
           </div>
@@ -217,7 +267,7 @@ export const OverviewTab = ({
             <div className="card-f">
               <span>
                 {record.metrics
-                  ? `DefiLlama · collected ${dateInfo(tvl?.fetchedAt).label}`
+                  ? `Data cut ${dateInfo(tvl?.fetchedAt).label} · DefiLlama and on-chain`
                   : 'DefiLlama’s figures could not be loaded'}
               </span>
               <Link className="text-link" to={`${base}/governance`}>

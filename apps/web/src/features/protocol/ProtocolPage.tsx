@@ -130,7 +130,7 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           <small>
             {metricsMissing
               ? 'DefiLlama · could not be loaded'
-              : `DefiLlama · Ethereum${tvlAge ? ` · ${tvlAge} ago` : ''}`}
+              : `DefiLlama · Ethereum${tvlAge ? ` · data cut ${tvlAge} ago` : ''}`}
           </small>
         </div>
         <div className="id-links">

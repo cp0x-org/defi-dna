@@ -1,6 +1,6 @@
-import type { ProtocolDetail } from '@defi-dna/data'
+import type { Change, ProtocolDetail } from '@defi-dna/data'
 import { describe, expect, it } from 'vitest'
-import { summarizeRecord } from './record.ts'
+import { runsOf, summarizeRecord } from './record.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 
 const incident = (date: string) => ({
@@ -53,5 +53,39 @@ describe('summarizeRecord', () => {
     expect(summarizeRecord(record).latestIncident?.date).toBe('2024-06-01')
     expect(summarizeRecord({ ...record, metrics: null }).latestIncident).toBeUndefined()
     expect(summarizeRecord({ ...record, metrics: {} }).latestIncident).toBeUndefined()
+  })
+})
+
+describe('runsOf', () => {
+  const move = (ts: string, feedId: string, from: string | null, to: string): Change => ({
+    ts,
+    protocolId: 'aave-v3',
+    protocolName: 'Aave v3',
+    feedId,
+    from,
+    to,
+  })
+
+  it('folds back-to-back moves of one feed and keeps every entry, newest first', () => {
+    const log = [
+      move('2026-11-02T05:00:00Z', 'defiscoring', '47', '48'),
+      move('2026-11-01T05:00:00Z', 'defiscoring', '46', '47'),
+      move('2026-10-31T05:00:00Z', 'defiscoring', '45', '46'),
+      move('2026-10-30T05:00:00Z', 'pigi', 'B 83', 'B 82'),
+      move('2026-10-29T05:00:00Z', 'defiscoring', null, '45'),
+    ]
+    const runs = runsOf(log)
+    expect(runs.map((run) => [run.feedId, run.entries.length])).toEqual([
+      ['defiscoring', 3],
+      ['pigi', 1],
+      ['defiscoring', 1],
+    ])
+    expect(runs[0]?.entries[0]).toBe(log[0])
+    expect(runs[0]?.entries[2]).toBe(log[2])
+    expect(runs.flatMap((run) => run.entries)).toEqual(log)
+  })
+
+  it('answers an empty log with no runs', () => {
+    expect(runsOf([])).toEqual([])
   })
 })

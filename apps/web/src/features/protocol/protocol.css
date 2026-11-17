@@ -321,6 +321,40 @@
 .tl .go:hover {
   text-decoration: underline;
 }
+/* A folded run: every move is one line, opened on request. */
+.tl .tl-runs {
+  margin-top: 4px;
+  font-size: 13px;
+}
+.tl .tl-runs summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+  list-style: none;
+}
+.tl .tl-runs summary::before {
+  content: '▸ ';
+}
+.tl .tl-runs[open] summary::before {
+  content: '▾ ';
+}
+.tl .tl-runs ul {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+.tl .tl-runs li {
+  display: flex;
+  gap: 10px;
+  padding: 2px 0;
+  border: 0;
+  color: var(--muted);
+}
+.tl .tl-runs .d {
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
 
 .kv-body {
   padding-top: 4px;

@@ -53,7 +53,8 @@ export const GovernanceTab = ({
           <div className="card-h">
             <h2>Governance</h2>
             <span className="aside">
-              read on-chain · {dateInfo(governance?.updatedAt ?? governance?.fetchedAt).label}
+              read on-chain · data cut{' '}
+              {dateInfo(governance?.updatedAt ?? governance?.fetchedAt).label}
             </span>
           </div>
           <div className="card-b">
@@ -119,7 +120,7 @@ export const GovernanceTab = ({
         <section className="card">
           <div className="card-h">
             <h2>TVL</h2>
-            <span className="aside">via DefiLlama · {dateInfo(tvl?.fetchedAt).label}</span>
+            <span className="aside">via DefiLlama · data cut {dateInfo(tvl?.fetchedAt).label}</span>
           </div>
           <div className="card-b">
             <div className="tvl-big">
