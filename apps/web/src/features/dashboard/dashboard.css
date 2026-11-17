@@ -532,6 +532,20 @@ button.hit:hover {
 .pop-body b {
   color: var(--ink);
 }
+/* The readings behind a timelock figure, in the card's own density. */
+.pop-facts {
+  padding: 6px 13px 8px;
+}
+.pop-facts > div {
+  padding: 5px 0;
+}
+.pop-facts dt {
+  white-space: normal;
+}
+.pop-facts dd {
+  font-weight: 500;
+  white-space: nowrap;
+}
 .pop-f {
   display: flex;
   justify-content: space-between;

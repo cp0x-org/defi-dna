@@ -4,6 +4,7 @@ import { dataCount, type Group } from './rows.ts'
 import { categoryLabel, formatUsd } from '../../shared/lib/view.ts'
 import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
 import { GovernanceCell, TimelockCell } from './GovernanceCells.tsx'
+import type { PopKind, PopTarget } from './usePopover.ts'
 
 const feedIds = feeds.map((feed) => feed.id)
 /** The group row repeats a governance reading only when every version shares it. */
@@ -13,14 +14,18 @@ const NO_GOVERNANCE = 'Differs by version, or not read'
 export const GroupRow = ({
   group,
   noIncidentsTitle,
+  popTarget,
   show,
 }: {
   group: Group
   noIncidentsTitle: string
+  popTarget: (kind: PopKind, protocolId: string) => PopTarget
   /** Whether the visitor keeps a column in the table; the protocol column always stays. */
   show: (key: ColumnKey) => boolean
 }) => {
   const categories = [...new Set(group.rows.map((row) => row.protocol.category))]
+  // The shared reading is every version's; the card reads it from the first.
+  const first = group.rows[0]?.protocol.id
   return (
     <tr className="group-row">
       <td>
@@ -43,7 +48,11 @@ export const GroupRow = ({
       ) : null}
       {show('timelock') ? (
         <td className="num">
-          <TimelockCell governance={group.governance} absent={NO_GOVERNANCE} />
+          <TimelockCell
+            governance={group.governance}
+            absent={NO_GOVERNANCE}
+            popTarget={first ? popTarget('timelock', first) : undefined}
+          />
         </td>
       ) : null}
       {show('governance') ? (

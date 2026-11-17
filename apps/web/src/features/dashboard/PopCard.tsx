@@ -2,11 +2,15 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { feedName, feeds } from '../../shared/lib/registry.ts'
 import { changedWithinDay, dataCount, type Row } from './rows.ts'
-import { ageLabel, dateInfo } from '../../shared/lib/view.ts'
+import { ageLabel, dateInfo, formatDuration } from '../../shared/lib/view.ts'
 import { FeedStatusList } from './FeedStatusList.tsx'
 import type { PopKind } from './usePopover.ts'
 
 const feedIds = feeds.map((feed) => feed.id)
+/** Facts shown on the card before the rest is left to the Governance tab. */
+const FACTS_SHOWN = 6
+/** A contract address read as a fact: on the card it is noise, on the tab a link. */
+const ADDRESS = /^0x[0-9a-fA-F]{40}$/
 
 const Foot = ({
   pinned,
@@ -48,6 +52,53 @@ const CoverageCard = ({ row, pinned, onClose }: CardProps) => (
     />
   </>
 )
+
+/**
+ * The timelock figure with the readings behind it: each delay the contracts
+ * enforce (a protocol with a faster emergency path shows both), then the
+ * modes and committees, in the order the metric read them.
+ */
+const TimelockCard = ({ row, pinned, onClose }: CardProps) => {
+  const governance = row.governance
+  const facts = (governance?.facts ?? []).filter((fact) => !ADDRESS.test(fact.value))
+  const shown = facts.slice(0, FACTS_SHOWN)
+  const more = facts.length - shown.length
+  return (
+    <>
+      <div className="pop-h">
+        <strong>Governance timelock · {row.protocol.name}</strong>
+        <span className="mono">{formatDuration(governance?.delay) ?? '—'}</span>
+      </div>
+      <div className="pop-sub">
+        {governance?.delay == null
+          ? 'None of the contracts read for this version is a timelock.'
+          : `${governance.delay.toLocaleString('en-US')} seconds between scheduling and execution, as the timelock contract reports it.`}
+      </div>
+      {shown.length > 0 ? (
+        <dl className="facts one pop-facts">
+          {shown.map((fact) => (
+            <div key={fact.name}>
+              <dt>{fact.name}</dt>
+              <dd className="mono">{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+      {more > 0 ? (
+        <div className="pop-body">
+          +{more} more reading{more === 1 ? '' : 's'} on the Governance tab.
+        </div>
+      ) : null}
+      <Foot
+        pinned={pinned}
+        text="Read on-chain"
+        to={`/protocol/${row.protocol.id}/governance`}
+        link="Governance →"
+        onClose={onClose}
+      />
+    </>
+  )
+}
 
 const IncidentsCard = ({ row, pinned, onClose }: CardProps) => {
   const latest = row.incidents?.latest
@@ -116,6 +167,7 @@ interface CardProps {
 
 const CARDS: Record<PopKind, (props: CardProps) => ReactNode> = {
   coverage: CoverageCard,
+  timelock: TimelockCard,
   incidents: IncidentsCard,
   changes: ChangesCard,
 }

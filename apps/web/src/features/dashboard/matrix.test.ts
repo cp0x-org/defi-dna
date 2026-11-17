@@ -62,7 +62,7 @@ const metrics: MetricsFile = {
       value: 86400,
       fetchedAt: FETCHED,
       extra: {
-        facts: [],
+        facts: [{ name: 'Executor level 1 delay', value: '86400 s (1 day)' }],
         bodies: [
           {
             name: 'Protocol Guardian',
@@ -150,8 +150,9 @@ describe('buildRows', () => {
           signers: 7,
         },
       ],
+      facts: [{ name: 'Executor level 1 delay', value: '86400 s (1 day)' }],
     })
-    expect(governance('lido')).toEqual({ delay: null, bodies: [] })
+    expect(governance('lido')).toEqual({ delay: null, bodies: [], facts: [] })
     expect(governance('curve')).toBeNull()
     // The group row repeats the reading only when every version shares it.
     const groups = groupRows(rows)

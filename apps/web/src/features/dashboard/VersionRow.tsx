@@ -73,7 +73,11 @@ export const VersionRow = ({
       ) : null}
       {show('timelock') ? (
         <td className="num">
-          <TimelockCell governance={row.governance} absent={noGovernanceTitle} />
+          <TimelockCell
+            governance={row.governance}
+            absent={noGovernanceTitle}
+            popTarget={popTarget('timelock', protocol.id)}
+          />
         </td>
       ) : null}
       {show('governance') ? (

@@ -1,5 +1,6 @@
 import type {
   Change,
+  Detail,
   ExtraIncident,
   ExtraGovernanceBody,
   IndexBundle,
@@ -23,6 +24,8 @@ export interface Governance {
   delay: number | null
   /** Who decides, as the contracts read report it: token votes, multisigs, single keys. */
   bodies: ExtraGovernanceBody[]
+  /** Every value read, in the metric's order: the delays first, then modes, votes and committees. */
+  facts: Detail[]
 }
 
 /** One protocol version: the hand-maintained entry joined with what we collected. */
@@ -104,7 +107,11 @@ export const buildRows = (index: IndexBundle, sources: RowSources = {}): Row[] =
       tvl: generated?.tvl ?? null,
       // A version with no contracts mapped is stored as a bare null; only a cell with facts was read.
       governance: governance?.extra?.facts
-        ? { delay: governance.value, bodies: governance.extra.bodies ?? [] }
+        ? {
+            delay: governance.value,
+            bodies: governance.extra.bodies ?? [],
+            facts: governance.extra.facts,
+          }
         : null,
       feeds: generated?.feeds ?? {},
       tones: Object.fromEntries(

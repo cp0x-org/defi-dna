@@ -342,7 +342,12 @@ export const DashboardPage = ({
                   />
                 ) : (
                   <Fragment key={group.key}>
-                    <GroupRow group={group} noIncidentsTitle={noIncidentsTitle} show={show} />
+                    <GroupRow
+                      group={group}
+                      noIncidentsTitle={noIncidentsTitle}
+                      popTarget={target}
+                      show={show}
+                    />
                     {group.rows.map((row) => (
                       <VersionRow key={row.protocol.id} row={row} nested {...rowProps} />
                     ))}
