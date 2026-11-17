@@ -245,6 +245,12 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+@media (max-width: 959px) {
+  /* Under the two-row header (base.css). */
+  .directory-card {
+    scroll-margin-top: 132px;
+  }
+}
 @media (max-width: 759px) {
   .section-heading {
     flex-wrap: wrap;
@@ -273,9 +279,6 @@
   }
   .reading-strip > .button {
     margin: 0;
-  }
-  .directory-card {
-    scroll-margin-top: 132px;
   }
   .page-intro {
     padding: 36px 0 28px;

@@ -611,19 +611,8 @@ details[open] > summary > svg:last-child {
     padding-right: 30px;
   }
 }
+/* Below 960 px the one-line header no longer fits its tools: two rows, as on a phone. */
 @media (max-width: 959px) {
-  .primary-nav {
-    gap: 22px;
-  }
-  .footer-main {
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-  .footer-links {
-    margin-left: 0;
-  }
-}
-@media (max-width: 759px) {
   html {
     scroll-padding-top: 132px;
   }
@@ -660,6 +649,15 @@ details[open] > summary > svg:last-child {
     font-size: 14px;
     padding: 0 0 10px;
   }
+  .footer-main {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .footer-links {
+    margin-left: 0;
+  }
+}
+@media (max-width: 759px) {
   .page-container {
     padding: 0 20px;
   }

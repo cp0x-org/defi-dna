@@ -868,6 +868,13 @@
   }
 }
 @media (max-width: 959px) {
+  /* The header is two rows here (see base.css): the sticky tabs sit under it. */
+  .tabs {
+    top: 100px;
+  }
+  .tabs-anchor {
+    scroll-margin-top: 100px;
+  }
   .identity {
     flex-direction: column;
   }
@@ -892,13 +899,9 @@
 }
 @media (max-width: 759px) {
   .tabs {
-    top: 100px;
     gap: 20px;
     overflow-x: auto;
     scrollbar-width: none;
-  }
-  .tabs-anchor {
-    scroll-margin-top: 100px;
   }
   .id-title h1 {
     font-size: 30px;
