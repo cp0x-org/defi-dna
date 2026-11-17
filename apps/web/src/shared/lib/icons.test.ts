@@ -27,7 +27,7 @@ describe('feedIconUrl', () => {
     expect(feedIconUrl('pigi')).toBeTruthy()
     expect(feedIconUrl('defipunkd')).toBeTruthy()
     expect(feedIconUrl('credora')).toBeTruthy()
-    expect(feedIconUrl('risklayer')).toBeUndefined()
+    expect(feedIconUrl('unknown-feed')).toBeUndefined()
   })
 
   it('marks single-colour feeds for dark-theme invert', () => {

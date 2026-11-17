@@ -126,7 +126,6 @@ address in the project's `.env` file (copy `.env.example`; for example,
 ## Sources and contributions
 
 Risk feeds currently include [DeFiScan](https://www.defiscan.info),
-[Risklayer](https://risklayer.online),
 [Philidor](https://analytics.philidor.io),
 [pigi.finance](https://pigi.finance),
 [DeFi Scoring](https://defiscoring.com),

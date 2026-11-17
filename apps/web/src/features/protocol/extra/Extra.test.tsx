@@ -32,7 +32,7 @@ describe('optional extra views', () => {
   it('renders facts, findings and vault data from their shapes', () => {
     const analysis = renderToStaticMarkup(
       <FeedExtras
-        feedName="Risklayer"
+        feedName="Philidor"
         extra={{
           facts: [
             { name: 'Analyzed domain', value: 'example.org' },
@@ -44,7 +44,7 @@ describe('optional extra views', () => {
         }}
       />,
     )
-    expect(analysis).toContain('As filed by Risklayer')
+    expect(analysis).toContain('As filed by Philidor')
     expect(analysis).toContain('example.org')
     expect(analysis).toContain('Oracle risk')
     expect(analysis).toContain('Oracle')
