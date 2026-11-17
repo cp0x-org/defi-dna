@@ -89,6 +89,7 @@ export interface AssessedReview {
   headline: string
   summary?: string
   details: Detail[]
+  findings: ExtraFinding[]
   updatedAt?: string
   url: string
   chain?: string
@@ -288,8 +289,25 @@ const mitigationsOf = (
   )
 }
 
-/** Headline from DeFiScan’s published totals — counts and capital, not a Stage. */
-export const headlineOf = (totals: ReviewTotals | undefined): string | null => {
+/**
+ * The headline: the findings DeFiScan’s page flags (critical, warning), by
+ * title; the positive ones when nothing is flagged; the published counts when
+ * the review carries no finding at all.
+ */
+export const headlineOf = (
+  findings: ExtraFinding[],
+  totals: ReviewTotals | undefined,
+): string | null => {
+  const flagged = findings.filter(
+    (entry) => entry.severity === 'critical' || entry.severity === 'warning',
+  )
+  const shown =
+    flagged.length > 0 ? flagged : findings.filter((entry) => entry.severity === 'positive')
+  return shown.length > 0 ? shown.map((entry) => entry.title).join(' · ') : countsOf(totals)
+}
+
+/** Counts and capital from DeFiScan’s published totals — never a Stage. */
+export const countsOf = (totals: ReviewTotals | undefined): string | null => {
   if (!totals) return null
   const admins = count(totals.adminCount)
   const capital =
@@ -314,7 +332,8 @@ const dateOf = (review: CompiledReview): string | undefined => {
 
 /** Turn one compiled-review.json into the fields we store for a protocol cell. */
 export const assessReview = (slug: string, review: CompiledReview): AssessedReview | null => {
-  const headline = headlineOf(review.totals)
+  const findings = findingsOf(review)
+  const headline = headlineOf(findings, review.totals)
   if (!headline) return null
 
   const totals = review.totals ?? {}
@@ -370,6 +389,7 @@ export const assessReview = (slug: string, review: CompiledReview): AssessedRevi
     headline,
     ...(trim(review.metadata?.description) ? { summary: trim(review.metadata?.description) } : {}),
     details,
+    findings,
     ...(updatedAt ? { updatedAt } : {}),
     url: `${SITE}/${slug}`,
     ...(review.metadata?.chain ? { chain: review.metadata.chain } : {}),
@@ -393,6 +413,11 @@ export const assess = (reviews: AssessedReview[]): FeedResult => {
 
   const notes: string[] = []
   if (primary.chain) notes.push(`Review covers ${primary.chain}.`)
+  if (primary.findings.length > 0) {
+    notes.push(
+      'The headline and the findings are the ones DeFiScan’s own page derives from this review, under its rules and in its words.',
+    )
+  }
   if (primary.compiledAt && primary.updatedAt && primary.compiledAt !== primary.updatedAt) {
     notes.push(
       `DeFiScan’s review date is ${primary.updatedAt}; the compiled JSON was rebuilt on ${primary.compiledAt}.`,
@@ -411,15 +436,20 @@ export const assess = (reviews: AssessedReview[]): FeedResult => {
     ...(updatedAt ? { updatedAt } : {}),
     url: primary.url,
     ...(notes.length > 0 ? { note: notes.join(' ') } : {}),
-    ...(reviews.length > 1
+    ...(primary.findings.length > 0 || reviews.length > 1
       ? {
           extra: {
-            text: reviews.map(
-              (review) =>
-                `${review.slug}: ${review.headline}` +
-                (review.updatedAt ? ` (${review.updatedAt})` : '') +
-                ` — ${review.url}`,
-            ),
+            ...(primary.findings.length > 0 ? { findings: primary.findings } : {}),
+            ...(reviews.length > 1
+              ? {
+                  text: reviews.map(
+                    (review) =>
+                      `${review.slug}: ${review.headline}` +
+                      (review.updatedAt ? ` (${review.updatedAt})` : '') +
+                      ` — ${review.url}`,
+                  ),
+                }
+              : {}),
           },
         }
       : {}),
@@ -431,9 +461,12 @@ export const assess = (reviews: AssessedReview[]): FeedResult => {
  *
  * Reads the public compiled-review JSON the site serves. V2 publishes counts,
  * capital at risk, admins and permissioned functions — not the Stage 0/1/2
- * scale from the frozen V1 repository. `mapping.json` names the project
- * slug(s) a row takes; DeFiScan files each project separately, so every slug
- * is read and none stands in for the rest.
+ * scale from the frozen V1 repository. The headline is the page's own "Key
+ * Findings" (who holds permissioned access, what the protocol depends on),
+ * derived from that JSON by the page's rules; the counts stay in the
+ * breakdown. `mapping.json` names the project slug(s) a row takes; DeFiScan
+ * files each project separately, so every slug is read and none stands in
+ * for the rest.
  */
 const adapter: FeedAdapter = {
   id: 'defiscan',
