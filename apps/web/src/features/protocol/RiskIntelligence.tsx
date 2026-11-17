@@ -8,6 +8,7 @@ import { TONE_LABELS, detailToneOf, ruleWord, toneOf, type Tone } from '../../sh
 import { ageLabel, assessesLabel, dateInfo, hostOf, timeLabel } from '../../shared/lib/view.ts'
 import { StatusPill } from '../../shared/ui/Coverage.tsx'
 import { FeedExtras } from './extra/FeedExtras.tsx'
+import { SliceChips } from './SliceChips.tsx'
 import { Block, DataAgeHelp, ExternalLink, SourceMark } from '../../shared/ui/UI.tsx'
 
 /** Sidebar groups: feeds with a reading of their own first, then data without one, then gaps. */
@@ -175,8 +176,15 @@ export const FeedSource = ({
           <Block type="value">
             <div className="b-score">
               <div className="b-title">Headline value</div>
+              {feed.detailStatus && details.length > 0 ? (
+                <div className="b-slices">
+                  <SliceChips feed={feed} details={details} />
+                </div>
+              ) : null}
               <div className="b-score-row">
-                <span className="v">{data.value}</span>
+                <span className={feed.detailStatus && details.length > 0 ? 'v small' : 'v'}>
+                  {data.value}
+                </span>
                 <span className="scale">as {feed.name} publishes it</span>
               </div>
             </div>

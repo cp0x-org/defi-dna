@@ -106,6 +106,14 @@ describe('FeedSource', () => {
     expect(html).toContain('Chip colours: Example grades each part green, orange or red.')
     expect(html).toMatch(/<dt><span class="pill st-neg"[^>]*>Control<\/span><\/dt>/)
     expect(html).toContain('<dt>Autonomy</dt>')
+    // The headline is read as chips too, one per part, with the feed's word in the title.
+    expect(html).toMatch(
+      /<span class="pill st-neg" title="tentative red — Negative on Example Feed’s own scale">/,
+    )
+    expect(html).toMatch(/<span class="pill plain" title="unknown">/)
+    expect(html).toContain(
+      '<span class="v small">Control: tentative red · Autonomy: unknown</span>',
+    )
     // The headline has no rule of its own, so it stays neutral data.
     expect(html).toContain('No status colour')
   })

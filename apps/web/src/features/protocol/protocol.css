@@ -237,6 +237,26 @@
 .ftile.st-error .ft-head {
   color: var(--muted);
 }
+/* A feed's graded parts as chips: the colour is the feed's own, the word is in the title. */
+.slices {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.slices .pill {
+  font-weight: 600;
+  white-space: normal;
+}
+.b-slices {
+  margin-bottom: 8px;
+}
+.b-slices .slices {
+  gap: 6px;
+}
+.b-score .v.small {
+  font: 500 15px/1.5 var(--mono);
+  letter-spacing: 0;
+}
 .ft-meta {
   font-size: 12px;
   color: var(--muted);

@@ -11,6 +11,7 @@ import type { RecordSummary } from './record.ts'
 import { dateInfo, dayAndTime, formatDuration } from '../../shared/lib/view.ts'
 import { CoverageRing, StatusPill } from '../../shared/ui/Coverage.tsx'
 import { Info, SourceMark } from '../../shared/ui/UI.tsx'
+import { SliceChips } from './SliceChips.tsx'
 
 const TIMELINE_SHOWN = 8
 
@@ -70,7 +71,9 @@ export const OverviewTab = ({
                     <StatusPill tone={tone} />
                   </span>
                   <span className="ft-head">
-                    {status === 'ok' && data?.value ? (
+                    {status === 'ok' && feed.detailStatus && data?.details?.length ? (
+                      <SliceChips feed={feed} details={data.details} />
+                    ) : status === 'ok' && data?.value ? (
                       <q>{data.value}</q>
                     ) : status === 'error' ? (
                       'We could not read this feed'
