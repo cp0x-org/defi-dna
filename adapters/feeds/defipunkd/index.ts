@@ -77,9 +77,28 @@ export const stateOf = (slice: Slice & { modelsCount?: number }): string => {
   return slice.tentative ? `tentative ${grade}` : grade
 }
 
-/** `Control: tentative orange · Ability to exit: tentative red · …` — all five, in DeFiPunk’d’s order. */
-export const headlineOf = (slices: Slice[], separator = ' · '): string =>
-  slices.map((slice) => `${slice.label}: ${stateOf(slice)}`).join(separator)
+/** A grade alone: the colour word, "unknown" for gray; tentative and partial are said once, at the end. */
+const gradeOf = (slice: Slice): string => (slice.grade === 'gray' ? 'unknown' : slice.grade)
+
+/** How many of the slices DeFiPunk’d flags as tentative (weak consensus) or without quorum. */
+const tentativeNote = (slices: Slice[]): string => {
+  const tentative = slices.filter((slice) => slice.tentative || slice.partial).length
+  if (tentative === 0) return ''
+  return tentative === slices.length ? ' (all tentative)' : ` (${tentative} tentative)`
+}
+
+/**
+ * `Control: orange · Ability to exit: red · … · Verifiability: green (all tentative)`
+ * — all five in DeFiPunk’d’s order, the colour words only, so the headline
+ * stays about the length of the other feeds'. Each slice's full state, with
+ * "tentative" and the model count, is in the breakdown.
+ */
+export const headlineOf = (slices: Slice[]): string =>
+  slices.map((slice) => `${slice.label}: ${gradeOf(slice)}`).join(' · ') + tentativeNote(slices)
+
+/** `Curve DEX — green, green, green, green, green (all tentative)`: for a row with several slugs, grades only. */
+const shortHeadlineOf = (name: string, slices: Slice[]): string =>
+  `${name} — ${slices.map(gradeOf).join(', ')}${tentativeNote(slices)}`
 
 const detailsOf = (entry: ProtocolEntry, prefix: string): Detail[] =>
   entry.slices.map((slice) => {
@@ -178,7 +197,7 @@ const adapter: FeedAdapter<Map<string, IndexEntry>> = {
 
     const several = entries.length > 1
     const value = several
-      ? entries.map(({ entry }) => `${entry.name} — ${headlineOf(entry.slices, ', ')}`).join(' · ')
+      ? entries.map(({ entry }) => shortHeadlineOf(entry.name, entry.slices)).join(' · ')
       : headlineOf(entries[0]!.entry.slices)
     const summary = trim(entries.find(({ entry }) => entry.about)?.entry.about)
     const filed = entries.map(({ slug, entry }) => `${entry.name} ("${slug}")`).join(' and ')
@@ -191,7 +210,10 @@ const adapter: FeedAdapter<Map<string, IndexEntry>> = {
       url: `${SITE}/${entries[0]!.slug}`,
       note:
         `DeFiPunk’d files ${protocol.name} as ${filed}` +
-        (several ? '; each is graded separately and every one is shown. ' : '. ') +
+        (several
+          ? '; each is graded separately and every one is shown, grades in the order Control, ' +
+            'Ability to exit, Autonomy, Open Access, Verifiability. '
+          : '. ') +
         'Grades cover the deployment on every chain it runs on, not Ethereum mainnet alone, ' +
         'and DeFiPunk’d publishes no date with them.' +
         (unlisted.length > 0 ? ` Not listed by DeFiPunk’d: ${unlisted.join(', ')}.` : ''),
