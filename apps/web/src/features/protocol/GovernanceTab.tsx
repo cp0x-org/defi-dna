@@ -84,10 +84,8 @@ export const GovernanceTab = ({
             {governance?.url ? <ExternalLink href={governance.url}>Etherscan</ExternalLink> : null}
           </div>
         </section>
-      </div>
 
-      <div className="row2">
-        <section className="card" id="incidents">
+        <section className="card span2" id="incidents">
           <div className="card-h">
             <h2>Incidents</h2>
             <span className="aside">recorded by DefiLlama</span>
@@ -118,51 +116,48 @@ export const GovernanceTab = ({
           </div>
         </section>
 
-        <div className="stack">
-          <section className="card">
-            <div className="card-h">
-              <h2>TVL</h2>
-              <span className="aside">via DefiLlama · {dateInfo(tvl?.fetchedAt).label}</span>
+        <section className="card">
+          <div className="card-h">
+            <h2>TVL</h2>
+            <span className="aside">via DefiLlama · {dateInfo(tvl?.fetchedAt).label}</span>
+          </div>
+          <div className="card-b">
+            <div className="tvl-big">
+              {formatUsd(tvl?.value) ?? (record.metrics ? 'Not available' : 'Could not be loaded')}
             </div>
-            <div className="card-b">
-              <div className="tvl-big">
-                {formatUsd(tvl?.value) ??
-                  (record.metrics ? 'Not available' : 'Could not be loaded')}
-              </div>
-              <p className="tvl-note">
-                The Ethereum-mainnet figure, as DefiLlama publishes it. A measured quantity — never
-                combined with what a feed says.
-              </p>
-              <TvlComponentsExtra components={tvl?.extra?.components} />
-              <TextExtra text={tvl?.extra?.text} />
-            </div>
-          </section>
-          <section className="card">
-            <div className="card-h">
-              <h2>Links</h2>
-            </div>
-            <div className="card-b links-list">
-              {protocol.website ? (
-                <ExternalLink className="link-row" href={protocol.website}>
-                  <b>Website</b>
-                  <span>{hostOf(protocol.website)}</span>
-                </ExternalLink>
-              ) : null}
-              {tvl?.url ? (
-                <ExternalLink className="link-row" href={tvl.url}>
-                  <b>DefiLlama</b>
-                  <span>{hostOf(tvl.url)}</span>
-                </ExternalLink>
-              ) : null}
-              {feedLinks.map((feed) => (
-                <ExternalLink className="link-row" key={feed.id} href={record.feeds[feed.id]?.url}>
-                  <b>{feed.name}</b>
-                  <span>{hostOf(record.feeds[feed.id]?.url)}</span>
-                </ExternalLink>
-              ))}
-            </div>
-          </section>
-        </div>
+            <p className="tvl-note">
+              The Ethereum-mainnet figure, as DefiLlama publishes it. A measured quantity — never
+              combined with what a feed says.
+            </p>
+            <TvlComponentsExtra components={tvl?.extra?.components} />
+            <TextExtra text={tvl?.extra?.text} />
+          </div>
+        </section>
+        <section className="card">
+          <div className="card-h">
+            <h2>Links</h2>
+          </div>
+          <div className="card-b links-list">
+            {protocol.website ? (
+              <ExternalLink className="link-row" href={protocol.website}>
+                <b>Website</b>
+                <span>{hostOf(protocol.website)}</span>
+              </ExternalLink>
+            ) : null}
+            {tvl?.url ? (
+              <ExternalLink className="link-row" href={tvl.url}>
+                <b>DefiLlama</b>
+                <span>{hostOf(tvl.url)}</span>
+              </ExternalLink>
+            ) : null}
+            {feedLinks.map((feed) => (
+              <ExternalLink className="link-row" key={feed.id} href={record.feeds[feed.id]?.url}>
+                <b>{feed.name}</b>
+                <span>{hostOf(record.feeds[feed.id]?.url)}</span>
+              </ExternalLink>
+            ))}
+          </div>
+        </section>
       </div>
     </>
   )
