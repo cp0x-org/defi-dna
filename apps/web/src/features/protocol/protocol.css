@@ -9,7 +9,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   margin: 16px 0 12px;
 }
@@ -40,14 +40,14 @@
   gap: 10px;
 }
 .id-title h1 {
-  font-size: 30px;
+  font-size: 38px;
   font-weight: 700;
-  letter-spacing: -1.2px;
+  letter-spacing: -1.4px;
   line-height: 1.1;
 }
 .id-sub {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 16px;
   margin-top: 3px;
   max-width: 110ch;
 }
@@ -63,7 +63,7 @@
   margin-top: 8px;
 }
 .id-chains > .lbl {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   margin-right: 4px;
 }
@@ -91,7 +91,7 @@
   overflow: hidden;
 }
 .m {
-  padding: 9px 14px 10px;
+  padding: 14px 18px 16px;
   min-width: 0;
   background: var(--surface);
 }
@@ -106,12 +106,12 @@ a.m:hover .m-v {
   justify-content: space-between;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   white-space: nowrap;
 }
 .m-v {
-  font: 600 18px/1.35 var(--mono);
+  font: 600 22px/1.35 var(--mono);
   letter-spacing: -0.4px;
   margin-top: 3px;
   white-space: nowrap;
@@ -119,12 +119,12 @@ a.m:hover .m-v {
   text-overflow: ellipsis;
 }
 .m-v small {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted);
   font-weight: 500;
 }
 .m-s {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
@@ -137,14 +137,14 @@ a.m:hover .m-v {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 10px;
-  padding: 10px 14px 11px;
+  padding: 14px 18px 16px;
 }
 .cov-head {
   display: flex;
   align-items: center;
   gap: 10px 16px;
   flex-wrap: wrap;
-  font-size: 12px;
+  font-size: 14px;
 }
 .cov-head .ttl {
   font-weight: 700;
@@ -157,7 +157,7 @@ a.m:hover .m-v {
   flex-wrap: wrap;
   gap: 12px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
 }
 .cov-legend span {
   display: inline-flex;
@@ -166,7 +166,7 @@ a.m:hover .m-v {
 }
 .cov-head .note {
   margin-left: auto;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 /* --feeds is set from the registry, so a new feed needs no CSS. */
@@ -203,7 +203,7 @@ a.m:hover .m-v {
 }
 .cseg span {
   display: block;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   margin-top: 5px;
   white-space: nowrap;
@@ -212,7 +212,7 @@ a.m:hover .m-v {
 }
 .cseg small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
@@ -232,11 +232,11 @@ a.m:hover .m-v {
 
 /* ------------------------------------------------------------------ tabs */
 .tabs-anchor {
-  scroll-margin-top: 64px;
+  scroll-margin-top: 72px;
 }
 .tabs {
   position: sticky;
-  top: 64px;
+  top: 72px;
   z-index: 20;
   display: flex;
   gap: 26px;
@@ -251,7 +251,7 @@ a.m:hover .m-v {
   padding: 11px 0 10px;
   margin-bottom: -1px;
   border-bottom: 2px solid transparent;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--muted);
   white-space: nowrap;
@@ -264,7 +264,7 @@ a.m:hover .m-v {
   border-bottom-color: var(--accent);
 }
 .tabs .cnt {
-  font: 600 10px var(--mono);
+  font: 600 12px var(--mono);
   background: var(--accent-tint);
   color: var(--accent);
   padding: 1px 6px;
@@ -273,7 +273,7 @@ a.m:hover .m-v {
 .tabs .hint {
   margin-left: auto;
   align-self: center;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 
@@ -286,14 +286,14 @@ a.m:hover .m-v {
 }
 .two {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr) 420px;
   gap: 14px;
   align-items: start;
   margin-top: 16px;
 }
 .row2 {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr) 440px;
   gap: 14px;
   align-items: start;
   margin-top: 16px;
@@ -302,7 +302,7 @@ a.m:hover .m-v {
   grid-column: 1 / -1;
 }
 .desc {
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.6;
   max-width: 90ch;
   margin-bottom: 10px;
@@ -311,7 +311,7 @@ a.m:hover .m-v {
 /* ------------------------------------------------------------------ overview */
 .ftiles {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 8px;
 }
 .ftile {
@@ -351,7 +351,7 @@ a.m:hover .m-v {
   min-width: 0;
 }
 .ft-top b {
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -360,7 +360,7 @@ a.m:hover .m-v {
   margin-left: auto;
 }
 .ft-head {
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 3px;
   white-space: nowrap;
   overflow: hidden;
@@ -371,7 +371,7 @@ a.m:hover .m-v {
   color: var(--muted);
 }
 .ft-meta {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -390,7 +390,7 @@ a.m:hover .m-v {
 }
 .tl li {
   display: grid;
-  grid-template-columns: 58px 30px minmax(0, 1fr) auto;
+  grid-template-columns: 72px 36px minmax(0, 1fr) auto;
   gap: 10px;
   align-items: start;
   padding: 8px 0;
@@ -400,12 +400,12 @@ a.m:hover .m-v {
   border-bottom: 0;
 }
 .tl .d {
-  font: 500 11px/1.9 var(--mono);
+  font: 500 14px/1.9 var(--mono);
   color: var(--muted);
 }
 .tl .d small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.2;
   color: var(--faint);
 }
@@ -413,19 +413,19 @@ a.m:hover .m-v {
   padding-top: 2px;
 }
 .tl .what {
-  font-size: 12px;
+  font-size: 14px;
 }
 .tl .what b {
   font-weight: 700;
 }
 .tl .det {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   margin-top: 1px;
   overflow-wrap: anywhere;
 }
 .tl .go {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--accent);
   font-weight: 700;
   white-space: nowrap;
@@ -454,25 +454,25 @@ a.m:hover .m-v {
   display: inline-flex;
   align-items: center;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 .kv dt .info-button {
   width: 22px;
   height: 22px;
 }
 .kv dd {
-  font: 600 13px var(--mono);
+  font: 600 16px var(--mono);
   text-align: right;
 }
 .kv dd small {
   display: block;
-  font: 500 10px var(--font);
+  font: 500 12px var(--font);
   color: var(--muted);
 }
 .legend-list {
   display: grid;
   gap: 8px;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 .legend-list > div {
@@ -487,11 +487,11 @@ a.m:hover .m-v {
 
 /* ------------------------------------------------------------------ protocol data */
 .tvl-big {
-  font: 600 26px/1.2 var(--mono);
+  font: 600 32px/1.2 var(--mono);
   letter-spacing: -0.8px;
 }
 .tvl-note {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   margin: 4px 0 12px;
 }
@@ -502,7 +502,7 @@ a.m:hover .m-v {
 .governance-facts dd .where {
   display: block;
   margin-top: 2px;
-  font: 10px/1.4 var(--mono);
+  font: 13px/1.4 var(--mono);
   color: var(--faint);
   white-space: normal;
   overflow-wrap: anywhere;
@@ -517,7 +517,7 @@ a.m:hover .m-v {
   gap: 10px;
   padding: 6px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 14px;
 }
 .links-list .link-row:last-child {
   border-bottom: 0;
@@ -526,7 +526,7 @@ a.m:hover .m-v {
   margin-left: auto;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
 }
 .links-list .link-row svg {
   width: 12px;
@@ -544,22 +544,22 @@ a.m:hover .m-v {
 /* ------------------------------------------------------------------ risk intelligence */
 .risk {
   display: grid;
-  grid-template-columns: 272px minmax(0, 1fr);
+  grid-template-columns: 340px minmax(0, 1fr);
   gap: 14px;
   margin-top: 16px;
   align-items: start;
 }
 .rside {
   position: sticky;
-  top: 114px;
-  max-height: calc(100vh - 126px);
+  top: 128px;
+  max-height: calc(100vh - 140px);
   overflow-y: auto;
   padding: 6px;
 }
 .rs-group {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -584,14 +584,14 @@ a.m:hover .m-v {
 }
 .rs-item b {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .rs-item small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
@@ -599,7 +599,7 @@ a.m:hover .m-v {
 }
 .rs-st {
   text-align: right;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -626,7 +626,7 @@ a.m:hover .m-v {
   margin: 8px 8px 4px;
   padding-top: 8px;
   border-top: 1px solid var(--line);
-  font-size: 10px;
+  font-size: 12px;
   color: var(--muted);
   line-height: 1.5;
 }
@@ -645,7 +645,7 @@ a.m:hover .m-v {
   flex-wrap: wrap;
 }
 .src-title h2 {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.4px;
 }
@@ -654,7 +654,7 @@ a.m:hover .m-v {
   flex-wrap: wrap;
   align-items: center;
   gap: 3px 14px;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   margin-top: 4px;
 }
@@ -689,7 +689,7 @@ a.m:hover .m-v {
   align-items: center;
   padding: 7px 16px;
   border-bottom: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 .mapping {
@@ -702,7 +702,7 @@ a.m:hover .m-v {
 .attrib .cb {
   margin-left: auto;
   white-space: nowrap;
-  font-size: 11px;
+  font-size: 14px;
   gap: 6px;
 }
 .attrib .cb input {
@@ -728,7 +728,7 @@ a.m:hover .m-v {
 }
 .blk {
   display: grid;
-  grid-template-columns: 70px minmax(0, 1fr);
+  grid-template-columns: 88px minmax(0, 1fr);
   gap: 12px;
   padding: 11px 0;
   border-bottom: 1px dashed var(--line);
@@ -737,7 +737,7 @@ a.m:hover .m-v {
   border-bottom: 0;
 }
 .blk-type {
-  font: 600 9px/1.2 var(--mono);
+  font: 600 12px/1.2 var(--mono);
   letter-spacing: 0.8px;
   text-transform: uppercase;
   color: var(--faint);
@@ -753,18 +753,18 @@ a.m:hover .m-v {
   min-width: 0;
 }
 .b-title {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   margin-bottom: 5px;
   letter-spacing: normal;
 }
 .b-note {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   margin: -2px 0 8px;
 }
 .b-text {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.6;
   max-width: 88ch;
 }
@@ -783,12 +783,12 @@ a.m:hover .m-v {
   gap: 4px 12px;
 }
 .b-score .v {
-  font: 600 24px/1.25 var(--mono);
+  font: 600 30px/1.25 var(--mono);
   letter-spacing: -0.8px;
   overflow-wrap: anywhere;
 }
 .scale {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 .b-warn {
@@ -797,7 +797,7 @@ a.m:hover .m-v {
   background: var(--amber-tint);
   color: var(--amber);
   border-radius: 0 6px 6px 0;
-  font-size: 12px;
+  font-size: 14px;
   overflow-wrap: anywhere;
 }
 .b-dims > div {
@@ -806,7 +806,7 @@ a.m:hover .m-v {
   gap: 4px 14px;
   padding: 6px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 14px;
 }
 .b-dims > div:last-child {
   border-bottom: 0;
@@ -816,18 +816,18 @@ a.m:hover .m-v {
   overflow-wrap: anywhere;
 }
 .b-dims dt .pill {
-  font-size: 11px;
+  font-size: 14px;
   white-space: normal;
 }
 .b-dims dd .pill {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 14px;
   white-space: normal;
 }
 .b-dims dd p {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
   max-width: 88ch;
 }
 .b-metrics {
@@ -843,12 +843,12 @@ a.m:hover .m-v {
 }
 .b-metric span {
   display: block;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
 }
 .b-metric b {
   display: block;
-  font: 600 13px/1.35 var(--mono);
+  font: 600 16px/1.35 var(--mono);
   overflow-wrap: break-word;
 }
 .b-finds {
@@ -863,7 +863,7 @@ a.m:hover .m-v {
   align-items: center;
   gap: 10px;
   padding: 7px 10px;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
 }
 .b-find summary b {
@@ -877,11 +877,11 @@ a.m:hover .m-v {
 .b-find p {
   padding: 0 10px 9px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   max-width: 96ch;
 }
 .sev {
-  font: 700 10px var(--mono);
+  font: 700 12px var(--mono);
   text-transform: uppercase;
   padding: 2px 6px;
   border-radius: 3px;
@@ -892,7 +892,7 @@ a.m:hover .m-v {
 }
 .fstatus {
   margin-left: auto;
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -906,7 +906,7 @@ a.m:hover .m-v {
   padding: 6px 10px;
   border: 1px solid var(--line);
   border-radius: 7px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .b-link:hover {
   border-color: var(--accent-line);
@@ -917,7 +917,7 @@ a.m:hover .m-v {
 }
 .b-link span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
 }
 .b-link svg {
   width: 12px;
@@ -930,7 +930,7 @@ a.m:hover .m-v {
   max-width: 680px;
 }
 .empty-src h3 {
-  font-size: 15px;
+  font-size: 18px;
   margin-bottom: 10px;
 }
 .empty-src .facts {
@@ -956,7 +956,7 @@ a.m:hover .m-v {
   border-radius: 6px;
   background: var(--subtle);
   border: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 14px;
   margin-bottom: 14px;
 }
 
@@ -1014,7 +1014,7 @@ a.m:hover .m-v {
     scroll-margin-top: 100px;
   }
   .id-title h1 {
-    font-size: 24px;
+    font-size: 30px;
   }
   .mstrip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1025,7 +1025,7 @@ a.m:hover .m-v {
     grid-template-columns: minmax(0, 1fr);
   }
   .tl li {
-    grid-template-columns: 52px minmax(0, 1fr);
+    grid-template-columns: 68px minmax(0, 1fr);
   }
   .tl .who {
     display: none;
