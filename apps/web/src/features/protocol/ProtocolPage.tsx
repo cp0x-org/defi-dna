@@ -9,22 +9,27 @@ import { ageLabel, categoryLabel, formatUsd } from '../../shared/lib/view.ts'
 import { IconArrow } from '../../shared/ui/Icons.tsx'
 import { LoadState } from '../../shared/ui/LoadState.tsx'
 import { ExternalLink, ProtocolAvatar } from '../../shared/ui/UI.tsx'
-import { DataTab } from './DataTab.tsx'
+import { GovernanceTab } from './GovernanceTab.tsx'
 import { OverviewTab } from './OverviewTab.tsx'
 import { RiskIntelligence } from './RiskIntelligence.tsx'
+
+const REGISTRY_URL = 'https://github.com/cp0x-org/defi-dna/blob/main/registry/protocols.json'
 
 const TABS = {
   overview: {
     label: 'Overview',
     hint: 'A summary for investigation — every feed is one click away',
   },
-  data: {
-    label: 'Protocol data',
-    hint: 'What the protocol is, what DefiLlama measures and what its governance contracts report — no feed opinions here',
+  governance: {
+    label: 'Governance',
+    hint: 'Who decides and how fast, as the contracts report it on-chain, plus what DefiLlama measures — no feed opinions here',
   },
   risk: { label: 'Risk intelligence', hint: 'Read each feed in its own words' },
 } as const
 type Tab = keyof typeof TABS
+
+/** The tab's former path; links to it keep working. */
+const TAB_ALIASES: Record<string, Tab> = { data: 'governance' }
 
 /**
  * One protocol version. The heading comes from the hand-maintained registry
@@ -38,7 +43,9 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
   const { data: record, error, retry } = useProtocol(id)
   const changelog = useChangelog()
   const anchor = useRef<HTMLDivElement>(null)
-  const tab: Tab = Object.hasOwn(TABS, tabParam) ? (tabParam as Tab) : 'overview'
+  const tab: Tab = Object.hasOwn(TABS, tabParam)
+    ? (tabParam as Tab)
+    : (TAB_ALIASES[tabParam] ?? 'overview')
 
   // A tab or feed picked below the fold brings the reader back up to the tabs, not the page top.
   useEffect(() => {
@@ -137,6 +144,9 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
               DefiLlama
             </ExternalLink>
           ) : null}
+          <ExternalLink className="linkbtn" href={REGISTRY_URL}>
+            Suggest an edit
+          </ExternalLink>
         </div>
       </section>
 
@@ -177,8 +187,8 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           index={index}
           feedId={feedParam}
         />
-      ) : tab === 'data' ? (
-        <DataTab protocol={protocol} record={record} versions={versions} />
+      ) : tab === 'governance' ? (
+        <GovernanceTab protocol={protocol} record={record} />
       ) : (
         <OverviewTab
           protocol={protocol}

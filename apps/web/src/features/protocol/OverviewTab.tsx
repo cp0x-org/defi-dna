@@ -217,7 +217,7 @@ export const OverviewTab = ({
                   ? `DefiLlama · collected ${dateInfo(tvl?.fetchedAt).label}`
                   : 'DefiLlama’s figures could not be loaded'}
               </span>
-              <Link className="text-link" to={`${base}/data`}>
+              <Link className="text-link" to={`${base}/governance`}>
                 All figures →
               </Link>
             </div>

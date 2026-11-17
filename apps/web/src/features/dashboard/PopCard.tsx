@@ -68,7 +68,7 @@ const IncidentsCard = ({ row, pinned, onClose }: CardProps) => {
       <Foot
         pinned={pinned}
         text="Source: DefiLlama"
-        to={`/protocol/${row.protocol.id}/data`}
+        to={`/protocol/${row.protocol.id}/governance`}
         link="Open incidents →"
         onClose={onClose}
       />

@@ -6,13 +6,10 @@ import {
   feeds,
 } from '../../shared/lib/registry.ts'
 import { dateInfo, formatUsd, hostOf } from '../../shared/lib/view.ts'
-import { Prov } from '../../shared/ui/Coverage.tsx'
 import { GovernanceExtra, IncidentsExtra, TvlComponentsExtra } from './extra/MetricExtras.tsx'
 import { TextExtra } from './extra/TextExtra.tsx'
 import { ExternalLink } from '../../shared/ui/UI.tsx'
-import { RegistryFacts } from './RegistryFacts.tsx'
 
-const REGISTRY_URL = 'https://github.com/cp0x-org/defi-dna/blob/main/registry/protocols.json'
 const LINK = /(https?:\/\/[^\s)]+)/
 
 /** A note with its URLs clickable, for a metric that names where to look (a Snapshot space). */
@@ -30,15 +27,17 @@ const Linked = ({ text }: { text: string }) => (
   </>
 )
 
-/** The protocol's own facts and what DefiLlama measures. No feed opinions here. */
-export const DataTab = ({
+/**
+ * Who decides and how fast, as the protocol's governance contracts report it
+ * on-chain, then what DefiLlama measures. Facts about the protocol; no feed
+ * opinions here.
+ */
+export const GovernanceTab = ({
   protocol,
   record,
-  versions,
 }: {
   protocol: Protocol
   record: ProtocolDetail
-  versions: Protocol[]
 }) => {
   const tvl = record.metrics?.[TVL_METRIC]
   const incidents = record.metrics?.[INCIDENTS_METRIC]
@@ -50,44 +49,9 @@ export const DataTab = ({
   return (
     <>
       <div className="row2">
-        <section className="card">
-          <div className="card-h">
-            <h2>Protocol metadata</h2>
-            <Prov kind="meta" />
-            <span className="aside">
-              registry · <ExternalLink href={REGISTRY_URL}>Suggest an edit</ExternalLink>
-            </span>
-          </div>
-          <div className="card-b">
-            {protocol.description ? <p className="desc">{protocol.description}</p> : null}
-            <RegistryFacts protocol={protocol} versions={versions} className="facts three" />
-          </div>
-        </section>
-        <section className="card">
-          <div className="card-h">
-            <h2>TVL</h2>
-            <Prov kind="meta" />
-            <span className="aside">via DefiLlama · {dateInfo(tvl?.fetchedAt).label}</span>
-          </div>
-          <div className="card-b">
-            <div className="tvl-big">
-              {formatUsd(tvl?.value) ?? (record.metrics ? 'Not available' : 'Could not be loaded')}
-            </div>
-            <p className="tvl-note">
-              The Ethereum-mainnet figure, as DefiLlama publishes it. A measured quantity — never
-              combined with what a feed says.
-            </p>
-            <TvlComponentsExtra components={tvl?.extra?.components} />
-            <TextExtra text={tvl?.extra?.text} />
-          </div>
-        </section>
-      </div>
-
-      <div className="row2">
         <section className="card span2" id="governance">
           <div className="card-h">
             <h2>Governance</h2>
-            <Prov kind="meta" />
             <span className="aside">
               read on-chain · {dateInfo(governance?.updatedAt ?? governance?.fetchedAt).label}
             </span>
@@ -126,7 +90,6 @@ export const DataTab = ({
         <section className="card" id="incidents">
           <div className="card-h">
             <h2>Incidents</h2>
-            <Prov kind="src" />
             <span className="aside">recorded by DefiLlama</span>
           </div>
           <div className="card-b">
@@ -154,32 +117,52 @@ export const DataTab = ({
             ) : null}
           </div>
         </section>
-        <section className="card">
-          <div className="card-h">
-            <h2>Links</h2>
-            <Prov kind="meta" />
-          </div>
-          <div className="card-b links-list">
-            {protocol.website ? (
-              <ExternalLink className="link-row" href={protocol.website}>
-                <b>Website</b>
-                <span>{hostOf(protocol.website)}</span>
-              </ExternalLink>
-            ) : null}
-            {tvl?.url ? (
-              <ExternalLink className="link-row" href={tvl.url}>
-                <b>DefiLlama</b>
-                <span>{hostOf(tvl.url)}</span>
-              </ExternalLink>
-            ) : null}
-            {feedLinks.map((feed) => (
-              <ExternalLink className="link-row" key={feed.id} href={record.feeds[feed.id]?.url}>
-                <b>{feed.name}</b>
-                <span>{hostOf(record.feeds[feed.id]?.url)}</span>
-              </ExternalLink>
-            ))}
-          </div>
-        </section>
+
+        <div className="stack">
+          <section className="card">
+            <div className="card-h">
+              <h2>TVL</h2>
+              <span className="aside">via DefiLlama · {dateInfo(tvl?.fetchedAt).label}</span>
+            </div>
+            <div className="card-b">
+              <div className="tvl-big">
+                {formatUsd(tvl?.value) ??
+                  (record.metrics ? 'Not available' : 'Could not be loaded')}
+              </div>
+              <p className="tvl-note">
+                The Ethereum-mainnet figure, as DefiLlama publishes it. A measured quantity — never
+                combined with what a feed says.
+              </p>
+              <TvlComponentsExtra components={tvl?.extra?.components} />
+              <TextExtra text={tvl?.extra?.text} />
+            </div>
+          </section>
+          <section className="card">
+            <div className="card-h">
+              <h2>Links</h2>
+            </div>
+            <div className="card-b links-list">
+              {protocol.website ? (
+                <ExternalLink className="link-row" href={protocol.website}>
+                  <b>Website</b>
+                  <span>{hostOf(protocol.website)}</span>
+                </ExternalLink>
+              ) : null}
+              {tvl?.url ? (
+                <ExternalLink className="link-row" href={tvl.url}>
+                  <b>DefiLlama</b>
+                  <span>{hostOf(tvl.url)}</span>
+                </ExternalLink>
+              ) : null}
+              {feedLinks.map((feed) => (
+                <ExternalLink className="link-row" key={feed.id} href={record.feeds[feed.id]?.url}>
+                  <b>{feed.name}</b>
+                  <span>{hostOf(record.feeds[feed.id]?.url)}</span>
+                </ExternalLink>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </>
   )
