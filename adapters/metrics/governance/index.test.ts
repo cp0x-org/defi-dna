@@ -60,7 +60,7 @@ describe('governance', () => {
     // Facts follow systems.json: contract by contract, read by read.
     const shown = compound?.extra?.facts?.map(({ name, value }) => ({ name, value }))
     expect(shown).toEqual([
-      { name: 'Timelock delay', value: '172800 s (2 days)' },
+      { name: 'Timelock delay', value: '2 days (172800 s)' },
       { name: 'Timelock admin', value: '0x309a862bbc1a00e45506cb8a802d1ff10004c8c0 (contract)' },
       { name: 'Governor voting delay', value: '13,140 blocks' },
       { name: 'Governor voting period', value: '19,710 blocks' },
@@ -110,8 +110,8 @@ describe('governance', () => {
     ])
     expect(lido?.extra?.facts).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ name: 'After-submit delay', value: '259200 s (3 days)' }),
-        expect.objectContaining({ name: 'After-schedule delay', value: '86400 s (1 day)' }),
+        expect.objectContaining({ name: 'After-submit delay', value: '3 days (259200 s)' }),
+        expect.objectContaining({ name: 'After-schedule delay', value: '1 day (86400 s)' }),
         expect.objectContaining({ name: 'Emergency mode', value: 'not active' }),
         expect.objectContaining({ name: 'Dual Governance state', value: 'Normal' }),
         expect.objectContaining({ name: 'Aragon voting support required', value: '50%' }),

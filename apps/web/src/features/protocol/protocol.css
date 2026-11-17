@@ -546,10 +546,6 @@
 .mapping {
   background: var(--subtle);
 }
-.mapping .text-link {
-  margin-left: auto;
-  white-space: nowrap;
-}
 .attrib .cb {
   margin-left: auto;
   white-space: nowrap;
@@ -562,14 +558,6 @@
 }
 .attrib b {
   color: var(--ink);
-}
-.feed-cell {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.tbl q {
-  quotes: '�' '�';
 }
 
 .blocks {

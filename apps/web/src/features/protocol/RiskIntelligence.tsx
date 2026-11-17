@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import type { Feed, FeedData, IndexBundle, Protocol, ProtocolDetail } from '@defi-dna/data'
 import { feedById, feeds } from '../../shared/lib/registry.ts'
 import type { RecordSummary } from './record.ts'
 import { coverageCount } from '../dashboard/rows.ts'
 import { TONE_LABELS, detailToneOf, ruleWord, toneOf, type Tone } from '../../shared/lib/status.ts'
 import { ageLabel, assessesLabel, dateInfo, hostOf, timeLabel } from '../../shared/lib/view.ts'
-import { CoverageBar, CoverageRing, Prov, StatusPill } from '../../shared/ui/Coverage.tsx'
+import { StatusPill } from '../../shared/ui/Coverage.tsx'
 import { FeedExtras } from './extra/FeedExtras.tsx'
 import { Block, DataAgeHelp, ExternalLink, SourceMark } from '../../shared/ui/UI.tsx'
 
@@ -93,7 +93,6 @@ export const FeedSource = ({
               : `${feed.name} has not published anything we could map to ${protocol.name}.`}
           </h3>
           <div className="es-note">
-            <Prov kind="cp" />
             {failed ? (
               <span>
                 <b>This is our failure.</b> It says nothing about coverage, and nothing about the
@@ -139,7 +138,6 @@ export const FeedSource = ({
     <>
       {head}
       <div className="mapping">
-        <Prov kind="cp" />
         {feed.status && tone !== 'inf' ? (
           <span>
             Status colour: {feed.status.rule} “{data.value}” reads as <b>{TONE_LABELS[tone]}</b>
@@ -153,14 +151,12 @@ export const FeedSource = ({
         )}
       </div>
       <div className="mapping">
-        <Prov kind="cp" />
         <span>
           {feed.name} assesses {assessesLabel(feed.assesses)}. Its values appear exactly as
           published and are not converted into any other feed’s scale.
         </span>
       </div>
       <div className="attrib">
-        <Prov kind="src">Source content</Prov>
         <span>
           Everything below is published by <b>{feed.name}</b> and shown as collected. defi-dna does
           not edit, summarise or score it.
@@ -244,7 +240,11 @@ export const FeedSource = ({
   )
 }
 
-/** The sidebar and the reading panel: every feed, or one feed in full. */
+/**
+ * The sidebar and the reading panel. One feed is always open in full — the
+ * one in the URL, else the first with data — so the panel never repeats the
+ * sidebar as a table.
+ */
 export const RiskIntelligence = ({
   protocol,
   record,
@@ -258,12 +258,9 @@ export const RiskIntelligence = ({
   index: IndexBundle | null
   feedId: string
 }) => {
-  const navigate = useNavigate()
   const base = `/protocol/${protocol.id}/risk`
   const toneFor = (feed: Feed): Tone => summary.tones[feeds.indexOf(feed)] ?? 'none'
-  const states = summary.tones
-  const withData = summary.withData.length
-  const selected = feedById(feedId)
+  const selected = feedById(feedId) ?? summary.withData[0] ?? feeds[0]
 
   const item = (feed: Feed) => {
     const tone = toneFor(feed)
@@ -297,22 +294,6 @@ export const RiskIntelligence = ({
   return (
     <div className="risk">
       <aside className="card rside" aria-label="Risk feeds">
-        <Link
-          className={`rs-item${selected ? '' : ' on'}`}
-          to={base}
-          aria-current={selected ? undefined : 'page'}
-        >
-          <CoverageRing states={states} size={22} />
-          <span>
-            <b>All risk feeds</b>
-            <small>every feed’s headline</small>
-          </span>
-          <span className="rs-st">
-            <span className="mono">
-              {withData}/{feeds.length}
-            </span>
-          </span>
-        </Link>
         {GROUPS.map(([tones, label]) => {
           const members = feeds.filter((feed) => tones.includes(toneFor(feed)))
           return members.length > 0 ? (
@@ -344,85 +325,7 @@ export const RiskIntelligence = ({
                 : undefined
             }
           />
-        ) : (
-          <>
-            <div className="src-h">
-              <CoverageRing states={states} size={40} label={String(withData)} />
-              <div>
-                <div className="src-title">
-                  <h2>All risk feeds</h2>
-                  <span className="pill plain">
-                    {withData} / {feeds.length} with data
-                  </span>
-                </div>
-                <div className="src-meta">
-                  <span>
-                    Each row quotes that feed’s own headline. Pick a feed to read everything it
-                    publishes.
-                  </span>
-                </div>
-              </div>
-              <div className="src-actions">
-                <CoverageBar states={states} />
-              </div>
-            </div>
-            <div className="mapping">
-              <Prov kind="cp" />
-              <span>
-                Status colours place each headline on the publishing feed’s own scale. They are not
-                added up — there is no overall score — and each feed may cover a different slice of{' '}
-                {protocol.name}.
-              </span>
-            </div>
-            <div className="card-b">
-              <div className="tscroll">
-                <table className="tbl clickable">
-                  <thead>
-                    <tr>
-                      <th>Feed</th>
-                      <th>Topic</th>
-                      <th>Status</th>
-                      <th>Headline (as published)</th>
-                      <th>Assesses</th>
-                      <th>Assessed</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {feeds.map((feed) => {
-                      const data = record.feeds[feed.id]
-                      const status = data?.status ?? 'none'
-                      return (
-                        <tr key={feed.id} onClick={() => navigate(`${base}/${feed.id}`)}>
-                          <td>
-                            <Link className="feed-cell" to={`${base}/${feed.id}`}>
-                              <SourceMark id={feed.id} />
-                              {feed.name}
-                            </Link>
-                          </td>
-                          <td>{feed.topic}</td>
-                          <td>
-                            <StatusPill tone={toneFor(feed)} />
-                          </td>
-                          <td className="wrap">
-                            {status === 'ok' && data?.value ? (
-                              <q>{data.value}</q>
-                            ) : (
-                              <span className="muted">—</span>
-                            )}
-                          </td>
-                          <td className="wrap muted">{assessesLabel(feed.assesses)}</td>
-                          <td className="mono">
-                            {status === 'ok' ? dateInfo(data?.updatedAt).label : '—'}
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        )}
+        ) : null}
       </section>
     </div>
   )

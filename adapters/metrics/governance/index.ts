@@ -250,11 +250,11 @@ function encodeArgs(args: (number | string)[] | undefined, block: number): strin
 
 /* ------------------------------------------------------------------ formats */
 
-/** `172800 s (2 days)`: the chain's unit first, the readable one after it. */
+/** `2 days (172800 s)`: the readable unit first, the chain's after it. */
 const seconds = (value: bigint): string => {
   const raw = Number(value)
   const readable = formatDuration(raw)
-  return readable && readable !== `${raw} s` ? `${raw} s (${readable})` : `${raw} s`
+  return readable && readable !== `${raw} s` ? `${readable} (${raw} s)` : `${raw} s`
 }
 
 /** An 18-decimal token amount as whole tokens; governance tokens here all have 18 decimals. */
