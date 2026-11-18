@@ -3,7 +3,7 @@
  *
  * Filenames match a protocol or feed id (or its group stem): `aave.svg` covers
  * `aave-v3`, `aave-v4` and the dashboard group key `Aave`. A missing file keeps
- * the letter avatar / source mark as a fallback — e.g. risklayer today.
+ * the letter avatar / source mark as a fallback.
  */
 
 const stemFromPath = (path: string): string => {

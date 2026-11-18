@@ -1,12 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'
 import type { ColumnKey } from '../../shared/lib/prefs.ts'
 import { feeds } from '../../shared/lib/registry.ts'
-import { changedAt, changedWithinDay, dataCount, type Row } from './rows.ts'
-import { SIGNALS, signalCounts, type Tone } from '../../shared/lib/status.ts'
+import { changedWithinDay, dataCount, type Row } from './rows.ts'
+import type { Tone } from '../../shared/lib/status.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../../shared/lib/view.ts'
-import { CoverageBar, CoverageRing } from '../../shared/ui/Coverage.tsx'
+import { CoverageRing } from '../../shared/ui/Coverage.tsx'
 import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
-import { Fresh } from './Fresh.tsx'
 import { GovernanceCell, TimelockCell } from './GovernanceCells.tsx'
 import type { PopKind, PopTarget } from './usePopover.ts'
 
@@ -18,7 +17,6 @@ export const VersionRow = ({
   row,
   nested,
   now,
-  noChangeTitle,
   noIncidentsTitle,
   noGovernanceTitle,
   popTarget,
@@ -27,7 +25,6 @@ export const VersionRow = ({
   row: Row
   nested: boolean
   now: number
-  noChangeTitle: string
   noIncidentsTitle: string
   noGovernanceTitle: string
   popTarget: (kind: PopKind, protocolId: string) => PopTarget
@@ -39,7 +36,6 @@ export const VersionRow = ({
   const href = `/protocol/${protocol.id}`
   const states = tonesOf(row)
   const covered = dataCount(row.feeds, feedIds)
-  const counts = signalCounts(states)
   const today = changedWithinDay(row, now)
   return (
     <tr className={nested ? 'version-row' : undefined} onClick={() => navigate(href)}>
@@ -77,7 +73,11 @@ export const VersionRow = ({
       ) : null}
       {show('timelock') ? (
         <td className="num">
-          <TimelockCell governance={row.governance} absent={noGovernanceTitle} />
+          <TimelockCell
+            governance={row.governance}
+            absent={noGovernanceTitle}
+            popTarget={popTarget('timelock', protocol.id)}
+          />
         </td>
       ) : null}
       {show('governance') ? (
@@ -93,33 +93,11 @@ export const VersionRow = ({
             aria-label={`${covered} of ${feeds.length} feeds have data — show the list`}
             {...popTarget('coverage', protocol.id)}
           >
-            <span className="v-ring">
-              <CoverageRing states={states} />
-            </span>
-            <span className="v-bar">
-              <CoverageBar states={states} />
-            </span>
+            <CoverageRing states={states} />
             <span className="cov-count">
               {covered}
               <span>/{feeds.length}</span>
             </span>
-          </button>
-        </td>
-      ) : null}
-      {show('signals') ? (
-        <td>
-          <button
-            type="button"
-            className="hit sig"
-            aria-label={`Feed signals: ${counts.neg} negative, ${counts.neu} neutral or informational, ${counts.pos} positive`}
-            {...popTarget('signals', protocol.id)}
-          >
-            {SIGNALS.map((signal) => (
-              <span key={signal} className={`sc ${signal}${counts[signal] ? '' : ' zero'}`}>
-                <i />
-                {counts[signal]}
-              </span>
-            ))}
           </button>
         </td>
       ) : null}
@@ -141,11 +119,6 @@ export const VersionRow = ({
               </span>
             </button>
           )}
-        </td>
-      ) : null}
-      {show('updated') ? (
-        <td>
-          <Fresh changed={changedAt(row)} now={now} emptyTitle={noChangeTitle} />
         </td>
       ) : null}
       <td className="go" aria-hidden="true">

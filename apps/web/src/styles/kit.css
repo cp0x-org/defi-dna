@@ -19,38 +19,6 @@
   padding: 0;
   border-radius: 6px;
 }
-/* ------------------------------------------------------------------ provenance */
-.prov {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font: 700 12px/1 var(--mono);
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-  padding: 3px 5px;
-  border-radius: 3px;
-  border: 1px solid transparent;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-.prov.meta {
-  color: var(--muted);
-  border-color: var(--line-strong);
-  background: var(--surface);
-}
-.prov.cov {
-  color: var(--source-ink-0);
-  background: var(--source-0);
-}
-.prov.src {
-  color: var(--source-ink-1);
-  background: var(--source-1);
-}
-.prov.cp {
-  color: var(--surface);
-  background: var(--ink);
-}
-
 /* ------------------------------------------------------------------ feed status */
 /* Our own read failure is grey too, struck through: it says nothing about the feed. */
 .dot {
@@ -128,33 +96,6 @@
 }
 .ring .st-error {
   stroke-dasharray: 1.5 1.5;
-}
-.ring text {
-  font: 700 14px var(--mono);
-  fill: var(--ink);
-}
-.sbar {
-  display: inline-flex;
-  gap: 2px;
-}
-.sbar i {
-  width: 5px;
-  height: 14px;
-  border-radius: 1.5px;
-  background: var(--none-seg);
-}
-.sbar i.st-pos {
-  background: var(--pos-seg);
-}
-.sbar i.st-neu,
-.sbar i.st-inf {
-  background: var(--neu-seg);
-}
-.sbar i.st-neg {
-  background: var(--neg-seg);
-}
-.sbar i.st-error {
-  background: repeating-linear-gradient(135deg, var(--none-seg) 0 2px, transparent 2px 4px);
 }
 
 /* Source marks and avatars at the density of these pages. */
@@ -297,6 +238,14 @@
   background: var(--surface);
   color: var(--accent);
   box-shadow: 0 0 0 1px var(--accent-line);
+}
+/* How many rows an option would keep, in the same quiet figure as the category chips. */
+.seg button em {
+  font: normal 12px var(--mono);
+  color: var(--faint);
+}
+.seg button.on em {
+  color: var(--accent);
 }
 .seg.sm button {
   height: 28px;

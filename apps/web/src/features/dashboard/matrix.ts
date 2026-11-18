@@ -1,7 +1,6 @@
 import { feedName, feeds } from '../../shared/lib/registry.ts'
-import { changedAt, dataCount, groupRows, type Group, type Row } from './rows.ts'
-import { SIGNAL_LABELS, signalCounts, type Signal } from '../../shared/lib/status.ts'
-import { DAY, categoryLabel } from '../../shared/lib/view.ts'
+import { dataCount, groupRows, type Group, type Row } from './rows.ts'
+import { categoryLabel } from '../../shared/lib/view.ts'
 
 /**
  * The orders a visitor can pick. The default is TVL, a measured quantity —
@@ -13,9 +12,7 @@ export const SORTS = {
   'tvl-asc': 'TVL · low to high',
   'name-asc': 'Name · A–Z',
   'coverage-desc': 'Feed coverage · most first',
-  'updated-desc': 'Recently changed',
   'incidents-desc': 'Incidents · most first',
-  'signals-desc': 'Negative feed signals · most first',
 } as const
 export type SortKey = keyof typeof SORTS
 
@@ -25,15 +22,6 @@ export const TVL_MIN = {
   '1b': { label: '> $1B', min: 1e9 },
 } as const satisfies Record<string, { label: string; min: number }>
 export type TvlBand = keyof typeof TVL_MIN
-
-/** How recently a feed's value moved, per our run log. `old` includes versions with no move logged. */
-export const UPDATED = {
-  '24h': { label: '24 hours', chip: 'Changed ≤ 24h', days: 1 },
-  '7d': { label: '7 days', chip: 'Changed ≤ 7d', days: 7 },
-  '30d': { label: '30 days', chip: 'Changed ≤ 30d', days: 30 },
-  old: { label: 'Not in 30 days', chip: 'No change in 30d', days: 30 },
-} as const satisfies Record<string, { label: string; chip: string; days: number }>
-export type UpdatedWindow = keyof typeof UPDATED
 
 /** A table's keys in declaration order, typed as the keys they are. */
 export const keysOf = <T extends object>(table: T): Extract<keyof T, string>[] =>
@@ -51,9 +39,6 @@ export interface MatrixQuery {
   has: string[]
   missing: string[]
   incidents: boolean
-  /** Signal groups a version must have at least one feed in. */
-  signals: Signal[]
-  updated: UpdatedWindow | ''
   sort: SortKey
 }
 
@@ -65,8 +50,6 @@ export const EMPTY_QUERY: MatrixQuery = {
   has: [],
   missing: [],
   incidents: false,
-  signals: [],
-  updated: '',
   sort: 'tvl-desc',
 }
 
@@ -79,7 +62,6 @@ export const readQuery = (params: URLSearchParams): MatrixQuery => {
   const feedIds = feeds.map((feed) => feed.id)
   const sort = params.get('sort') ?? ''
   const tvl = params.get('tvl') ?? ''
-  const updated = params.get('updated') ?? ''
   const feedsMin = Number(params.get('feeds'))
   return {
     q: params.get('q') ?? '',
@@ -89,8 +71,6 @@ export const readQuery = (params: URLSearchParams): MatrixQuery => {
     has: list(params.get('has')).filter((id) => feedIds.includes(id)),
     missing: list(params.get('missing')).filter((id) => feedIds.includes(id)),
     incidents: params.get('incidents') === '1',
-    signals: list(params.get('signals')).filter((signal) => known(SIGNAL_LABELS, signal)),
-    updated: known(UPDATED, updated) ? updated : '',
     sort: known(SORTS, sort) ? sort : EMPTY_QUERY.sort,
   }
 }
@@ -115,8 +95,6 @@ export const writeQuery = (query: MatrixQuery): URLSearchParams => {
   set('has', query.has.join(','))
   set('missing', query.missing.join(','))
   set('incidents', query.incidents ? '1' : '')
-  set('signals', query.signals.join(','))
-  set('updated', query.updated)
   set('sort', query.sort === EMPTY_QUERY.sort ? '' : query.sort)
   return params
 }
@@ -146,23 +124,11 @@ export const filterChips = (query: MatrixQuery): { label: string; without: Matri
     ...(query.incidents
       ? [{ label: 'Has reported incidents', without: { ...query, incidents: false } }]
       : []),
-    ...query.signals.map((signal) => ({
-      label: `Has ${SIGNAL_LABELS[signal].toLowerCase()} signals`,
-      without: { ...query, signals: query.signals.filter((other) => other !== signal) },
-    })),
-    ...(query.updated
-      ? [
-          {
-            label: UPDATED[query.updated].chip,
-            without: { ...query, updated: EMPTY_QUERY.updated },
-          },
-        ]
-      : []),
   ]
 }
 
 /** One version against the filters. Coverage filters look at whether data exists, never at a value. */
-export const rowMatches = (row: Row, query: MatrixQuery, now: number): boolean => {
+export const rowMatches = (row: Row, query: MatrixQuery): boolean => {
   const { protocol } = row
   const needle = query.q.trim().toLowerCase()
   const text = `${protocol.group ?? ''} ${protocol.name} ${protocol.id} ${categoryLabel(
@@ -186,17 +152,6 @@ export const rowMatches = (row: Row, query: MatrixQuery, now: number): boolean =
   if (query.has.some((id) => !row.feeds[id])) return false
   if (query.missing.some((id) => row.feeds[id])) return false
   if (query.incidents && !row.incidents?.count) return false
-  if (query.signals.length) {
-    const counts = signalCounts(Object.values(row.tones))
-    if (query.signals.some((signal) => counts[signal] === 0)) return false
-  }
-  if (query.updated) {
-    // Without the run log there is no answer either way, so nothing passes.
-    if (row.changes === null) return false
-    const changed = changedAt(row)
-    const recent = changed != null && now - Date.parse(changed) <= UPDATED[query.updated].days * DAY
-    if (query.updated === 'old' ? recent : !recent) return false
-  }
   return true
 }
 
@@ -208,17 +163,11 @@ const byNumber = (a: number | null, b: number | null, dir: 'asc' | 'desc' = 'des
       ? b - a
       : a - b
 
-const time = (value: string | null): number | null => (value ? Date.parse(value) : null)
-
-/** The most negative readings any one version of the group has; versions are never added up. */
-const negatives = (group: Group): number =>
-  Math.max(...group.rows.map((row) => signalCounts(Object.values(row.tones)).neg))
-
 /**
  * Filter the versions, nest them by protocol and order the groups. Pure: the
- * same rows, query and clock always give the same table.
+ * same rows and query always give the same table.
  */
-export const matrixGroups = (rows: Row[], query: MatrixQuery, now: number): Group[] => {
+export const matrixGroups = (rows: Row[], query: MatrixQuery): Group[] => {
   const feedIds = feeds.map((feed) => feed.id)
   const order: Record<SortKey, (a: Group, b: Group) => number> = {
     'tvl-desc': (a, b) => byNumber(a.tvl, b.tvl),
@@ -226,12 +175,9 @@ export const matrixGroups = (rows: Row[], query: MatrixQuery, now: number): Grou
     'name-asc': () => 0,
     'coverage-desc': (a, b) =>
       byNumber(dataCount(a.feeds, feedIds), dataCount(b.feeds, feedIds)) || byNumber(a.tvl, b.tvl),
-    'updated-desc': (a, b) =>
-      byNumber(time(a.changedAt), time(b.changedAt)) || byNumber(a.tvl, b.tvl),
     'incidents-desc': (a, b) => byNumber(a.incidents, b.incidents) || byNumber(a.tvl, b.tvl),
-    'signals-desc': (a, b) => byNumber(negatives(a), negatives(b)) || byNumber(a.tvl, b.tvl),
   }
-  return groupRows(rows.filter((row) => rowMatches(row, query, now))).sort(
+  return groupRows(rows.filter((row) => rowMatches(row, query))).sort(
     (a, b) => order[query.sort](a, b) || a.name.localeCompare(b.name),
   )
 }

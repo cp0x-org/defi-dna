@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -52,7 +53,7 @@ export const Info = ({
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const id = useId()
 
-  const clearTimers = () => {
+  const clearTimers = useCallback(() => {
     if (openTimer.current) {
       clearTimeout(openTimer.current)
       openTimer.current = null
@@ -61,24 +62,24 @@ export const Info = ({
       clearTimeout(closeTimer.current)
       closeTimer.current = null
     }
-  }
+  }, [])
 
-  const showSoon = () => {
+  const showSoon = useCallback(() => {
     clearTimers()
     openTimer.current = setTimeout(() => setOpen(true), INFO_OPEN_DELAY_MS)
-  }
+  }, [clearTimers])
 
-  const hideSoon = () => {
+  const hideSoon = useCallback(() => {
     clearTimers()
     closeTimer.current = setTimeout(() => setOpen(false), INFO_CLOSE_DELAY_MS)
-  }
+  }, [clearTimers])
 
-  const hideNow = () => {
+  const hideNow = useCallback(() => {
     clearTimers()
     setOpen(false)
-  }
+  }, [clearTimers])
 
-  useEffect(() => () => clearTimers(), [])
+  useEffect(() => clearTimers, [clearTimers])
 
   useLayoutEffect(() => {
     if (!open) {
@@ -117,7 +118,7 @@ export const Info = ({
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [open])
+  }, [open, hideNow])
 
   return (
     <span
@@ -265,10 +266,13 @@ export const Block = ({
   </div>
 )
 
+/** The three dates on these pages, named apart so none is mistaken for another. */
 export const DataAgeHelp = () => (
-  <Info label="About assessment dates">
-    Dates belong to the feed’s own assessment, not to our last download. Amber marks a date more
-    than 90 days old; it does not mean the assessment is invalid. Some reviews only change when the
-    protocol does.
+  <Info label="About the dates">
+    <b>Assessed</b> is the feed’s own date for its assessment, not our download. Amber marks a date
+    more than 90 days old; it does not mean the assessment is invalid, some reviews only change when
+    the protocol does. <b>Data cut</b> is when our pipeline last collected everything, and{' '}
+    <b>Last read</b> when it last read this feed without a failure. <b>Changed</b> is when a value
+    moved between two of our runs.
   </Info>
 )

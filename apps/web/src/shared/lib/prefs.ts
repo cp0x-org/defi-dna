@@ -39,22 +39,6 @@ const write = (key: string, cookie: string, value: string): void => {
   }
 }
 
-/** How the dashboard draws coverage: a ring, a bar of segments, or both side by side. */
-export type CoverageView = 'ring' | 'bar' | 'both'
-
-const VIEW_KEY = 'defi-dna-coverage-view'
-const VIEW_COOKIE = 'defi-dna_coverage_view'
-
-const isView = (value: string | null): value is CoverageView =>
-  value === 'ring' || value === 'bar' || value === 'both'
-
-export const readCoverageView = (): CoverageView => {
-  const value = read(VIEW_KEY, VIEW_COOKIE)
-  return isView(value) ? value : 'ring'
-}
-
-export const writeCoverageView = (view: CoverageView): void => write(VIEW_KEY, VIEW_COOKIE, view)
-
 /** The dashboard columns a visitor can hide, in table order; the protocol column always shows. */
 export const COLUMNS = {
   category: 'Category',
@@ -62,9 +46,7 @@ export const COLUMNS = {
   timelock: 'Governance timelock',
   governance: 'Governance',
   coverage: 'Coverage',
-  signals: 'Signals',
   incidents: 'Incidents',
-  updated: 'Updated',
 } as const
 export type ColumnKey = keyof typeof COLUMNS
 
@@ -73,9 +55,17 @@ const COLUMNS_COOKIE = 'defi-dna_hidden_columns'
 
 const isColumn = (key: string): key is ColumnKey => Object.hasOwn(COLUMNS, key)
 
+/**
+ * Governance starts hidden: four lines of bodies per row made the table the
+ * hardest thing on the page to scan. A visitor who turns it on keeps it on.
+ */
+const HIDDEN_BY_DEFAULT: ColumnKey[] = ['governance']
+
 /** What is stored is the hidden set, so a column added later shows for everyone. */
-export const readHiddenColumns = (): Set<ColumnKey> =>
-  new Set((read(COLUMNS_KEY, COLUMNS_COOKIE) ?? '').split(',').filter(isColumn))
+export const readHiddenColumns = (): Set<ColumnKey> => {
+  const stored = read(COLUMNS_KEY, COLUMNS_COOKIE)
+  return new Set(stored == null ? HIDDEN_BY_DEFAULT : stored.split(',').filter(isColumn))
+}
 
 export const writeHiddenColumns = (hidden: Set<ColumnKey>): void =>
   write(COLUMNS_KEY, COLUMNS_COOKIE, [...hidden].join(','))

@@ -1,7 +1,7 @@
 {
   "id": "defipunkd",
   "name": "DeFiPunk’d",
-  "topic": "Five risk slices",
+  "topic": "Risk dimensions",
   "focus": "Five risk dimensions adapted from DeFiScan v2 — Control, Ability to exit, Autonomy, Open Access and Verifiability — each graded green, orange or red by a quorum of independent LLM runs (DEFI@home) or a deterministic heuristic, gray where no grade has been earned yet; plus a tier (wood to gold) for review depth, which DeFiPunk’d states is not a safety signal.",
   "assesses": "deployment",
   "homepage": "https://defipunkd.com",

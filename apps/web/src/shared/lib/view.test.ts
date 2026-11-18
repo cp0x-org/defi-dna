@@ -5,7 +5,6 @@ import {
   assessesLabel,
   categoryLabel,
   colourSlot,
-  coverageLabel,
   dateInfo,
   dayAndTime,
   hostOf,
@@ -21,16 +20,13 @@ describe('labels', () => {
     expect(categoryLabel('restaking')).toBe('restaking')
   })
 
-  it('names what a feed assesses and the three cell states', () => {
+  it('names what a feed assesses', () => {
     expect(assessesLabel('vault')).toBe('individual vaults, not the protocol')
-    expect(coverageLabel('ok')).toBe('Data available')
-    expect(coverageLabel('none')).toBe('No data')
-    expect(coverageLabel('error')).toBe('Collection error')
   })
 
   it('gives every id the same colour slot, one of five', () => {
     expect(colourSlot('pigi')).toBe(colourSlot('pigi'))
-    for (const id of ['pigi', 'defiscan', 'philidor', 'risklayer', 'x']) {
+    for (const id of ['pigi', 'defiscan', 'philidor', 'credora', 'x']) {
       expect(colourSlot(id)).toBeGreaterThanOrEqual(0)
       expect(colourSlot(id)).toBeLessThan(5)
     }

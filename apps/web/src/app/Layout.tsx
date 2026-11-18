@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import type { IndexBundle } from '@defi-dna/data'
-import { dateInfo, timeLabel } from '../shared/lib/view.ts'
+import { DAY, dateInfo, timeLabel } from '../shared/lib/view.ts'
 import { IconMark, IconTheme } from '../shared/ui/Icons.tsx'
 import { ExternalLink } from '../shared/ui/UI.tsx'
 import { NAV } from './routes.ts'
 
 const REPO = 'https://github.com/cp0x-org/defi-dna'
 const DATA_REPO = 'https://github.com/cp0x-org/defi-dna-data'
+
+/** The refresh runs twice a day; a cut older than this means our collection has stopped. */
+const STALE_AFTER = 2 * DAY
 
 export const Layout = ({ index }: { index: IndexBundle | null }) => {
   const location = useLocation()
@@ -47,6 +50,9 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
     }
   }, [page, location.hash])
 
+  // The cut is a fact about our collection, not about any feed; amber here means we are late.
+  const stale = index != null && Date.now() - Date.parse(index.generatedAt) > STALE_AFTER
+
   return (
     <div className="app-shell">
       <a href="#main-content" className="skip-link">
@@ -69,7 +75,14 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
           </nav>
           <div className="header-tools">
             {index ? (
-              <span className="data-cut">
+              <span
+                className={`data-cut${stale ? ' stale' : ''}`}
+                title={
+                  stale
+                    ? 'Our last collection is more than two days old; the values may be behind the feeds.'
+                    : 'When we last collected the feeds'
+                }
+              >
                 Data cut <span className="mono">{timeLabel(index.generatedAt)}</span>
               </span>
             ) : null}
@@ -98,7 +111,6 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
           <span>Every verdict belongs to the feed that published it. No composite score.</span>
         </div>
         <div className="footer-links">
-          <Link to="/methodology">Methodology</Link>
           <ExternalLink href={DATA_REPO}>Open data</ExternalLink>
           <ExternalLink href={`${REPO}/blob/main/CHARTER.md`}>Charter</ExternalLink>
           <ExternalLink href={REPO}>GitHub · AGPL-3.0</ExternalLink>

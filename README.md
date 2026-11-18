@@ -126,11 +126,10 @@ address in the project's `.env` file (copy `.env.example`; for example,
 ## Sources and contributions
 
 Risk feeds currently include [DeFiScan](https://www.defiscan.info),
-[Risklayer](https://risklayer.online),
 [Philidor](https://analytics.philidor.io),
 [pigi.finance](https://pigi.finance),
 [DeFi Scoring](https://defiscoring.com),
-[DeFiPunk'd](https://defipunkd.com) (five risk slices per deployment) and
+[DeFiPunk'd](https://defipunkd.com) (five risk dimensions per deployment) and
 [Credora](https://www.credora.network) (vault ratings). Independent
 measurements come from DefiLlama's Ethereum TVL and incident history, and from
 Ethereum mainnet itself: the governance metric reads timelock delays, multisig

@@ -1,5 +1,4 @@
-import type { AssessedObject, FeedData } from '@defi-dna/data'
-import { TONE_LABELS } from './status.ts'
+import type { AssessedObject } from '@defi-dna/data'
 
 export { formatDuration, formatUsd } from '@defi-dna/data'
 
@@ -31,10 +30,6 @@ const ASSESSES_LABELS: Record<AssessedObject, string> = {
 }
 
 export const assessesLabel = (assesses: AssessedObject): string => ASSESSES_LABELS[assesses]
-
-/** The three states a cell can be in. None of them is a safety judgement. */
-export const coverageLabel = (status: FeedData['status']): string =>
-  TONE_LABELS[status === 'ok' ? 'inf' : status]
 
 /** Stable colour slot for a feed mark or a protocol avatar, so a new id needs no CSS. */
 export const colourSlot = (id: string): number =>

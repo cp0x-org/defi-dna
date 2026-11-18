@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------ *
- * The protocol page: identity, key figures, coverage, then three tabs.
+ * The protocol page: identity with TVL, then three tabs.
  * ------------------------------------------------------------------ */
 
 .protocol-page {
@@ -77,157 +77,28 @@
   flex-wrap: wrap;
   justify-content: flex-end;
 }
-
-/* ------------------------------------------------------------------ key figures */
-.mstrip {
+/* TVL beside the name: the only figure in the header, set like a key figure. */
+.id-figure {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 1px;
-  margin-top: 16px;
-  background: var(--line);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
-.m {
-  padding: 14px 18px 16px;
-  min-width: 0;
-  background: var(--surface);
-}
-a.m:hover {
-  background: var(--row-hover);
-}
-a.m:hover .m-v {
-  color: var(--accent);
-}
-.m-l {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.m-v {
-  font: 600 22px/1.35 var(--mono);
-  letter-spacing: -0.4px;
-  margin-top: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.m-v small {
-  font-size: 14px;
-  color: var(--muted);
-  font-weight: 500;
-}
-.m-s {
-  font-size: 12px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ------------------------------------------------------------------ coverage strip */
-.covblock {
-  margin-top: 10px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 14px 18px 16px;
-}
-.cov-head {
-  display: flex;
-  align-items: center;
-  gap: 10px 16px;
-  flex-wrap: wrap;
-  font-size: 14px;
-}
-.cov-head .ttl {
-  font-weight: 700;
-}
-.cov-head .ttl b {
-  font-family: var(--mono);
-}
-.cov-legend {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  color: var(--muted);
-  font-size: 14px;
-}
-.cov-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.cov-head .note {
+  justify-items: end;
   margin-left: auto;
-  font-size: 14px;
+  text-align: right;
+  white-space: nowrap;
+}
+.id-figure .lbl {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
   color: var(--muted);
 }
-/* --feeds is set from the registry, so a new feed needs no CSS. */
-.covsegs {
-  display: grid;
-  grid-template-columns: repeat(var(--feeds, 1), minmax(0, 1fr));
-  gap: 3px;
-  margin-top: 9px;
+.id-figure b {
+  font: 600 26px/1.25 var(--mono);
+  letter-spacing: -0.6px;
 }
-.cseg {
-  display: block;
-  padding: 0 0 2px;
-  border-radius: 4px;
-  min-width: 0;
-}
-.cseg i {
-  display: block;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--none-seg);
-}
-.cseg.st-pos i {
-  background: var(--pos-seg);
-}
-.cseg.st-neu i,
-.cseg.st-inf i {
-  background: var(--neu-seg);
-}
-.cseg.st-neg i {
-  background: var(--neg-seg);
-}
-.cseg.st-error i {
-  background: repeating-linear-gradient(135deg, var(--none-seg) 0 3px, transparent 3px 6px);
-}
-.cseg span {
-  display: block;
-  font-size: 14px;
-  font-weight: 700;
-  margin-top: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cseg small {
-  display: block;
+.id-figure small {
   font-size: 12px;
   color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cseg.st-none span,
-.cseg.st-error span {
-  color: var(--muted);
-  font-weight: 500;
-}
-.cseg:hover span {
-  color: var(--accent);
-}
-.cseg:hover i {
-  box-shadow: 0 0 0 2px var(--accent-tint);
 }
 
 /* ------------------------------------------------------------------ tabs */
@@ -284,12 +155,15 @@ a.m:hover .m-v {
   min-width: 0;
   align-content: start;
 }
+/* The overview: the feed cards first, full width, then the run log beside the figures. */
+.overview {
+  margin-top: 16px;
+}
 .two {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 420px;
   gap: 14px;
   align-items: start;
-  margin-top: 16px;
 }
 .row2 {
   display: grid;
@@ -300,12 +174,6 @@ a.m:hover .m-v {
 }
 .row2 > .span2 {
   grid-column: 1 / -1;
-}
-.desc {
-  font-size: 16px;
-  line-height: 1.6;
-  max-width: 90ch;
-  margin-bottom: 10px;
 }
 
 /* ------------------------------------------------------------------ overview */
@@ -359,20 +227,51 @@ a.m:hover .m-v {
 .ft-top .pill {
   margin-left: auto;
 }
+/* The headline is the feed's own words: it wraps rather than ends in an ellipsis. */
 .ft-head {
   font-size: 14px;
   margin-top: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 .ftile.st-none .ft-head,
 .ftile.st-error .ft-head {
   color: var(--muted);
 }
+/* A feed's graded parts as chips: the colour is the feed's own, the word is in the title. */
+.slices {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.slices .pill {
+  font-weight: 600;
+  white-space: normal;
+}
+.b-slices {
+  margin-bottom: 8px;
+}
+.b-slices .slices {
+  gap: 6px;
+}
+.b-score .v.small {
+  font: 500 15px/1.5 var(--mono);
+  letter-spacing: 0;
+}
 .ft-meta {
   font-size: 12px;
   color: var(--muted);
+}
+/* The colour rule in the feed's words, two lines on the tile and whole in the title. */
+.ft-rule {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--faint);
+  margin-top: 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  max-height: 2.8em;
+  overflow: hidden;
 }
 
 .tl-body {
@@ -434,6 +333,40 @@ a.m:hover .m-v {
 .tl .go:hover {
   text-decoration: underline;
 }
+/* A folded run: every move is one line, opened on request. */
+.tl .tl-runs {
+  margin-top: 4px;
+  font-size: 13px;
+}
+.tl .tl-runs summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+  list-style: none;
+}
+.tl .tl-runs summary::before {
+  content: '▸ ';
+}
+.tl .tl-runs[open] summary::before {
+  content: '▾ ';
+}
+.tl .tl-runs ul {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+.tl .tl-runs li {
+  display: flex;
+  gap: 10px;
+  padding: 2px 0;
+  border: 0;
+  color: var(--muted);
+}
+.tl .tl-runs .d {
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
 
 .kv-body {
   padding-top: 4px;
@@ -469,22 +402,6 @@ a.m:hover .m-v {
   font: 500 12px var(--font);
   color: var(--muted);
 }
-.legend-list {
-  display: grid;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--muted);
-}
-.legend-list > div {
-  display: grid;
-  grid-template-columns: 78px 1fr;
-  gap: 8px;
-  align-items: start;
-}
-.legend-list .prov {
-  justify-self: start;
-}
-
 /* ------------------------------------------------------------------ protocol data */
 .tvl-big {
   font: 600 32px/1.2 var(--mono);
@@ -695,10 +612,6 @@ a.m:hover .m-v {
 .mapping {
   background: var(--subtle);
 }
-.mapping .text-link {
-  margin-left: auto;
-  white-space: nowrap;
-}
 .attrib .cb {
   margin-left: auto;
   white-space: nowrap;
@@ -711,14 +624,6 @@ a.m:hover .m-v {
 }
 .attrib b {
   color: var(--ink);
-}
-.feed-cell {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.tbl q {
-  quotes: '�' '�';
 }
 
 .blocks {
@@ -966,9 +871,6 @@ a.m:hover .m-v {
 
 /* ------------------------------------------------------------------ narrow screens */
 @media (max-width: 1199px) {
-  .mstrip {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
   .two,
   .row2 {
     grid-template-columns: minmax(0, 1fr);
@@ -978,19 +880,26 @@ a.m:hover .m-v {
   }
 }
 @media (max-width: 959px) {
+  /* The header is two rows here (see base.css): the sticky tabs sit under it. */
+  .tabs {
+    top: 100px;
+  }
+  .tabs-anchor {
+    scroll-margin-top: 100px;
+  }
   .identity {
     flex-direction: column;
   }
   .id-links {
     justify-content: flex-start;
   }
-  .cov-head .note,
+  .id-figure {
+    margin-left: 0;
+    justify-items: start;
+    text-align: left;
+  }
   .tabs .hint {
     display: none;
-  }
-  .covsegs {
-    overflow-x: auto;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   }
   .risk {
     grid-template-columns: minmax(0, 1fr);
@@ -999,29 +908,18 @@ a.m:hover .m-v {
     position: static;
     max-height: none;
   }
-  .facts.three {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 @media (max-width: 759px) {
   .tabs {
-    top: 100px;
     gap: 20px;
     overflow-x: auto;
     scrollbar-width: none;
   }
-  .tabs-anchor {
-    scroll-margin-top: 100px;
-  }
   .id-title h1 {
     font-size: 30px;
   }
-  .mstrip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .two > aside.stack,
-  .facts,
-  .facts.three {
+  .facts {
     grid-template-columns: minmax(0, 1fr);
   }
   .tl li {

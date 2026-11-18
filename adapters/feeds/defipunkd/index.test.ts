@@ -4,7 +4,7 @@ import aaveV3 from './fixtures/aave-v3.json' with { type: 'json' }
 import crvusd from './fixtures/crvusd.json' with { type: 'json' }
 import curveDex from './fixtures/curve-dex.json' with { type: 'json' }
 import index from './fixtures/index.json' with { type: 'json' }
-import adapter, { stateOf } from './index.ts'
+import adapter, { headlineOf, stateOf } from './index.ts'
 
 /*
  * Real responses from 2026-10-17: `index.json` trimmed to five slugs, and the
@@ -35,8 +35,8 @@ describe('defipunkd adapter', () => {
 
     expect(result).toMatchObject({
       value:
-        'Control: tentative orange · Ability to exit: tentative red · Autonomy: tentative orange · ' +
-        'Open Access: tentative orange · Verifiability: tentative green',
+        'Control: orange · Ability to exit: red · Autonomy: orange · Open Access: orange · ' +
+        'Verifiability: green (all tentative)',
       summary: aaveV3.about,
       url: 'https://defipunkd.com/protocol/aave-v3',
       note:
@@ -73,12 +73,10 @@ describe('defipunkd adapter', () => {
     const prepared = await adapter.prepare!(ctx)
     const result = await adapter.collect({ protocol: row('curve', 'Curve'), ctx, prepared })
 
+    // Several slugs: grades only, in slice order, so the headline stays short.
     expect(result?.value).toBe(
-      'Curve DEX — Control: tentative green, Ability to exit: tentative green, Autonomy: tentative ' +
-        'green, Open Access: tentative green, Verifiability: tentative green · crvUSD — Control: ' +
-        'tentative orange (3/3 models submitted), Ability to exit: tentative unknown (3/3 models ' +
-        'submitted), Autonomy: tentative orange, Open Access: tentative unknown (2/3 models ' +
-        'submitted), Verifiability: tentative green',
+      'Curve DEX — green, green, green, green, green (all tentative) · ' +
+        'crvUSD — orange, unknown, orange, unknown, green (all tentative)',
     )
     expect(result?.details).toHaveLength(10)
     expect(result?.details?.[6]).toMatchObject({
@@ -90,7 +88,8 @@ describe('defipunkd adapter', () => {
     expect(result?.summary).toMatch(/^Curve DEX is an automated market maker /)
     expect(result?.note).toContain(
       'DeFiPunk’d files Curve as Curve DEX ("curve-dex") and crvUSD ("crvusd"); each is graded ' +
-        'separately and every one is shown.',
+        'separately and every one is shown, grades in the order Control, Ability to exit, ' +
+        'Autonomy, Open Access, Verifiability.',
     )
     expect(result?.extra?.facts).toContainEqual({
       name: 'Tier (crvUSD)',
@@ -129,6 +128,18 @@ describe('defipunkd adapter', () => {
     await expect(adapter.collect({ protocol: row('aave-v3'), ctx, prepared })).rejects.toThrow(
       'HTTP 404',
     )
+  })
+
+  it('says tentative once in the headline, and counts the slices it applies to', () => {
+    const slice = { id: 'control', label: 'Control', tentative: false, partial: false }
+    expect(
+      headlineOf([
+        { ...slice, grade: 'green' },
+        { ...slice, id: 'autonomy', label: 'Autonomy', grade: 'red', tentative: true },
+        { ...slice, id: 'open-access', label: 'Open Access', grade: 'gray', partial: true },
+      ]),
+    ).toBe('Control: green · Autonomy: red · Open Access: unknown (2 tentative)')
+    expect(headlineOf([{ ...slice, grade: 'green' }])).toBe('Control: green')
   })
 
   it("words a slice's state the way DeFiPunk’d titles it", () => {

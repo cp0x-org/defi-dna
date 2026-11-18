@@ -1,10 +1,8 @@
-import { useEffect, useRef } from 'react'
-import { TVL_MIN, UPDATED, keysOf, withoutFilters, type MatrixQuery } from './matrix.ts'
+import { useEffect, useRef, type ReactNode } from 'react'
+import { TVL_MIN, keysOf, withoutFilters, type MatrixQuery } from './matrix.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { coverageCount, type Row } from './rows.ts'
-import { SIGNALS, SIGNAL_LABELS, SIGNAL_TONES } from '../../shared/lib/status.ts'
 import { categoryLabel } from '../../shared/lib/view.ts'
-import { Prov, StatusDot } from '../../shared/ui/Coverage.tsx'
 import { IconClose } from '../../shared/ui/Icons.tsx'
 
 /** A row of mutually exclusive buttons. */
@@ -17,7 +15,7 @@ const Segmented = <T extends string | number>({
 }: {
   label: string
   value: T
-  options: readonly (readonly [T, string])[]
+  options: readonly (readonly [T, ReactNode])[]
   onChange: (value: T) => void
   small?: boolean
 }) => (
@@ -137,9 +135,7 @@ export const FilterDrawer = ({
         </div>
         <div className="dr-body">
           <section className="fs">
-            <h3>
-              Protocol <Prov kind="meta" />
-            </h3>
+            <h3>Protocol</h3>
             <div className="fl-label">Category</div>
             <div className="chipset">
               {categories.map((category) => (
@@ -165,9 +161,7 @@ export const FilterDrawer = ({
           </section>
 
           <section className="fs">
-            <h3>
-              Size <Prov kind="meta" />
-            </h3>
+            <h3>Size</h3>
             <div className="fl-label">
               TVL <span className="muted">DefiLlama · Ethereum</span>
             </div>
@@ -176,17 +170,29 @@ export const FilterDrawer = ({
               value={query.tvl}
               options={[
                 ['', 'Any'],
-                ...keysOf(TVL_MIN).map((key) => [key, TVL_MIN[key].label] as const),
+                ...keysOf(TVL_MIN).map(
+                  (key) =>
+                    [
+                      key,
+                      <>
+                        {TVL_MIN[key].label}{' '}
+                        <em>
+                          {
+                            rows.filter((row) => row.tvl != null && row.tvl > TVL_MIN[key].min)
+                              .length
+                          }
+                        </em>
+                      </>,
+                    ] as const,
+                ),
               ]}
               onChange={(tvl) => set({ tvl })}
             />
           </section>
 
           <section className="fs">
-            <h3>
-              Coverage <Prov kind="cov" />
-            </h3>
-            <div className="fl-label">Feeds with data</div>
+            <h3>Risk feeds</h3>
+            <div className="fl-label">Risk feeds with data</div>
             <Segmented
               label="Feeds with data"
               value={query.feedsMin}
@@ -202,9 +208,7 @@ export const FilterDrawer = ({
           </section>
 
           <section className="fs">
-            <h3>
-              By feed <Prov kind="cov" />
-            </h3>
+            <h3>By risk feed</h3>
             <p className="fs-note">
               Filters on whether a feed has published data about a version — never on what the feed
               says.
@@ -254,35 +258,7 @@ export const FilterDrawer = ({
           </section>
 
           <section className="fs">
-            <h3>
-              Signals <Prov kind="src" />
-            </h3>
-            <p className="fs-note">
-              Each feed’s own characterization, read from its own published scale.
-            </p>
-            {SIGNALS.map((signal) => (
-              <label className="cb" key={signal}>
-                <input
-                  type="checkbox"
-                  checked={query.signals.includes(signal)}
-                  onChange={(event) =>
-                    set({
-                      signals: event.target.checked
-                        ? [...query.signals, signal]
-                        : query.signals.filter((other) => other !== signal),
-                    })
-                  }
-                />
-                <StatusDot tone={SIGNAL_TONES[signal]} />
-                Has {SIGNAL_LABELS[signal].toLowerCase()} signals
-              </label>
-            ))}
-          </section>
-
-          <section className="fs">
-            <h3>
-              Incidents <Prov kind="src" />
-            </h3>
+            <h3>Incidents</h3>
             <label className="cb">
               <input
                 type="checkbox"
@@ -291,24 +267,6 @@ export const FilterDrawer = ({
               />
               Has incidents recorded by DefiLlama
             </label>
-          </section>
-
-          <section className="fs">
-            <h3>
-              Freshness <Prov kind="cov" />
-            </h3>
-            <div className="fl-label">
-              Last change <span className="muted">in a feed’s published value</span>
-            </div>
-            <Segmented
-              label="Last change"
-              value={query.updated}
-              options={[
-                ['', 'Any'],
-                ...keysOf(UPDATED).map((key) => [key, UPDATED[key].label] as const),
-              ]}
-              onChange={(updated) => set({ updated })}
-            />
           </section>
         </div>
         <div className="dr-foot">

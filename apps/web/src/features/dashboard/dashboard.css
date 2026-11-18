@@ -20,6 +20,18 @@
   font-size: 14px;
   margin-top: 4px;
 }
+.page-head .quick {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.page-head .quick a {
+  font-weight: 700;
+  color: var(--accent);
+}
+.page-head .quick a:hover {
+  text-decoration: underline;
+}
 .page-head p strong {
   color: var(--ink);
 }
@@ -86,13 +98,6 @@
   color: var(--ink);
 }
 .search input::placeholder {
-  color: var(--muted);
-}
-.search kbd {
-  font: 12px var(--mono);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  padding: 0 5px;
   color: var(--muted);
 }
 .sort {
@@ -168,51 +173,6 @@
 .pop-list.sort-options button.on {
   background: var(--accent-tint);
   color: var(--accent);
-}
-.spacer {
-  flex: 1;
-}
-.viewtoggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  height: 44px;
-}
-.viewtoggle > span {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted);
-  padding: 0 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-.viewtoggle button {
-  height: 36px;
-  padding: 0 9px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--muted);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.viewtoggle button:hover {
-  color: var(--ink);
-  background: var(--subtle);
-}
-.viewtoggle button.on {
-  background: var(--accent-tint);
-  color: var(--accent);
-}
-.viewtoggle .ring path {
-  stroke-width: 2.4;
-}
-.viewtoggle .sbar i {
-  width: 3px;
-  height: 11px;
 }
 .result-count {
   font-size: 14px;
@@ -303,25 +263,8 @@ table.grid {
   vertical-align: middle;
   white-space: nowrap;
 }
-.grid thead tr.grp th {
-  padding: 10px 16px 8px;
-  background: var(--subtle);
-  border-top: 1px solid var(--line);
-  border-bottom: 0;
-}
-.grid thead tr.grp th + th {
-  border-left: 5px solid var(--surface);
-}
-.grid thead tr.grp th.g-meta {
-  box-shadow: inset 0 -2px 0 var(--line-strong);
-}
-.grid thead tr.grp th.g-cov {
-  box-shadow: inset 0 -2px 0 var(--source-ink-0);
-}
-.grid thead tr.grp th.g-src {
-  box-shadow: inset 0 -2px 0 var(--source-ink-1);
-}
 .grid thead tr.cols th {
+  border-top: 1px solid var(--line);
   background: var(--subtle);
   color: var(--muted);
   font-size: 14px;
@@ -461,45 +404,6 @@ button.hit:hover {
   color: var(--muted);
   font-weight: 400;
 }
-.v-ring,
-.v-bar {
-  display: inline-flex;
-}
-.panel[data-view='ring'] .v-bar,
-.panel[data-view='bar'] .v-ring {
-  display: none;
-}
-.sig {
-  gap: 10px;
-}
-.sc {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font: 600 14px var(--mono);
-  min-width: 24px;
-}
-.sc i {
-  width: 7px;
-  height: 7px;
-  border-radius: 2px;
-}
-.sc.neg i {
-  background: var(--neg-seg);
-}
-.sc.neu i {
-  background: var(--neu-seg);
-}
-.sc.pos i {
-  background: var(--pos-seg);
-}
-.sc.zero {
-  color: var(--faint);
-  font-weight: 400;
-}
-.sc.zero i {
-  opacity: 0.35;
-}
 .group-row .cov-count small {
   display: inline;
   margin-left: 6px;
@@ -511,23 +415,6 @@ button.hit:hover {
 .evt.zero {
   color: var(--muted);
   font-weight: 400;
-}
-.fresh {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font: 500 14px var(--mono);
-}
-.fresh.recent::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-tint);
-}
-.fresh.stale {
-  color: var(--amber);
 }
 .grid .go {
   color: var(--faint);
@@ -580,6 +467,10 @@ button.hit:hover {
   font-weight: 700;
   color: var(--ink);
   min-width: 92px;
+}
+/* Running prose, not a flex row: its <b> must not become a separate item. */
+.legend > .lg-note {
+  display: inline;
 }
 
 /* ------------------------------------------------------------------ popover */
@@ -641,14 +532,6 @@ button.hit:hover {
 .pop-list li.st-none {
   color: var(--muted);
 }
-.pop-group {
-  padding: 8px 13px 2px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
 .pop-list .age {
   width: 30px;
   flex-shrink: 0;
@@ -660,6 +543,20 @@ button.hit:hover {
 }
 .pop-body b {
   color: var(--ink);
+}
+/* The readings behind a timelock figure, in the card's own density. */
+.pop-facts {
+  padding: 6px 13px 8px;
+}
+.pop-facts > div {
+  padding: 5px 0;
+}
+.pop-facts dt {
+  white-space: normal;
+}
+.pop-facts dd {
+  font-weight: 500;
+  white-space: nowrap;
 }
 .pop-f {
   display: flex;
@@ -848,22 +745,20 @@ button.hit:hover {
     padding-left: 0;
     border-left: 0;
   }
-  .spacer {
-    display: none;
-  }
 }
 @media (max-width: 759px) {
   .page-head h1 {
     font-size: 28px;
+  }
+  .ph-stats {
+    flex-wrap: wrap;
+    row-gap: 10px;
   }
   .ph-stats > div {
     padding: 0 12px;
   }
   .search {
     flex: 1 1 100%;
-  }
-  .viewtoggle > span {
-    display: none;
   }
   .drawer {
     width: 100vw;
@@ -929,7 +824,6 @@ button.hit:hover {
 .table-scroll {
   position: relative;
 }
-.grid thead tr.grp th,
 .grid .th-sub {
   white-space: normal;
 }
@@ -937,8 +831,7 @@ button.hit:hover {
    column in view there instead of behind the panel's own scrollbar. */
 @media (max-width: 1365px) {
   .grid th,
-  .grid td,
-  .grid thead tr.grp th {
+  .grid td {
     padding-left: 8px;
     padding-right: 8px;
   }
