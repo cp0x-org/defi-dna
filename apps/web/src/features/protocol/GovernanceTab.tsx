@@ -1,12 +1,9 @@
-import type { Protocol, ProtocolDetail } from '@defi-dna/data'
-import {
-  GOVERNANCE_METRIC,
-  INCIDENTS_METRIC,
-  TVL_METRIC,
-  feeds,
-} from '../../shared/lib/registry.ts'
-import { dateInfo, formatUsd, hostOf } from '../../shared/lib/view.ts'
-import { GovernanceExtra, IncidentsExtra, TvlComponentsExtra } from './extra/MetricExtras.tsx'
+import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
+import type { ProtocolDetail } from '@defi-dna/data'
+import { GOVERNANCE_METRIC, INCIDENTS_METRIC } from '../../shared/lib/registry.ts'
+import { dateInfo } from '../../shared/lib/view.ts'
+import { GovernanceExtra, IncidentsExtra } from './extra/MetricExtras.tsx'
 import { TextExtra } from './extra/TextExtra.tsx'
 import { ExternalLink } from '../../shared/ui/UI.tsx'
 
@@ -32,134 +29,104 @@ const Linked = ({ text }: { text: string }) => (
  * on-chain, then what DefiLlama measures. Facts about the protocol; no feed
  * opinions here.
  */
-export const GovernanceTab = ({
-  protocol,
-  record,
-}: {
-  protocol: Protocol
-  record: ProtocolDetail
-}) => {
-  const tvl = record.metrics?.[TVL_METRIC]
+export const GovernanceTab = ({ record }: { record: ProtocolDetail }) => {
   const incidents = record.metrics?.[INCIDENTS_METRIC]
   const governance = record.metrics?.[GOVERNANCE_METRIC]
-  const feedLinks = feeds.filter(
-    (feed) => record.feeds[feed.id]?.status === 'ok' && record.feeds[feed.id]?.url,
-  )
+  const location = useLocation()
+  const incidentsRef = useRef<HTMLElement>(null)
+
+  // "Open incidents" lands on #incidents. The record loads after the layout has
+  // already looked for the anchor, so the scroll happens here, once the block
+  // exists. The mark follows on the next frame, holds, then fades.
+  useEffect(() => {
+    const node = incidentsRef.current
+    if (!node || location.hash !== '#incidents') return
+    node.scrollIntoView({ block: 'start' })
+    node.focus({ preventScroll: true })
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let removeTimer = 0
+    const frame = window.requestAnimationFrame(() => {
+      node.classList.remove('anchor-flash')
+      void node.offsetWidth
+      node.classList.add('anchor-flash')
+      removeTimer = window.setTimeout(() => node.classList.remove('anchor-flash'), 1600)
+    })
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(removeTimer)
+      node.classList.remove('anchor-flash')
+    }
+  }, [location.hash])
 
   return (
-    <>
-      <div className="row2">
-        <section className="card span2" id="governance">
-          <div className="card-h">
-            <h2>Governance</h2>
-            <span className="aside">
-              read on-chain · data cut{' '}
-              {dateInfo(governance?.updatedAt ?? governance?.fetchedAt).label}
-            </span>
-          </div>
-          <div className="card-b">
-            {governance?.extra?.facts?.length ? (
-              <GovernanceExtra value={governance.value} facts={governance.extra.facts} />
-            ) : record.metrics ? (
-              <p className="muted">
-                No governance contracts are mapped for this version; nothing was read.
-              </p>
-            ) : (
-              <p className="muted">
-                What the governance contracts report could not be loaded. This is our failure, not
-                an empty reading.
-              </p>
-            )}
-          </div>
-          <div className="card-f">
-            <span>
-              {governance?.note ? (
-                <Linked text={governance.note} />
-              ) : (
-                'Contracts, the views called on them and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'
-              )}
-              {governance?.note
-                ? ' Each fact names the view and the contract it was read from; open the contract on Etherscan (Contract → Read) to repeat it.'
-                : ''}
-            </span>
-            {governance?.url ? <ExternalLink href={governance.url}>Etherscan</ExternalLink> : null}
-          </div>
-        </section>
-
-        <section className="card span2" id="incidents">
-          <div className="card-h">
-            <h2>Incidents</h2>
-            <span className="aside">recorded by DefiLlama</span>
-          </div>
-          <div className="card-b">
-            {incidents ? (
-              <>
-                <IncidentsExtra incidents={incidents.extra?.incidents ?? []} />
-                <TextExtra text={incidents.extra?.text} />
-              </>
-            ) : record.metrics ? (
-              <p className="muted">DefiLlama’s incident list was not collected for this version.</p>
-            ) : (
-              <p className="muted">
-                DefiLlama’s incident list could not be loaded. This is our failure, not an empty
-                list.
-              </p>
-            )}
-          </div>
-          <div className="card-f">
-            <span>
-              {incidents?.note ??
-                'Attributing an incident to a protocol is DefiLlama’s call. defi-dna does not verify, classify or score incidents.'}
-            </span>
-            {incidents?.url ? (
-              <ExternalLink href={incidents.url}>DefiLlama hacks</ExternalLink>
-            ) : null}
-          </div>
-        </section>
-
-        <section className="card">
-          <div className="card-h">
-            <h2>TVL</h2>
-            <span className="aside">via DefiLlama · data cut {dateInfo(tvl?.fetchedAt).label}</span>
-          </div>
-          <div className="card-b">
-            <div className="tvl-big">
-              {formatUsd(tvl?.value) ?? (record.metrics ? 'Not available' : 'Could not be loaded')}
-            </div>
-            <p className="tvl-note">
-              The Ethereum-mainnet figure, as DefiLlama publishes it. A measured quantity — never
-              combined with what a feed says.
+    <div className="stack gov">
+      <section className="card" id="governance">
+        <div className="card-h">
+          <h2>Governance</h2>
+          <span className="aside">
+            read on-chain · data cut{' '}
+            {dateInfo(governance?.updatedAt ?? governance?.fetchedAt).label}
+          </span>
+        </div>
+        <div className="card-b">
+          {governance?.extra?.facts?.length ? (
+            <GovernanceExtra value={governance.value} facts={governance.extra.facts} />
+          ) : record.metrics ? (
+            <p className="muted">
+              No governance contracts are mapped for this version; nothing was read.
             </p>
-            <TvlComponentsExtra components={tvl?.extra?.components} />
-            <TextExtra text={tvl?.extra?.text} />
-          </div>
-        </section>
-        <section className="card">
-          <div className="card-h">
-            <h2>Links</h2>
-          </div>
-          <div className="card-b links-list">
-            {protocol.website ? (
-              <ExternalLink className="link-row" href={protocol.website}>
-                <b>Website</b>
-                <span>{hostOf(protocol.website)}</span>
-              </ExternalLink>
-            ) : null}
-            {tvl?.url ? (
-              <ExternalLink className="link-row" href={tvl.url}>
-                <b>DefiLlama</b>
-                <span>{hostOf(tvl.url)}</span>
-              </ExternalLink>
-            ) : null}
-            {feedLinks.map((feed) => (
-              <ExternalLink className="link-row" key={feed.id} href={record.feeds[feed.id]?.url}>
-                <b>{feed.name}</b>
-                <span>{hostOf(record.feeds[feed.id]?.url)}</span>
-              </ExternalLink>
-            ))}
-          </div>
-        </section>
-      </div>
-    </>
+          ) : (
+            <p className="muted">
+              What the governance contracts report could not be loaded. This is our failure, not an
+              empty reading.
+            </p>
+          )}
+        </div>
+        <div className="card-f">
+          <span>
+            {governance?.note ? (
+              <Linked text={governance.note} />
+            ) : (
+              'Contracts, the views called on them and their sources are listed in systems.json in the repository. A measured quantity — never combined with what a feed says.'
+            )}
+            {governance?.note
+              ? ' Each fact names the view and the contract it was read from; open the contract on Etherscan (Contract → Read) to repeat it.'
+              : ''}
+          </span>
+          {governance?.url ? <ExternalLink href={governance.url}>Etherscan</ExternalLink> : null}
+        </div>
+      </section>
+
+      <section className="card" id="incidents" ref={incidentsRef} tabIndex={-1}>
+        <div className="card-h">
+          <h2>Incidents</h2>
+          <span className="aside">recorded by DefiLlama</span>
+        </div>
+        <div className="card-b">
+          {incidents ? (
+            <>
+              <IncidentsExtra incidents={incidents.extra?.incidents ?? []} />
+              <TextExtra text={incidents.extra?.text} />
+            </>
+          ) : record.metrics ? (
+            <p className="muted">DefiLlama’s incident list was not collected for this version.</p>
+          ) : (
+            <p className="muted">
+              DefiLlama’s incident list could not be loaded. This is our failure, not an empty list.
+            </p>
+          )}
+        </div>
+        <div className="card-f">
+          <span>
+            {incidents?.note ??
+              'Attributing an incident to a protocol is DefiLlama’s call. defi-dna does not verify, classify or score incidents.'}
+          </span>
+          {incidents?.url ? (
+            <ExternalLink href={incidents.url}>DefiLlama hacks</ExternalLink>
+          ) : null}
+        </div>
+      </section>
+    </div>
   )
 }
