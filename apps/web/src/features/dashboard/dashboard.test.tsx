@@ -64,6 +64,7 @@ describe('dashboard rows and cards', () => {
     expect(html).toContain('Curve')
     expect(html).toContain('NEW · 1')
     expect(html).toContain(`1 of ${feeds.length} feeds have data`)
+    for (const feed of feeds) expect(html).toContain(`${feed.name} ·`)
     // Governance as the contracts report it: the delay in words, the seconds behind it, each body by what it is.
     expect(html).toContain('2 days')
     expect(html).toContain('title="172,800 seconds"')

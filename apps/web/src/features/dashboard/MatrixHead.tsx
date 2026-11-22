@@ -73,7 +73,8 @@ export const MatrixHead = ({
           <th aria-sort={ariaSort('coverage-desc')}>
             {sortButton('coverage-desc', 'Coverage')}
             <Info label="Coverage">
-              How many feeds have data for this version. Hover a cell for the list.
+              How many feeds have data for this version. Each mark is one feed, in the order listed
+              under the table; the bar is that feed’s own reading. Open a cell for the names.
             </Info>
           </th>
         ) : null}
@@ -83,9 +84,6 @@ export const MatrixHead = ({
             <Info label="Incidents">Incidents recorded by DefiLlama for this version.</Info>
           </th>
         ) : null}
-        <th>
-          <span className="sr-only">Open</span>
-        </th>
       </tr>
     </thead>
   )
