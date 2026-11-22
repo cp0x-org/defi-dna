@@ -180,16 +180,13 @@
 /* The incidents link scrolls here. The tint is a "you arrived" mark, not a reading of the incidents. */
 #incidents {
   scroll-margin-top: 8px;
-  transition:
-    background-color 0.7s ease,
-    box-shadow 0.7s ease;
+  transition: background-color 1s;
 }
 #incidents:focus {
   outline: none;
 }
 #incidents.anchor-flash {
-  background-color: var(--accent-tint);
-  box-shadow: inset 0 0 0 2px var(--accent);
+  background-color: color-mix(in srgb, var(--accent) 5%, transparent);
   transition: none;
 }
 .two {

@@ -50,7 +50,7 @@ export const GovernanceTab = ({ record }: { record: ProtocolDetail }) => {
       node.classList.remove('anchor-flash')
       void node.offsetWidth
       node.classList.add('anchor-flash')
-      removeTimer = window.setTimeout(() => node.classList.remove('anchor-flash'), 1600)
+      removeTimer = window.setTimeout(() => node.classList.remove('anchor-flash'), 700)
     })
     return () => {
       window.cancelAnimationFrame(frame)
