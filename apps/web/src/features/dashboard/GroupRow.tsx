@@ -84,7 +84,6 @@ export const GroupRow = ({
           )}
         </td>
       ) : null}
-      <td />
     </tr>
   )
 }

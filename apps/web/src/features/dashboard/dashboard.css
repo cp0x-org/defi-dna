@@ -397,6 +397,57 @@ button.hit:hover {
 .hit.static {
   opacity: 0.75;
 }
+/* The coverage cell names each feed. The bar reuses the ring's colours: the feed's own reading, never ours. */
+.feed-marks {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.feed-mark {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.feed-marks .source-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  padding: 2px;
+  font-size: 10px;
+}
+/* No publication for this version: the logo stays recognisable, but it does not read as a result. */
+.feed-mark.st-none .source-mark {
+  opacity: 0.4;
+  filter: grayscale(1);
+  color: var(--muted);
+  background: transparent;
+  border-color: transparent;
+}
+.feed-mark .mark-bar {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--none-seg);
+}
+.feed-mark .mark-bar.st-pos {
+  background: var(--pos-seg);
+}
+.feed-mark .mark-bar.st-neu,
+.feed-mark .mark-bar.st-inf {
+  background: var(--neu-seg);
+}
+.feed-mark .mark-bar.st-neg {
+  background: var(--neg-seg);
+}
+.feed-mark .mark-bar.st-none {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.feed-mark .mark-bar.st-error {
+  background: repeating-linear-gradient(135deg, var(--none-seg) 0 2px, transparent 2px 4px);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
 .cov-count {
   font: 600 14px var(--mono);
 }
@@ -415,14 +466,6 @@ button.hit:hover {
 .evt.zero {
   color: var(--muted);
   font-weight: 400;
-}
-.grid .go {
-  color: var(--faint);
-  width: 28px;
-  text-align: center;
-}
-.grid tr:hover .go {
-  color: var(--accent);
 }
 
 .empty {
@@ -818,9 +861,8 @@ button.hit:hover {
 }
 
 /* The table fits its panel, and only the panel scrolls sideways. Header notes
-   wrap, so a note never makes a column wider than its cells; the scroll box
-   contains its absolutely positioned children (the screen-reader label of the
-   last column), so they cannot widen the page and give it a scrollbar. */
+   wrap, so a note never makes a column wider than its cells. The scroll box
+   contains its absolutely positioned children, so they cannot widen the page. */
 .table-scroll {
   position: relative;
 }

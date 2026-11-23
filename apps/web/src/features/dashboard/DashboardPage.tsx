@@ -414,10 +414,11 @@ export const DashboardPage = ({
 
         <div className="table-foot">
           <div className="legend">
-            <span className="lg-title">Coverage ring</span>
+            <span className="lg-title">Coverage</span>
             <span>
-              One segment per risk feed, clockwise from 12 o’clock:{' '}
-              {feeds.map((feed, k) => `${k + 1} ${feed.name}`).join(' · ')}.
+              One mark per risk feed, left to right:{' '}
+              {feeds.map((feed, k) => `${k + 1} ${feed.name}`).join(' · ')}. The bar under the logo
+              is that feed’s own reading.
             </span>
           </div>
           <div className="legend">

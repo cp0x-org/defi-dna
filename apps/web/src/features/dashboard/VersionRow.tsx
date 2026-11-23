@@ -2,15 +2,36 @@ import { Link, useNavigate } from 'react-router-dom'
 import type { ColumnKey } from '../../shared/lib/prefs.ts'
 import { feeds } from '../../shared/lib/registry.ts'
 import { changedWithinDay, dataCount, type Row } from './rows.ts'
-import type { Tone } from '../../shared/lib/status.ts'
+import { TONE_LABELS, type Tone } from '../../shared/lib/status.ts'
 import { categoryLabel, dateInfo, formatUsd } from '../../shared/lib/view.ts'
-import { CoverageRing } from '../../shared/ui/Coverage.tsx'
-import { ProtocolAvatar } from '../../shared/ui/UI.tsx'
+import { ProtocolAvatar, SourceMark } from '../../shared/ui/UI.tsx'
 import { GovernanceCell, TimelockCell } from './GovernanceCells.tsx'
 import type { PopKind, PopTarget } from './usePopover.ts'
 
 const feedIds = feeds.map((feed) => feed.id)
-const tonesOf = (row: Row): Tone[] => feeds.map((feed) => row.tones[feed.id] ?? 'none')
+
+/**
+ * One mark per feed, in registry order. The logo names the feed; the bar is
+ * that feed's own reading. A hollow bar is "nothing published", a hatch is our
+ * failure to read it. Neither is a colour we assigned.
+ */
+const FeedMarks = ({ row }: { row: Row }) => (
+  <span className="feed-marks" aria-hidden="true">
+    {feeds.map((feed) => {
+      const tone: Tone = row.tones[feed.id] ?? 'none'
+      return (
+        <span
+          key={feed.id}
+          className={`feed-mark st-${tone}`}
+          title={`${feed.name} · ${TONE_LABELS[tone]}`}
+        >
+          <SourceMark id={feed.id} />
+          <i className={`mark-bar st-${tone}`} />
+        </span>
+      )
+    })}
+  </span>
+)
 
 /** One protocol version. The whole row opens the protocol page; the buttons open cards instead. */
 export const VersionRow = ({
@@ -34,7 +55,6 @@ export const VersionRow = ({
   const navigate = useNavigate()
   const { protocol, incidents } = row
   const href = `/protocol/${protocol.id}`
-  const states = tonesOf(row)
   const covered = dataCount(row.feeds, feedIds)
   const today = changedWithinDay(row, now)
   return (
@@ -93,7 +113,7 @@ export const VersionRow = ({
             aria-label={`${covered} of ${feeds.length} feeds have data — show the list`}
             {...popTarget('coverage', protocol.id)}
           >
-            <CoverageRing states={states} />
+            <FeedMarks row={row} />
             <span className="cov-count">
               {covered}
               <span>/{feeds.length}</span>
@@ -121,9 +141,6 @@ export const VersionRow = ({
           )}
         </td>
       ) : null}
-      <td className="go" aria-hidden="true">
-        →
-      </td>
     </tr>
   )
 }
