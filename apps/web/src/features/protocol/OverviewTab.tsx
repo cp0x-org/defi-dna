@@ -8,16 +8,26 @@ import {
   feeds,
 } from '../../shared/lib/registry.ts'
 import { runsOf, type RecordSummary } from './record.ts'
-import { assessesLabel, dateInfo, dayAndTime, formatDuration } from '../../shared/lib/view.ts'
+import {
+  assessesLabel,
+  dateInfo,
+  dayAndTime,
+  formatDuration,
+  formatUsd,
+  hostOf,
+} from '../../shared/lib/view.ts'
 import { CoverageRing, StatusPill } from '../../shared/ui/Coverage.tsx'
-import { Info, SourceMark } from '../../shared/ui/UI.tsx'
+import { ExternalLink, Info, SourceMark } from '../../shared/ui/UI.tsx'
+import { TvlComponentsExtra } from './extra/MetricExtras.tsx'
+import { TextExtra } from './extra/TextExtra.tsx'
 import { SliceChips } from './SliceChips.tsx'
 
 const TIMELINE_SHOWN = 8
 
 /**
- * The summary, in the order a reader needs it: what each risk feed publishes
- * first, then the run log and the protocol's own figures, each stated once.
+ * The summary, in the order a reader needs it: size and where to read on,
+ * then what each risk feed publishes, then the run log and the protocol's
+ * own figures, each stated once.
  */
 export const OverviewTab = ({
   protocol,
@@ -40,9 +50,56 @@ export const OverviewTab = ({
   const tvl = record.metrics?.[TVL_METRIC]
   const incidents = record.metrics?.[INCIDENTS_METRIC]
   const governance = record.metrics?.[GOVERNANCE_METRIC]
+  const feedLinks = feeds.filter(
+    (feed) => record.feeds[feed.id]?.status === 'ok' && record.feeds[feed.id]?.url,
+  )
 
   return (
     <div className="stack overview">
+      <div className="pair">
+        <section className="card">
+          <div className="card-h">
+            <h2>TVL</h2>
+            <span className="aside">via DefiLlama · data cut {dateInfo(tvl?.fetchedAt).label}</span>
+          </div>
+          <div className="card-b">
+            <div className="tvl-big">
+              {formatUsd(tvl?.value) ?? (record.metrics ? 'Not available' : 'Could not be loaded')}
+            </div>
+            <p className="tvl-note">
+              The Ethereum-mainnet figure, as DefiLlama publishes it. A measured quantity — never
+              combined with what a feed says.
+            </p>
+            <TvlComponentsExtra components={tvl?.extra?.components} />
+            <TextExtra text={tvl?.extra?.text} />
+          </div>
+        </section>
+        <section className="card">
+          <div className="card-h">
+            <h2>Links</h2>
+          </div>
+          <div className="card-b links-list">
+            {protocol.website ? (
+              <ExternalLink className="link-row" href={protocol.website}>
+                <b>Website</b>
+                <span>{hostOf(protocol.website)}</span>
+              </ExternalLink>
+            ) : null}
+            {tvl?.url ? (
+              <ExternalLink className="link-row" href={tvl.url}>
+                <b>DefiLlama</b>
+                <span>{hostOf(tvl.url)}</span>
+              </ExternalLink>
+            ) : null}
+            {feedLinks.map((feed) => (
+              <ExternalLink className="link-row" key={feed.id} href={record.feeds[feed.id]?.url}>
+                <b>{feed.name}</b>
+                <span>{hostOf(record.feeds[feed.id]?.url)}</span>
+              </ExternalLink>
+            ))}
+          </div>
+        </section>
+      </div>
       <section className="card">
         <div className="card-h">
           <h2>What the risk feeds publish</h2>

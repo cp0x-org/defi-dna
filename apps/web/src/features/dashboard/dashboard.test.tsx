@@ -127,4 +127,13 @@ describe('dashboard rows and cards', () => {
     expect(html).not.toContain('0x40907540d8a6C65c637785e8f8B742ae6b0b9968')
     expect(html).toContain('href="/protocol/curve/governance"')
   })
+
+  it('opens incidents on the incidents block', () => {
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <PopCard kind="incidents" row={row} pinned={false} now={NOW} onClose={() => {}} />
+      </MemoryRouter>,
+    )
+    expect(html).toContain('href="/protocol/curve/governance#incidents"')
+  })
 })
