@@ -188,7 +188,7 @@ export const ProtocolPage = ({ index }: { index: IndexBundle | null }) => {
           feedId={feedParam}
         />
       ) : tab === 'governance' ? (
-        <GovernanceTab protocol={protocol} record={record} />
+        <GovernanceTab record={record} />
       ) : (
         <OverviewTab
           protocol={protocol}
