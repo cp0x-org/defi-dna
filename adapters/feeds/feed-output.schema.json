@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/adapters/feeds/feed-output.schema.json",
-  "title": "defi-dna feed output",
+  "title": "defidna feed output",
   "description": "What one feed adapter produces for one protocol. collect() returns the fields below, or null when the feed has nothing for that protocol; the runner adds `status` and `since` and stores the result under data/protocols/<protocol>.json in `feeds.<feed id>`.",
   "type": "object",
   "additionalProperties": false,

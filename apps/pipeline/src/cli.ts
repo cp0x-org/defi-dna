@@ -10,7 +10,7 @@ try {
 }
 
 const HELP = `
-defi-dna — collect what risk feeds publish about DeFi protocols.
+defidna — collect what risk feeds publish about DeFi protocols.
 
   collect    run every adapter and write data/protocols/<id>.json
   bundle     merge those files into data/index.json and copy them to the web app

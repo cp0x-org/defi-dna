@@ -24,7 +24,7 @@ export const App = () => {
       (section === 'protocol' ? protocolById(id)?.name : undefined) ??
       pageTitle(location.pathname) ??
       'What every risk feed says about a DeFi protocol'
-    document.title = `${page} · defi-dna`
+    document.title = `${page} · defidna`
   }, [location.pathname])
 
   return (

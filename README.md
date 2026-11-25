@@ -1,6 +1,6 @@
-# defi-dna
+# defidna
 
-**defi-dna** is an open-source, neutral aggregator of DeFi risk intelligence for
+**defidna** is an open-source, neutral aggregator of DeFi risk intelligence for
 Ethereum mainnet protocols. It shows what each risk feed publishes, with the
 source and date, side by side. The dashboard shows coverage; it does not compute
 its own score, rating or ranking. See the [project charter](CHARTER.md) for the

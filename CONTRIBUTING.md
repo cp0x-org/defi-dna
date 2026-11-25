@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for taking the time to contribute to **defi DNA**. This guide covers the
+Thanks for taking the time to contribute to **defidna**. This guide covers the
 basics.
 
 ## Getting started

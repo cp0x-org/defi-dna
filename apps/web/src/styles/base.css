@@ -305,9 +305,6 @@ code {
 .brand > svg {
   color: var(--accent);
 }
-.brand-dot {
-  color: var(--accent);
-}
 .brand.small {
   font-size: 18px;
 }
@@ -729,7 +726,7 @@ details[open] > summary > svg:last-child {
 }
 
 /* ------------------------------------------------------------------ *
- * Additions for the defi-dna data model.
+ * Additions for the defidna data model.
  *
  * The design above is source-agnostic; these rules cover what this
  * dataset carries and the earlier interface did not: source marks,

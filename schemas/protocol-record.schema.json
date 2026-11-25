@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/cp0x-org/defi-dna/main/schemas/protocol-record.schema.json",
-  "title": "defi-dna protocol record",
+  "title": "defidna protocol record",
   "description": "Generated data/protocols/<id>.json: what every feed published about one protocol. Changes only when a feed's content does; measured quantities live in metrics.json. Each optional extra field has a defined shape and a dedicated frontend view.",
   "type": "object",
   "additionalProperties": false,
