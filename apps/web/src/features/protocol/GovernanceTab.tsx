@@ -120,7 +120,7 @@ export const GovernanceTab = ({ record }: { record: ProtocolDetail }) => {
         <div className="card-f">
           <span>
             {incidents?.note ??
-              'Attributing an incident to a protocol is DefiLlama’s call. defi-dna does not verify, classify or score incidents.'}
+              'Attributing an incident to a protocol is DefiLlama’s call. defidna does not verify, classify or score incidents.'}
           </span>
           {incidents?.url ? (
             <ExternalLink href={incidents.url}>DefiLlama hacks</ExternalLink>

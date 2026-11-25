@@ -83,7 +83,7 @@ export const mockupFiles = (): Map<string, string | Buffer> => {
       files.set(
         `${version}/index.html`,
         page(
-          `defi-dna mockup ${version}`,
+          `defidna mockup ${version}`,
           `<a href="${entry}">${entry}</a>`,
           `<meta http-equiv="refresh" content="0; url=${entry}" />\n`,
         ),
@@ -94,8 +94,8 @@ export const mockupFiles = (): Map<string, string | Buffer> => {
   files.set(
     'index.html',
     page(
-      'defi-dna mockups',
-      `<h1>defi-dna mockups</h1><p>Unreleased UX explorations. Not linked from the site.</p><ul>${mockups
+      'defidna mockups',
+      `<h1>defidna mockups</h1><p>Unreleased UX explorations. Not linked from the site.</p><ul>${mockups
         .map((m) => `<li><a href="${m.version}/">${m.version}</a> — <code>${m.name}</code></li>`)
         .join('')}</ul>`,
     ),

@@ -1,4 +1,4 @@
-# AGENTS.md — working in defi-dna
+# AGENTS.md — working in defidna
 
 Read this before changing anything. It is short on purpose; the details live in
 the files it points to.

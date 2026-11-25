@@ -114,7 +114,7 @@ const IncidentsCard = ({ row, pinned, onClose }: CardProps) => {
         recorded by <b>DefiLlama</b>.
         {latest ? ` Latest: ${dateInfo(latest.date).label}, “${latest.name}”.` : ''}
         <br />
-        Listed as DefiLlama published them. defi-dna does not verify, classify or score incidents.
+        Listed as DefiLlama published them. defidna does not verify, classify or score incidents.
       </div>
       <Foot
         pinned={pinned}

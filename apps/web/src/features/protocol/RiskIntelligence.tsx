@@ -108,7 +108,7 @@ export const FeedSource = ({
           </div>
           <dl className="facts one">
             <div>
-              <dt>Last read by defi-dna</dt>
+              <dt>Last read by defidna</dt>
               <dd>{timeLabel(lastRead) ?? 'Not known'}</dd>
             </div>
             <div>
@@ -159,7 +159,7 @@ export const FeedSource = ({
       </div>
       <div className="attrib">
         <span>
-          Everything below is published by <b>{feed.name}</b> and shown as collected. defi-dna does
+          Everything below is published by <b>{feed.name}</b> and shown as collected. defidna does
           not edit, summarise or score it.
         </span>
         <label className="cb">

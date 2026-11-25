@@ -60,11 +60,9 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
       </a>
       <header className="site-header">
         <div className="site-header-inner">
-          <Link to="/" className="brand" aria-label="defi-dna home">
+          <Link to="/" className="brand" aria-label="defidna home">
             <IconMark />
-            <span>
-              defi-dna<span className="brand-dot">.</span>
-            </span>
+            <span>defidna</span>
           </Link>
           <nav className="primary-nav" aria-label="Main navigation">
             {NAV.map((item) => (
@@ -106,7 +104,7 @@ export const Layout = ({ index }: { index: IndexBundle | null }) => {
         <div className="footer-main">
           <Link to="/" className="brand small">
             <IconMark />
-            <span>defi-dna.</span>
+            <span>defidna</span>
           </Link>
           <span>Every verdict belongs to the feed that published it. No composite score.</span>
         </div>

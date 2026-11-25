@@ -14,10 +14,32 @@ const Svg = ({ children, size = 18 }: { children: ReactNode; size?: number }) =>
     {children}
   </svg>
 )
+// A helix whose rungs are rows of separate dots: the feeds stand side by side and are
+// never drawn as one bar. Same drawing as public/favicon.svg.
 export const IconMark = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-    <path d="M3 3h9v9H3zM16 3h9v9h-9zM3 16h9v9H3z" fill="currentColor" />
-    <path d="M16 25v-9h9" stroke="currentColor" strokeWidth="3" />
+  <svg
+    width="28"
+    height="28"
+    viewBox="0 0 32 32"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    aria-hidden="true"
+  >
+    <path d="M24 3.5C24 11 8 10 8 16S24 21 24 28.5" opacity="0.45" />
+    <g fill="currentColor" stroke="none">
+      <circle cx="13" cy="6" r="1.35" />
+      <circle cx="16" cy="6" r="1.35" />
+      <circle cx="19" cy="6" r="1.35" />
+      <circle cx="12" cy="16" r="1.5" />
+      <circle cx="16" cy="16" r="1.5" />
+      <circle cx="20" cy="16" r="1.5" />
+      <circle cx="13" cy="26" r="1.35" />
+      <circle cx="16" cy="26" r="1.35" />
+      <circle cx="19" cy="26" r="1.35" />
+    </g>
+    <path d="M8 3.5C8 11 24 10 24 16S8 21 8 28.5" />
   </svg>
 )
 export const IconSearch = () => (

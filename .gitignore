@@ -36,9 +36,10 @@ pnpm-debug.log*
 /apps/web/public/data
 /.cache
 
-# Grant working material: private, kept here only locally.
-/grant_data
 
 # Internal working notes: kept here only locally.
 /docs/prompts.md
 /docs/refactoring-report.md
+
+# Local analytics deployment (has its own .env): kept out of the repo.
+/infra/umami
