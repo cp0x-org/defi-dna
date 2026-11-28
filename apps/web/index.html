@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>defidna — what every risk feed says about a DeFi protocol</title>
+    <title>DeFi DNA Risk Intelligence by cp0x</title>
     <meta
       name="description"
-      content="Neutral aggregator of DeFi risk feeds. Every feed's verdict shown verbatim, side by side, with sources and dates. No composite score."
+      content="DeFi DNA by cp0x shows risk feed coverage for Ethereum mainnet protocols and presents each feed&#x27;s assessment, source and date side by side."
     />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#16161f" />
@@ -32,9 +32,42 @@
         document.documentElement.dataset.theme = 'dark'
       }
     </script>
+    <link rel="canonical" href="https://defidna.io/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://defidna.io/" />
+    <meta property="og:title" content="DeFi DNA Risk Intelligence by cp0x" />
+    <meta property="og:description" content="DeFi DNA by cp0x shows risk feed coverage for Ethereum mainnet protocols and presents each feed&#x27;s assessment, source and date side by side." />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "DeFi DNA Risk Intelligence by cp0x",
+        "url": "https://defidna.io/",
+        "description": "DeFi DNA by cp0x shows risk feed coverage for Ethereum mainnet protocols and presents each feed's assessment, source and date side by side.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "cp0x",
+          "url": "https://cp0x.com"
+        },
+        "sameAs": [
+          "https://github.com/cp0x-org/defi-dna"
+        ]
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main style="max-width:720px;margin:40px auto;padding:0 16px;font-family:system-ui,sans-serif;line-height:1.5">
+        <h1>DeFi DNA Risk Intelligence by cp0x</h1>
+        <p>DeFi DNA is an open-source, neutral aggregator of DeFi risk intelligence from cp0x. It shows what each risk feed publishes about Ethereum mainnet protocols, with the original source and assessment date.</p>
+        <ul>
+          <li>Browse coverage one protocol version at a time.</li>
+          <li>See total value locked and incidents recorded by DefiLlama on the dashboard.</li>
+          <li>Open a protocol to compare the feeds' published assessments side by side.</li>
+        </ul>
+        <p>View the <a href="https://github.com/cp0x-org/defi-dna">source code on GitHub</a> and learn about <a href="https://cp0x.com">cp0x</a>.</p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

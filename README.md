@@ -1,5 +1,7 @@
 # defidna
 
+Live at [defidna.io](https://defidna.io/).
+
 **defidna** is an open-source, neutral aggregator of DeFi risk intelligence for
 Ethereum mainnet protocols. It shows what each risk feed publishes, with the
 source and date, side by side. The dashboard shows coverage; it does not compute
