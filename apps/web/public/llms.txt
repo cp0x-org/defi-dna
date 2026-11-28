@@ -1,0 +1,9 @@
+# DeFi DNA Risk Intelligence by cp0x
+
+> DeFi DNA is an open-source, neutral aggregator of DeFi risk intelligence from cp0x. The dashboard shows risk feed coverage for Ethereum mainnet protocols. Protocol pages display the feeds' assessments side by side with sources and dates.
+
+## Links
+
+- [App](https://defidna.io/): the live site
+- [Source code](https://github.com/cp0x-org/defi-dna): open-source repository
+- [cp0x](https://cp0x.com): the community behind the site
